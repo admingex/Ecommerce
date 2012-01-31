@@ -15,7 +15,7 @@
 |
 */
 $config['base_url']	= 'http://localhost:8020/Ecommerce';
-
+/* Comentarios*/
 /*
 |--------------------------------------------------------------------------
 | Index File
