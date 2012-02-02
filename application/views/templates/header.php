@@ -103,7 +103,7 @@
 			/*background-color: #fd3;*/
 			text-align: center;
 			/*border-right: solid 2px #002166;*/
-			border-bottom: solid 2px #002166;
+			border-bottom: solid 1px #002166;
 		}
 		
 		#list_results {
@@ -119,7 +119,7 @@
 		}
 		
 		#list_results  ul li{
-			width: 16%;	/*145px;*/
+			width: 16%;		/*145px;*/
 			padding: 4px 0px 4px 0px;
 			list-style-type: none;
 			display: inline;
