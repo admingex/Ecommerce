@@ -21,6 +21,21 @@ class Welcome extends CI_Controller {
 	{
 		$this->load->view('welcome_message');
 	}
+	
+	public function view($page = 'home')
+	{
+			
+		if ( ! file_exists('application/views/pages/'.$page.'.php'))
+		{
+			// Whoops, we don't have a page for that!
+			show_404();
+		}
+		
+		$data['title'] = ucfirst($page); 			// Capitalize the first letter
+		$data['subtitle'] = ucfirst('P�ginas'); 	// Capitalize the first letter
+		
+		$this->cargar_vista('pages', $page, $data);
+	}
 }
 
 /* End of file welcome.php */
