@@ -1,5 +1,4 @@
 <html>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
 <head>
 	<title><?php echo $title ?> - CMS GEX</title>
 
@@ -47,20 +46,9 @@
 			margin: 0 15px 0 15px;
 			border: 1px solid #000;
 			margin-bottom: 10px;
-			padding: 15px 5px 0px 5px;
+			padding: 15px 5px 15px 5px;
 		}
-		ul li{
-			/*width: %;		/*145px;*/
-			padding: 4px 0px 4px 4px;
-			list-style-type: none;
-			
-			
-			font-size: 13px;
-			/*border: 1px solid #000;*/
-			text-align: left;
-			text-indent:0%;
-			/*background-color: #fa3;*/
-		}
+
 		p.footer{
 			text-align: right;
 			font-size: 11px;
@@ -103,24 +91,23 @@
 		/*para listado*/
 		
 		#list_headers {
-			padding-left: 4px;
+			padding-left: 0px;
 		}
 
 		.column_header {
 			width: 16%;	/*160px*/
 			font-weight: bold;
-			padding: 4px 0px 4px 4px;
+			padding: 4px 0px 4px 0px;
 			float: left;
 			/*color: #903;*/
 			/*background-color: #fd3;*/
-			text-align: left;
-			text-indent: 1%;
+			text-align: center;
 			/*border-right: solid 2px #002166;*/
 			border-bottom: solid 1px #002166;
 		}
 		
 		#list_results {
-			/*padding-left: 0px;*/
+			padding-left: 0px;
 			padding: 15px 0px 15px 0px;
 		}
 			
@@ -133,14 +120,13 @@
 		
 		#list_results  ul li{
 			width: 16%;		/*145px;*/
-			padding: 4px 0px 4px 4px;
+			padding: 4px 0px 4px 0px;
 			list-style-type: none;
 			display: inline;
 			float: left;
 			font-size: 13px;
 			/*border: 1px solid #000;*/
-			text-align: left;
-			text-indent:0%;
+			text-align: center;
 			/*background-color: #fa3;*/
 		}
 
@@ -157,7 +143,7 @@
 		
 		.form_button {
 			/*padding: 15px 0px 15px 0px;*/
-			padding: 15px 0px 0px 15px;
+			margin-left: 20%;
 			clear: both;
 		}
 	</style>

@@ -1,0 +1,42 @@
+<h1>Iniciar Sesi&oacute;n segura</h1>
+
+<div id="body">	
+	<form id="form_registro_tc" action="<?php echo $this->config->item('base_url').'/index.php/login/'; ?>" method="POST">
+		<div class="item_requerid">Correo electr&oacute;nico:</div>
+		<div class="form_requerid">
+			<input type="text" name="email" id="email" size="40" maxlength="60" 
+				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
+			<span class="validation_message"><?php if(isset($login_err['email'])) echo ($login_err['email']);?></span>
+		</div>
+		<div class="item_requerid">Iniciar sesi&oacute;n como:</div>
+		<div class="form_requerid">			
+			<ul>
+				<li>
+					<input type="radio" id="tipo_inicio" name="tipo_inicio" value="nuevo" >Cliente nuevo</input>
+				</li>
+				<li>
+					<input type="radio" id="tipo_inicio" name="tipo_inicio" value="registrado" <?php if(isset($login_err['password'])) echo "checked"; ?> >
+						Cliente Registrado
+					</input>
+				</li>
+			</ul>
+		</div>
+		<div class="item_requerid">Contrase&ntilde;a:</div>
+		<div class="form_requerid">
+			<input type="password" name="password" id="password" size="20" 
+			value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
+			<span class="validation_message"><a href="#">&iquest;Olvidaste tu contrsae&ntilde;a?</a>
+				<?php if(isset($login_err['password'])) echo ($login_err['password']);?>
+			</span>
+		</div>
+		
+		<span id="message" class="validation_message">
+			<?php if(isset($login_err['user_login'])) echo ($login_err['user_login']);?>
+		</span>
+		
+		<div id="message" class="validation_message"></div>
+		<div class="form_button">
+			<input type="submit" id="enviar" value="Iniciar sesi&oacute;n"/>
+		</div>
+	</form>
+</div>

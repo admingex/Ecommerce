@@ -5,7 +5,7 @@
 		<form id="form_tc_amex" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/forma_pago/registrar/amex" method="POST">
 			<div class="item_requerid">N&uacute;mero de tarjeta:</div>
 			<div class="form_requerid">
-				<input type="text" name="txt_numeroTarjeta" id="txt_numeroTarjeta" maxlength="17"
+				<input type="text" name="txt_numeroTarjeta" id="txt_numeroTarjeta" maxlength="16"
 					value="<?php if(isset($_POST['txt_numeroTarjeta'])) echo htmlspecialchars($_POST['txt_numeroTarjeta']);?>"/>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_numeroTarjeta'])) echo ($reg_errores['txt_numeroTarjeta']);?></span>
 			</div>
@@ -35,30 +35,30 @@
 			</div>
 			<div class="item_requerid">Fecha de expiraci&oacute;n:</div>
 			<div class="form_requerid">
-			<?php
-				$mes = isset($_POST['sel_mes_expira']) ? $_POST['sel_mes_expira'] : 0;
-				$anio = isset($_POST['sel_anio_expira']) ? $_POST['sel_anio_expira'] : 0;
-			?>
 				<select id="sel_mes_expira" name="sel_mes_expira">
-					<?php 
-						for($i = 1; $i != 12; $i++) {
-							if ($i == $mes)
-								echo "<option value='".$i."' selected='true'>$i</option>";
-							else 
-								echo "<option value='".$i."'>$i</option>";
-						} 
-					?>
+					<option value="01">Enero</option>
+					<option value="02">Ferbero</option>
+					<option value="03">Marzo</option>
+					<option value="04">Abril</option>
+					<option value="05">Mayo</option>
+					<option value="06">Junio</option>
+					<option value="07">Julio</option>
+					<option value="08">Agosto</option>
+					<option value="09">Septiembre</option>
+					<option value="10">Octubre</option>
+					<option value="11">Noviembre</option>
+					<option value="12">Diciembre</option>
 				</select>
 				<select id="sel_anio_expira" name="sel_anio_expira">
-					<?php 
-						for($i = 2012; $i != 2019; $i++) {	/*ajustar el periodo de años con constantes/globales en el config.*/
-							if ($i == $anio) 
-								echo "<option value='".$i."' selected='true'>$i</option>";
-							else 
-								echo "<option value='".$i."'>$i</option>";
-						} 
-					?>
+					<option value="12">2012</option>
+					<option value="13">2013</option>
+					<option value="14">2014</option>
+					<option value="15">2015</option>
+					<option value="16">2016</option>
+					<option value="17">2017</option>
+					<option value="18">2018</option>
 				</select>
+				
 				<span class="validation_message"><?php if(isset($reg_errores['fecha_error'])) echo ($reg_errores['fecha_error']);?></span>
 			</div>
 			
@@ -75,8 +75,7 @@
 					<!--span><input type="submit" id="enviar" value="Llenar"/></span-->
 				<span class="validation_message"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
 				<!--div>
-					<small>Ingresa tu c&oacute;digo postay y presiona "llenar" para acompletar los datos de Colonia, Ciudad y Estado</small>
-				</div-->
+					<small>Ingresa tu c&oacute;digo postay y presiona "llenar" para acompletar los datos de Colonia, Ciudad y Estado</small></div-->
 			</div>
 			<!--div class="item_requerid">Colonia:</div>
 			<div class="form_requerid">

@@ -1,0 +1,135 @@
+<div id="tc_amex">
+	<h1>American Express</h1>
+	
+	<div id="body">	
+		<form id="form_tc_amex" action="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/registrar/amex" method="POST">
+			<div class="item_requerid">N&uacute;mero de tarjeta:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_numeroTarjeta" id="txt_numeroTarjeta" maxlength="16" 
+					value="<?php if(isset($_POST['txt_numeroTarjeta'])) echo htmlspecialchars($_POST['txt_numeroTarjeta']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['num_tarjeta_error'])) echo ($datos['num_tarjeta_error']);?></span>
+			</div>
+			<div class="item_requerid">Nombre del Titular:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_nombre" id="txt_nombre" 
+					value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['nombre_error'])) echo ($datos['nombre_error']);?></span>
+			</div>
+			<div class="item_requerid">Apellido Paterno:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_apellidoP" id="txt_apellidoP" 
+					value="<?php if(isset($_POST['txt_apellidoP'])) echo htmlspecialchars($_POST['txt_apellidoP']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['apellidoP_error'])) echo ($datos['apellidoP_error']);?></span>
+			</div>
+			<div class="item_requerid">Apellido Materno:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_apellidoM" id="txt_apellidoM" 
+					value="<?php if(isset($_POST['txt_apellidoM'])) echo htmlspecialchars($_POST['txt_apellidoM']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['apellidoM_error'])) echo ($datos['apellidoM_error']);?></span>
+			</div>
+			<!--
+			<div class="item_requerid">C&oacute;digo de seguridad:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_codigoSeguridad" id="txt_codigoSeguridad" maxlength="4" size="4"
+					value="<?php if(isset($_POST['txt_codigoSeguridad'])) echo htmlspecialchars($_POST['txt_codigoSeguridad']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['codigo_seguridad_error'])) echo ($datos['codigo_seguridad_error']);?></span>
+			</div>
+			-->
+			<div class="item_requerid">Fecha de expiraci&oacute;n:</div>
+			<div class="form_requerid">
+				<select id="sel_mes_expira" name="sel_anio_expira">
+					<option value="01">Enero</option>
+					<option value="02">Ferbero</option>
+					<option value="03">Marzo</option>
+					<option value="04">Abril</option>
+					<option value="05">Mayo</option>
+					<option value="06">Junio</option>
+					<option value="07">Julio</option>
+					<option value="08">Agosto</option>
+					<option value="09">Septiembre</option>
+					<option value="10">Octubre</option>
+					<option value="11">Noviembre</option>
+					<option value="12">Diciembre</option>
+				</select>
+				<select id="sel_anio_expira" name="sel_anio_expira">
+					<option value="12">2012</option>
+					<option value="13">2013</option>
+					<option value="14">2014</option>
+					<option value="15">2015</option>
+					<option value="16">2016</option>
+					<option value="17">2017</option>
+					<option value="18">2018</option>
+				</select>
+				
+				<span class="validation_message"><?php if(isset($datos['fecha_error'])) echo $datos['fecha_error'];?></span>
+			</div>
+			
+			<div class="item_requerid">Calle y n&uacute;mero:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_calle" id="txt_calle" size="60"
+					value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['calle_error'])) echo ($datos['calle_error']);?></span>
+			</div>
+			<div class="item_requerid">C&oacute;digo postal:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_cp" id="txt_cp" maxlength="4" size="5"
+					value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
+					<span><input type="submit" id="enviar" value="Llenar"/></span>
+				<span class="validation_message"><?php if(isset($datos['cp_error'])) echo ($datos['cp_error']);?></span>
+				<div><small>Ingresa tu c&oacute;digo postay y presiona "llenar" para acompletar los datos de Colonia, Ciudad y Estado</small></div>
+			</div>
+			<div class="item_requerid">Colonia:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_colonia" id="txt_colonia" 
+					value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['colonia_error'])) echo ($datos['colonia_error']);?></span>
+			</div>
+			<div class="item_requerid">Ciudad:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_ciudad" id="txt_ciudad" 
+					value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['ciudad_error'])) echo ($datos['ciudad_error']);?></span>
+			</div>
+			<div class="item_requerid">Estado:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_estado" id="txt_estado" 
+					value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['estado_error'])) echo ($datos['estado_error']);?></span>
+			</div>
+			<div class="item_requerid">Pa&iacute;s:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_pais" id="txt_pais" 
+					value="<?php if(isset($_POST['txt_pais'])) echo htmlspecialchars($_POST['txt_pais']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['pais_error'])) echo ($datos['pais_error']);?></span>
+			</div>
+			
+			<div class="item_requerid">Tel&eacute;fono:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_telefono" id="txt_telefono" 
+					value="<?php if(isset($_POST['txt_telefono'])) echo htmlspecialchars($_POST['txt_telefono']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['telefono_error'])) echo ($datos['telefono_error']);?></span>
+			</div>
+			<div class="item_requerid">Email:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_email" id="txt_email" size="30"
+					value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['email_error'])) echo ($datos['email_error']);?></span>
+			</div>
+			
+			
+			<div class="item_requerid"></div>
+			<div class="form_requerid">
+				<input type="checkbox" id="chk_guardar" name="chk_guardar" >Guardar para compra futuras</input>
+			</div>
+			
+			<div class="item_requerid"></div>
+			<div class="form_requerid">
+				<input type="checkbox" id="chk_predeterminada" name="chk_predeterminada" >Usar como tarjeta predeterminada</input>
+			</div>
+			
+			<div class="form_button">
+				<input type="submit" id="enviar" value="Guardar tarjeta"/>
+			</div>
+		</form>
+	</div>
+</div>
