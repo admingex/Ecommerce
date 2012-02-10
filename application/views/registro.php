@@ -4,8 +4,7 @@
 	
 	<?php
 		//formulario
-		include ('login/login.html');
-		 
+		include ('login/registro.html');
 	?>
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
 </div>

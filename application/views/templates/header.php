@@ -2,7 +2,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
 <head>
 	<title><?php echo $title ?> - CMS GEX</title>
-
+	<?php if (isset($scritp)) echo $script; ?>
+	
 	<style type="text/css">
 		::selection{ background-color: #E13300; color: white; }
 		::moz-selection{ background-color: #E13300; color: white; }

@@ -1,4 +1,4 @@
-<h1>Tarjetas guardadas</h1>
+<h1>Tarjetas guardadas de <?php echo $this->session->userdata('username');?></h1>
 
 <div id="body">
 	<form id="form_registro_tc" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/forma_pago/registrar/tc" method="POST">
@@ -64,5 +64,5 @@
 <h1>Nueva Tarjeta:
 	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/registrar/tc">TC</a>
 	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/registrar/amex">AMEX</a>
-	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/listar/<?php echo $this->session->userdata('id_cliente');?>">Listar</a>
+	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/listar/">Listar</a>
 </h1>

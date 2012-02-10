@@ -7,7 +7,8 @@ class Forma_Pago extends CI_Controller {
 	var $subtitle = 'Seleccionar Forma de Pago'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
 	var $tc = array();
-//	protected $lista_bancos = array();
+	private $id_cliente;
+	//protected $lista_bancos = array();
 	 
 	function __construct()
     {
@@ -17,25 +18,32 @@ class Forma_Pago extends CI_Controller {
 		//cargar el modelo en el constructor
 		$this->load->model('forma_pago_model', 'modelo', true);
 		//la sesion se carga automáticamente
+		
+		//inicializar el id del cliente de la session, si no hay sesión
+		$this->id_cliente = $this->session->userdata('id_cliente');
+		//manda al usuario a la... pagina de login
     }
 
-	public function index($id_cliente = 1)	//Para pruebas se usa 1
+	public function index()	//Para pruebas se usa 1
 	{
 		//Recuperar el "id_ClienteNu" de la sesion
 		
-		//$tc = $this->modelo->tc;
-		//$tc->id_clienteIn = 1;
+		//$id_cliente = $this->session->userdata('id_cliente');
+		
+		//echo 'cliente_Id: '.$id_cliente;
 		
 		//echo 'tipo '. gettype($tc);
 		//echo 'cliente_Id'.$tc->cliente_id;
 		//var_dump($tc);
 		
-		$this->listar($id_cliente);
+		$this->listar();
 	}
 	
-	public function listar($id_cliente = 1, $msg = '') 
-	{	/*asignación de la session*/
-		$this->session->set_userdata('id_cliente', $id_cliente);
+	public function listar($msg = '') 
+	{	
+		/*asignación de la session*/
+		//$id_cliente = $this->session->userdata('id_cliente');
+		//$this->session->set_userdata('id_cliente', $id_cliente);
 		
 		//echo 'Session: '.$this->session->userdata('id_cliente');
 				
@@ -43,12 +51,11 @@ class Forma_Pago extends CI_Controller {
 		//EL usuario se tomará de la sesión...
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = $this->subtitle;
-		
+		$data['subtitle'] = $this->subtitle;		
 		$data['mensaje'] = $msg;
 		
 		//listar por default las tarjetas del cliente
-		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($id_cliente);
+		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($this->id_cliente);
 		
 		//cargar vista	
 		$this->cargar_vista('', 'forma_pago', $data);
@@ -59,7 +66,8 @@ class Forma_Pago extends CI_Controller {
 	{
 		//echo 'Session: '.$this->session->userdata('id_cliente');
 		
-		$id_cliente = $this->session->userdata('id_cliente');
+		$id_cliente = $this->id_cliente;
+		
 		$consecutivo = $this->modelo->get_consecutivo($id_cliente);
 		
 		$data['title'] = $this->title;
@@ -285,7 +293,7 @@ class Forma_Pago extends CI_Controller {
 		}
 	}
 	
-	private function detalle_tarjeta_CCTC($id_cliente, $consecutivo)	//siempre será la información de AMEX
+	private function detalle_tarjeta_CCTC($id_cliente=0, $consecutivo=0)	//siempre será la información de AMEX
 	{
 		//Traer la info de amex
 		try {  
