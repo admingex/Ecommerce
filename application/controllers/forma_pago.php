@@ -45,7 +45,9 @@ class Forma_Pago extends CI_Controller {
 		//$id_cliente = $this->session->userdata('id_cliente');
 		//$this->session->set_userdata('id_cliente', $id_cliente);
 		
-		//echo 'Session: '.$this->session->userdata('id_cliente');
+		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
+		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
+		echo 'last_Activity: '.$this->session->userdata('last_activity').'<br/>';
 				
 		
 		//EL usuario se tomará de la sesión...
@@ -132,7 +134,7 @@ class Forma_Pago extends CI_Controller {
 							
 							//Registrar Localmente
 							if ($this->modelo->insertar_tc($form_values['tc'])) {
-								$this->listar($id_cliente, "Tarjeta registrada.");
+								$this->listar("Tarjeta registrada.");
 							} else {
 								echo "<br/>Hubo un error en el registro en CMS";
 							}
@@ -166,7 +168,7 @@ class Forma_Pago extends CI_Controller {
 
 	public function editar($consecutivo)	//el consecutivo de la tarjeta
 	{
-		$id_cliente = $this->session->userdata('id_cliente');
+		$id_cliente = $this->id_cliente;
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Editar Forma de Pago');
@@ -247,7 +249,7 @@ class Forma_Pago extends CI_Controller {
 	
 	public function eliminar($consecutivo = '')
 	{
-		$id_cliente = $this->session->userdata('id_cliente');
+		$id_cliente = $this->id_cliente;
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Eliminar Forma de Pago');
 		
