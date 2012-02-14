@@ -19,9 +19,13 @@ class Forma_Pago extends CI_Controller {
 		$this->load->model('forma_pago_model', 'modelo', true);
 		//la sesion se carga automáticamente
 		
-		//inicializar el id del cliente de la session, si no hay sesión
+		//si no hay sesión
+				//manda al usuario a la... pagina de login
+		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
+		
+		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
-		//manda al usuario a la... pagina de login
+
     }
 
 	public function index()	//Para pruebas se usa 1
@@ -604,6 +608,15 @@ class Forma_Pago extends CI_Controller {
 		$this->load->view('templates/header', $data);
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
+	}
+	
+	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') {
+		if (!$this->session->userdata($revisar)) {
+			//$url = $protocolo . BASE_URL . $destination; // Define the URL.
+			$url = $this->config->item('base_url') . $destino; // Define the URL.
+			header("Location: $url");
+			exit(); // Quit the script.
+		}
 	}
 
 }
