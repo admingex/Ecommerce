@@ -1,22 +1,25 @@
 <?php
+include ('DTO/Tc_DTO.php');
 
-class Forma_Pago_model extends CI_Model {
-
+class Direccion_Envio_model extends CI_Model {
+	
     function __construct()
     {
         // Call the Model constructor
         parent::__construct();
+		$this->tc = new Tc_DTO();
+		$this->amex = new Amex_DTO();
     }
     
-	function listar_tarjetas($id_cliente)
+	function listar_direcciones($id_cliente)
     {	
-		$this->db->select('id_TCSi, id_clienteIn, nombre_titularVc, apellidoP_titularVc, 
-			apellidoM_titularVc, mes_expiracionVc, anio_expiracionVc, descripcionVc, 
-			terminacion_tarjetaVc, id_tipo_tarjetaSi, id_estatusSi');
+		$this->db->select('id_consecutivoSi, address_type, id_clienteIn, address1 as calle, 
+			address2 as num_ext, address3 as colonia, zip as cp, state as estado, 
+			city as ciudad, phone as telefono, email');
 		$this->db->where(array('id_clienteIn'=> $id_cliente, 'id_estatusSi !=' => 2));	//2 es deshabilitado
 		        
 		
-		$resultado = $this->db->get('CMS_IntTC');
+		$resultado = $this->db->get('CMS_IntDireccion');
         
         //echo $resultado->num_rows();
 		return $resultado;
@@ -113,11 +116,14 @@ class Forma_Pago_model extends CI_Model {
 	
 	/**
 	 * Este método pasa los arreglos tc y amex al WS del CCTC,
-	 * almacena únicamente la parte de TC, así que no se utilizará 
+	 * almacena únicamente la parte de TC.
 	 */
 	function insertar_amex($tc, $amex)
     {
-    	
+    	//var_dump($tc);
+        $res = $this->db->insert('CMS_IntTC', $tc);		//true si se inserta
+        //echo '<bt/>Resultado: '.$res;
+        return $res;
     }
 	
 }

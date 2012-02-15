@@ -12,7 +12,7 @@ class Login_Registro_model extends CI_Model {
 	function verifica_cliente($email = '', $password = '')
 	{
 		$m5_pass = md5($email.'|'.$password);		//encriptaciónn definida en el registro de usuarios
-		$qry = "SELECT id_ClienteIn as id_cliente, salutation as nombre 
+		$qry = "SELECT id_clienteIn as id_cliente, salutation as nombre 
 				FROM CMS_IntCliente
 				WHERE email = '".$email."' AND password = '".$m5_pass."'
 				LIMIT 1";
@@ -57,7 +57,7 @@ class Login_Registro_model extends CI_Model {
 	
 	function next_cliente_id()
 	{
-		$qry = "SELECT MAX(id_ClienteIn) as consecutivo 
+		$qry = "SELECT MAX(id_clienteIn) as consecutivo 
 				FROM CMS_IntCliente";
 		$res = $this->db->query($qry);
 		

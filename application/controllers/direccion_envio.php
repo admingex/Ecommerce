@@ -2,11 +2,11 @@
 
 include ('DTOS/Tipos_Tarjetas.php');
 
-class Forma_Pago extends CI_Controller {
-	var $title = 'Forma de Pago'; 		// Capitalize the first letter
-	var $subtitle = 'Seleccionar Forma de Pago'; 	// Capitalize the first letter
+class Direccion_Envio extends CI_Controller {
+	var $title = 'Direcci&oacute;n de Env&iacute;o'; 		// Capitalize the first letter
+	var $subtitle = 'Direcci&oacute;n de Env&iacute;o'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
-	//var $tc = array();
+	
 	private $id_cliente;
 	//protected $lista_bancos = array();
 	 
@@ -16,12 +16,12 @@ class Forma_Pago extends CI_Controller {
         parent::__construct();
 		
 		//cargar el modelo en el constructor
-		$this->load->model('forma_pago_model', 'modelo', true);
+		$this->load->model('direccion_envio_model', 'modelo', true);
 		//la sesion se carga automáticamente
 		
 		//si no hay sesión
-				//manda al usuario a la... pagina de login
-		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
+		//manda al usuario a la... página de login
+		//$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
@@ -61,7 +61,7 @@ class Forma_Pago extends CI_Controller {
 		$data['mensaje'] = $msg;
 		
 		//listar por default las tarjetas del cliente
-		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($this->id_cliente);
+		$data['lista_direcciones'] = $this->modelo->listar_direcciones($this->id_cliente);
 		
 		//cargar vista	
 		$this->cargar_vista('', 'forma_pago', $data);
@@ -87,7 +87,7 @@ class Forma_Pago extends CI_Controller {
 		//$this->lista_bancos =  $lista_tipo_tarjeta;
 				
 		//recuperar el listado de las tarjetas del cliente
-		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($id_cliente);
+		$data['lista_direcciones'] = $this->modelo->listar_direcciones($id_cliente);
 		
 		$data['form'] = $form;		//para indicar qué formulario mostrar
 		if ($_POST)	{	//si hay parámetros del formulario
@@ -621,5 +621,5 @@ class Forma_Pago extends CI_Controller {
 
 }
 
-/* End of file forma_pago.php */
-/* Location: ./application/controllers/forma_pago.php */
+/* End of file direccion_envio.php */
+/* Location: ./application/controllers/direccion_envio.php */

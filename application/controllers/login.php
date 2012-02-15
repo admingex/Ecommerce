@@ -20,7 +20,7 @@ class Login extends CI_Controller {
 	
 	public function index()
 	{
-		echo 'Session: '.$this->session->userdata('id_cliente');
+		//echo 'Session: '.$this->session->userdata('id_cliente');
 		//$this->load->view('login');
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;

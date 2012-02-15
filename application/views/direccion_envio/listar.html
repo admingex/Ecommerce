@@ -1,0 +1,68 @@
+<h1>Direcciones guardadas de <?php echo $this->session->userdata('username');?></h1>
+
+<div id="body">
+	<form id="form_forma_pago" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/" method="POST">
+		<div id="list_headers">
+			<div class="column_header">Nombre</div>
+			<div class="column_header">Calle y n&uacute;mero</div>
+			<div class="column_header">Colonia</div>
+			<div class="column_header">CP</div>
+			<div class="column_header">&nbsp;</div>
+			<div class="column_header">&nbsp;</div>
+		</div>
+		<div id="list_results">
+		<?php
+			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {
+				$hay_tarjetas = true;
+				$direcciones = $lista_direcciones;
+				foreach($direcciones->result_array() as $direccion) {
+			?>
+			<ul>
+				<li><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php if ($direccion['id_estatusSi'] == 0) echo 'checked'; ?>/>
+					<?php echo $direccion['descripcionVc'].' terminaci&oacute;n '
+						.substr($direccion['terminacion_tarjetaVc'],strlen($direccion['terminacion_tarjetaVc']) - 4); ?>
+				</li>
+				<li><?php echo $direccion['nombre_titularVc'].' '.$direccion['apellidoP_titularVc'].' '.$direccion['apellidoM_titularVc']; ?></li> 
+				<li><?php echo $direccion['mes_expiracionVc'].'/'.$direccion['anio_expiracionVc']; ?> </li>	
+				<li><input id="txt_codigoVerificador" name="txt_codigoVerificador" maxlength="4" size="4"/> ?</li>
+				<li><a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/editar/'.$direccion['id_TCSi']; ?>" title="editar">editar</a></li>
+				<li><a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/eliminar/'.$direccion['id_TCSi']; ?>" title="eliminar">eliminar</a></li>
+			</ul>
+			<?php 
+					
+				}
+				//echo " ", count($direcciones);
+				//echo "num rows: ", $direcciones->num_rows();
+				//var_dump($lista_direcciones);
+			} else {
+				$hay_tarjetas = false;
+			?>
+			<ul>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+			</ul>
+			<?php 
+			}
+			?>
+		</div>
+		<?php if (!$hay_tarjetas): ?>
+			<h4>No tiene tarjetas registradas</h4>	
+		<?php else: ?>
+			<div class="form_button">
+				Usar esta direcc&oacute;n.
+				<!---input type="button" id="usar_tarjeta" name="usar_tarjeta" value="Usar esta tarjeta"/-->
+				<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
+			</div>
+		<?php endif ?> 
+	</form>
+</div>
+
+<h1>Nueva Tarjeta:
+	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/registrar/tc">TC</a>
+	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/registrar/amex">AMEX</a>
+	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/listar/">Listar</a>
+</h1>

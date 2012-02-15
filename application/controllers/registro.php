@@ -21,21 +21,21 @@ class Registro extends CI_Controller {
 
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
-		echo 'Session: '.$this->session->userdata('id_cliente');
+		//echo 'Session: '.$this->session->userdata('id_cliente');
 		
 		if ($_POST)
 		{	
 			//$cliente_info = array();		
 			$cliente_info = $this->get_datos_login();
-						
+			
 			if(empty($this->registro_errores)) {			//verificar la existencia de email y password.
 				$email_registrado = $this->modelo->verifica_registro_email($cliente_info['email']);
 				if($email_registrado->num_rows() == 0) {	//email no está registrado
 					
-					$cliente_info['id_ClienteIn'] = $this->modelo->next_cliente_id() + 1;	//id del cliente
+					$cliente_info['id_clienteIn'] = $this->modelo->next_cliente_id() + 1;	//id del cliente
 					
 					if($this->registrar_cliente($cliente_info)) {						//registro exitoso	
-						$this->crear_sesion($cliente_info['id_ClienteIn'], $cliente_info['salutation']);	//crear sesion,
+						$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation']);	//crear sesion,
 						$url = $this->config->item('base_url').'/index.php/forma_pago/'; 
 						header("Location: $url");
 						//exit();
@@ -72,7 +72,7 @@ class Registro extends CI_Controller {
 	private function registrar_cliente($cliente = array())
 	{
 		//$cliente_id = $this->modelo->next_cliente_id();
-		//$cliente['id_ClienteIn'] = $cliente_id;
+		//$cliente['id_clienteIn'] = $cliente_id;
 		
 		//var_dump($cliente);		
 		//exit();
