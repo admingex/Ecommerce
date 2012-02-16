@@ -1,0 +1,110 @@
+<div id="direccion_envio">
+	
+	<div id="body">
+		<form id="form_direccion_envio" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/forma_pago/registrar/" method="POST">
+			<div class="item_requerid">Calle:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_calle" id="txt_calle" size="30"
+					value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);?>"/>
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>
+			</div>
+			<div class="item_requerid">N&uacute;mero exterior:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_numero" id="txt_numero" maxlength="5" size="5" 
+					value="<?php if(isset($_POST['txt_numero'])) echo htmlspecialchars($_POST['txt_numero']);?>" />		
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_numero'])) echo ($reg_errores['txt_numero']);?></span>
+			</div>
+			<div class="item_requerid">N&uacute;mero interior:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_num_int" id="txt_num_int" maxlength="5" size="5"
+					value="<?php if(isset($_POST['txt_num_int'])) echo htmlspecialchars($_POST['txt_num_int']);?>"/>
+			</div>
+			
+			<div class="item_requerid">C&oacute;digo postal:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5"
+					value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
+					<span><input type="submit" id="enviar" value="Llenar"/></span>
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
+				<div>
+					<small>Ingresa tu c&oacute;digo postay y presiona "llenar" para acompletar los datos de Colonia, Ciudad y Estado</small>
+				</div>
+			</div>
+			<div class="item_requerid">Colonia:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_colonia" id="txt_colonia" size="30"
+					value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/>
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?></span>
+			</div>
+			<div class="item_requerid">Ciudad:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
+					value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
+			</div>
+			<div class="item_requerid">Estado:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_estado" id="txt_estado" size="30"
+					value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
+			</div>
+			<div class="item_requerid">Pa&iacute;s:</div>
+			<div class="form_requerid">
+				<select id="sel_pais" name="sel_pais">
+					
+					<!--option value="0">Seleccionar</option-->
+					<?php
+					if (isset($lista_paises_think)) {
+						$id_pais = "MX";
+						if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
+							$id_pais = $_POST['sel_pais'];
+						//echo '<option value="AM">America</option>';	
+						foreach($lista_paises_think->result() as $pais)
+						{
+							if ($id_pais == $pais->id_pais) {
+								echo "<option value='".$pais->id_pais."' selected='true'>".
+									$pais->pais.
+									"</option>";
+							} else {
+								echo "<option value='".$pais->id_pais."'>".
+									$pais->pais.
+									"</option>";
+							}
+						}
+					}
+					?>
+				</select>
+				
+				<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
+			</div>
+			<!--div class="item_requerid">Email:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_email" id="txt_email" size="30"
+					value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);?>"/>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
+			</div>
+			<div class="item_requerid">Tel&eacute;fono:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_telefono" id="txt_telefono" size="30"
+					value="<?php if(isset($_POST['txt_telefono'])) echo htmlspecialchars($_POST['txt_telefono']);?>"/>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_telefono'])) echo ($reg_errores['txt_telefono']);?></span>
+			</div-->
+			
+			<div class="item_requerid">&nbsp;</div>
+			<div class="form_requerid">
+				<input type="checkbox" id="chk_guardar" 
+				name="chk_guardar" <?php if(isset($_POST['chk_guardar'])) echo 'checked="true"';?> /> 
+				Guardar para compra futuras
+			</div>
+			<div class="item_requerid">&nbsp;</div>
+			<div class="form_requerid">
+				<input type="checkbox" id="chk_default" name="chk_default" 
+				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direcci&oacute;n predeterminada
+			</div>
+			
+			<div class="form_button">
+				<input type="submit" id="guardar_tarjeta" value="Guardar esta direcci&oacute;n"/>
+			</div>			
+		</form>
+	</div>
+</div>

@@ -1,0 +1,91 @@
+<div id="tc_normal">
+	<h1>Editar Tarjeta de Cr&eacute;dito/D&eacute;bito</h1>
+	
+	<div id="body">	
+		<form id="form_editar_tc" action="<?php echo $this->config->item('base_url').'/index.php/forma_pago/editar/'.$tarjeta_tc->id_TCSi; ?>" method="POST">
+			<div class="item_requerid">Tipo de tarjeta:</div>
+			<div class="form_requerid">
+				<?php echo $tarjeta_tc->descripcionVc; ?>
+			</div>
+			<div class="item_requerid">N&uacute;mero de tarjeta:</div>
+			<div class="form_requerid"> 
+				**** **** **** <?php echo substr($tarjeta_tc->terminacion_tarjetaVc, strlen($tarjeta_tc->terminacion_tarjetaVc) -4);?>
+			</div>
+			<div class="item_requerid">Nombre del Titular:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_nombre" id="txt_nombre" 
+					value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);
+						else echo $tarjeta_tc->nombre_titularVc;?>"/>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_nombre'])) echo ($reg_errores['txt_nombre']);?></span>
+			</div>
+			<div class="item_requerid">Apellido Paterno:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" 
+					value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);
+						else echo $tarjeta_tc->apellidoP_titularVc;?>"/>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_apellidoPaterno'])) echo ($reg_errores['txt_apellidoPaterno']);?></span>
+			</div>
+			<div class="item_requerid">Apellido Materno:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_apellidoMaterno" id="txt_apellidoMaterno" 
+					value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']);
+					else echo $tarjeta_tc->apellidoM_titularVc;?>"/>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_apellidoMaterno'])) echo ($reg_errores['txt_apellidoMaterno']);?></span>
+			</div>
+			<!--div class="item_requerid">C&oacute;digo de seguridad:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_codigoSeguridad" id="txt_codigoSeguridad" maxlength="4" size="4"
+					value="<?php if(isset($_POST['txt_codigoSeguridad'])) echo htmlspecialchars($_POST['txt_codigoSeguridad']);?>"/>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_codigoSeguridad'])) echo ($reg_errores['txt_codigoSeguridad']);?></span>
+			</div-->
+			<?php 
+				//La primera vez se tomará la fecha guardada, si el boton fue enviado...se toma del post
+				$mes = isset($_POST['guardar_tarjeta']) ? $_POST['sel_mes_expira'] : $tarjeta_tc->mes_expiracionVc;
+				$anio = isset($_POST['guardar_tarjeta']) ? $_POST['sel_anio_expira'] : $tarjeta_tc->anio_expiracionVc;
+				//echo 'fecha exp. '.$mes.'/'.$anio;
+			?>
+			<div class="item_requerid">Fecha de expiraci&oacute;n:</div>
+			<div class="form_requerid">
+				<select id="sel_mes_expira" name="sel_mes_expira">
+					<?php 
+						for($i = 1; $i != 12; $i++) {
+							if ($i == $mes)
+								echo "<option value='".$i."' selected='true'>$i</option>";
+							else 
+								echo "<option value='".$i."'>$i</option>";
+						} 
+					?>
+				</select>
+				<select id="sel_anio_expira" name="sel_anio_expira">
+					<?php 
+						for($i = 2012; $i != 2019; $i++) {	/*ajustar el periodo de años con constantes/globales en el config.*/
+							if ($i == $anio) 
+								echo "<option value='".$i."' selected='true'>$i</option>";
+							else 
+								echo "<option value='".$i."'>$i</option>";
+						} 
+					?>
+				</select>
+				
+				<span class="validation_message"><?php if(isset($reg_errores['fecha_error'])) echo ($reg_errores['fecha_error']);?></span>
+			</div>
+			
+			<div class="item_requerid">&nbsp;</div>
+			<div class="form_requerid">
+				<input type="checkbox" id="chk_default" name="chk_default" 
+				<?php 
+					if(isset($_POST['chk_default'])) { echo 'checked="true"'; }
+					//si no viene del post y es default su estado inicial
+					else if(!isset($_POST['guardar_tarjeta']) && $tarjeta_tc->id_estatusSi == 0)
+						{ echo 'checked="true"'; }
+				?> />
+				Usar como tarjeta predeterminada
+			</div>
+			<div><?php if(isset($msg_actualizacion)) { echo $msg_actualizacion; } ?></div>
+			<div class="form_button">
+				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Actualizar cambios"/>
+				<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/listar/<?php echo $this->session->userdata('id_cliente');?>">Regresar a la Lista</a>
+			</div>
+		</form>
+	</div>
+</div>

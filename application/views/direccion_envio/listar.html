@@ -1,0 +1,66 @@
+<h1>Direcciones guardadas de <?php echo $this->session->userdata('username');?></h1>
+
+<div id="body">
+	<form id="form_direccion_envio" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/" method="POST">
+		<div id="list_headers">			
+			<div class="column_header">Calle y n&uacute;mero</div>
+			<div class="column_header">Colonia</div>
+			<div class="column_header">CP</div>
+			<div class="column_header">Ciudad y Esado</div>
+			<div class="column_header">&nbsp;</div>
+			<div class="column_header">&nbsp;</div>
+		</div>
+		<div id="list_results">
+		<?php
+			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {
+				$hay_tarjetas = true;
+				$direcciones = $lista_direcciones;
+				foreach($direcciones->result_array() as $direccion) {
+			?>
+			<ul>
+				<li><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php if ($direccion['id_estatusSi'] == 0) echo 'checked'; ?>/>
+					<?php echo $direccion['calle'].' no. '.$direccion['num_ext']; ?>
+				</li>
+				<li><?php echo $direccion['colonia']; ?></li> 
+				<li><?php echo $direccion['cp']; ?> </li>	
+				<li><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
+				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_envio/editar/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a></li>
+				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_envio/eliminar/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a></li>
+			</ul>
+			<?php 
+					
+				}
+				//echo " ", count($direcciones);
+				//echo "num rows: ", $direcciones->num_rows();
+				//var_dump($lista_direcciones);
+			} else {
+				$hay_direcciones = false;
+			?>
+			<ul>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+				<li> &nbsp; </li>
+			</ul>
+			<?php 
+			}
+			?>
+		</div>
+		<?php if (!$hay_direcciones): ?>
+			<h4>No tiene direcciones registradas</h4>	
+		<?php else: ?>
+			<div class="form_button">
+				Usar esta direcc&oacute;n.
+				<!---input type="button" id="usar_tarjeta" name="usar_tarjeta" value="Usar esta tarjeta"/-->
+				<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
+			</div>
+		<?php endif ?> 
+	</form>
+</div>
+
+<h1>
+	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/direccion_envio/registrar/">Nueva Direcci&oacute;n</a>
+	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/direccion_envio/listar/">Listar</a>
+</h1>
