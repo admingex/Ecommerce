@@ -38,10 +38,11 @@
 			<?php
 				$mes = isset($_POST['sel_mes_expira']) ? $_POST['sel_mes_expira'] : 0;
 				$anio = isset($_POST['sel_anio_expira']) ? $_POST['sel_anio_expira'] : 0;
+				$anio_actual = date('Y');
 			?>
 				<select id="sel_mes_expira" name="sel_mes_expira">
 					<?php 
-						for($i = 1; $i != 12; $i++) {
+						for($i = 1; $i <= 12; $i++) {
 							if ($i == $mes)
 								echo "<option value='".$i."' selected='true'>$i</option>";
 							else 
@@ -51,7 +52,7 @@
 				</select>
 				<select id="sel_anio_expira" name="sel_anio_expira">
 					<?php 
-						for($i = 2012; $i != 2019; $i++) {	/*ajustar el periodo de años con constantes/globales en el config.*/
+						for($i = $anio_actual; $i <= $anio_actual + 7; $i++) {	/*ajustar el periodo de años con constantes/globales en el config.*/
 							if ($i == $anio) 
 								echo "<option value='".$i."' selected='true'>$i</option>";
 							else 

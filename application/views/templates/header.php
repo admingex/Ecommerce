@@ -2,7 +2,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
 <head>
 	<title><?php echo $title ?> - CMS GEX</title>
-	<?php if (isset($scritp)) echo $script; ?>
+	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-1.7.1.min.js"> </script>
+	<?php if (isset($script)) echo $script; ?>
 	
 	<style type="text/css">
 		::selection{ background-color: #E13300; color: white; }

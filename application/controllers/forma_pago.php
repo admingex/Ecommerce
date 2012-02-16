@@ -98,9 +98,6 @@ class Forma_Pago extends CI_Controller {
 			
 			$form_values['tc']['id_clienteIn'] = $id_cliente;
 			$form_values['tc']['id_TCSi'] = $consecutivo + 1;		//cambió
-			
-			//if ($form == 'tc')
-			//{/*registro de tarjeta normal*/
 				
 				/* Se debe validar si se quiere guardar la tarjeta antes de registrarla
 				 * esto con: $form_values['guardar']
