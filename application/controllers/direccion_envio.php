@@ -1,7 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include ('DTOS/Tipos_Tarjetas.php');
-
 class Direccion_Envio extends CI_Controller {
 	var $title = 'Direcci&oacute;n de Env&iacute;o'; 		// Capitalize the first letter
 	var $subtitle = 'Direcci&oacute;n de Env&iacute;o'; 	// Capitalize the first letter
@@ -78,7 +76,7 @@ class Direccion_Envio extends CI_Controller {
 		$consecutivo = $this->modelo->get_consecutivo($id_cliente);
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Nueva Forma de Pago');
+		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
 		
 		//catálogo de paises de think
 		$lista_paises_think = $this->modelo->listar_paises_think();
@@ -92,7 +90,10 @@ class Direccion_Envio extends CI_Controller {
 		
 		$data['registrar'] = TRUE;		//para indicar qué formulario mostrar
 		$script_file = "<script type='text/javascript' src='".  base_url() ."js/dir_envio.js'> </script>";
-		$data['script'] = $script_file; 
+		
+		$data['script'] = $script_file;
+		//$data['alert'] = "alert('hola mundo ecommerce GEx!');";
+		 
 		
 		if ($_POST)	{	//si hay parámetros del formulario
 			
@@ -171,7 +172,7 @@ class Direccion_Envio extends CI_Controller {
 		$id_cliente = $this->id_cliente;
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Editar Forma de Pago');
+		$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
 		
 		//recuperar la información local de la tc
 		$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
@@ -251,7 +252,7 @@ class Direccion_Envio extends CI_Controller {
 	{
 		$id_cliente = $this->id_cliente;
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Eliminar Forma de Pago');
+		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
 		
 		//exit();
 		if ($this->eliminar_tarjeta_CCTC($id_cliente, $consecutivo)) {

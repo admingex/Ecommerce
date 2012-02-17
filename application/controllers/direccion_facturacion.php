@@ -1,12 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include ('DTOS/Tipos_Tarjetas.php');
-
-class Forma_Pago extends CI_Controller {
-	var $title = 'Forma de Pago'; 		// Capitalize the first letter
-	var $subtitle = 'Seleccionar Forma de Pago'; 	// Capitalize the first letter
+class Direccion_Facturacion extends CI_Controller {
+	var $title = 'Direcci&oacute;n de Facturaci&oacute;n'; 		// Capitalize the first letter
+	var $subtitle = 'Direcci&oacute;n de Facturaci&oacute;n'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
-	//var $tc = array();
+	
 	private $id_cliente;
 	//protected $lista_bancos = array();
 	 
@@ -16,12 +14,12 @@ class Forma_Pago extends CI_Controller {
         parent::__construct();
 		
 		//cargar el modelo en el constructor
-		$this->load->model('forma_pago_model', 'modelo', true);
+		$this->load->model('direccion_envio_model', 'modelo', true);
 		//la sesion se carga automáticamente
 		
 		//si no hay sesión
-				//manda al usuario a la... pagina de login
-		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
+		//manda al usuario a la... página de login
+		//$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
@@ -52,7 +50,8 @@ class Forma_Pago extends CI_Controller {
 		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
 		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
 		echo 'last_Activity: '.$this->session->userdata('last_activity').'<br/>';
-				
+		$ano = date('m.d')	;
+		echo "date: ". $ano;	
 		
 		//EL usuario se tomará de la sesión...
 		
@@ -60,15 +59,15 @@ class Forma_Pago extends CI_Controller {
 		$data['subtitle'] = $this->subtitle;		
 		$data['mensaje'] = $msg;
 		
-		//listar por default las tarjetas del cliente
-		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($this->id_cliente);
+		//listar por default las direcciones del cliente
+		$data['lista_direcciones'] = $this->modelo->listar_direcciones($this->id_cliente);
 		
 		//cargar vista	
-		$this->cargar_vista('', 'forma_pago', $data);
+		$this->cargar_vista('', 'direccion_envio', $data);
 		
 	}
 	
-	public function registrar($form = 'tc') 
+	public function registrar() 
 	{
 		//echo 'Session: '.$this->session->userdata('id_cliente');
 		
@@ -77,54 +76,55 @@ class Forma_Pago extends CI_Controller {
 		$consecutivo = $this->modelo->get_consecutivo($id_cliente);
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Nueva Forma de Pago');
+		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
 		
-		//catálogo que se obtendrá del CCTC
-		$lista_tipo_tarjeta = $this->lista_tipos_tarjeta_WS();
-		$data['lista_tipo_tarjeta'] = $lista_tipo_tarjeta;
+		//catálogo de paises de think
+		$lista_paises_think = $this->modelo->listar_paises_think();
+		$data['lista_paises_think'] = $lista_paises_think;
 		
 		//se aloja como parte del objeto para obtener la descripcion, no necesario
 		//$this->lista_bancos =  $lista_tipo_tarjeta;
 				
 		//recuperar el listado de las tarjetas del cliente
-		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($id_cliente);
+		$data['lista_direcciones'] = $this->modelo->listar_direcciones($id_cliente);
 		
-		$data['form'] = $form;		//para indicar qué formulario mostrar
+		$data['registrar'] = TRUE;		//para indicar qué formulario mostrar
+		$script_file = "<script type='text/javascript' src='".  base_url() ."js/dir_envio.js'> </script>";
+		
+		$data['script'] = $script_file;
+		//$data['alert'] = "alert('hola mundo ecommerce GEx!');";
+		 
+		
 		if ($_POST)	{	//si hay parámetros del formulario
 			
 			//común
 			$form_values = array();	//alojará los datos previos a la inserción	
-			$form_values = $this->get_datos_tarjeta();
+			$form_values = $this->get_datos_direccion();
 			
-			$form_values['tc']['id_clienteIn'] = $id_cliente;
-			$form_values['tc']['id_TCSi'] = $consecutivo + 1;		//cambió
-				
-				/* Se debe validar si se quiere guardar la tarjeta antes de registrarla
+			$form_values['direccion']['id_clienteIn'] = $id_cliente;
+			$form_values['direccion']['id_TCSi'] = $consecutivo + 1;		//cambió
+			
+				/*
+				 *  Se debe validar si se quiere guardar la direccion antes de registrarla
 				 * esto con: $form_values['guardar']
 				 * si no se quiere guardar se continua con el proceso
 				 * */
 			if (empty($this->reg_errores)) {	
-				//si no hay errores y se solicita registrar la tarjeta
+				//si no hay errores y se solicita registrar la direccion
 				if (isset($form_values['guardar']) || isset($form_values['tc']['id_estatusSi'])) {
-					//verificar que no exista la tarjeta activa en la BD
+					//verificar que no exista la direccion activa en la BD
 					//var_dump($form_values);
 					//exit();
-					if ($form == 'tc') {
-						$form_values['tc']['descripcionVc'] = $lista_tipo_tarjeta[$form_values['tc']['id_tipo_tarjetaSi'] - 1]->descripcion;
-						$form_values['amex'] = null;	//para que no se tome encuenta.
-					} else if ($form == 'amex') {
-						$form_values['amex']['id_clienteIn'] = $id_cliente;
 						$form_values['amex']['id_TCSi'] = $consecutivo + 1;
-						$form_values['tc']['id_tipo_tarjetaSi'] = 1;
+						$form_values['direccion']['id_consecitivoSi'] = 1;
 						$form_values['tc']['descripcionVc'] = "AMERICAN EXPRESS";
-					}
 					//echo var_dump($form_values);
 					//exit();
 					
 					if($this->modelo->existe_tc($form_values['tc'])) {	//Redirect al listado por que ya existe
-						//$url = $this->config->item('base_url').'/index.php/forma_pago/listar/'.$id_cliente;
+						//$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
 						//header("Location: $url");
-						$this->listar("La tarjeta ya está registrada.");
+						$this->listar($id_cliente, "La direcci&oacute;n ya está registrada.");
 						//echo "La tarjeta ya está registrada.";
 						//exit();
 					} else {
@@ -134,8 +134,8 @@ class Forma_Pago extends CI_Controller {
 						//if (1) {	//echo "Se registró exitosamente! en CCTC";
 							
 							//Registrar Localmente
-							if ($this->modelo->insertar_tc($form_values['tc'])) {
-								$this->listar("Tarjeta registrada.");
+							if ($this->modelo->insertar_direccion($form_values['tc'])) {
+								$this->listar("Direcci&oacute;n registrada.");
 							} else {
 								echo "<br/>Hubo un error en el registro en CMS";
 							}
@@ -151,8 +151,8 @@ class Forma_Pago extends CI_Controller {
 				//se envía la tc al WS de CCTC y de acuerdo a la respuesta...
 				/*					
 				//De momento se regresará al listado de tarjetas
-				if ($this->modelo->insertar_tc($form_values['tc'])) {
-					$url = $this->config->item('base_url').'/index.php/forma_pago/listar/'.$id_cliente;
+				if ($this->modelo->insertar_direccion($form_values['tc'])) {
+					$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
 					header("Location: $url");
 					exit();	
 				}
@@ -160,10 +160,10 @@ class Forma_Pago extends CI_Controller {
 			} else {	//Si hubo errores
 				//vuelve a mostrar la info.
 				$data['reg_errores'] = $this->reg_errores;
-				$this->cargar_vista('', 'forma_pago' , $data);	
+				$this->cargar_vista('', 'direccion_envio' , $data);	
 			}
 		} else {
-			$this->cargar_vista('', 'forma_pago' , $data);
+			$this->cargar_vista('', 'direccion_envio' , $data);
 		}
 	}
 
@@ -172,7 +172,7 @@ class Forma_Pago extends CI_Controller {
 		$id_cliente = $this->id_cliente;
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Editar Forma de Pago');
+		$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
 		
 		//recuperar la información local de la tc
 		$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
@@ -245,14 +245,14 @@ class Forma_Pago extends CI_Controller {
 			//print_r($nueva_info[$tipo_tarjeta]);
 		}//If POST
 		
-		$this->cargar_vista('', 'forma_pago' , $data);
+		$this->cargar_vista('', 'direccion_envio' , $data);
 	}
 	
 	public function eliminar($consecutivo = '')
 	{
 		$id_cliente = $this->id_cliente;
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Eliminar Forma de Pago');
+		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
 		
 		//exit();
 		if ($this->eliminar_tarjeta_CCTC($id_cliente, $consecutivo)) {
@@ -271,7 +271,7 @@ class Forma_Pago extends CI_Controller {
 		
 		//cargar la lista
 		$this->listar($id_cliente, $msg_eliminacion);
-		//$this->cargar_vista('', 'forma_pago' , $data);
+		//$this->cargar_vista('', 'direccion_envio' , $data);
 	}
 	
 	private function eliminar_tarjeta_CCTC($id_cliente = 0, $consecutivo = 0)
@@ -431,25 +431,30 @@ class Forma_Pago extends CI_Controller {
 			return false;
 		}
 	}
+	
 	/*
-	 * Consulta del catálogo de tarjetas de Banco de CCTC
+	 * Consulta del catálogo SEPOMEX 
+	 * 	Devuelve un objeto...
+	 * 		->codigo_postal
+	 * 		->ciudad
+	 * 		->estado 
 	 * */
-	private function lista_tipos_tarjeta_WS() 
+	private function consulta_estado_ciudad() 
 	{	
 		try {
 			//URL del WS debe estar en archivo protegido  
 			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");	
 			
 			//Recupera la lista de bancos
-			$ObtenerBancosResponse = $cliente->ObtenerBancos();		//Repuesta inicial del WS
-			$ObtenerBancosResult = $ObtenerBancosResponse->ObtenerBancosResult;
-			$InformacionBancoArray = $ObtenerBancosResult->InformacionBanco;
-			//print var_dump($InformacionBancoArray);	//arreglo de objetos
+			$ObtenerEstadoCiudadResponse = $cliente->ObtenerEstadoCiudad ();		//Repuesta inicial del WS
+			$ObtenerEstadoCiudadResult = $ObtenerEstadoCiudadResponse->ObtenerEstadoCiudadResult;	//el objeto con la info.
+			
+			print var_dump($ObtenerEstadoCiudadResult);	//arreglo de objetos
 				
-			return $InformacionBancoArray;
+			return $ObtenerEstadoCiudadResult;
 			
 		} catch (Exception $e) {
-			echo "No se pudo recuperar el catálogo de bancos.<br/>";
+			echo "No se pudo recuperar el catálogo de SEPOMEX.<br/>";
 			echo $e->getMessage();
 			exit();
 		}
@@ -607,7 +612,8 @@ class Forma_Pago extends CI_Controller {
 		$this->load->view('templates/footer', $data);
 	}
 	
-	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') {
+	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') 
+	{
 		if (!$this->session->userdata($revisar)) {
 			//$url = $protocolo . BASE_URL . $destination; // Define the URL.
 			$url = $this->config->item('base_url') . $destino; // Define the URL.
@@ -618,5 +624,5 @@ class Forma_Pago extends CI_Controller {
 
 }
 
-/* End of file forma_pago.php */
-/* Location: ./application/controllers/forma_pago.php */
+/* End of file direccion_facturacion.php */
+/* Location: ./application/controllers/direccion_facturacion.php */
