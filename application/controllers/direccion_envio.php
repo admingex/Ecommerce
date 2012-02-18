@@ -432,6 +432,98 @@ class Direccion_Envio extends CI_Controller {
 		}
 	}
 	
+	
+	/**
+	 * Regresa el listado de estados para poblar el select correspondiente
+	 * en formato JSON
+	 */
+	public function get_estados()
+	{
+		echo json_encode($this->consulta_estados());
+	}
+	
+	/*
+	 * Regresa un array con los resultados
+	 */
+	private function consulta_estados()
+	{
+		$resultado = array();
+		
+		try {
+			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+		
+			$parameter = array(	);	
+			
+			$obj_result = $cliente->ObtenerEstado($parameter);
+			$simple_result = $obj_result->ObtenerEstadoResult;		
+			
+			$resultado['estados'] = $simple_result->InformacionEstado;
+			
+			
+			//echo var_dump($simple_result) . "<br/>";
+			foreach($resultado['estados'] as $estado) {
+				//echo $estado->clave_estado." -> " . $estado->estado . "<br/>";
+			}
+			
+			$resultado['success'] = true;
+			$resultado['msg'] = "Ok";
+			return $resultado;
+			
+		} catch (Exception $e)	{
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			//echo "No se pudo recuperar el catálogo de SEPOMEX.<br/>";
+			//echo $e->getMessage();
+			//exit();
+			return $resultado;	
+		}
+		
+	}
+	
+	public function get_info_sepomex($cp=0)
+	{
+		//echo "cp: ". $cp;
+		if (isset($_POST['codigo_postal']) && $cp ==0)
+			$cp = $_POST['codigo_postal'];
+		echo "cp: ". $cp;
+		echo json_encode($this->consulta_sepomex($cp));
+	}
+	
+	/*
+	 * Regresa un array con los resultados
+	 */
+	private function consulta_sepomex($codigo_postal)
+	{
+		$resultado = array();
+		
+		try {
+			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+		
+			$parameter = array( "codigo_postal" => $codigo_postal );	
+			
+			$obj_result = $cliente->ObtenerEstadoCiudad($parameter);
+			$simple_result = $obj_result->ObtenerEstadoCiudadResult;		
+			
+			$resultado['sepomex'] = $simple_result;
+			
+			$resultado['success'] = true;
+			$resultado['msg'] = "Sepomex Ok";
+			
+			return $resultado;
+			
+		} catch (Exception $e)	{
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			//echo "No se pudo recuperar el catálogo de SEPOMEX.<br/>";
+			//echo $e->getMessage();
+			//exit();
+			return $resultado;	
+		}
+		
+	}
+	
 	/*
 	 * Consulta del catálogo SEPOMEX 
 	 * 	Devuelve un objeto...

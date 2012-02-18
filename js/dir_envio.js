@@ -16,25 +16,19 @@ $(document).ready(function() {
 		
 		$.ajax({
 			type: "POST",
-			//data: "{'codigo_postal':'55749'}",
-			//async: false,
-			//url: "https://cctc.gee.com.mx/ServicioWebCCTC/wcf_cms_cctc.svc/ObtenerEstadoJson",
-			url: "http://cctc.gee.com.mx/ServicioWebCCTC/wcf_cms_cctc.svc/ObtenerEstadoJson",
+			url: "http://localhost/ecommerce/index.php/direccion_envio/get_estados/",
 			crossDomain: true,
 			contentType: "application/json; charset=utf-8",
-			//contentType: "text/xml",
-			dataType: "jsonp",
-			//mimeType: "text/xml",	
-			//beforesend: alert(cp),
-			//data: "{}",	
+			dataType: "json",
 			success: function(data) {
-				alert("success: " + data.d);
+				alert("success: " + data.msg);
+				
 			},
 			error:function(data) {
-				alert("error: " + data);
+				alert("error: " + data.msg);
 			},
 			fail: function(data) {
-				alert("fail: " + data.d);
+				alert("fail: " + data.msg);
 			},
 			//async: false,
 			cache: false

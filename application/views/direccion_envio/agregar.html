@@ -29,25 +29,6 @@
 					<small>Ingresa tu c&oacute;digo postay y presiona "llenar" para acompletar los datos de Colonia, Ciudad y Estado</small>
 				</div>
 			</div>
-			<div class="item_requerid">Estado:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_estado" id="txt_estado" size="30"
-					value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
-			</div>
-			
-			<div class="item_requerid">Ciudad:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
-					value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
-			</div>
-			<div class="item_requerid">Colonia:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_colonia" id="txt_colonia" size="30"
-					value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/>
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?></span>
-			</div>
 			<div class="item_requerid">Pa&iacute;s:</div>
 			<div class="form_requerid">
 				<select id="sel_pais" name="sel_pais">
@@ -75,6 +56,89 @@
 				
 				<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
 			</div>
+			<div class="item_requerid">Estado:</div>
+			<div class="form_requerid">
+				<!--input type="text" name="txt_estado" id="txt_estado" size="30"
+					value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/-->
+				<select id="sel_estado" name="sel_estado">
+					<?php
+					if (isset($lista_estados_think)) {
+						$id_estado = "";
+						if (isset($_POST['sel_estado']))
+							$id_estado = $_POST['sel_estado'];
+						foreach($lista_estados_think->result() as $estado)
+						{
+							if ($id_estado == $estado->id_estado) {
+								echo "<option value='".$estado->id_estado."' selected='true'>".
+									$estado->estado.
+									"</option>";
+							} else {
+								echo "<option value='".$pais->id_estado."'>".
+									$estado->estado.
+									"</option>";
+							}
+						}
+					}
+					?>
+				</select>
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_estado'])) echo ($reg_errores['sel_estado']);?></span>
+			</div>
+			
+			<div class="item_requerid">Ciudad:</div>
+			<div class="form_requerid">
+				<!--input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
+					value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/-->
+				<select id="sel_ciudad" name="sel_ciudad">
+					<?php
+					if (isset($lista_ciudades_think)) {
+						$id_ciudad = "";
+						if (isset($_POST['sel_ciudad']))
+							$id_ciudad = $_POST['sel_ciudad'];
+						foreach($lista_ciudades_think->result() as $ciudad)
+						{
+							if ($id_ciudad == $ciudad->id_ciudad) {
+								echo "<option value='".$ciudad->id_ciudad."' selected='true'>".
+									$ciudad->ciudad.
+									"</option>";
+							} else {
+								echo "<option value='".$pais->id_ciudad."'>".
+									$ciudad->estado.
+									"</option>";
+							}
+						}
+					}
+					?>
+				</select>
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_ciudad'])) echo ($reg_errores['sel_ciudad']);?></span>
+			</div>
+			<div class="item_requerid">Colonia:</div>
+			<div class="form_requerid">
+				<!--input type="text" name="txt_colonia" id="txt_colonia" size="30"
+					value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/-->
+				<select id="sel_colonia" name="sel_colonia">
+					<?php
+					if (isset($lista_colonias_think)) {
+						$id_ciudad = "";
+						if (isset($_POST['sel_colonia']))
+							$id_colonia = $_POST['sel_colonia'];
+						foreach($lista_colonias_think->result() as $colonia)
+						{
+							if ($id_colonia == $colonia->id_colonia) {
+								echo "<option value='".$colonia->id_colonia."' selected='true'>".
+									$colonia->colonia.
+									"</option>";
+							} else {
+								echo "<option value='".$pais->id_colonia."'>".
+									$colonia->estado.
+									"</option>";
+							}
+						}
+					}
+					?>
+				</select>
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_colonia'])) echo ($reg_errores['sel_colonia']);?></span>
+			</div>
+			
 			<!--div class="item_requerid">Email:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_email" id="txt_email" size="30"
