@@ -464,9 +464,10 @@ class Direccion_Envio extends CI_Controller {
 			foreach($resultado['estados'] as $estado) {
 				//echo $estado->clave_estado." -> " . $estado->estado . "<br/>";
 			}
-			
+						
 			$resultado['success'] = true;
 			$resultado['msg'] = "Ok";
+			
 			return $resultado;
 			
 		} catch (Exception $e)	{
@@ -481,12 +482,17 @@ class Direccion_Envio extends CI_Controller {
 		
 	}
 	
-	public function get_info_sepomex($cp=0)
+	public function get_info_sepomex($cp = 0)
 	{
 		//echo "cp: ". $cp;
-		if (isset($_POST['codigo_postal']) && $cp ==0)
-			$cp = $_POST['codigo_postal'];
-		echo "cp: ". $cp;
+		
+		/*if (array_key_exists('codigo_postal', $_POST) && isset($_POST['codigo_postal']))
+			$cp = $_POST['codigo_postal'];*/
+		
+		$cp = $this->input->post('codigo_postal');
+		
+		//echo "<br/>Es llamada ajax?: ". $this->input->is_ajax_request() . "<br/>";
+		//echo "<script>alert('Peticion Ajax'); </script>";
 		echo json_encode($this->consulta_sepomex($cp));
 	}
 	
@@ -503,12 +509,23 @@ class Direccion_Envio extends CI_Controller {
 			$parameter = array( "codigo_postal" => $codigo_postal );	
 			
 			$obj_result = $cliente->ObtenerEstadoCiudad($parameter);
-			$simple_result = $obj_result->ObtenerEstadoCiudadResult;		
+			//por si no regresa ningún resultado
+			$simple_result = isset($obj_result->ObtenerEstadoCiudadResult) ?
+				 $obj_result->ObtenerEstadoCiudadResult : null;
 			
+			//var_dump($obj_result);
 			$resultado['sepomex'] = $simple_result;
 			
 			$resultado['success'] = true;
 			$resultado['msg'] = "Sepomex Ok";
+			
+			
+			/*if ($this->input->is_ajax_request())
+				$resultado['esAjax'] = "  Peticion Ajax";*/
+			
+			/*if (isset($_POST['codigo_postal']))
+				$cp = $_POST['codigo_postal'];
+			$resultado['cp'] = $cp;*/
 			
 			return $resultado;
 			
@@ -521,34 +538,104 @@ class Direccion_Envio extends CI_Controller {
 			//exit();
 			return $resultado;	
 		}
-		
+	}
+	
+	/**
+	 * Regresa el listado de estados para poblar el select correspondiente
+	 * en formato JSON
+	 */
+	public function get_ciudades($estado = "")
+	{
+		$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
+		//echo "edo: ".$edo;
+		echo json_encode($this->consulta_ciudades($estado));
+	}
+	
+	private function consulta_ciudades($estado)
+	{
+		$resultado = array();	
+		try {
+			//URL del WS debe estar en archivo protegido
+			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");	
+			$parameter = array(	'estado' => $estado);
+			
+			$obj_result = $cliente->ObtenerCiudad($parameter);			
+			$simple_result = $obj_result->ObtenerCiudadResult;
+			
+			
+			if (isset($simple_result->InformacionCiudad)) {	//por si no regresa ningún resultado
+				$resultado['ciudades'] = $simple_result->InformacionCiudad;	//es un array de objects	
+			} else {
+				$resultado['ciudades'] = NULL;
+			}
+			
+			$resultado['success'] = true;
+			$resultado['msg'] = "Ciudades Resultados";
+			//var_dump($resultado);
+			
+			return $resultado;
+			
+		} catch (Exception $e) {
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			//echo "No se pudo recuperar el catálogo de SEPOMEX.<br/>";
+			//echo $e->getMessage();
+			//exit();
+			return $resultado;
+		}
 	}
 	
 	/*
-	 * Consulta del catálogo SEPOMEX 
-	 * 	Devuelve un objeto...
-	 * 		->codigo_postal
-	 * 		->ciudad
-	 * 		->estado 
+	 * Regresa la lista de colonias correspondientes
+	 * params:
+	 * $estado:string = clave del estado en cuestión
+	 * $estado:string = clave del estado en cuestión
+	 * 
+	 * return:
+	 * $resuktado:json object = listado de colonias en formato JSON
 	 * */
-	private function consulta_estado_ciudad() 
-	{	
+	
+	public function get_colonias($estado = "", $ciudad = "")
+	{
+		$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
+		$ciudad = $this->input->post('ciudad');
+		//echo "edo: ".$edo;
+		echo json_encode($this->consulta_colonias($estado, $ciudad));
+	}
+	
+	private function consulta_colonias($estado, $ciudad)
+	{
+		$resultado = array();
 		try {
-			//URL del WS debe estar en archivo protegido  
+			//URL del WS debe estar en archivo protegido
 			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");	
+			$parameter = array(	'estado' => $estado, 'ciudad' => $ciudad);
 			
-			//Recupera la lista de bancos
-			$ObtenerEstadoCiudadResponse = $cliente->ObtenerEstadoCiudad ();		//Repuesta inicial del WS
-			$ObtenerEstadoCiudadResult = $ObtenerEstadoCiudadResponse->ObtenerEstadoCiudadResult;	//el objeto con la info.
+			$obj_result = $cliente->ObtenerColonia($parameter);
+			$simple_result = $obj_result->ObtenerColoniaResult;
 			
-			print var_dump($ObtenerEstadoCiudadResult);	//arreglo de objetos
-				
-			return $ObtenerEstadoCiudadResult;
+			
+			if (isset($simple_result->InformacionColonia)) {	//por si no regresa ningún resultado
+				$resultado['colonias'] = $simple_result->InformacionColonia;	//es un array de objects	
+			} else {
+				$resultado['colonias'] = NULL;
+			}
+			
+			$resultado['success'] = true;
+			$resultado['msg'] = "Colonias Resultados";
+			//var_dump($resultado);
+			
+			return $resultado;
 			
 		} catch (Exception $e) {
-			echo "No se pudo recuperar el catálogo de SEPOMEX.<br/>";
-			echo $e->getMessage();
-			exit();
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			//echo "No se pudo recuperar el catálogo de SEPOMEX.<br/>";
+			//echo $e->getMessage();
+			//exit();
+			return $resultado;
 		}
 	}
 	
