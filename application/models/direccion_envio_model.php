@@ -2,7 +2,11 @@
 include ('DTO/Tc_DTO.php');
 
 class Direccion_Envio_model extends CI_Model {
-	
+	//catálogo de estatus para comparaciones***
+	/**
+	 * 
+	 */
+		
     function __construct()
     {
         // Call the Model constructor
@@ -13,14 +17,16 @@ class Direccion_Envio_model extends CI_Model {
     {	
 		$this->db->select('id_consecutivoSi, address_type, id_clienteIn, 
 			address1 as calle, 
-			address2 as num_ext, 
-			address3 as colonia, 
+			address2 as num_ext,
+			address4 as num_int, 
+			address3 as colonia,
 			zip as cp, 
 			state as estado, 
-			city as ciudad, 
-			phone as telefono, 
+			city as ciudad,
+			codigo_paisVc as pais, 
+			phone as telefono,
 			email');
-		$this->db->where(array('id_clienteIn'=> $id_cliente, 'id_estatusSi !=' => 2));	//2 es deshabilitado
+		$this->db->where(array('id_clienteIn'=> $id_cliente, 'id_estatusSi !=' => 2));		//2 es deshabilitado
 		        
 		
 		$resultado = $this->db->get('CMS_IntDireccion');
@@ -31,15 +37,19 @@ class Direccion_Envio_model extends CI_Model {
         //return $query->result();
     }
 	
-	function existe_direccion($datos_tc)
+	function existe_direccion($datos_dir)
 	{
-		$campos = array('nombre_titularVc' 	=> 	$datos_tc['nombre_titularVc'], 
-						'apellidoP_titularVc' => $datos_tc['apellidoP_titularVc'],
-						'apellidoM_titularVc' => $datos_tc['apellidoM_titularVc'],
-						'mes_expiracionVc' 	=> 	$datos_tc['mes_expiracionVc'],
-						'anio_expiracionVc' => 	$datos_tc['anio_expiracionVc'],
-						'terminacion_tarjetaVc' =>	$datos_tc['terminacion_tarjetaVc'],
-						'id_tipo_tarjetaSi'	=>	$datos_tc['id_tipo_tarjetaSi'],
+		$campos = array('id_clienteIn' 	=> 	$datos_dir['id_clienteIn'], 
+						'address_type' => $datos_dir['address_type'],
+						'address1' => $datos_dir['address1'],		//calle
+						'address2' 	=> 	$datos_dir['address2'],		//numero ext
+						'address3' => 	$datos_dir['address3'],		//colonia
+						'address4' =>	$datos_dir['address4'],		//num int
+						'zip' =>	$datos_dir['zip'],
+						'state' =>	$datos_dir['state'],
+						'city' =>	$datos_dir['city'],
+						'colonia' =>	$datos_dir['colonia'],
+						'codigo_paisVc' =>	$datos_dir['codigo_paisVc'],
 						'id_estatusSi !=' => 2);
 						
 		$resultado = $this->db->get_where('CMS_IntDireccion', $campos);
@@ -95,13 +105,6 @@ class Direccion_Envio_model extends CI_Model {
 										 'id_clienteIn' => $id_cliente));	
 		$row_res = $resultado->row();
 		return $row_res;
-	}
-	
-	function listar_tipos_tarjeta() 
-	{
-		//excepto AMEX, esto funciona con la BD local.
-		$this->db->not_like('descripcionVc', 'AMERICAN EXPRESS');	
-		return $this->db->get_where('CMS_CatTipoTarjeta', array('estatusBi' => TRUE));	
 	}
 	
 	/**

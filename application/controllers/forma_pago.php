@@ -49,10 +49,11 @@ class Forma_Pago extends CI_Controller {
 		//$id_cliente = $this->session->userdata('id_cliente');
 		//$this->session->set_userdata('id_cliente', $id_cliente);
 		
+		/*
 		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
 		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
 		echo 'last_Activity: '.$this->session->userdata('last_activity').'<br/>';
-				
+		*/	
 		
 		//EL usuario se tomará de la sesión...
 		
