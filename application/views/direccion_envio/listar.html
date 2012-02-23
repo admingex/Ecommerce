@@ -13,13 +13,13 @@
 		<div id="list_results">
 		<?php
 			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {
-				$hay_tarjetas = true;
+				$hay_direcciones = true;
 				$direcciones = $lista_direcciones;
 				foreach($direcciones->result_array() as $direccion) {
 			?>
 			<ul>
 				<li><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php if ($direccion['id_estatusSi'] == 0) echo 'checked'; ?>/>
-					<?php echo $direccion['calle'].' no. '.$direccion['num_ext']; ?>
+					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?>
 				</li>
 				<li><?php echo $direccion['colonia']; ?></li> 
 				<li><?php echo $direccion['cp']; ?> </li>	
@@ -53,7 +53,7 @@
 		<?php else: ?>
 			<div class="form_button">
 				Usar esta direcc&oacute;n.
-				<!---input type="button" id="usar_tarjeta" name="usar_tarjeta" value="Usar esta tarjeta"/-->
+				<!---input type="button" id="usar_direccion" name="usar_direccion" value="Usar esta direccion"/-->
 				<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
 			</div>
 		<?php endif ?> 

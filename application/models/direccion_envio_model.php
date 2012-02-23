@@ -25,6 +25,7 @@ class Direccion_Envio_model extends CI_Model {
 			city as ciudad,
 			codigo_paisVc as pais, 
 			phone as telefono,
+			id_estatusSi,
 			email');
 		$this->db->where(array('id_clienteIn'=> $id_cliente, 'id_estatusSi !=' => 2));		//2 es deshabilitado
 		        
@@ -45,10 +46,9 @@ class Direccion_Envio_model extends CI_Model {
 						'address2' 	=> 	$datos_dir['address2'],		//numero ext
 						'address3' => 	$datos_dir['address3'],		//colonia
 						'address4' =>	$datos_dir['address4'],		//num int
-						'zip' =>	$datos_dir['zip'],
+						'zip' =>	$datos_dir['zip'],				//cp
 						'state' =>	$datos_dir['state'],
 						'city' =>	$datos_dir['city'],
-						'colonia' =>	$datos_dir['colonia'],
 						'codigo_paisVc' =>	$datos_dir['codigo_paisVc'],
 						'id_estatusSi !=' => 2);
 						
@@ -98,7 +98,7 @@ class Direccion_Envio_model extends CI_Model {
 		}
 	}
 	
-	function detalle_tarjeta($id_consecutivoSi, $id_cliente)
+	function detalle_direccion($id_consecutivoSi, $id_cliente)
 	{
 		$resultado = $this->db->get_where('CMS_IntDireccion', 
 								array(	'id_consecutivoSi' => $id_consecutivoSi,
