@@ -132,7 +132,7 @@
 			<div><?php if(isset($msg_actualizacion)) { echo $msg_actualizacion; } ?></div>
 			<div class="form_button">
 				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Actualizar tarjeta"/>
-				<a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/listar/'.$this->session->userdata('id_cliente');?>">Regresar a la Lista</a>
+				<a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/listar/';?>">Regresar a la Lista</a>
 			</div>			
 		</form>
 	</div>

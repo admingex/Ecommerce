@@ -5,6 +5,13 @@ class Direccion_Envio extends CI_Controller {
 	var $subtitle = 'Direcci&oacute;n de Env&iacute;o'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
 	
+	public static $TIPO_DIR = array(
+		"RESIDENCE"	=> 0, 
+		"BUSINESS"	=> 1, 
+		"OTHER"		=>	2
+	);
+	
+	
 	private $id_cliente;
 	//protected $lista_bancos = array();
 	 
@@ -47,13 +54,14 @@ class Direccion_Envio extends CI_Controller {
 		//$id_cliente = $this->session->userdata('id_cliente');
 		//$this->session->set_userdata('id_cliente', $id_cliente);
 		
+		/*
 		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
 		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
 		echo 'last_Activity: '.$this->session->userdata('last_activity').'<br/>';
 		$ano = date('m.d')	;
-		echo "date: ". $ano;	
-		
-		//EL usuario se tomará de la sesión...
+		echo "date: ". $ano;
+		*/
+		//EL usuario se toma de la sesión...
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;		
@@ -81,17 +89,15 @@ class Direccion_Envio extends CI_Controller {
 		//catálogo de paises de think
 		$lista_paises_think = $this->modelo->listar_paises_think();
 		$data['lista_paises_think'] = $lista_paises_think;
-		
-		//se aloja como parte del objeto para obtener la descripcion, no necesario
-		//$this->lista_bancos =  $lista_tipo_tarjeta;
 				
-		//recuperar el listado de las tarjetas del cliente
+		//recuperar el listado de las direcciones del cliente
 		$data['lista_direcciones'] = $this->modelo->listar_direcciones($id_cliente);
 		
-		$data['registrar'] = TRUE;		//para indicar qué formulario mostrar
-		$script_file = "<script type='text/javascript' src='".  base_url() ."js/dir_envio.js'> </script>";
-		
+		$data['registrar'] = TRUE;		//para indicar que se debe mostrar formulario de registro
+		/*agregar el script para este formulario*/
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'> </script>";
 		$data['script'] = $script_file;
+		
 		//$data['alert'] = "alert('hola mundo ecommerce GEx!');";
 		 
 		
@@ -102,55 +108,51 @@ class Direccion_Envio extends CI_Controller {
 			$form_values = $this->get_datos_direccion();
 			
 			$form_values['direccion']['id_clienteIn'] = $id_cliente;
-			$form_values['direccion']['id_TCSi'] = $consecutivo + 1;		//cambió
+			$form_values['direccion']['id_consecutivoSi'] = $consecutivo + 1;		//cambió
+			$form_values['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
 			
-				/*
-				 *  Se debe validar si se quiere guardar la direccion antes de registrarla
-				 * esto con: $form_values['guardar']
-				 * si no se quiere guardar se continua con el proceso
-				 * */
+			/*
+			 *  Se debe validar si se quiere guardar la direccion antes de registrarla
+			 * esto con: $form_values['guardar']
+			 * si no se quiere guardar se continua con el proceso
+			 * */
 			if (empty($this->reg_errores)) {	
 				//si no hay errores y se solicita registrar la direccion
-				if (isset($form_values['guardar']) || isset($form_values['tc']['id_estatusSi'])) {
+				if (isset($form_values['guardar']) || isset($form_values['direccion']['id_estatusSi'])) {
 					//verificar que no exista la direccion activa en la BD
 					//var_dump($form_values);
 					//exit();
-						$form_values['amex']['id_TCSi'] = $consecutivo + 1;
+						$form_values['direccion']['id_TCSi'] = $consecutivo + 1;
 						$form_values['direccion']['id_consecitivoSi'] = 1;
-						$form_values['tc']['descripcionVc'] = "AMERICAN EXPRESS";
+						$form_values['direccion']['descripcionVc'] = "AMERICAN EXPRESS";
 					//echo var_dump($form_values);
 					//exit();
 					
-					if($this->modelo->existe_tc($form_values['tc'])) {	//Redirect al listado por que ya existe
+					if($this->modelo->existe_direccion($form_values['direccion'])) {	//Redirect al listado por que ya existe
 						//$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
 						//header("Location: $url");
-						$this->listar($id_cliente, "La tarjeta ya está registrada.");
-						//echo "La tarjeta ya está registrada.";
+						$this->listar($id_cliente, "La direcci&oacute;n ya está registrada.");
+						//echo "La direcci&oacute;n ya está registrada.";
 						//exit();
 					} else {
-						//echo "se manda insertar en CCTC";
-						
-						if ($this->registrar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {
-						//if (1) {	//echo "Se registró exitosamente! en CCTC";
-							
-							//Registrar Localmente
-							if ($this->modelo->insertar_direccion($form_values['tc'])) {
-								$this->listar("Tarjeta registrada.");
-							} else {
-								echo "<br/>Hubo un error en el registro en CMS";
-							}
+						//Registrar Localmente
+						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
+							$this->listar("Direcci&oacute;n registrada.");
 						} else {
-							echo "Hubo un error en el registro en CCTC";
+							$this->listar("Hubo un error en el registro en CMS.");
+							echo "<br/>Hubo un error en el registro en CMS";
 						}
 					}						
 				} else {
-					//si no se guardará la tc, almacenar la info para la venta  
-					echo "no se almacenará la TC >> Pasar a captura de dir. de envío<br/> Coming soon...";
+					//si no se guardará la tc, almacenar la info para la venta
+					$url = base_url().'/index.php/direccion_facturacion/';		//la sesion debe tomar el cliente
+					header("Location: $url");
+					exit();	  
+					echo "No se almacenar&aacute; la direcci&oacute;n>> Pasar a captura de dir. de facturación<br/> Coming soon...";
 					//exit();	
 				}
-				//se envía la tc al WS de CCTC y de acuerdo a la respuesta...
-				/*					
-				//De momento se regresará al listado de tarjetas
+				/*
+				//De momento se regresará al listado de direccions
 				if ($this->modelo->insertar_direccion($form_values['tc'])) {
 					$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
 					header("Location: $url");
@@ -167,7 +169,7 @@ class Direccion_Envio extends CI_Controller {
 		}
 	}
 
-	public function editar($consecutivo)	//el consecutivo de la tarjeta
+	public function editar($consecutivo)	//el consecutivo de la direccion
 	{
 		$id_cliente = $this->id_cliente;
 		
@@ -272,164 +274,6 @@ class Direccion_Envio extends CI_Controller {
 		//cargar la lista
 		$this->listar($id_cliente, $msg_eliminacion);
 		//$this->cargar_vista('', 'direccion_envio' , $data);
-	}
-	
-	private function eliminar_tarjeta_CCTC($id_cliente = 0, $consecutivo = 0)
-	{
-		try {  
-			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-				
-			$parameter = array(	'id_clienteNu' => $id_cliente, 'consecutivo_cmsSi' => $consecutivo);
-			
-			$obj_result = $cliente->EliminarTC($parameter);
-			$simple_result = $obj_result->EliminarTCResult;
-			
-			//print($simple_result);
-			
-			return $simple_result;
-			
-		} catch (SoapFault $exception) {
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
-			//exit();
-			return false;
-		}
-	}
-	
-	private function detalle_tarjeta_CCTC($id_cliente=0, $consecutivo=0)	//siempre será la información de AMEX
-	{
-		//Traer la info de amex
-		try {  
-			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-				
-			$parameter = array(	'id_clienteNu' => $id_cliente, 'consecutivo_cmsSi' => $consecutivo);
-			
-			$obj_result = $cliente->ConsultarAmex($parameter);
-			$tarjeta_amex = $obj_result->ConsultarAmexResult;	//regresa un objeto
-			
-			//print($simple_result);
-			
-			return $tarjeta_amex;
-			
-		} catch (SoapFault $exception) {
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
-			//exit();
-			return false;
-		}
-		
-	}
-	
-	private function editar_tarjeta_CCTC($tc, $amex = null)
-	{
-		$resultado = FALSE;
-		//mapeo de la tc
-		$tc_soap = new Tc(
-			$tc['id_clienteIn'],
-			$tc['id_TCSi'],
-			$tc['id_tipo_tarjetaSi'],
-			$tc['nombre_titularVc'],
-			$tc['apellidoP_titularVc'],
-			$tc['apellidoM_titularVc'],
-			$tc['terminacion_tarjetaVc'],
-			$tc['mes_expiracionVc'],
-			$tc['anio_expiracionVc']
-			//'renovacion_automatica' => $tc[']//Mandar true para que se guarde
-		);
-		
-		//mapeo Amex
-		if (isset($amex)) {
-			$amex_soap = new Amex(
-				$amex['id_clienteIn'],
-				$amex['id_TCSi'],
-				$amex['nombre_titularVc'],
-				$amex['apellidoP_titularVc'],
-				$amex['apellidoM_titularVc'],
-				$amex['pais'], $amex['codigo_postal'],
-				$amex['calle'], $amex['ciudad'],
-				$amex['estado'], $amex['mail'],
-				$amex['telefono']
-			);
-		} else {
-			$amex_soap = null;
-		}
-		//var_dump($tc_soap);
-		//var_dump($amex_soap);
-		//echo (isset($amex));
-		//exit();
-		
-		try {  
-			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-				
-			$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap);
-			
-			$obj_result = $cliente->EditarTC($parameter);
-			$simple_result = $obj_result->EditarTCResult;
-			
-			//print($simple_result);
-			
-			return $simple_result;
-			
-		} catch (SoapFault $exception) {
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
-			//exit();
-			return false;
-		}
-	}
-	
-	private function registrar_tarjeta_CCTC($tc, $amex = null) 
-	{
-		$resultado = FALSE;
-		//mapeo de la tc
-		$tc_soap = new Tc(
-			$tc['id_clienteIn'],
-			$tc['id_TCSi'],
-			$tc['id_tipo_tarjetaSi'],
-			$tc['nombre_titularVc'],
-			$tc['apellidoP_titularVc'],
-			$tc['apellidoM_titularVc'],
-			$tc['terminacion_tarjetaVc'],
-			$tc['mes_expiracionVc'],
-			$tc['anio_expiracionVc']
-			//'renovacion_automatica' => $tc[']//Mandar true para que se guarde
-		);
-		
-		//mapeo Amex
-		if (isset($amex)) {
-			$amex_soap = new Amex(
-				$amex['id_clienteIn'],
-				$amex['id_TCSi'],
-				$amex['nombre_titularVc'],
-				$amex['apellidoP_titularVc'],
-				$amex['apellidoM_titularVc'],
-				$amex['pais'], $amex['codigo_postal'],
-				$amex['calle'], $amex['ciudad'],
-				$amex['estado'], $amex['mail'],
-				$amex['telefono']
-			);
-		} else {
-			$amex_soap = null;
-		}
-		
-		try {  
-			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-				
-			$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap);
-			
-			$obj_result = $cliente->InsertarTC($parameter);
-			$simple_result = $obj_result->InsertarTCResult;
-			
-			//print($simple_result);
-			
-			return $simple_result;
-			
-		} catch (SoapFault $exception) {
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
-			//exit();
-			return false;
-		}
 	}
 	
 	
@@ -639,29 +483,11 @@ class Direccion_Envio extends CI_Controller {
 		}
 	}
 	
-	/*
-	 * Consulta del catálogo de tarjetad de Banco local
-	 * */
-	private function lista_tipos_tarjeta() 
-	{	
-		$lista_tipo_tarjeta = $this->modelo->listar_tipos_tarjeta();
-		return $lista_tipo_tarjeta->result();
-	}
-	
-	private function get_datos_tarjeta($tipo = '')
+	private function get_datos_direccion()
 	{
 		$datos = array();
-		//echo "tipo : ". $tipo;
 		//no se usa la funcion de escape '$this->db->escape()', por que en la inserción ya se incluye 
 		if($_POST) {
-			if(array_key_exists('sel_tipo_tarjeta', $_POST)) {
-				$datos['tc']['id_tipo_tarjetaSi'] = $_POST['sel_tipo_tarjeta'];
-				//echo "existe sel_tipos"; 
-			} else if ($tipo == 'amex') {
-				$datos['tc']['id_tipo_tarjetaSi'] = 1;	//Amex
-				$datos['tc']['descripcionVc'] = 'AMERICAN EXPRESS';	//Amex
-				
-			}
 			
 			if(array_key_exists('txt_numeroTarjeta', $_POST)) { 
 				//al final sólo será la terminación de la tarjeta, pero se deben validar los 16 digitos
@@ -712,15 +538,7 @@ class Direccion_Envio extends CI_Controller {
 			if(array_key_exists('sel_anio_expira', $_POST)) { 
 				$datos['tc']['anio_expiracionVc'] = $_POST['sel_anio_expira'];  
 			}
-			if(array_key_exists('chk_guardar', $_POST)) {
-				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
-				$datos['tc']['id_estatusSi'] = 1;
-			}
-			if(array_key_exists('chk_default', $_POST)) {
-				$datos['tc']['id_estatusSi'] = 0;	//indica que será la tarjeta predeterminada	
-				//$_POST['chk_default'];
-				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC
-			}
+			
 			
 			//AMEX
 			if(array_key_exists('txt_calle', $_POST)) {
@@ -752,29 +570,44 @@ class Direccion_Envio extends CI_Controller {
 					$this->reg_errores['txt_estado'] = 'Ingresa tu estado correctamente';
 				}
 			}
-			if(array_key_exists('txt_pais', $_POST)) {
-				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_pais'])) {
-					$datos['amex']['pais'] = $_POST['txt_pais'];
+			
+			if(array_key_exists('sel_pais', $_POST)) {
+				if(preg_match('/^[A-Z]{2}$/i', $_POST['sel_pais'])) {
+					$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];
 				} else {
-					$this->reg_errores['txt_pais'] = 'Ingresa tu pa&iacute;s correctamente';
+					$this->reg_errores['sel_pais'] = 'Selecciona tu pa&iacute;s';
 				}
 			}
-			if(array_key_exists('txt_email', $_POST) && $_POST['txt_email'] != "") {
-				if(filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
-					$datos['amex']['mail'] = $_POST['txt_email'];
+			if(array_key_exists('sel_estados', $_POST)) {
+				if(preg_match('/^[A-Z ]{2, 30}$/i', $_POST['sel_estados'])) {
+					$datos['direccion']['state'] = $_POST['sel_estado'];
 				} else {
-					$this->reg_errores['txt_email'] = 'Ingresa tu email correctamente (opcional)';
+					$this->reg_errores['sel_estado'] = 'Selecciona tu estado';
 				}
-			} else {
-				$datos['amex']['mail'] = '';
 			}
+			
 			
 			if(array_key_exists('txt_telefono', $_POST)) {
 				if(preg_match('/^[0-9 -]{2,15}$/i', $_POST['txt_telefono'])) {
-					$datos['amex']['telefono'] = $_POST['txt_telefono'];
+					$datos['direccion']['telefono'] = $_POST['txt_telefono'];
 				} else {
 					$this->reg_errores['txt_telefono'] = 'Ingresa tu tel&eacute;fono correctamente';
 				}
+			}
+			if (filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
+				$datos['direccion']['txt_email'] = htmlspecialchars(trim($_POST['txt_email']));
+			} else {
+				$this->registro_errores['txt_email'] = 'Ingresa una direcci&oacute;n v&aacute;lida.';
+			}
+			
+			if(array_key_exists('chk_guardar', $_POST)) {
+				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
+				$datos['direccion']['id_estatusSi'] = 1;
+			}
+			if(array_key_exists('chk_default', $_POST)) {
+				$datos['direccion']['id_estatusSi'] = 0;	//indica que será la tarjeta predeterminada	
+				//$_POST['chk_default'];
+				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC
 			}
 		} 
 		
