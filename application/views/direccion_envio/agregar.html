@@ -59,6 +59,10 @@
 			</div>
 			<div class="item_requerid">Estado:</div>
 			<div class="form_requerid">
+<<<<<<< HEAD
+				<input type="text" name="sel_estado" value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>" size="30" />				
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_estado'])) echo ($reg_errores['sel_estado']);?></span>
+=======
 				<!--input type="text" name="txt_estado" id="txt_estado" size="30"
 					value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/-->
 				<select id="sel_estados" name="sel_estados">
@@ -84,10 +88,15 @@
 					?>
 				</select>
 				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_estados'])) echo ($reg_errores['sel_estados']);?></span>
+>>>>>>> origin/master
 			</div>
 			
 			<div class="item_requerid">Ciudad:</div>
 			<div class="form_requerid">
+<<<<<<< HEAD
+				<input type="text" name="sel_ciudad" value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>" />				
+				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_ciudad'])) echo ($reg_errores['sel_ciudad']);?></span>
+=======
 				<!--input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
 					value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/-->
 				<select id="sel_ciudades" name="sel_ciudades">
@@ -122,6 +131,7 @@
 					?>
 				</select>
 				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_ciudades'])) echo ($reg_errores['sel_ciudades']);?></span>
+>>>>>>> origin/master
 			</div>
 			<div class="item_requerid">Colonia:</div>
 			<div class="form_requerid">

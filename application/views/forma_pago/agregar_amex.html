@@ -36,6 +36,9 @@
 			<div class="item_requerid">Fecha de expiraci&oacute;n:</div>
 			<div class="form_requerid">
 			<?php
+				// Autor: Armando Barrales //
+				// Cambio agregado para que funcione en el Server //
+				date_default_timezone_set("America/Mexico_City");
 				$mes = isset($_POST['sel_mes_expira']) ? $_POST['sel_mes_expira'] : 0;
 				$anio = isset($_POST['sel_anio_expira']) ? $_POST['sel_anio_expira'] : 0;
 				$anio_actual = date('Y');
