@@ -33,7 +33,7 @@ class Direccion_Envio extends CI_Controller {
 
     }
 
-	public function index()	//Para pruebas se usa 1
+	public function index()
 	{
 		//Recuperar el "id_ClienteNu" de la sesion
 		
@@ -41,19 +41,11 @@ class Direccion_Envio extends CI_Controller {
 		
 		//echo 'cliente_Id: '.$id_cliente;
 		
-		//echo 'tipo '. gettype($tc);
-		//echo 'cliente_Id'.$tc->cliente_id;
-		//var_dump($tc);
-		
 		$this->listar();
 	}
 	
 	public function listar($msg = '') 
-	{	
-		/*asignación de la session*/
-		//$id_cliente = $this->session->userdata('id_cliente');
-		//$this->session->set_userdata('id_cliente', $id_cliente);
-		
+	{		
 		/*
 		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
 		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
@@ -82,7 +74,6 @@ class Direccion_Envio extends CI_Controller {
 		$id_cliente = $this->id_cliente;
 		
 		
-		
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
 		
@@ -98,49 +89,33 @@ class Direccion_Envio extends CI_Controller {
 		$data['lista_estados_sepomex'] = $lista_estados['estados'];
 		
 		
-		$data['registrar'] = TRUE;		//para indicar que se debe mostrar formulario de registro
+		$data['registrar'] = TRUE;		//se debe mostrar formulario de registro
 		/*agregar el script para este formulario*/
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'> </script>";
 		$data['script'] = $script_file;
 		
-		//$data['alert'] = "alert('hola mundo ecommerce GEx!');";
-		 
-		
-		if ($_POST)	{	//si hay parámetros del formulario
+		if ($_POST)	{	
+			//Petición de registro
 			$consecutivo = $this->modelo->get_consecutivo($id_cliente);			
-			//común
-			$form_values = array();	//alojará los datos previos a la inserción	
-			$form_values = $this->get_datos_direccion();
 			
+			$form_values = array();		//alojará los datos ingresados previos a la inserción	
+			$form_values = $this->get_datos_direccion();			
 			
 			$form_values['direccion']['id_clienteIn'] = $id_cliente;
 			$form_values['direccion']['id_consecutivoSi'] = $consecutivo + 1;		//cambió
 			$form_values['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
-			
-			//carga de catálogos de sepomex si ya se hizo la seleccion de estado, ciudad, colonia
-			
-			/*
-			 *  Se debe validar si se quiere guardar la direccion antes de registrarla
-			 * esto con: $form_values['guardar']
-			 * si no se quiere guardar se continua con el proceso
-			 * */
-			//var_dump($form_values);
-			//exit();
+						
 			if (empty($this->reg_errores)) {	
-				//si no hay errores y se solicita registrar la direccion
+				//si no hay errores en el formulario y se solicita registrar la direccion
 				if (isset($form_values['guardar']) || isset($form_values['direccion']['id_estatusSi'])) {
 					//verificar que no exista la direccion activa en la BD
-					
-						//$form_values['direccion']['id_TCSi'] = $consecutivo + 1;
-						//$form_values['direccion']['id_consecitivoSi'] = $consecutivo  + 1;
-					if($this->modelo->existe_direccion($form_values['direccion'])) {	//Redirect al listado por que ya existe
+					if($this->modelo->existe_direccion($form_values['direccion'])) {	
+						//Redirect al listado por que ya existe
 						//$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
 						//header("Location: $url");
-						
-						
-						$this->listar($id_cliente, "La direcci&oacute;n ya est&aacute; registrada.");
-						echo "La direcci&oacute;n ya está registrada.";
-						exit();
+						$this->listar("La direcci&oacute;n ya est&aacute; registrada.");
+						//echo "La direcci&oacute;n ya está registrada.";
+						//exit();
 					} else {
 						//Registrar Localmente
 						
@@ -149,7 +124,7 @@ class Direccion_Envio extends CI_Controller {
 							$this->listar("Direcci&oacute;n registrada.");
 						} else {
 							$this->listar("Hubo un error en el registro en CMS.");
-							echo "<br/>Hubo un error en el registro en CMS";
+							//echo "<br/>Hubo un error en el registro en CMS";
 						}
 					}						
 				} else {
@@ -158,45 +133,36 @@ class Direccion_Envio extends CI_Controller {
 					header("Location: $url");
 					exit();	  
 					echo "No se almacenar&aacute; la direcci&oacute;n>> Pasar a captura de dir. de facturación<br/> Coming soon...";
-					//exit();	
 				}
-				/*
-				//De momento se regresará al listado de direccions
-				if ($this->modelo->insertar_direccion($form_values['tc'])) {
-					$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
-					header("Location: $url");
-					exit();	
-				}
-				*/
-			} else {	//Si hubo errores
-			
-				//echo var_dump($form_values);
-				if(!empty($_POST['sel_ciudades']))
+			} else {	//Si hubo errores en la captura
+				//carga de catálogos de sepomex si ya se hizo la seleccion de estado, ciudad, colonia
+				if (!empty($_POST['sel_ciudades']))
 				{
-					//catalogo de estados
+					//catálogo de ciudades
 					$lista_ciudades = $this->consulta_ciudades($_POST['sel_estados']);		
 					$data['lista_ciudades_sepomex'] = $lista_ciudades['ciudades'];
-					//ar_dump($lista_ciudades);
 				}
 				
-				//echo "col. ". $_POST['sel_colonias'];
-				
-				if(!empty($_POST['sel_estados']) && !empty($_POST['sel_ciudades']))
+				if (!empty($_POST['sel_estados']) && !empty($_POST['sel_ciudades']))
 				{
-					//catalogo de colonias
+					//catálogo de colonias
 					$lista_colonias = $this->consulta_colonias($_POST['sel_estados'], $_POST['sel_ciudades']);		
 					$data['lista_colonias_sepomex'] = $lista_colonias['colonias'];
 				}
 				
-				//vuelve a mostrar la info.
+				//vuelve a mostrar la información en el formulario 
 				$data['reg_errores'] = $this->reg_errores;
 				$this->cargar_vista('', 'direccion_envio' , $data);	
 			}
 		} else {
+			//muestra la lista de direcciones sólamente
 			$this->cargar_vista('', 'direccion_envio' , $data);
 		}
 	}
 
+	/**
+	 * Edición de la dirección seleccionada
+	 */
 	public function editar($consecutivo)	//el consecutivo de la direccion
 	{
 		$id_cliente = $this->id_cliente;
@@ -204,16 +170,15 @@ class Direccion_Envio extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
 		
-		//recuperar la información local de la tc
+		//recuperar la información de la dirección
 		$detalle_direccion = $this->modelo->detalle_direccion($consecutivo, $id_cliente);
-		//Siempre se trae la info para tc
 		$data['direccion'] = $detalle_direccion;
-		//var_dump($detalle_direccion);
-		//exit();
-		
-		//array par al anueva información
+				
+		//array para la nueva información
 		$nueva_info = array();
 		
+		var_dump($detalle_direccion);
+		exit();
 		//Se intentará actualizar la información
 		if ($_POST) {
 			$tipo_tarjeta = $data['vista_detalle'];
@@ -259,8 +224,6 @@ class Direccion_Envio extends CI_Controller {
 				}
 			} else {	//sí hubo errores
 				$data['msg_actualizacion'] = "Campos incorrectos";
-				//echo "<br/>Campos incorrectos.<br/>";
-				//var_dump($this->reg_errores);
 			}
 			//print_r($nueva_info[$tipo_tarjeta]);
 		}//If POST
@@ -576,14 +539,7 @@ class Direccion_Envio extends CI_Controller {
 			}
 			
 			if(array_key_exists('txt_referencia', $_POST)) {
-				$datos['direccion']['referenciaVc'] = $_POST['txt_referencia'];
-				/*if(preg_match('/^[A-Z0-9 \'.-áéíóúÁÉÍÓÚÑñ]{0, 256}$/i', $_POST['txt_referencia'])) { 
-				
-					
-				} else {
-					$this->reg_errores['txt_referencia'] = 'Ingresa caracteres validos';
-				}
-				 * */
+				$datos['direccion']['referenciaVc'] = trim($_POST['txt_referencia']);
 			}
 			
 			
