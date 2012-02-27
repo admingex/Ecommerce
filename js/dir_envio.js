@@ -5,10 +5,11 @@
 $(document).ready(function() {
 	//alert('hola mundo ecommerce GEx!');
 	$("#btn_cp").ajaxError(function() {
-		alert('Error Handler invoked when an error ocurs!');		//Ok
+	//	alert('Error Handler invoked when an error ocurs!');		//Ok
 	});
 	
-	//cargar el catálogo de estados 
+	//cargar el catálogo de estados
+	/* 
 	$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/get_estados",
 		function(data) {
 			$.each(data.estados, function(indice, estado) {
@@ -16,7 +17,7 @@ $(document).ready(function() {
 			});
 		}
 	);
-	
+	*/
 	//onChange:
 	$('#sel_estados').change(function() {
 		//actualizar ciudad y colonia
@@ -102,11 +103,29 @@ $(document).ready(function() {
 						{ 'estado': clave_estado},
 						function(datos) {
 							var ciudades = datos.ciudades;
+							
+							$("#sel_ciudades").empty();
+							
+							if (ciudades.length == undefined) {	//DF sólo devuelve un obj de ciudad.
+								$("<option></option>").attr("value", ciudades.clave_ciudad).html(ciudades.ciudad).appendTo("#sel_ciudades");
+								$("#sel_ciudades").trigger('change');	//trigger cities' change event
+							} else {							//ciudades.length == 'undefined'
+								$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_ciudades");
+								$.each(ciudades, function(indice, ciudad) {
+									if (ciudad.clave_ciudad != '') {
+									
+										$("<option></option>").attr("value", ciudad.clave_ciudad).html(ciudad.ciudad).appendTo("#sel_ciudades");
+									}
+								});
+							}
+							/*
+							var ciudades = datos.ciudades;
 							$.each(datos.ciudades, function(indice, ciudad) {
 								if (ciudad.clave_ciudad != '') {
 									$("<option></option>").attr("value", ciudad.clave_ciudad).html(ciudad.ciudad).appendTo("#sel_ciudades");
 								}
 							});
+							*/
 							//select choosen city
 							$("#sel_ciudades").val(ciudad);
 							//trigger ciudades change 
@@ -144,7 +163,7 @@ $(document).ready(function() {
 	
 	//submit validation
 	$("form[id='form_direccion_envio']").submit(function(event) {
-		event.preventDefault();
+		//event.preventDefault();
 	});
 });
 

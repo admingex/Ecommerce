@@ -1,7 +1,7 @@
 <div id="direccion_envio">
 	
 	<div id="body">
-		<form id="form_direccion_envio" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/forma_pago/registrar/" method="POST">
+		<form id="form_direccion_envio" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/direccion_envio/registrar/" method="POST">
 			<div class="item_requerid">Calle:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_calle" id="txt_calle" size="30"
@@ -68,18 +68,18 @@
 				<select id="sel_estados" name="sel_estados">
 					<option value="">Seleccionar</option>
 					<?php
-					if (isset($lista_estados_think)) {
-						$id_estado = "";
+					if (isset($lista_estados_sepomex)) {
+						$clave_estado = "";
 						if (isset($_POST['sel_estados']))
-							$id_estado = $_POST['sel_estados'];
-						foreach($lista_estados_think->result() as $estado)
+							$clave_estado = $_POST['sel_estados'];
+						foreach($lista_estados_sepomex as $estado)
 						{
-							if ($id_estado == $estado->id_estado) {
-								echo "<option value='".$estado->id_estado."' selected='true'>".
+							if ($clave_estado == $estado->clave_estado) {
+								echo "<option value='".$estado->clave_estado."' selected='true'>".
 									$estado->estado.
 									"</option>";
 							} else {
-								echo "<option value='".$pais->id_estado."'>".
+								echo "<option value='".$estado->clave_estado."'>".
 									$estado->estado.
 									"</option>";
 							}
@@ -102,20 +102,29 @@
 				<select id="sel_ciudades" name="sel_ciudades">
 					<option value="">Seleccionar</option>
 					<?php
-					if (isset($lista_ciudades_think)) {
-						$id_ciudad = "";
+					if (isset($lista_ciudades_sepomex)) {
+						$clave_ciudad = "";
 						if (isset($_POST['sel_ciudades']))
-							$id_ciudad = $_POST['sel_ciudades'];
-						foreach($lista_ciudades_think->result() as $ciudad)
-						{
-							if ($id_ciudad == $ciudad->id_ciudad) {
-								echo "<option value='".$ciudad->id_ciudad."' selected='true'>".
-									$ciudad->ciudad.
+							$clave_ciudad = $_POST['sel_ciudades'];
+						
+						//echo gettype($lista_ciudades_sepomex) ==   'object';
+						//excepcion del DF
+						if (gettype($lista_ciudades_sepomex) == 'object') {
+							echo "<option value='". $lista_ciudades_sepomex->clave_ciudad. "' selected='true'>".
+									$lista_ciudades_sepomex->ciudad.
 									"</option>";
-							} else {
-								echo "<option value='".$pais->id_ciudad."'>".
-									$ciudad->estado.
-									"</option>";
+						} else {
+							foreach($lista_ciudades_sepomex as $ciudad)
+							{
+								if ($clave_ciudad == $ciudad->clave_ciudad) {
+									echo "<option value='". $ciudad->clave_ciudad. "' selected='true'>".
+										$ciudad->ciudad.
+										"</option>";
+								} else if ($ciudad->ciudad != ''){
+									echo "<option value='". $ciudad->clave_ciudad. "'>".
+										$ciudad->ciudad.
+										"</option>";
+								}
 							}
 						}
 					}
@@ -126,24 +135,22 @@
 			</div>
 			<div class="item_requerid">Colonia:</div>
 			<div class="form_requerid">
-				<!--input type="text" name="txt_colonia" id="txt_colonia" size="30"
-					value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/-->
 				<select id="sel_colonias" name="sel_colonias">
 					<option value="">Seleccionar</option>
 					<?php
-					if (isset($lista_colonias_think)) {
+					if (isset($lista_colonias_sepomex)) {
 						$id_ciudad = "";
 						if (isset($_POST['sel_colonias']))
 							$id_colonia = $_POST['sel_colonias'];
-						foreach($lista_colonias_think->result() as $colonia)
+						foreach($lista_colonias_sepomex as $colonia)
 						{
-							if ($id_colonia == $colonia->id_colonia) {
-								echo "<option value='".$colonia->id_colonia."' selected='true'>".
+							if ($id_colonia == $colonia->colonia) {
+								echo "<option value='".$colonia->colonia."' selected='true'>".
 									$colonia->colonia.
 									"</option>";
 							} else {
-								echo "<option value='".$pais->id_colonia."'>".
-									$colonia->estado.
+								echo "<option value='".$colonia->colonia."'>".
+									$colonia->colonia.
 									"</option>";
 							}
 						}
@@ -170,7 +177,7 @@
 				<textarea type="text" name="txt_referencia" id="txt_referencia" cols="30" >
 					<?php if(isset($_POST['txt_num_int'])) echo htmlspecialchars($_POST['txt_num_int']);?>
 				</textarea>
-				<span class="validation_message"><?php if(isset($reg_errores['txt_num_int'])) echo ($reg_errores['txt_num_int']);?></span>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_referencia'])) echo ($reg_errores['txt_referencia']);?></span>
 			</div>	
 			<div class="item_requerid">&nbsp;</div>
 			<div class="form_requerid">

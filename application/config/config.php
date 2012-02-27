@@ -245,7 +245,7 @@ $config['encryption_key'] = 'ecommerce_gex';
 |
 */
 $config['sess_cookie_name']		= 'ci_session';
-$config['sess_expiration']		= 600;	//7200;
+$config['sess_expiration']		= 6000;	//7200;
 $config['sess_expire_on_close']	= TRUE;
 $config['sess_encrypt_cookie']	= TRUE;
 $config['sess_use_database']	= FALSE;

@@ -33,7 +33,7 @@ class Direccion_Envio extends CI_Controller {
 
     }
 
-	public function index()	//Para pruebas se usa 1
+	public function index()
 	{
 		//Recuperar el "id_ClienteNu" de la sesion
 		
@@ -41,19 +41,11 @@ class Direccion_Envio extends CI_Controller {
 		
 		//echo 'cliente_Id: '.$id_cliente;
 		
-		//echo 'tipo '. gettype($tc);
-		//echo 'cliente_Id'.$tc->cliente_id;
-		//var_dump($tc);
-		
 		$this->listar();
 	}
 	
 	public function listar($msg = '') 
-	{	
-		/*asignación de la session*/
-		//$id_cliente = $this->session->userdata('id_cliente');
-		//$this->session->set_userdata('id_cliente', $id_cliente);
-		
+	{		
 		/*
 		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
 		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
@@ -81,7 +73,6 @@ class Direccion_Envio extends CI_Controller {
 		
 		$id_cliente = $this->id_cliente;
 		
-		$consecutivo = $this->modelo->get_consecutivo($id_cliente);
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
@@ -93,54 +84,47 @@ class Direccion_Envio extends CI_Controller {
 		//recuperar el listado de las direcciones del cliente
 		$data['lista_direcciones'] = $this->modelo->listar_direcciones($id_cliente);
 		
-		$data['registrar'] = TRUE;		//para indicar que se debe mostrar formulario de registro
+		//catalogo de estados
+		$lista_estados = $this->consulta_estados();		
+		$data['lista_estados_sepomex'] = $lista_estados['estados'];
+		
+		
+		$data['registrar'] = TRUE;		//se debe mostrar formulario de registro
 		/*agregar el script para este formulario*/
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'> </script>";
 		$data['script'] = $script_file;
 		
-		//$data['alert'] = "alert('hola mundo ecommerce GEx!');";
-		 
-		
-		if ($_POST)	{	//si hay parámetros del formulario
+		if ($_POST)	{	
+			//Petición de registro
+			$consecutivo = $this->modelo->get_consecutivo($id_cliente);			
 			
-			//común
-			$form_values = array();	//alojará los datos previos a la inserción	
-			$form_values = $this->get_datos_direccion();
+			$form_values = array();		//alojará los datos ingresados previos a la inserción	
+			$form_values = $this->get_datos_direccion();			
 			
 			$form_values['direccion']['id_clienteIn'] = $id_cliente;
 			$form_values['direccion']['id_consecutivoSi'] = $consecutivo + 1;		//cambió
 			$form_values['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
-			
-			/*
-			 *  Se debe validar si se quiere guardar la direccion antes de registrarla
-			 * esto con: $form_values['guardar']
-			 * si no se quiere guardar se continua con el proceso
-			 * */
+						
 			if (empty($this->reg_errores)) {	
-				//si no hay errores y se solicita registrar la direccion
+				//si no hay errores en el formulario y se solicita registrar la direccion
 				if (isset($form_values['guardar']) || isset($form_values['direccion']['id_estatusSi'])) {
 					//verificar que no exista la direccion activa en la BD
-					//var_dump($form_values);
-					//exit();
-						$form_values['direccion']['id_TCSi'] = $consecutivo + 1;
-						$form_values['direccion']['id_consecitivoSi'] = 1;
-						$form_values['direccion']['descripcionVc'] = "AMERICAN EXPRESS";
-					//echo var_dump($form_values);
-					//exit();
-					
-					if($this->modelo->existe_direccion($form_values['direccion'])) {	//Redirect al listado por que ya existe
+					if($this->modelo->existe_direccion($form_values['direccion'])) {	
+						//Redirect al listado por que ya existe
 						//$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
 						//header("Location: $url");
-						$this->listar($id_cliente, "La direcci&oacute;n ya está registrada.");
+						$this->listar("La direcci&oacute;n ya est&aacute; registrada.");
 						//echo "La direcci&oacute;n ya está registrada.";
 						//exit();
 					} else {
 						//Registrar Localmente
+						
+						
 						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
 							$this->listar("Direcci&oacute;n registrada.");
 						} else {
 							$this->listar("Hubo un error en el registro en CMS.");
-							echo "<br/>Hubo un error en el registro en CMS";
+							//echo "<br/>Hubo un error en el registro en CMS";
 						}
 					}						
 				} else {
@@ -149,26 +133,36 @@ class Direccion_Envio extends CI_Controller {
 					header("Location: $url");
 					exit();	  
 					echo "No se almacenar&aacute; la direcci&oacute;n>> Pasar a captura de dir. de facturación<br/> Coming soon...";
-					//exit();	
 				}
-				/*
-				//De momento se regresará al listado de direccions
-				if ($this->modelo->insertar_direccion($form_values['tc'])) {
-					$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
-					header("Location: $url");
-					exit();	
+			} else {	//Si hubo errores en la captura
+				//carga de catálogos de sepomex si ya se hizo la seleccion de estado, ciudad, colonia
+				if (!empty($_POST['sel_ciudades']))
+				{
+					//catálogo de ciudades
+					$lista_ciudades = $this->consulta_ciudades($_POST['sel_estados']);		
+					$data['lista_ciudades_sepomex'] = $lista_ciudades['ciudades'];
 				}
-				*/
-			} else {	//Si hubo errores
-				//vuelve a mostrar la info.
+				
+				if (!empty($_POST['sel_estados']) && !empty($_POST['sel_ciudades']))
+				{
+					//catálogo de colonias
+					$lista_colonias = $this->consulta_colonias($_POST['sel_estados'], $_POST['sel_ciudades']);		
+					$data['lista_colonias_sepomex'] = $lista_colonias['colonias'];
+				}
+				
+				//vuelve a mostrar la información en el formulario 
 				$data['reg_errores'] = $this->reg_errores;
 				$this->cargar_vista('', 'direccion_envio' , $data);	
 			}
 		} else {
+			//muestra la lista de direcciones sólamente
 			$this->cargar_vista('', 'direccion_envio' , $data);
 		}
 	}
 
+	/**
+	 * Edición de la dirección seleccionada
+	 */
 	public function editar($consecutivo)	//el consecutivo de la direccion
 	{
 		$id_cliente = $this->id_cliente;
@@ -176,26 +170,15 @@ class Direccion_Envio extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
 		
-		//recuperar la información local de la tc
-		$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
-		//Siempre se trae la info para tc
-		$data['tarjeta_tc'] = $detalle_tarjeta;
-		//var_dump($detalle_tarjeta);
-		//exit();
-		
-		//array par al anueva información
+		//recuperar la información de la dirección
+		$detalle_direccion = $this->modelo->detalle_direccion($consecutivo, $id_cliente);
+		$data['direccion'] = $detalle_direccion;
+				
+		//array para la nueva información
 		$nueva_info = array();
 		
-		if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
-			$data['vista_detalle'] = 'amex';
-			$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
-			//en este caso se consultará la info del WS
-		} else  {	
-			//Si no es de tipo American Express, trae la info de la base local
-			//y especificat el tipo de la tarjeta y el numero.
-			$data['vista_detalle'] = 'tc';
-		}
-
+		var_dump($detalle_direccion);
+		exit();
 		//Se intentará actualizar la información
 		if ($_POST) {
 			$tipo_tarjeta = $data['vista_detalle'];
@@ -241,8 +224,6 @@ class Direccion_Envio extends CI_Controller {
 				}
 			} else {	//sí hubo errores
 				$data['msg_actualizacion'] = "Campos incorrectos";
-				//echo "<br/>Campos incorrectos.<br/>";
-				//var_dump($this->reg_errores);
 			}
 			//print_r($nueva_info[$tipo_tarjeta]);
 		}//If POST
@@ -488,123 +469,92 @@ class Direccion_Envio extends CI_Controller {
 		$datos = array();
 		//no se usa la funcion de escape '$this->db->escape()', por que en la inserción ya se incluye 
 		if($_POST) {
-			
-			if(array_key_exists('txt_numeroTarjeta', $_POST)) { 
-				//al final sólo será la terminación de la tarjeta, pero se deben validar los 16 digitos
-				if(preg_match('/^[0-9]{16,17}$/', $_POST['txt_numeroTarjeta'])) {
-					$datos['tc']['terminacion_tarjetaVc'] = 
-					substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
-				} else {
-					$this->reg_errores['txt_numeroTarjeta'] = 'Por favor ingrese un numero de tarjeta v&aacute;lido';
-				}				
-			}
-			if(array_key_exists('txt_nombre', $_POST)) {
-				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_nombre'])) { 
-					$datos['tc']['nombre_titularVc'] = $_POST['txt_nombre'];
-					if ($tipo = 'amex') {
-						$datos['amex']['nombre_titularVc'] = $_POST['txt_nombre'];
-					}
-				} else {
-					$this->reg_errores['txt_nombre'] = 'Ingresa tu nombre correctamente';
-				}
-			}
-			if(array_key_exists('txt_apellidoPaterno', $_POST)) {
-				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_apellidoPaterno'])) { 
-					$datos['tc']['apellidoP_titularVc'] = $_POST['txt_apellidoPaterno'];
-					if ($tipo = 'amex') {
-						$datos['amex']['apellidoP_titularVc'] = $_POST['txt_apellidoPaterno'];
-					}
-				} else {
-					$this->reg_errores['txt_apellidoPaterno'] = 'Ingresa tu apellido correctamente';
-				}
-			}
-			if(array_key_exists('txt_apellidoMaterno', $_POST)) {
-				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_apellidoMaterno'])) {
-					$datos['tc']['apellidoM_titularVc'] = $_POST['txt_apellidoMaterno'];
-					if ($tipo = 'amex') {
-						$datos['amex']['apellidoM_titularVc'] = $_POST['txt_apellidoMaterno'];
-					}
-				} else {
-					$this->reg_errores['txt_apellidoMaterno'] = 'Ingresa tu apellido correctamente';
-				}
-			}
-			if(array_key_exists('txt_codigoSeguridad', $_POST)) {
-				//este código sólo se almaccena para solicitar el pago 
-				$datos['codigo_seguridad'] = $_POST['txt_codigoSeguridad']; 
-			}
-			if(array_key_exists('sel_mes_expira', $_POST)) {
-				$datos['tc']['mes_expiracionVc'] = $_POST['sel_mes_expira']; 
-			}
-			if(array_key_exists('sel_anio_expira', $_POST)) { 
-				$datos['tc']['anio_expiracionVc'] = $_POST['sel_anio_expira'];  
-			}
-			
-			
 			//AMEX
-			if(array_key_exists('txt_calle', $_POST)) {
-				if(preg_match('/^[A-Z0-9 \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_calle'])) {
-					$datos['amex']['calle'] = $_POST['txt_calle'];
+			if (array_key_exists('txt_calle', $_POST)) {
+				if(preg_match('/^[A-Z0-9 \'.-áéíóúÁÉÍÓÚÑñ]{1,50}$/i', $_POST['txt_calle'])) {
+					$datos['direccion']['address1'] = $_POST['txt_calle'];
 				} else {
 					$this->reg_errores['txt_calle'] = 'Ingresa tu calle y n&uacute;mero correctamente';
 				}
 			}
-			if(array_key_exists('txt_cp', $_POST)) {
+			if (array_key_exists('txt_numero', $_POST)) {
+				if(preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['txt_numero'])) {
+					$datos['direccion']['address2'] = $_POST['txt_numero'];
+				} else {
+					$this->reg_errores['txt_numero'] = 'Ingresa tu n&uacute;mero correctamente';
+				}
+			}
+			if (!empty($_POST['txt_num_int'])) {
+				if(preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['txt_num_int'])) {
+					$datos['direccion']['address4'] = $_POST['txt_num_int'];
+				} else {
+					$this->reg_errores['txt_numero'] = 'Ingresa tu n&uacute;mero correctamente';
+				}
+			} else {
+				$datos['direccion']['address4'] = NULL;
+			}
+			if (array_key_exists('txt_cp', $_POST)) {
 				//regex usada en js
 				if(preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['txt_cp'])) {
-					$datos['amex']['codigo_postal'] = $_POST['txt_cp'];
+					$datos['direccion']['zip'] = $_POST['txt_cp'];
 				} else {
 					$this->reg_errores['txt_cp'] = 'Ingresa tu c&oacute;digo postal correctamente';
 				}
 			}
-			if(array_key_exists('txt_ciudad', $_POST)) {
-				if(preg_match('/^[A-Z0-9 \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_ciudad'])) {
-					$datos['amex']['ciudad'] = $_POST['txt_ciudad'];
-				} else {
-					$this->reg_errores['txt_ciudad'] = 'Ingresa tu ciudad correctamente';
-				}
-			}
-			if(array_key_exists('txt_estado', $_POST)) {
-				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_estado'])) {
-					$datos['amex']['estado'] = $_POST['txt_estado'];
-				} else {
-					$this->reg_errores['txt_estado'] = 'Ingresa tu estado correctamente';
-				}
+						
+			if (!empty($_POST['sel_pais'])) {
+			//if(preg_match('/^[A-Z]{2}$/i', $_POST['sel_pais'])) {
+				$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];
+			} else {
+				$this->reg_errores['sel_pais'] = 'Selecciona tu pa&iacute;s';
 			}
 			
-			if(array_key_exists('sel_pais', $_POST)) {
-				if(preg_match('/^[A-Z]{2}$/i', $_POST['sel_pais'])) {
-					$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];
-				} else {
-					$this->reg_errores['sel_pais'] = 'Selecciona tu pa&iacute;s';
-				}
+			if (!empty($_POST['sel_estados'])) {
+			//if(preg_match('/^[A-Z  \'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_estados'])) {
+				$datos['direccion']['state'] = $_POST['sel_estados'];
+			} else {
+				$this->reg_errores['sel_estados'] = 'Selecciona tu estado';
 			}
-			if(array_key_exists('sel_estados', $_POST)) {
-				if(preg_match('/^[A-Z ]{2, 30}$/i', $_POST['sel_estados'])) {
-					$datos['direccion']['state'] = $_POST['sel_estado'];
-				} else {
-					$this->reg_errores['sel_estado'] = 'Selecciona tu estado';
-				}
+			if (!empty($_POST['sel_ciudades'])) {
+			//if(preg_match('/^[A-Z ()\'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_ciudades'])) {
+				$datos['direccion']['city'] = $_POST['sel_ciudades'];
+			} else {
+				$this->reg_errores['sel_ciudades'] = 'Selecciona tu ciudad';
 			}
 			
+			if (!empty($_POST['sel_colonias'])) {
+			//if(preg_match('/^[A-Z0-9  \'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_colonias'])) {
+				$datos['direccion']['address3'] = $_POST['sel_colonias'];
+			} else {
+				$this->reg_errores['sel_colonias'] = 'Selecciona tu colonia';
 			
-			if(array_key_exists('txt_telefono', $_POST)) {
+			}
+			
+			if (array_key_exists('txt_telefono', $_POST)) {
 				if(preg_match('/^[0-9 -]{2,15}$/i', $_POST['txt_telefono'])) {
-					$datos['direccion']['telefono'] = $_POST['txt_telefono'];
+					$datos['direccion']['phone'] = $_POST['txt_telefono'];
 				} else {
 					$this->reg_errores['txt_telefono'] = 'Ingresa tu tel&eacute;fono correctamente';
 				}
 			}
-			if (filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
-				$datos['direccion']['txt_email'] = htmlspecialchars(trim($_POST['txt_email']));
-			} else {
-				$this->registro_errores['txt_email'] = 'Ingresa una direcci&oacute;n v&aacute;lida.';
+			
+			if(array_key_exists('txt_referencia', $_POST)) {
+				$datos['direccion']['referenciaVc'] = trim($_POST['txt_referencia']);
 			}
 			
-			if(array_key_exists('chk_guardar', $_POST)) {
+			
+			
+			if (filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
+				$datos['direccion']['email'] = htmlspecialchars(trim($_POST['txt_email']));
+			} else {
+				$this->reg_errores['txt_email'] = 'Ingresa una direcci&oacute;n v&aacute;lida.';
+			}
+			
+			if (array_key_exists('chk_guardar', $_POST)) {
 				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
 				$datos['direccion']['id_estatusSi'] = 1;
 			}
-			if(array_key_exists('chk_default', $_POST)) {
+			if (array_key_exists('chk_default', $_POST)) {
 				$datos['direccion']['id_estatusSi'] = 0;	//indica que será la tarjeta predeterminada	
 				//$_POST['chk_default'];
 				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC

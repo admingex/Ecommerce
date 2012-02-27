@@ -534,7 +534,7 @@ class Forma_Pago extends CI_Controller {
 				$datos['tc']['id_estatusSi'] = 1;
 			}
 			if(array_key_exists('chk_default', $_POST)) {
-				$datos['tc']['id_estatusSi'] = 0;	//indica que será la tarjeta predeterminada	
+				$datos['tc']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada	
 				//$_POST['chk_default'];
 				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC
 			}
