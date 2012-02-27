@@ -9,8 +9,7 @@ class Direccion_Facturacion_model extends CI_Model {
         parent::__construct();
     }
     
-	function listar_direcciones($id_cliente)
-    {	
+	function listar_direcciones($id_cliente){	
 		$this->db->select('id_consecutivoSi, address_type, id_clienteIn, company, 
 			tax_id_number as rfc,
 			address1 as calle, 
@@ -21,6 +20,7 @@ class Direccion_Facturacion_model extends CI_Model {
 			state as estado, 
 			city as ciudad, 
 			phone as telefono, 
+			codigo_paisVc as pais,
 			email');
 			
 		$this->db->where(array('id_clienteIn'=> $id_cliente, 'id_estatusSi !=' => 2, 'address_type'	=>	1));	//2 es deshabilitado 2 direccion facturacion		        		
@@ -29,8 +29,7 @@ class Direccion_Facturacion_model extends CI_Model {
 		return $resultado;           
     }
 	
-	function existe_direccion($datos_tc)
-	{
+	function existe_direccion($datos_tc){
 		$campos = array('nombre_titularVc' 	=> 	$datos_tc['nombre_titularVc'], 
 						'apellidoP_titularVc' => $datos_tc['apellidoP_titularVc'],
 						'apellidoM_titularVc' => $datos_tc['apellidoM_titularVc'],
@@ -42,10 +41,10 @@ class Direccion_Facturacion_model extends CI_Model {
 						
 		$resultado = $this->db->get_where('CMS_IntDireccion', $campos);
 		
-		if($resultado->num_rows() > 0)
-		{
+		if($resultado->num_rows() > 0){
 			return TRUE;
-		} else {
+		} 
+		else {
 			return FALSE;
 		}
 	}
@@ -59,8 +58,7 @@ class Direccion_Facturacion_model extends CI_Model {
 	/**
 	 * Devuelve el consecutivo actual del cliente
 	 */
-	function get_consecutivo($id_cliente) 
-	{
+	function get_consecutivo($id_cliente){
 		$this->db->select_max('id_consecutivoSi', 'consecutivo');
 		$resultado = $this->db->get_where('CMS_IntDireccion', array('id_clienteIn' => $id_cliente));
 		$row = $resultado->row();	//regresa un objeto
@@ -69,16 +67,11 @@ class Direccion_Facturacion_model extends CI_Model {
 			return 0;
 		} else {
 			return $row->consecutivo;	
-		}
-		//echo " numrows: $resultado->num_rows<br/>";
-		//var_dump($resultado->row());
+		}		
 	}
 	
-	function insertar_direccion($direccion)
-    {
-    	//var_dump($direccion);
-        $resultado = $this->db->insert('CMS_IntDireccion', $direccion);		//true si se inserta
-        //echo '<bt/>Resultado: '.$resultado;
+	function insertar_direccion($direccion){    	
+        $resultado = $this->db->insert('CMS_IntDireccion', $direccion);		//true si se inserta        
         return $resultado;
     }
 	
@@ -92,4 +85,34 @@ class Direccion_Facturacion_model extends CI_Model {
 		}		
 	}	
 	
+	function obtener_direccion($id_cliente, $id_consecutivo){
+		$this->db->select('id_consecutivoSi, address_type, id_clienteIn, company, 
+			tax_id_number as rfc,
+			address1 as calle, 
+			address2 as num_ext, 
+			address3 as colonia, 
+			address4 as num_int,
+			zip as cp, 
+			state as estado, 
+			city as ciudad, 
+			codigo_paisVC as pais,	
+			id_estatusSi as estatus,		
+			email');
+			
+		$this->db->where(array(	'id_consecutivoSi' => $id_consecutivo, 'id_clienteIn' => $id_cliente));		        		
+		$resultado = $this->db->get('CMS_IntDireccion');
+		$row = $resultado->row();     
+		return $row;  		
+	}
+	
+	function actualizar_direccion($id_cliente, $id_consecutivo,$datos){		
+		$this->db->where(array(	'id_consecutivoSi' => $id_consecutivo, 'id_clienteIn' => $id_cliente));
+		$resultado = $this->db->update('CMS_IntDireccion', $datos);
+		if($resultado) {
+			return "actualizacion.";
+		} 
+		else {
+			return "Error al tratar de actualizar la tarjeta.";
+		}	
+	}		
 }

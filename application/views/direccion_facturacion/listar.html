@@ -13,7 +13,8 @@
 			<div class="column_header">Calle y n&uacute;mero</div>
 			<div class="column_header">Colonia</div>
 			<div class="column_header">CP</div>
-			<div class="column_header">Ciudad y Esado</div>
+			<div class="column_header">Ciudad y Estado</div>
+			<div class="column_header">E-mail</div>
 			<div class="column_header">&nbsp;</div>
 			<div class="column_header">&nbsp;</div>
 		</div>
@@ -30,6 +31,7 @@
 				<li><?php echo $direccion['colonia']; ?></li> 
 				<li><?php echo $direccion['cp']; ?> </li>	
 				<li><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
+				<li><?php echo $direccion['email'] ; ?></li>
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a></li>
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a></li>
 			</ul>
