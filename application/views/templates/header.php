@@ -110,7 +110,7 @@
 		}
 
 		.column_header {
-			width: 12%;	/*160px*/
+			width: 10%;	/*160px*/
 			font-weight: bold;
 			padding: 4px 0px 4px 4px;
 			float: left;
@@ -135,7 +135,7 @@
 		}
 		
 		#list_results  ul li{
-			width: 12%;		/*145px;*/
+			width: 10%;		/*145px;*/
 			padding: 4px 0px 4px 4px;
 			list-style-type: none;
 			display: inline;
