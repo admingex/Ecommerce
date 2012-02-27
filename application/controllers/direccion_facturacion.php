@@ -1,8 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Direccion_Facturacion extends CI_Controller {
-	var $title = 'Direcci&oacute;n de Facturaci&oacute;n'; 		// Capitalize the first letter
-	var $subtitle = 'Direcci&oacute;n de Facturaci&oacute;n'; 	// Capitalize the first letter
+	var $title = 'Direcci&oacute;n de Facturaci&oacute;n'; 		
+	var $subtitle = 'Direcci&oacute;n de Facturaci&oacute;n'; 	
+	var $mensaje= '';					
 	var $reg_errores = array();		//validación para los errores
 	
 	private $id_cliente;	
@@ -13,8 +14,7 @@ class Direccion_Facturacion extends CI_Controller {
 		"OTHER"		=>	2
 	);
 	 
-	function __construct()
-    {
+	function __construct(){
         // Call the Model constructor
         parent::__construct();
 		
@@ -30,13 +30,11 @@ class Direccion_Facturacion extends CI_Controller {
 		$this->id_cliente = $this->session->userdata('id_cliente');
     }
 
-	public function index()	//Para pruebas se usa 1
-	{		
+	public function index(){		
 		$this->listar();
 	}
 	
-	public function listar($msg = '') 
-	{					
+	public function listar($msg = ''){					
 		//EL usuario se tomará de la sesión...		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;		
@@ -54,6 +52,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$consecutivo = $this->modelo->get_consecutivo($id_cliente);		
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
+		$data['mensaje']='';
 		
 		//catálogo de paises de think
 		$lista_paises_think = $this->modelo->listar_paises_think();
@@ -67,158 +66,162 @@ class Direccion_Facturacion extends CI_Controller {
 		if ($_POST)	{	//si hay parámetros del formulario			
 											
 			$form_values = array();	//alojará los datos previos a la inserción	
-			$form_values = $this->get_datos_direccion();
+			$form_values = $this->get_datos_direccion();			
 						
 			$form_values['direccion']['id_clienteIn'] = $id_cliente;
 			$form_values['direccion']['id_consecutivoSi'] = $consecutivo + 1;		//cambió
 			$form_values['direccion']['address_type'] = self::$TIPO_DIR['BUSINESS'];		//address_type
-								
-			//var_dump($form_values);
-									
-			if (isset($form_values['guardar']) || isset($form_values['direccion']['id_estatusSi'])) {
-																				
-				if ($this->modelo->insertar_direccion($form_values['direccion'])) {
-					$this->listar("Direcci&oacute;n registrada.");
-				} 
-				else {
-					$this->listar("Hubo un error en el registro en CMS.");
-					echo "<br/>Hubo un error en el registro en CMS";
-				}										
-			} 
 			
+			
+			if(empty($this->reg_errores)){
+			    if (isset($form_values['direccion']['id_estatusSi'])) {
+																				
+					if ($this->modelo->insertar_direccion($form_values['direccion'])) {
+						$this->listar("Direcci&oacute;n registrada.");
+					} 
+					else {
+						$this->listar("Hubo un error en el registro en CMS.");
+						echo "<br/>Hubo un error en el registro en CMS";
+					}										
+				} 	
+			}	
+			else{								
+				$data['reg_errores'] = $this->reg_errores;				
+				$this->cargar_vista('', 'direccion_facturacion' , $data);	
+			}														
+					
 		} 
 		else {
 			$this->cargar_vista('', 'direccion_facturacion' , $data);
 		}
 	}
 
-	public function editar($consecutivo)	//el consecutivo de la tarjeta
-	{
-		$id_cliente = $this->id_cliente;
-		
-		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
-		
-		//recuperar la información local de la tc
-		$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
-		//Siempre se trae la info para tc
-		$data['tarjeta_tc'] = $detalle_tarjeta;
-		//var_dump($detalle_tarjeta);
-		//exit();
-		
-		//array par al anueva información
-		$nueva_info = array();
-		
-		if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
-			$data['vista_detalle'] = 'amex';
-			$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
-			//en este caso se consultará la info del WS
-		} else  {	
-			//Si no es de tipo American Express, trae la info de la base local
-			//y especificat el tipo de la tarjeta y el numero.
-			$data['vista_detalle'] = 'tc';
-		}
-
-		//Se intentará actualizar la información
-		if ($_POST) {
-			$tipo_tarjeta = $data['vista_detalle'];
-			//trae datos del formulario para actualizar
-			//echo "Se va a editar.";
-			$nueva_info = $this->get_datos_tarjeta($tipo_tarjeta);	//tc/amex
+	public function editar($consecutivo = ''){
 			
-			//errores
-			$data['reg_errores'] = $this->reg_errores;	
-			
-			if (empty($data['reg_errores'])) {	//si no hubo errores
-				//preparar la petición al WS, campos comunes
-				$nueva_info['tc']['id_clienteIn'] = $id_cliente;
-				$nueva_info['tc']['id_TCSi'] = $consecutivo;
-				$nueva_info['tc']['terminacion_tarjetaVc'] = $detalle_tarjeta->terminacion_tarjetaVc;
-				//Preparación de la sol.
-				if ($tipo_tarjeta == 'tc') {
-					$nueva_info['amex'] = null;		
-					$nueva_info['tc']['id_tipo_tarjetaSi'] = $detalle_tarjeta->id_tipo_tarjetaSi;
-					
-				} else {
-					$nueva_info['amex']['id_clienteIn'] = $id_cliente;
-					$nueva_info['amex']['id_TCSi'] = $consecutivo;
-				}
-				//var_dump($nueva_info);
-				//exit();
-				
-				//actualizar en CCTC
-				if($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
-				//if (1) {
-					//echo "Tarjeta actualizada en CCTC.<br/>";
-					//checar el estatus:
-					if (!isset($nueva_info['tc']['id_estatusSi'])) {	
-						//si no está como predeterminada se deja en activo
-						//echo "Activo!!!  ";
-						$nueva_info['tc']['id_estatusSi'] = 1;
-					}					
-					//registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
-					$data['msg_actualizacion'] = 
-						$this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
-				} else {
-					echo "Error de actualización hacia CCTC.<br/>";	//redirect					
-				}
-			} else {	//sí hubo errores
-				$data['msg_actualizacion'] = "Campos incorrectos";
-				//echo "<br/>Campos incorrectos.<br/>";
-				//var_dump($this->reg_errores);
+			$data['mensaje']='';
+			$data['editar'] = TRUE;
+			if($consecutivo){						
+				$id_cliente = $this->id_cliente;		
+				$data['title'] = $this->title;
+				$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
+				$data['consecutivo']=$consecutivo;
+	
+		
+				$datos_direccion = $this->modelo->obtener_direccion($id_cliente, $consecutivo);
+				$data['datos_direccion']=$datos_direccion;
+		
+				$lista_paises_think = $this->modelo->listar_paises_think();
+				$data['lista_paises_think'] = $lista_paises_think;
+																								
+				if($_POST){					
+					$form_values = array();	//alojará los datos previos a la inserción	
+					$form_values = $this->get_datos_direccion();	
+					if(empty($this->reg_errores)){									
+						$this->modelo->actualizar_direccion($id_cliente, $consecutivo, $form_values['direccion']);
+						$this->listar("Actualizacion correcta");
+					}
+					else{								
+						$data['reg_errores'] = $this->reg_errores;				
+						$this->cargar_vista('', 'direccion_facturacion' , $data);	
+					}
+																				
+				}	
+				else{
+					$this->cargar_vista('', 'direccion_facturacion', $data);	
+				}								
 			}
-			//print_r($nueva_info[$tipo_tarjeta]);
-		}//If POST
-		
-		$this->cargar_vista('', 'direccion_facturacion' , $data);
+			else{
+				$this->listar();
+			}					
 	}
 	
 	public function eliminar($consecutivo = ''){		
 		$id_cliente = $this->id_cliente;
-		$data['title'] = $this->title;
+		$data['title'] = $this->title;		
 		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
 		$this->modelo->eliminar_direccion($id_cliente, $consecutivo);
-		$this->listar();
-		
+		$this->listar('Registro eliminado');		
 	}
 	
 	
-private function get_datos_direccion(){
-	$datos = array();		 
-	if($_POST) {
-			
-		$datos['direccion']['tax_id_number'] = $_POST['txt_rfc'];
-		$datos['direccion']['company'] = $_POST['txt_razon_social'];		
-		$datos['direccion']['address1'] = $_POST['txt_calle'];							
-		$datos['direccion']['address2'] = $_POST['txt_numero'];
-		$datos['direccion']['address3'] = $_POST['txt_colonia'];				
-		$datos['direccion']['address4'] = $_POST['txt_num_int'];
-		$datos['direccion']['zip'] = $_POST['txt_cp'];					
-		$datos['direccion']['state'] = $_POST['txt_estado'];
-		$datos['direccion']['city'] = $_POST['txt_ciudad'];
-		$datos['direccion']['email'] = $_POST['txt_email'];				
-									
+	private function get_datos_direccion(){
+		$datos = array();		 		
+		
+		if($_POST['txt_rfc']!=""){
+			$datos['direccion']['tax_id_number'] = $_POST['txt_rfc'];
+		}			
+		else{
+			$this->reg_errores['txt_rfc'] = 'Por favor ingrese un rfc';				
+		}
+		if($_POST['txt_razon_social']!=""){
+			$datos['direccion']['company'] = $_POST['txt_razon_social'];
+		}
+		else{
+			$this->reg_errores['txt_razon_social'] = 'Por favor ingrese una razón social';
+		}
+		if($_POST['txt_calle']!=""){
+			$datos['direccion']['address1'] = $_POST['txt_calle'];
+		}
+		else{
+			$this->reg_errores['txt_calle'] = 'Por favor ingrese una calle valida';
+		}
+		if($_POST['txt_numero']!=""){
+			$datos['direccion']['address2'] = $_POST['txt_numero'];
+		}
+		else{
+			$this->reg_errores['txt_numero'] = 'Por favor ingrese un numero';
+		}
+		if($_POST['txt_cp']!=""){
+			$datos['direccion']['zip'] = $_POST['txt_cp'];
+		}
+		else{
+			$this->reg_errores['txt_cp'] = 'Por favor ingrese un codigo postal valido';
+		}
+		if($_POST['txt_colonia']!=""){
+			$datos['direccion']['address3'] = $_POST['txt_colonia'];
+		}
+		else{
+			$this->reg_errores['txt_colonia'] = 'Por favor ingrese una colonia valida';
+		}
+		if($_POST['txt_ciudad']!=""){
+			$datos['direccion']['city'] = $_POST['txt_ciudad'];
+		}
+		else{
+			$this->reg_errores['txt_ciudad'] = 'Por favor ingrese una ciudad valida';
+		}
+		if($_POST['txt_estado']!=""){
+			$datos['direccion']['state'] = $_POST['txt_estado'];
+		}
+		else{
+			$this->reg_errores['txt_estado'] = 'Por favor ingrese un estado valido';
+		}				
+		if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/', $_POST['txt_email'])) {    		
+			$datos['direccion']['email'] = $_POST['txt_email'];					
+		}  	
+		else{
+			$this->reg_errores['txt_email'] = 'Por favor ingrese una correo valida';
+		}								
+		$datos['direccion']['address4'] = $_POST['txt_num_int'];			
+		$datos['direccion']['codigo_paisVC'] = $_POST['sel_pais'];	
+		
 		if (array_key_exists('chk_guardar', $_POST)) {
-			$datos['guardar'] = $_POST['chk_guardar'];	//indicador para saber si se guarda o no la tarjeta
-			$datos['direccion']['id_estatusSi'] = 1;
-		}
+			$datos['direccion']['id_estatusSi'] = 1;							
+		}			
+																
 		if (array_key_exists('chk_default', $_POST)) {
-				$datos['direccion']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada					
-		}
-	} 		
-	return $datos;
-}
+			$datos['direccion']['id_estatusSi'] = 3;	//indica que será la direccion de facturacion predeterminada					
+		}																 	
+		return $datos;
+	}
 				
-	private function cargar_vista($folder, $page, $data)
-	{	
+	private function cargar_vista($folder, $page, $data){	
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
 	}
 	
-	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') 
-	{
+	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://'){
 		if (!$this->session->userdata($revisar)) {
 			//$url = $protocolo . BASE_URL . $destination; // Define the URL.
 			$url = $this->config->item('base_url') . $destino; // Define the URL.
@@ -226,7 +229,6 @@ private function get_datos_direccion(){
 			exit(); // Quit the script.
 		}
 	}
-
 }
 
 /* End of file direccion_facturacion.php */
