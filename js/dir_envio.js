@@ -7,7 +7,6 @@ $(document).ready(function() {
 	$("#btn_cp").ajaxError(function() {
 	//	alert('Error Handler invoked when an error ocurs!');		//Ok
 	});
-	
 	//cargar el catálogo de estados
 	/* 
 	$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/get_estados",
@@ -18,7 +17,33 @@ $(document).ready(function() {
 		}
 	);
 	*/
+	
+	/*Ocultar campos abiertos de estado, ciudad, colonia*/
+	$('#div_otro_pais').hide();
+	
+	
 	//onChange:
+	$('#sel_pais').change(function() {
+		/*hacer un toggle*/
+		var es_mx = false; 
+		$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/es_mexico/" + $(this).val(),
+			function(data) {
+				//alert("es Mexico: " + data.result + "param: " + data.param);
+				if (!data.result) {
+					$('#div_mexico').hide();
+					$('#div_otro_pais').show();
+				} else {
+					$('#div_mexico').show();
+					$('#div_otro_pais').hide();
+				}
+			}
+		);
+		
+		//if ()
+		//alert("sel value: " + $(this).val());
+	});
+	
+	
 	$('#sel_estados').change(function() {
 		//actualizar ciudad y colonia
 		var clave_estado = $("#sel_estados option:selected").val();
@@ -47,7 +72,6 @@ $(document).ready(function() {
 		
 		actualizar_cp(clave_estado, ciudad, colonia);
 	});
-
 	
 	//con el botón de llenar sólo se recupera y selecciona edo. y ciudad
 	$("#btn_cp").click(function() {
@@ -161,6 +185,8 @@ $(document).ready(function() {
 		});
 	});
 	
+	
+	
 	//submit validation
 	$("form[id='form_direccion_envio']").submit(function(event) {
 		//event.preventDefault();
@@ -175,18 +201,20 @@ function actualizar_ciudades(clave_estado) {
 			var ciudades = datos.ciudades;
 			
 			$("#sel_ciudades").empty();
-			
-			if (ciudades.length == undefined) {	//DF sólo devuelve un obj de ciudad.
-				$("<option></option>").attr("value", ciudades.clave_ciudad).html(ciudades.ciudad).appendTo("#sel_ciudades");
-				$("#sel_ciudades").trigger('change');	//trigger cities' change event
-			} else {							//ciudades.length == 'undefined'
-				$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_ciudades");
-				$.each(ciudades, function(indice, ciudad) {
-					if (ciudad.clave_ciudad != '') {
-					
-						$("<option></option>").attr("value", ciudad.clave_ciudad).html(ciudad.ciudad).appendTo("#sel_ciudades");
-					}
-				});
+			$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_ciudades");
+			if (ciudades != null) {
+				if (ciudades.length == undefined) {	//DF sólo devuelve un obj de ciudad.
+					$("<option></option>").attr("value", ciudades.clave_ciudad).html(ciudades.ciudad).appendTo("#sel_ciudades");
+					$("#sel_ciudades").trigger('change');	//trigger cities' change event
+				} else {							//ciudades.length == 'undefined'
+					$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_ciudades");
+					$.each(ciudades, function(indice, ciudad) {
+						if (ciudad.clave_ciudad != '') {
+						
+							$("<option></option>").attr("value", ciudad.clave_ciudad).html(ciudad.ciudad).appendTo("#sel_ciudades");
+						}
+					});
+				}
 			}
 		}, 
 		"json"
@@ -202,10 +230,11 @@ function actualizar_colonias(clave_estado, ciudad) {
 			
 			$("#sel_colonias").empty();
 			$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_colonias");
-			
-			$.each(colonias, function(indice, colonia) {
-				$("<option></option>").attr("value", colonia.colonia).html(colonia.colonia).appendTo("#sel_colonias");
-			});
+			if (colonias != null) {
+				$.each(colonias, function(indice, colonia) {
+					$("<option></option>").attr("value", colonia.colonia).html(colonia.colonia).appendTo("#sel_colonias");
+				});
+			}
 			//seleecionar la ciudad seleccionada
 			//$("#sel_ciudades").val(ciudad);
 		}, 
@@ -230,3 +259,22 @@ function actualizar_cp(clave_estado, ciudad, colonia) {
 	);
 }
 
+function carga_detalles_sepomex() {
+	/*Para la edición*/
+	/*
+	var form_edicion = $('#form_editar_direccion_envio');
+	
+	if (form_edicion.length != 0) {
+		//$('#btn_cp').click();
+		//od.
+		//carga_detalles_sepomex();
+	}*/
+	var edo = $('#sel_estados');
+	var cp = $('#txt_cp');
+	$('#btn_cp').trigger('click');
+	
+	if (edo.val() != '') {
+		//$('#sel_estados').trigger('change');		
+	}
+	
+}

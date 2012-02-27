@@ -57,107 +57,116 @@
 				
 				<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
 			</div>
-			<div class="item_requerid">Estado:</div>
-			<div class="form_requerid">
-<<<<<<< HEAD
-				<input type="text" name="sel_estado" value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>" size="30" />				
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_estado'])) echo ($reg_errores['sel_estado']);?></span>
-=======
-				<!--input type="text" name="txt_estado" id="txt_estado" size="30"
-					value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/-->
-				<select id="sel_estados" name="sel_estados">
-					<option value="">Seleccionar</option>
-					<?php
-					if (isset($lista_estados_sepomex)) {
-						$clave_estado = "";
-						if (isset($_POST['sel_estados']))
-							$clave_estado = $_POST['sel_estados'];
-						foreach($lista_estados_sepomex as $estado)
-						{
-							if ($clave_estado == $estado->clave_estado) {
-								echo "<option value='".$estado->clave_estado."' selected='true'>".
-									$estado->estado.
-									"</option>";
-							} else {
-								echo "<option value='".$estado->clave_estado."'>".
-									$estado->estado.
-									"</option>";
-							}
-						}
-					}
-					?>
-				</select>
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_estados'])) echo ($reg_errores['sel_estados']);?></span>
->>>>>>> origin/master
+			<div id="div_otro_pais">
+				<div class="item_requerid">Estado:</div>
+				<div class="form_requerid">
+					<input type="text" name="txt_estado" id="txt_estado" size="30"
+						value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
+					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
+				</div>			
+				<div class="item_requerid">Ciudad:</div>
+				<div class="form_requerid">
+					<input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
+						value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
+					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
+				</div>
+				<div class="item_requerid">Colonia:</div>
+				<div class="form_requerid">
+					<input type="text" name="txt_colonia" id="txt_colonia" size="30"
+						value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/>
+					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?></span>
+				</div>
 			</div>
-			
-			<div class="item_requerid">Ciudad:</div>
-			<div class="form_requerid">
-<<<<<<< HEAD
-				<input type="text" name="sel_ciudad" value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>" />				
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_ciudad'])) echo ($reg_errores['sel_ciudad']);?></span>
-=======
-				<!--input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
-					value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/-->
-				<select id="sel_ciudades" name="sel_ciudades">
-					<option value="">Seleccionar</option>
-					<?php
-					if (isset($lista_ciudades_sepomex)) {
-						$clave_ciudad = "";
-						if (isset($_POST['sel_ciudades']))
-							$clave_ciudad = $_POST['sel_ciudades'];
-						
-						//echo gettype($lista_ciudades_sepomex) ==   'object';
-						//excepcion del DF
-						if (gettype($lista_ciudades_sepomex) == 'object') {
-							echo "<option value='". $lista_ciudades_sepomex->clave_ciudad. "' selected='true'>".
-									$lista_ciudades_sepomex->ciudad.
-									"</option>";
-						} else {
-							foreach($lista_ciudades_sepomex as $ciudad)
+			<div id="div_mexico">
+				<div class="item_requerid">Estado:</div>
+				<div class="form_requerid">
+					<!--input type="text" name="txt_estado" id="txt_estado" size="30"
+						value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/-->
+					<select id="sel_estados" name="sel_estados">
+						<option value="">Seleccionar</option>
+						<?php
+						if (isset($lista_estados_sepomex)) {
+							$clave_estado = "";
+							if (isset($_POST['sel_estados']))
+								$clave_estado = $_POST['sel_estados'];
+							foreach($lista_estados_sepomex as $estado)
 							{
-								if ($clave_ciudad == $ciudad->clave_ciudad) {
-									echo "<option value='". $ciudad->clave_ciudad. "' selected='true'>".
-										$ciudad->ciudad.
+								if ($clave_estado == $estado->clave_estado) {
+									echo "<option value='".$estado->clave_estado."' selected='true'>".
+										$estado->estado.
 										"</option>";
-								} else if ($ciudad->ciudad != ''){
-									echo "<option value='". $ciudad->clave_ciudad. "'>".
-										$ciudad->ciudad.
+								} else {
+									echo "<option value='".$estado->clave_estado."'>".
+										$estado->estado.
 										"</option>";
 								}
 							}
 						}
-					}
-					?>
-				</select>
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_ciudades'])) echo ($reg_errores['sel_ciudades']);?></span>
->>>>>>> origin/master
-			</div>
-			<div class="item_requerid">Colonia:</div>
-			<div class="form_requerid">
-				<select id="sel_colonias" name="sel_colonias">
-					<option value="">Seleccionar</option>
-					<?php
-					if (isset($lista_colonias_sepomex)) {
-						$id_ciudad = "";
-						if (isset($_POST['sel_colonias']))
-							$id_colonia = $_POST['sel_colonias'];
-						foreach($lista_colonias_sepomex as $colonia)
-						{
-							if ($id_colonia == $colonia->colonia) {
-								echo "<option value='".$colonia->colonia."' selected='true'>".
-									$colonia->colonia.
-									"</option>";
+						?>
+					</select>
+					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_estados'])) echo ($reg_errores['sel_estados']);?></span>
+				</div>
+				<div class="item_requerid">Ciudad:</div>
+				<div class="form_requerid">
+					<select id="sel_ciudades" name="sel_ciudades">
+						<option value="">Seleccionar</option>
+						<?php
+						if (isset($lista_ciudades_sepomex)) {
+							$clave_ciudad = "";
+							if (isset($_POST['sel_ciudades']))
+								$clave_ciudad = $_POST['sel_ciudades'];
+							
+							//echo gettype($lista_ciudades_sepomex) ==   'object';
+							//excepcion del DF
+							if (gettype($lista_ciudades_sepomex) == 'object') {
+								echo "<option value='". $lista_ciudades_sepomex->clave_ciudad. "' selected='true'>".
+										$lista_ciudades_sepomex->ciudad.
+										"</option>";
 							} else {
-								echo "<option value='".$colonia->colonia."'>".
-									$colonia->colonia.
-									"</option>";
+								foreach($lista_ciudades_sepomex as $ciudad)
+								{
+									if ($clave_ciudad == $ciudad->clave_ciudad) {
+										echo "<option value='". $ciudad->clave_ciudad. "' selected='true'>".
+											$ciudad->ciudad.
+											"</option>";
+									} else if ($ciudad->ciudad != ''){
+										echo "<option value='". $ciudad->clave_ciudad. "'>".
+											$ciudad->ciudad.
+											"</option>";
+									}
+								}
 							}
 						}
-					}
-					?>
-				</select>
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_colonias'])) echo ($reg_errores['sel_colonias']);?></span>
+						?>
+					</select>
+					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_ciudades'])) echo ($reg_errores['sel_ciudades']);?></span>
+				</div>
+				<div class="item_requerid">Colonia:</div>
+				<div class="form_requerid">
+					<select id="sel_colonias" name="sel_colonias">
+						<option value="">Seleccionar</option>
+						<?php
+						if (isset($lista_colonias_sepomex)) {
+							$id_ciudad = "";
+							if (isset($_POST['sel_colonias']))
+								$id_colonia = $_POST['sel_colonias'];
+							foreach($lista_colonias_sepomex as $colonia)
+							{
+								if ($id_colonia == $colonia->colonia) {
+									echo "<option value='".$colonia->colonia."' selected='true'>".
+										$colonia->colonia.
+										"</option>";
+								} else {
+									echo "<option value='".$colonia->colonia."'>".
+										$colonia->colonia.
+										"</option>";
+								}
+							}
+						}
+						?>
+					</select>
+					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_colonias'])) echo ($reg_errores['sel_colonias']);?></span>
+				</div>
 			</div>
 			<div class="item_requerid">Tel&eacute;fono:</div>
 			<div class="form_requerid">
@@ -172,10 +181,9 @@
 				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
 			</div>
 			<div class="item_requerid">Referencia:</div>
-			<div class="form_requerid">
-				
+			<div class="form_requerid">		
 				<textarea type="text" name="txt_referencia" id="txt_referencia" cols="30" >
-					<?php if(isset($_POST['txt_num_int'])) echo htmlspecialchars($_POST['txt_num_int']);?>
+					<?php if(isset($_POST['txt_referencia'])) echo htmlspecialchars($_POST['txt_referencia']);?>
 				</textarea>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_referencia'])) echo ($reg_errores['txt_referencia']);?></span>
 			</div>	

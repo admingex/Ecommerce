@@ -5,12 +5,8 @@
 		<a href="<?php echo $this->config->item('base_url'); ?>/index.php/logout/">Cerrar Sesi&oacute;n</a>
 	</div>
 	<?php
-		if (isset($vista_detalle)) {	//Tipo de detalle a desplegar
-			if($vista_detalle == 'tc') {
-				include ('direccion_envio/editar.html'); 	
-			} else if ($vista_detalle == 'amex') {
-				include ('direccion_envio/editar_amex.html');
-			}
+		if (isset($direccion)) {	//detalle a desplegar
+			include ('direccion_envio/editar.html'); 
 		} else {
 	 		include ('direccion_envio/listar.html');
 			

@@ -4,6 +4,7 @@ class Direccion_Envio extends CI_Controller {
 	var $title = 'Direcci&oacute;n de Env&iacute;o'; 		// Capitalize the first letter
 	var $subtitle = 'Direcci&oacute;n de Env&iacute;o'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
+	const CODIGO_MEXICO = "MX";		//constante para verificar el código del país en el efecto del JS.
 	
 	public static $TIPO_DIR = array(
 		"RESIDENCE"	=> 0, 
@@ -68,11 +69,11 @@ class Direccion_Envio extends CI_Controller {
 	}
 	
 	public function registrar() 
-	{
-		//echo 'Session: '.$this->session->userdata('id_cliente');
-		
+	{	
 		$id_cliente = $this->id_cliente;
-		
+		/*agregar el script para este formulario*/
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'></script>";
+		$data['script'] = $script_file;
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
@@ -88,12 +89,8 @@ class Direccion_Envio extends CI_Controller {
 		$lista_estados = $this->consulta_estados();		
 		$data['lista_estados_sepomex'] = $lista_estados['estados'];
 		
-		
 		$data['registrar'] = TRUE;		//se debe mostrar formulario de registro
-		/*agregar el script para este formulario*/
-		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'> </script>";
-		$data['script'] = $script_file;
-		
+				
 		if ($_POST)	{	
 			//Petición de registro
 			$consecutivo = $this->modelo->get_consecutivo($id_cliente);			
@@ -166,95 +163,88 @@ class Direccion_Envio extends CI_Controller {
 	public function editar($consecutivo)	//el consecutivo de la direccion
 	{
 		$id_cliente = $this->id_cliente;
+		//inclusión de Scripts
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'></script>";
+		$data['script'] = $script_file;
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
+		$data['subtitle'] =  $this->subtitle;
+		//$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
 		
 		//recuperar la información de la dirección
 		$detalle_direccion = $this->modelo->detalle_direccion($consecutivo, $id_cliente);
 		$data['direccion'] = $detalle_direccion;
-				
-		//array para la nueva información
-		$nueva_info = array();
 		
-		var_dump($detalle_direccion);
-		exit();
+		//catálogo de paises de think
+		$lista_paises_think = $this->modelo->listar_paises_think();
+		$data['lista_paises_think'] = $lista_paises_think;
+		
+		/*muestra lo de sepomex*/
+		//catalogo de estados
+		$lista_estados = $this->consulta_estados();		
+		$data['lista_estados_sepomex'] = $lista_estados['estados'];
+		//ciudades		
+		$lista_ciudades = $this->consulta_ciudades($detalle_direccion->state);		
+		$data['lista_ciudades_sepomex'] = $lista_ciudades['ciudades'];
+		//colonias
+		$lista_colonias = $this->consulta_colonias($detalle_direccion->state, $detalle_direccion->city);		
+		$data['lista_colonias_sepomex'] = $lista_colonias['colonias'];
+		
 		//Se intentará actualizar la información
-		if ($_POST) {
-			$tipo_tarjeta = $data['vista_detalle'];
+		if ($_POST) {			
+			//array para la nueva información
+			$nueva_info = array();
 			//trae datos del formulario para actualizar
-			//echo "Se va a editar.";
-			$nueva_info = $this->get_datos_tarjeta($tipo_tarjeta);	//tc/amex
+			$nueva_info = $this->get_datos_direccion();
 			
-			//errores
-			$data['reg_errores'] = $this->reg_errores;	
+			if (empty($this->reg_errores)) {	//si no hubo errores
 			
-			if (empty($data['reg_errores'])) {	//si no hubo errores
-				//preparar la petición al WS, campos comunes
-				$nueva_info['tc']['id_clienteIn'] = $id_cliente;
-				$nueva_info['tc']['id_TCSi'] = $consecutivo;
-				$nueva_info['tc']['terminacion_tarjetaVc'] = $detalle_tarjeta->terminacion_tarjetaVc;
-				//Preparación de la sol.
-				if ($tipo_tarjeta == 'tc') {
-					$nueva_info['amex'] = null;		
-					$nueva_info['tc']['id_tipo_tarjetaSi'] = $detalle_tarjeta->id_tipo_tarjetaSi;
-					
-				} else {
-					$nueva_info['amex']['id_clienteIn'] = $id_cliente;
-					$nueva_info['amex']['id_TCSi'] = $consecutivo;
-				}
+				$nueva_info['direccion']['id_clienteIn'] = $id_cliente;
+				$nueva_info['direccion']['id_consecutivoSi'] = $consecutivo;	//$this
+				
 				//var_dump($nueva_info);
 				//exit();
 				
-				//actualizar en CCTC
-				if($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
-				//if (1) {
-					//echo "Tarjeta actualizada en CCTC.<br/>";
-					//checar el estatus:
-					if (!isset($nueva_info['tc']['id_estatusSi'])) {	
-						//si no está como predeterminada se deja en activo
-						//echo "Activo!!!  ";
-						$nueva_info['tc']['id_estatusSi'] = 1;
-					}					
-					//registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
-					$data['msg_actualizacion'] = 
-						$this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
-				} else {
-					echo "Error de actualización hacia CCTC.<br/>";	//redirect					
-				}
+				$data['msg_actualizacion'] = 
+					$this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
+				//Actualiza y muestra de nuevo el formulario y el mensaje con el resultado de la actualización
 			} else {	//sí hubo errores
-				$data['msg_actualizacion'] = "Campos incorrectos";
-			}
-			//print_r($nueva_info[$tipo_tarjeta]);
+				$data['msg_actualizacion'] = "Campos incorrectos!!";
+				$data['reg_errores'] = $this->reg_errores;
+			}	//ERRORES FORMULARIO
 		}//If POST
 		
 		$this->cargar_vista('', 'direccion_envio' , $data);
 	}
 	
-	public function eliminar($consecutivo = '')
+	/**
+	 * Eliminación lógica de la dirección en la BD
+	 */
+	public function eliminar($consecutivo=0)
 	{
 		$id_cliente = $this->id_cliente;
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
 		
-		//exit();
-		if ($this->eliminar_tarjeta_CCTC($id_cliente, $consecutivo)) {
-		//if (1) {
-			//echo "Eliminado correctamente de CCTC";
-			//eliminar lógicamente en la bd local
-			$msg_eliminacion =
-				$this->modelo->eliminar_tarjeta($id_cliente, $consecutivo);
-		} else {
-			//echo "no se pudo eliminar correctamente de CCTC";
-			$msg_eliminacion = "no se pudo eliminar correctamente de CCTC";
-		}
-		/*Pendiente el Redirect*/
-		//echo "<br/>se eliminó la tarjeta $consecutivo del cliente $id_cliente<br/>";
+		$msg_eliminacion =
+			$this->modelo->eliminar_direccion($id_cliente, $consecutivo);
+	
+		/*Pendiente el Redirect hacia la dirección de Facturación*/
 		//echo $data['msg_eliminacion´];
 		
-		//cargar la lista
-		$this->listar($id_cliente, $msg_eliminacion);
-		//$this->cargar_vista('', 'direccion_envio' , $data);
+		//cargar la lista de direeciones
+		$this->listar($msg_eliminacion);
+	}
+	
+	/**
+	 * Verifica si el código de país corresponde con el de México o no
+	 */
+	public function es_mexico($codigo_pais="") {
+		//$codigo_pais = ['codigo_pais'];
+		$r = ($codigo_pais == self::CODIGO_MEXICO) ? TRUE : FALSE;
+		$es_mexico = array('result' => $r, 'param' => $codigo_pais);
+		
+		echo json_encode($es_mexico);
 	}
 	
 	
@@ -464,6 +454,10 @@ class Direccion_Envio extends CI_Controller {
 		}
 	}
 	
+	/**
+	 * Recoge los valores del formulario de edición
+	 * 
+	 */
 	private function get_datos_direccion()
 	{
 		$datos = array();

@@ -25,7 +25,7 @@ class Direccion_Envio_model extends CI_Model {
     }
     
 	/*
-	 * Devuelve el listado de las direcciones 
+	 * Devuelve el listado de las direcciones registradas del cliente
 	 * */
 	function listar_direcciones($id_cliente)
     {	
@@ -52,7 +52,7 @@ class Direccion_Envio_model extends CI_Model {
     }
 	
 	/**
-	 * Verifica que la dirección no esté duplicada
+	 * Verifica que la dirección que se quiere registrar no esté duplicada
 	 */
 	function existe_direccion($datos_dir)
 	{
@@ -79,7 +79,7 @@ class Direccion_Envio_model extends CI_Model {
 	}
 	
 	/**
-	 * Devuelve la lista de paises del catálogo de Think
+	 * Devuelve la lista de países del catálogo de Think
 	 * */
 	function listar_paises_think() {
 		$this->db->select('country_code2 as id_pais, country_name as pais');		
@@ -89,31 +89,31 @@ class Direccion_Envio_model extends CI_Model {
 	/**
 	 * Deshabilita de manera lógica la tarjeta especificada del cliente 
 	 */
-	function eliminar_tarjeta($id_cliente, $consecutivo)
+	function eliminar_direccion($id_cliente, $consecutivo)
 	{
 		$this->db->where(array(	'id_consecutivoSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
-		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => 2));
+		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => self::$CAT_ESTATUS['DESHABILITADA']));
 		if($resultado) {
-			return "Tarjeta eliminada.";
+			return "Direcci&oacute;n eliminada.";
 		} else {
-			return "Error al tratar de eliminar la tarjeta.";
+			return "Error al tratar de eliminar la direcci&oacute;n de env&iacute;o.";
 		}
 	}
 	
 	
 	/**
-	 * Actualiza la tarjeta especificada del cliente
+	 * Actualiza la información de la dirección especificada del cliente
 	 */
-	function actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info)
+	function actualiza_direccion($consecutivo, $id_cliente, $nueva_info)
 	{
 		$this->db->where(array(	'id_consecutivoSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', $nueva_info);
 		//echo "resultado".$resultado;
 		if($resultado) {
-			//echo "Tarjeta actualizada.";
-			return "Tarjeta actualizada.";
+			//echo "Direcci&oacute;n actualizada.";
+			return "Direcci&oacute;n actualizada.";
 		} else {
-			return "Error al tratar de actualizar la tarjeta.";
+			return "Error al tratar de actualizar la direcci&oacute;n de env&iacute;o.";
 		}
 	}
 	
@@ -141,7 +141,7 @@ class Direccion_Envio_model extends CI_Model {
 		if(!$row->consecutivo)	{//si regresa null
 			return 0;
 		} else {
-			return $row->consecutivo;	
+			return $row->consecutivo;
 		}
 		/*
 		 * consulta en mysql
@@ -152,6 +152,9 @@ class Direccion_Envio_model extends CI_Model {
 		
 	}
 	
+	/**
+	 * Inserta el registro en la BD
+	 */
 	function insertar_direccion($direccion)
     {
     	//var_dump($direccion);
