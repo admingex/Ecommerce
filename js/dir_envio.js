@@ -24,12 +24,11 @@ $(document).ready(function() {
 	
 	//onChange:
 	$('#sel_pais').change(function() {
-		/*hacer un toggle*/
+		/*hacer un toggle si es necesario*/
 		var es_mx = false; 
 		$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/es_mexico/" + $(this).val(),
-			function(data) {
-				//alert("es Mexico: " + data.result + "param: " + data.param);
-				if (!data.result) {
+			function(data) {			
+				if (!data.result) {	//no es México
 					$('#div_mexico').hide();
 					$('#div_otro_pais').show();
 				} else {
@@ -38,11 +37,7 @@ $(document).ready(function() {
 				}
 			}
 		);
-		
-		//if ()
-		//alert("sel value: " + $(this).val());
-	});
-	
+	}).change();	//se lanza al inicio de la carga para verificar al inicio
 	
 	$('#sel_estados').change(function() {
 		//actualizar ciudad y colonia
@@ -129,12 +124,13 @@ $(document).ready(function() {
 							var ciudades = datos.ciudades;
 							
 							$("#sel_ciudades").empty();
+							$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_ciudades");
 							
 							if (ciudades.length == undefined) {	//DF sólo devuelve un obj de ciudad.
 								$("<option></option>").attr("value", ciudades.clave_ciudad).html(ciudades.ciudad).appendTo("#sel_ciudades");
 								$("#sel_ciudades").trigger('change');	//trigger cities' change event
 							} else {							//ciudades.length == 'undefined'
-								$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_ciudades");
+								
 								$.each(ciudades, function(indice, ciudad) {
 									if (ciudad.clave_ciudad != '') {
 									
@@ -184,9 +180,8 @@ $(document).ready(function() {
 			cache: false
 		});
 	});
-	
-	
-	
+
+
 	//submit validation
 	$("form[id='form_direccion_envio']").submit(function(event) {
 		//event.preventDefault();
@@ -202,6 +197,7 @@ function actualizar_ciudades(clave_estado) {
 			
 			$("#sel_ciudades").empty();
 			$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_ciudades");
+			
 			if (ciudades != null) {
 				if (ciudades.length == undefined) {	//DF sólo devuelve un obj de ciudad.
 					$("<option></option>").attr("value", ciudades.clave_ciudad).html(ciudades.ciudad).appendTo("#sel_ciudades");
@@ -230,6 +226,7 @@ function actualizar_colonias(clave_estado, ciudad) {
 			
 			$("#sel_colonias").empty();
 			$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_colonias");
+			
 			if (colonias != null) {
 				$.each(colonias, function(indice, colonia) {
 					$("<option></option>").attr("value", colonia.colonia).html(colonia.colonia).appendTo("#sel_colonias");
@@ -276,5 +273,4 @@ function carga_detalles_sepomex() {
 	if (edo.val() != '') {
 		//$('#sel_estados').trigger('change');		
 	}
-	
 }

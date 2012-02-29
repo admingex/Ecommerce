@@ -273,13 +273,7 @@ class Direccion_Envio extends CI_Controller {
 			$simple_result = $obj_result->ObtenerEstadoResult;		
 			
 			$resultado['estados'] = $simple_result->InformacionEstado;
-			
-			
-			//echo var_dump($simple_result) . "<br/>";
-			foreach($resultado['estados'] as $estado) {
-				//echo $estado->clave_estado." -> " . $estado->estado . "<br/>";
-			}
-						
+									
 			$resultado['success'] = true;
 			$resultado['msg'] = "Ok";
 			
@@ -312,7 +306,7 @@ class Direccion_Envio extends CI_Controller {
 	}
 	
 	/*
-	 * Regresa un array con los resultados
+	 * Regresa un array con los resultados: cp, CIUDAD, Clave estado, ESTADO
 	 */
 	private function consulta_sepomex($codigo_postal)
 	{
@@ -334,14 +328,6 @@ class Direccion_Envio extends CI_Controller {
 			$resultado['success'] = true;
 			$resultado['msg'] = "Sepomex Ok";
 			
-			
-			/*if ($this->input->is_ajax_request())
-				$resultado['esAjax'] = "  Peticion Ajax";*/
-			
-			/*if (isset($_POST['codigo_postal']))
-				$cp = $_POST['codigo_postal'];
-			$resultado['cp'] = $cp;*/
-			
 			return $resultado;
 			
 		} catch (Exception $e)	{
@@ -362,7 +348,7 @@ class Direccion_Envio extends CI_Controller {
 	public function get_ciudades($estado = "")
 	{
 		$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
-		//echo "edo: ".$edo;
+		
 		echo json_encode($this->consulta_ciudades($estado));
 	}
 	
@@ -455,7 +441,7 @@ class Direccion_Envio extends CI_Controller {
 	}
 	
 	/**
-	 * Recoge los valores del formulario de edición
+	 * Recoge los valores del formulario de registro y edición
 	 * 
 	 */
 	private function get_datos_direccion()
@@ -503,26 +489,48 @@ class Direccion_Envio extends CI_Controller {
 				$this->reg_errores['sel_pais'] = 'Selecciona tu pa&iacute;s';
 			}
 			
-			if (!empty($_POST['sel_estados'])) {
-			//if(preg_match('/^[A-Z  \'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_estados'])) {
-				$datos['direccion']['state'] = $_POST['sel_estados'];
+			/*Mexico*/
+			if (!empty($_POST['sel_pais']) && $_POST['sel_pais'] == self::CODIGO_MEXICO)
+			{
+				if (!empty($_POST['sel_estados'])) {
+					$datos['direccion']['state'] = $_POST['sel_estados'];
+				} else {
+					$this->reg_errores['sel_estados'] = 'Selecciona tu estado';
+				}
+				if (!empty($_POST['sel_ciudades'])) {
+				//if(preg_match('/^[A-Z ()\'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_ciudades'])) {
+					$datos['direccion']['city'] = $_POST['sel_ciudades'];
+				} else {
+					$this->reg_errores['sel_ciudades'] = 'Selecciona tu ciudad';
+				}
+				if (!empty($_POST['sel_colonias'])) {
+				//if(preg_match('/^[A-Z0-9  \'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_colonias'])) {
+					$datos['direccion']['address3'] = $_POST['sel_colonias'];
+				} else {
+					$this->reg_errores['sel_colonias'] = 'Selecciona tu colonia';
+				}
 			} else {
-				$this->reg_errores['sel_estados'] = 'Selecciona tu estado';
-			}
-			if (!empty($_POST['sel_ciudades'])) {
-			//if(preg_match('/^[A-Z ()\'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_ciudades'])) {
-				$datos['direccion']['city'] = $_POST['sel_ciudades'];
-			} else {
-				$this->reg_errores['sel_ciudades'] = 'Selecciona tu ciudad';
+			/*otros paises*/
+				if (array_key_exists('txt_colonia', $_POST) && $_POST['txt_colonia']!=""){
+					$datos['direccion']['address3'] = $_POST['txt_colonia'];
+				}
+				else{
+					$this->reg_errores['txt_colonia'] = 'Por favor ingrese una colonia valida';
+				}
+				if (array_key_exists('txt_ciudad', $_POST) && $_POST['txt_ciudad']!=""){
+					$datos['direccion']['city'] = $_POST['txt_ciudad'];
+				}
+				else{
+					$this->reg_errores['txt_ciudad'] = 'Por favor ingrese una ciudad valida';
+				}
+				if (array_key_exists('txt_estado', $_POST) && $_POST['txt_estado']!=""){
+					$datos['direccion']['state'] = $_POST['txt_estado'];
+				}
+				else{
+					$this->reg_errores['txt_estado'] = 'Por favor ingrese un estado valido';
+				}	
 			}
 			
-			if (!empty($_POST['sel_colonias'])) {
-			//if(preg_match('/^[A-Z0-9  \'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_colonias'])) {
-				$datos['direccion']['address3'] = $_POST['sel_colonias'];
-			} else {
-				$this->reg_errores['sel_colonias'] = 'Selecciona tu colonia';
-			
-			}
 			
 			if (array_key_exists('txt_telefono', $_POST)) {
 				if(preg_match('/^[0-9 -]{2,15}$/i', $_POST['txt_telefono'])) {
