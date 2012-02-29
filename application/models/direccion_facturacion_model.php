@@ -1,5 +1,4 @@
 <?php
-include ('DTO/Tc_DTO.php');
 
 class Direccion_Facturacion_model extends CI_Model {
 	
@@ -29,23 +28,29 @@ class Direccion_Facturacion_model extends CI_Model {
 		return $resultado;           
     }
 	
-	function existe_direccion($datos_tc){
-		$campos = array('nombre_titularVc' 	=> 	$datos_tc['nombre_titularVc'], 
-						'apellidoP_titularVc' => $datos_tc['apellidoP_titularVc'],
-						'apellidoM_titularVc' => $datos_tc['apellidoM_titularVc'],
-						'mes_expiracionVc' 	=> 	$datos_tc['mes_expiracionVc'],
-						'anio_expiracionVc' => 	$datos_tc['anio_expiracionVc'],
-						'terminacion_tarjetaVc' =>	$datos_tc['terminacion_tarjetaVc'],
-						'id_tipo_tarjetaSi'	=>	$datos_tc['id_tipo_tarjetaSi'],						
-						'id_estatusSi !=' => 2);
-						
+	function existe_direccion($datos){		
+		$campos = array('id_clienteIn' 	=> 	$datos['id_clienteIn'], 
+						'address_type' => $datos['address_type'],
+						'address1' => $datos['address1'],		//calle
+						'address2' 	=> 	$datos['address2'],		//numero ext
+						'address3' => 	$datos['address3'],		//colonia
+						'address4' =>	$datos['address4'],		//num int
+						'zip' =>	$datos['zip'],				//cp
+						'state' =>	$datos['state'],
+						'city' =>	$datos['city'],
+						'email' =>	$datos['email'],
+						'tax_id_number' =>	$datos['tax_id_number'],
+						'company' =>	$datos['company'],
+						'codigo_paisVC' =>	$datos['codigo_paisVC']
+						);
+										
 		$resultado = $this->db->get_where('CMS_IntDireccion', $campos);
 		
-		if($resultado->num_rows() > 0){
-			return TRUE;
+		if($resultado->num_rows() == 0){
+			return FALSE;
 		} 
 		else {
-			return FALSE;
+			return TRUE;
 		}
 	}
 	
