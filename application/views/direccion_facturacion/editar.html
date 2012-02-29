@@ -3,7 +3,7 @@
 		<form id="form_direccion_envio" action="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar/'.$consecutivo?>" method="POST">
 			<div class="item_requerid">Nombre o Raz&oacute;n Social</div>
 			<div class="form_requerid">
-				<input type="text" name="txt_razon_social" id="txt_rfc" size="30"
+				<input type="text" name="txt_razon_social" id="txt_razon_social" size="30"
 					value="<?php if(isset($_POST['txt_razon_social'])) echo htmlspecialchars($_POST['txt_razon_social']); else echo  $datos_direccion->company;?>"/>
 				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_razon_social'])) echo ($reg_errores['txt_razon_social']);?></span>
 			</div>
@@ -84,7 +84,7 @@
 				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>				
 			</div>																							
 			<div class="form_button">
-				<input type="submit" id="guardar_tarjeta" value="Actuaizar direcci&oacute;n"/>
+				<input type="submit" id="guardar_direccion" value="Actuaizar direcci&oacute;n"/>
 			</div>	
 					
 		</form>
