@@ -16,5 +16,27 @@
 			}
 		} 
 	?>
+	<div id="scripts">
+		<script type="text/javascript">
+			$(function() {
+				// a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
+				$( "#dialog:ui-dialog" ).dialog( "destroy" );
+			
+				$( "#dialog-confirm" ).dialog({
+					resizable: false,
+					height:140,
+					modal: true,
+					buttons: {
+						"Delete all items": function() {
+							$( this ).dialog( "close" );
+						},
+						Cancel: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				});
+			});
+			</script>
+	</div>
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
 </div>
