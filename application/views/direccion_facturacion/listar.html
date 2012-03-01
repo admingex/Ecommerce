@@ -23,15 +23,24 @@
 			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {				
 				$direcciones = $lista_direcciones;
 				foreach($direcciones->result_array() as $direccion) {
+					if ($direccion['id_estatusSi']==3){
+						$check="checked='checked'";
+						$class="style='background-color: #E70030; color: #FFF; height: 20px'";
+					} 
+					else{
+						$check="";
+						$class="";
+					}
+						
 			?>
-			<ul>
-				<li><?php echo $direccion['rfc']; ?></li>
-				<li><?php echo $direccion['company']; ?></li>
-				<li><?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?></li>
-				<li><?php echo $direccion['colonia']; ?></li> 
-				<li><?php echo $direccion['cp']; ?> </li>	
-				<li><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
-				<li><?php echo $direccion['email'] ; ?></li>
+			<ul>				
+				<li <?=$class?>><input type="radio" name="predeterminado" <?=$check?> /><?php echo "&nbsp;".$direccion['rfc']; ?></li>
+				<li <?=$class?>><?php echo $direccion['company']; ?></li>
+				<li <?=$class?>><?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?></li>
+				<li <?=$class?>><?php echo $direccion['colonia']; ?></li> 
+				<li <?=$class?>><?php echo $direccion['cp']; ?> </li>	
+				<li <?=$class?>><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
+				<li <?=$class?>><?php echo $direccion['email']?></li>
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a></li>
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a></li>
 			</ul>
@@ -44,7 +53,10 @@
 			<?php 
 			}
 			?>
-		</div>		
+		</div>	
+		<div id="list_results">
+			<input type="button" name="utilizar_registro" value="Utilizar " />
+		</div>	
 	</form>
 </div>
 

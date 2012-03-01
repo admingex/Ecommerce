@@ -80,7 +80,11 @@ class Direccion_Facturacion extends CI_Controller {
 					if($this->modelo->existe_direccion($form_values['direccion'])) {
 							$this->listar("Direcci&oacute;n previamente registrada.");
 					}
-					else{																	
+					else{
+						if(array_key_exists('chk_default', $_POST)){
+							$this->modelo->quitar_predeterminado($id_cliente);	
+						}
+																								
 						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
 							$this->listar("Direcci&oacute;n registrada.");
 						} 	
@@ -126,7 +130,10 @@ class Direccion_Facturacion extends CI_Controller {
 				if($_POST){					
 					$form_values = array();	//alojará los datos previos a la inserción	
 					$form_values = $this->get_datos_direccion();	
-					if(empty($this->reg_errores)){									
+					if(empty($this->reg_errores)){
+						if(array_key_exists('chk_default', $_POST)){							
+							$this->modelo->quitar_predeterminado($id_cliente);									
+						}								
 						$this->modelo->actualizar_direccion($id_cliente, $consecutivo, $form_values['direccion']);
 						$this->listar("Actualizacion correcta");
 					}
@@ -233,7 +240,7 @@ class Direccion_Facturacion extends CI_Controller {
 			$datos['direccion']['email'] = $_POST['txt_email'];					
 		}  	
 		else{
-			$this->reg_errores['txt_email'] = 'Por favor ingrese una correo valida';
+			$this->reg_errores['txt_email'] = 'Por favor ingrese un correo valido';
 		}								
 		
 		$datos['direccion']['address4'] = $_POST['txt_num_int'];			
@@ -244,7 +251,7 @@ class Direccion_Facturacion extends CI_Controller {
 		}			
 																
 		if (array_key_exists('chk_default', $_POST)) {
-			$datos['direccion']['id_estatusSi'] = 3;	//indica que será la direccion de facturacion predeterminada					
+			$datos['direccion']['id_estatusSi'] = 3;	//indica que será la direccion de facturacion predeterminada			
 		}																 	
 		return $datos;
 	}

@@ -20,6 +20,7 @@ class Direccion_Facturacion_model extends CI_Model {
 			city as ciudad, 
 			phone as telefono, 
 			codigo_paisVc as pais,
+			id_estatusSi,
 			email');
 			
 		$this->db->where(array('id_clienteIn'=> $id_cliente, 'id_estatusSi !=' => 2, 'address_type'	=>	1));	//2 es deshabilitado 2 direccion facturacion		        		
@@ -120,4 +121,15 @@ class Direccion_Facturacion_model extends CI_Model {
 			return "Error al tratar de actualizar la tarjeta.";
 		}	
 	}		
+	
+	function quitar_predeterminado($id_cliente){
+		$this->db->where(array('id_clienteIn' => $id_cliente));
+		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => 1));
+		if($resultado) {
+			return "actualizacion.";
+		} 
+		else {
+			return "Error al tratar de actualizar la tarjeta.";
+		}
+	}
 }

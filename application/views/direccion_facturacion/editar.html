@@ -82,7 +82,11 @@
 			<div class="form_requerid">
 				<input type="text" name="txt_email" id="txt_email" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']); else echo  $datos_direccion->email;?>" size="30"/>
 				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>				
-			</div>																							
+			</div>	
+			<div class="item_requerid">&nbsp;</div>
+			<div class="form_requerid">
+				<input type="checkbox" id="chk_default" name="chk_default" <?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direcci&oacute;n predeterminada
+			</div>																						
 			<div class="form_button">
 				<input type="submit" id="guardar_direccion" value="Actuaizar direcci&oacute;n"/>
 			</div>	
