@@ -17,7 +17,7 @@ $(document).ready(function() {
 		}
 	);
 	*/
-	
+		
 	/*Ocultar campos abiertos de estado, ciudad, colonia*/
 	$('#div_otro_pais').hide();
 	

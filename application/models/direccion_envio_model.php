@@ -67,7 +67,7 @@ class Direccion_Envio_model extends CI_Model {
 						'city' =>	$datos_dir['city'],
 						'codigo_paisVc' =>	$datos_dir['codigo_paisVc'],
 						'id_estatusSi !=' => self::$CAT_ESTATUS['DESHABILITADA']);
-						
+
 		$resultado = $this->db->get_where('CMS_IntDireccion', $campos);
 		
 		if($resultado->num_rows() > 0)

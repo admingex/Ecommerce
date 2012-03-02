@@ -2,7 +2,7 @@
 	<h1>Editar Informaci&oacute;n de la Direcci&oacute;n</h1>
 	
 	<div id="body">
-		<form id="form_editar_direccion_envio" action="<?php echo base_url().'/index.php/direccion_envio/editar/'.$direccion->id_consecutivoSi; ?>" method="POST">
+		<form id="form_editar_direccion_envio" action="<?php echo base_url().'index.php/direccion_envio/editar/'.$direccion->id_consecutivoSi; ?>" method="POST">
 			<div class="item_requerid">Calle:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_calle" id="txt_calle" size="30"
@@ -205,13 +205,13 @@
 			<div class="item_requerid">&nbsp;</div>
 			<div class="form_requerid">
 				<input type="checkbox" name="chk_default" id="chk_default" 
-				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direcci&oacute;n predeterminada
+					<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direcci&oacute;n predeterminada
 			</div>
 		
 			<div><?php if(isset($msg_actualizacion)) { echo $msg_actualizacion; } ?></div>
 			<div class="form_button">
-				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Actualizar direccióm"/>
-				<a href="<?php echo $this->config->item('base_url'); ?>/index.php/direccion_envio/listar/">Regresar a la Lista</a>
+				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Actualizar direcci&oacute;n"/>
+				<a href="<?php echo site_url('direccion_envio'); ?>">Regresar a la Lista</a>
 			</div>			
 		</form>
 	</div>

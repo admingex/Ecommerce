@@ -114,9 +114,7 @@ class Direccion_Envio extends CI_Controller {
 						//echo "La direcci&oacute;n ya está registrada.";
 						//exit();
 					} else {
-						//Registrar Localmente
-						
-						
+						//Registrar en BD
 						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
 							$this->listar("Direcci&oacute;n registrada.");
 						} else {
@@ -162,6 +160,8 @@ class Direccion_Envio extends CI_Controller {
 	 */
 	public function editar($consecutivo)	//el consecutivo de la direccion
 	{
+		if($_GET) echo "GET";
+		
 		$id_cliente = $this->id_cliente;
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'></script>";
@@ -204,17 +204,27 @@ class Direccion_Envio extends CI_Controller {
 				
 				//var_dump($nueva_info);
 				//exit();
-				
-				$data['msg_actualizacion'] = 
+				/*Para el modo estático*/
+				$data['msg_actualizacion'] = $this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
+				$msg_eliminacion = 
 					$this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
+				
+				//$this->cargar_vista('', 'direccion_envio' , $data);
+				$this->listar($msg_eliminacion);
+				/*$url = base_url().'/index.php/direccion_facturacion/';		//la sesion debe tomar el cliente
+				header("Location: $url");*/
+				//redirect("direccion_facturacion");
+				//exit();
+				
+				//$_POST = array();
 				//Actualiza y muestra de nuevo el formulario y el mensaje con el resultado de la actualización
 			} else {	//sí hubo errores
 				$data['msg_actualizacion'] = "Campos incorrectos!!";
 				$data['reg_errores'] = $this->reg_errores;
 			}	//ERRORES FORMULARIO
-		}//If POST
-		
-		$this->cargar_vista('', 'direccion_envio' , $data);
+		} else {//If POST
+			$this->cargar_vista('', 'direccion_envio' , $data);
+		}
 	}
 	
 	/**
@@ -228,11 +238,13 @@ class Direccion_Envio extends CI_Controller {
 		
 		$msg_eliminacion =
 			$this->modelo->eliminar_direccion($id_cliente, $consecutivo);
-	
+		
+		
 		/*Pendiente el Redirect hacia la dirección de Facturación*/
 		//echo $data['msg_eliminacion´];
 		
 		//cargar la lista de direeciones
+		
 		$this->listar($msg_eliminacion);
 	}
 	
@@ -585,7 +597,6 @@ class Direccion_Envio extends CI_Controller {
 			exit(); // Quit the script.
 		}
 	}
-
 }
 
 /* End of file direccion_envio.php */
