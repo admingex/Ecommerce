@@ -6,7 +6,6 @@
 			<div class="item_requerid">Tipo de tarjeta:</div>
 			<div class="form_requerid">
 				<select id="sel_tipo_tarjeta" name="sel_tipo_tarjeta">
-					<!--option value="0">Seleccionar</option-->
 					<?php
 					if (isset($lista_tipo_tarjeta)) {
 						$tipo_tarjeta_id = 0;
@@ -29,8 +28,6 @@
 					}
 					?>
 				</select>
-				<input type="hidden" id="txt_descripcionTarjeta" name="txt_descripcionTarjeta" 
-					value=""/>	<!-- se debe asignar por jQuery-->
 			</div>
 			<div class="item_requerid">N&uacute;mero de tarjeta:</div>
 			<div class="form_requerid">
@@ -56,12 +53,7 @@
 					value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']);?>"/>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_apellidoMaterno'])) echo ($reg_errores['txt_apellidoMaterno']);?></span>
 			</div>
-			<div class="item_requerid">C&oacute;digo de seguridad:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_codigoSeguridad" id="txt_codigoSeguridad" maxlength="4" size="4"
-					value="<?php if(isset($_POST['txt_codigoSeguridad'])) echo htmlspecialchars($_POST['txt_codigoSeguridad']);?>"/>
-				<span class="validation_message"><?php if(isset($reg_errores['txt_codigoSeguridad'])) echo ($reg_errores['txt_codigoSeguridad']);?></span>
-			</div>
+			
 			<?php
 				$mes = isset($_POST['sel_mes_expira']) ? $_POST['sel_mes_expira'] : 0;
 				$anio = isset($_POST['sel_anio_expira']) ? $_POST['sel_anio_expira'] : 0;
@@ -89,15 +81,13 @@
 						} 
 					?>
 				</select>
-				
 				<span class="validation_message"><?php if(isset($reg_errores['fecha_error'])) echo ($reg_errores['fecha_error']);?></span>
 			</div>
 			
 			<div class="item_requerid">&nbsp;</div>
 			<div class="form_requerid">
-				<input type="checkbox" id="chk_guardar" 
-				name="chk_guardar" <?php if(isset($_POST['chk_guardar'])) echo 'checked="true"';?> /> 
-				Guardar para compra futuras
+				<input type="checkbox" id="chk_guardar" name="chk_guardar" checked="true"  
+				<?php if(isset($_POST['chk_guardar'])) echo 'checked="true"';?> />Guardar para compra futuras
 			</div>
 			<div class="item_requerid">&nbsp;</div>
 			<div class="form_requerid">

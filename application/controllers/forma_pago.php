@@ -43,7 +43,7 @@ class Forma_Pago extends CI_Controller {
 		$this->listar();
 	}
 	
-	public function listar($msg = '') 
+	public function listar($msg = '', $redirect = TRUE) 
 	{	
 		/*asignación de la session*/
 		//$id_cliente = $this->session->userdata('id_cliente');
@@ -60,6 +60,7 @@ class Forma_Pago extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;		
 		$data['mensaje'] = $msg;
+		$data['redirect'] = $redirect;
 		
 		//listar por default las tarjetas del cliente
 		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($this->id_cliente);
@@ -125,7 +126,7 @@ class Forma_Pago extends CI_Controller {
 					if($this->modelo->existe_tc($form_values['tc'])) {	//Redirect al listado por que ya existe
 						//$url = $this->config->item('base_url').'/index.php/forma_pago/listar/'.$id_cliente;
 						//header("Location: $url");
-						$this->listar("La tarjeta ya está registrada.");
+						$this->listar("La tarjeta ya está registrada.", FALSE);
 						//echo "La tarjeta ya está registrada.";
 						//exit();
 					} else {
@@ -136,15 +137,18 @@ class Forma_Pago extends CI_Controller {
 							
 							//Registrar Localmente
 							if ($this->modelo->insertar_tc($form_values['tc'])) {
-								$this->listar("Tarjeta registrada.");
+								$this->listar("Tarjeta registrada correctamente.");
 							} else {
-								echo "<br/>Hubo un error en el registro en CMS";
+								$this->listar("Hubo un error en el registro en CMS.", FALSE);
+								//echo "<br/>Hubo un error en el registro en CMS";
 							}
 						} else {
-							echo "Hubo un error en el registro en CCTC";
+							$this->listar("Hubo un error en el registro en CCTC.", FALSE);
+							//echo "Hubo un error en el registro en CCTC";
 						}
 					}						
 				} else {
+					/*Poner en session la TC/AMEX*/
 					//si no se guardará la tc, almacenar la info para la venta  
 					echo "no se almacenará la TC >> Pasar a captura de dir. de envío<br/> Coming soon...";
 					//exit();	
@@ -173,7 +177,7 @@ class Forma_Pago extends CI_Controller {
 		$id_cliente = $this->id_cliente;
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Editar Forma de Pago');
+		$data['subtitle'] = ucfirst('editar Forma de Pago');
 		
 		//recuperar la información local de la tc
 		$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
@@ -271,7 +275,7 @@ class Forma_Pago extends CI_Controller {
 		//echo $data['msg_eliminacion´];
 		
 		//cargar la lista
-		$this->listar($id_cliente, $msg_eliminacion);
+		$this->listar($msg_eliminacion);
 		//$this->cargar_vista('', 'forma_pago' , $data);
 	}
 	
@@ -318,7 +322,6 @@ class Forma_Pago extends CI_Controller {
 			//exit();
 			return false;
 		}
-		
 	}
 	
 	private function editar_tarjeta_CCTC($tc, $amex = null)
@@ -608,6 +611,10 @@ class Forma_Pago extends CI_Controller {
 		$this->load->view('templates/footer', $data);
 	}
 	
+	/*
+	 * Verifica la sesión del usuario
+	 * 
+	 * */
 	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') {
 		if (!$this->session->userdata($revisar)) {
 			//$url = $protocolo . BASE_URL . $destination; // Define the URL.

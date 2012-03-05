@@ -25,13 +25,13 @@
 	</div>
 	<?php
 		}
-		if (!empty($lista_direcciones)) {
+		if (!empty($lista_direcciones) && $lista_direcciones->num_rows()) {
 	?>
-	<div id="dialog-confirm" title="Eliminar Tarjeta">
-		<p>
+	<div id="dialog-confirm" title="Eliminar Dirección">
+		<!--p>
 			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;">&nbsp;</span>
 			¿Seguro que desea eliminar esta tarjeta?
-		</p>
+		</p-->
 	</div>
 	<?php
 		}
@@ -39,6 +39,7 @@
 	
 	<div id="scripts">
 		<script type="text/javascript">
+			/*mensaje y redirección*/
 			$(function() {
 				$( "#dialog:ui-dialog" ).dialog( "destroy" );
 				
@@ -49,7 +50,14 @@
 					buttons: {
 						"Ok": function() {
 							$( this ).dialog( "close" );
-							location.href = "<?php echo site_url("direccion_envio");?>";
+							<?php
+							//Por default recirecciona a la raiz del módulo
+							$url_redirect = site_url("direccion_envio");
+							if ($redirect) {
+								$url_redirect = site_url('direccion_facturacion');
+							}
+							?>
+							window.location.href = "<?php echo $url_redirect; ?>";
 						}
 					}
 				});
@@ -57,8 +65,13 @@
 			/*Eliminación*/
 			$('a[href*="eliminar"]').click(function(event) {
 				event.preventDefault();
+				var url_destino = $(this).attr("href");
 				
 				$( "#dialog:ui-dialog" ).dialog( "destroy" );
+				//mensaje
+				$("#dialog-confirm").empty().append('<p>' +
+					'<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;">&nbsp;</span>' +
+					'¿Seguro que deseas eliminar esta dirección?</p>');
 				
 				$( "#dialog-confirm" ).dialog({
 					resizable: false,
@@ -67,7 +80,7 @@
 					buttons: {
 						"Eliminar": function() {
 							$( this ).dialog( "close" );
-							location.href = "<?php echo site_url("direccion_envio");?>";
+							window.location.href = url_destino;
 						},
 						"Cancelar": function() {
 							$( this ).dialog( "close" );
@@ -77,8 +90,6 @@
 			});
 		</script>
 	</div>
-	
-	
-	
+
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
 </div>

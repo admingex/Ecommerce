@@ -6,7 +6,7 @@
 			<div class="column_header">Tarjeta</div>
 			<div class="column_header">Nombre</div>
 			<div class="column_header">Expira</div>
-			<div class="column_header">C&oacute;digo de seguridad</div>
+			<!--div class="column_header">C&oacute;digo de seguridad</div-->
 			<div class="column_header">&nbsp;</div>
 			<div class="column_header">&nbsp;</div>
 		</div>
@@ -16,15 +16,21 @@
 				$hay_tarjetas = true;
 				$tarjetas = $lista_tarjetas;
 				foreach($tarjetas->result_array() as $tarjeta) {
+					$check = "";
+					$class = "";
+					if ($tarjeta['id_estatusSi'] == 3){	//$default
+						$check = "checked='true'";
+						$class = "style='background-color: #E70030; color: #F6F6F6; height: 20px'";
+					}
 			?>
 			<ul>
-				<li><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php if ($tarjeta['id_estatusSi'] == 0) echo 'checked'; ?>/>
+				<li <?php echo $class;?>><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check?>/>
 					<?php echo $tarjeta['descripcionVc'].' terminaci&oacute;n '
 						.substr($tarjeta['terminacion_tarjetaVc'],strlen($tarjeta['terminacion_tarjetaVc']) - 4); ?>
 				</li>
-				<li><?php echo $tarjeta['nombre_titularVc'].' '.$tarjeta['apellidoP_titularVc'].' '.$tarjeta['apellidoM_titularVc']; ?></li> 
-				<li><?php echo $tarjeta['mes_expiracionVc'].'/'.$tarjeta['anio_expiracionVc']; ?> </li>	
-				<li><input id="txt_codigoVerificador" name="txt_codigoVerificador" maxlength="4" size="4"/> ?</li>
+				<li <?php echo $class;?>><?php echo $tarjeta['nombre_titularVc'].' '.$tarjeta['apellidoP_titularVc'].' '.$tarjeta['apellidoM_titularVc']; ?></li> 
+				<li <?php echo $class;?>><?php echo $tarjeta['mes_expiracionVc'].'/'.$tarjeta['anio_expiracionVc']; ?> </li>	
+				<!--li <?php echo $class;?>><input id="txt_codigoVerificador" name="txt_codigoVerificador" maxlength="4" size="4"/> ?</li-->
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/editar/'.$tarjeta['id_TCSi']; ?>" title="editar">editar</a></li>
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/eliminar/'.$tarjeta['id_TCSi']; ?>" title="eliminar">eliminar</a></li>
 			</ul>
@@ -53,8 +59,7 @@
 			<h4>No tiene tarjetas registradas</h4>	
 		<?php else: ?>
 			<div class="form_button">
-				Usar esta tarjeta.
-				<!---input type="button" id="usar_tarjeta" name="usar_tarjeta" value="Usar esta tarjeta"/-->
+				<input type="button" id="usar_tarjeta" name="usar_tarjeta" value="Utilizar esta tarjeta"/>
 				<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
 			</div>
 		<?php endif ?> 

@@ -4,6 +4,8 @@ class Direccion_Envio extends CI_Controller {
 	var $title = 'Direcci&oacute;n de Env&iacute;o'; 		// Capitalize the first letter
 	var $subtitle = 'Direcci&oacute;n de Env&iacute;o'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
+	private $id_cliente;
+	
 	const CODIGO_MEXICO = "MX";		//constante para verificar el código del país en el efecto del JS.
 	
 	public static $TIPO_DIR = array(
@@ -12,8 +14,6 @@ class Direccion_Envio extends CI_Controller {
 		"OTHER"		=>	2
 	);
 	
-	
-	private $id_cliente;
 	//protected $lista_bancos = array();
 	 
 	function __construct()
@@ -27,7 +27,7 @@ class Direccion_Envio extends CI_Controller {
 		
 		//si no hay sesión
 		//manda al usuario a la... página de login
-		//$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
+		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
@@ -44,8 +44,11 @@ class Direccion_Envio extends CI_Controller {
 		
 		$this->listar();
 	}
-	
-	public function listar($msg = '') 
+	/**
+	 * Lista las direcciones registradas, si hay un mensaje, lo despliega y 
+	 * si debe haber redirección la aplica. 
+	 */
+	public function listar($msg = '', $redirect = TRUE) 
 	{		
 		/*
 		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
@@ -59,6 +62,7 @@ class Direccion_Envio extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;		
 		$data['mensaje'] = $msg;
+		$data['redirect'] = $redirect;
 		
 		//listar por default las direcciones del cliente
 		$data['lista_direcciones'] = $this->modelo->listar_direcciones($this->id_cliente);
@@ -110,24 +114,24 @@ class Direccion_Envio extends CI_Controller {
 						//Redirect al listado por que ya existe
 						//$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
 						//header("Location: $url");
-						$this->listar("La direcci&oacute;n ya est&aacute; registrada.");
+						$this->listar("La direcci&oacute;n ya est&aacute; registrada.", FALSE);
 						//echo "La direcci&oacute;n ya está registrada.";
 						//exit();
 					} else {
 						//Registrar en BD
 						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
-							$this->listar("Direcci&oacute;n registrada.");
+							$this->listar("Direcci&oacute;n registrada correctamente.");
 						} else {
-							$this->listar("Hubo un error en el registro en CMS.");
+							$this->listar("Hubo un error en el registro en CMS.", FALSE);
 							//echo "<br/>Hubo un error en el registro en CMS";
 						}
 					}						
 				} else {
-					//si no se guardará la tc, almacenar la info para la venta
-					$url = base_url().'/index.php/direccion_facturacion/';		//la sesion debe tomar el cliente
+					//si no se guardará la tc, almacenar la info para la venta en sesión temporalmente y pasar a direccón de facturación
+					$url = base_url().'/index.php/direccion_facturacion/';
 					header("Location: $url");
 					exit();	  
-					echo "No se almacenar&aacute; la direcci&oacute;n>> Pasar a captura de dir. de facturación<br/> Coming soon...";
+					echo "No se guardar&aacute; la direcci&oacute;n>> Pasar a captura de dir. de facturación<br/> Coming soon...";
 				}
 			} else {	//Si hubo errores en la captura
 				//carga de catálogos de sepomex si ya se hizo la seleccion de estado, ciudad, colonia
@@ -245,7 +249,7 @@ class Direccion_Envio extends CI_Controller {
 		
 		//cargar la lista de direeciones
 		
-		$this->listar($msg_eliminacion);
+		$this->listar($msg_eliminacion, FALSE);
 	}
 	
 	/**
@@ -569,7 +573,7 @@ class Direccion_Envio extends CI_Controller {
 				$datos['direccion']['id_estatusSi'] = 1;
 			}
 			if (array_key_exists('chk_default', $_POST)) {
-				$datos['direccion']['id_estatusSi'] = 0;	//indica que será la tarjeta predeterminada	
+				$datos['direccion']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada	
 				//$_POST['chk_default'];
 				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC
 			}

@@ -15,20 +15,27 @@
 			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {
 				$hay_direcciones = true;
 				$direcciones = $lista_direcciones;
+				//$default = self::$CAT_ESTATUS['DEFAULT'];	//es 3
 				foreach($direcciones->result_array() as $direccion) {
+					$check = "";
+					$class = "";
+					if ($direccion['id_estatusSi']==3){	//$default
+						$check = "checked='true'";
+						$class = "style='background-color: #E70030; color: #F6F6F6; height: 20px'";
+					}
 			?>
 			<ul>
-				<li><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php if ($direccion['id_estatusSi'] == 0) echo 'checked'; ?>/>
+				<li <?php echo $class;?>>
+					<input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check?>/>
 					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?>
 				</li>
-				<li><?php echo $direccion['colonia']; ?></li> 
-				<li><?php echo $direccion['cp']; ?> </li>	
-				<li><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
+				<li <?php echo $class;?>><?php echo $direccion['colonia']; ?></li> 
+				<li <?php echo $class;?>><?php echo $direccion['cp']; ?> </li>	
+				<li <?php echo $class;?>><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
 				<li><a href="<?php echo site_url("direccion_envio/editar/".$direccion['id_consecutivoSi']); ?>" title="editar">editar</a></li>
 				<li><a href="<?php echo site_url("direccion_envio/eliminar/".$direccion['id_consecutivoSi']); ?>" title="eliminar">eliminar</a></li>
 			</ul>
-			<?php 
-					
+			<?php
 				}
 				//echo " ", count($direcciones);
 				//echo "num rows: ", $direcciones->num_rows();
