@@ -27,12 +27,6 @@
 					value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']);?>"/>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_apellidoMaterno'])) echo ($reg_errores['txt_apellidoMaterno']);?></span>
 			</div>
-			<div class="item_requerid">C&oacute;digo de seguridad:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_codigoSeguridad" id="txt_codigoSeguridad" maxlength="4" size="4"
-					value="<?php if(isset($_POST['txt_codigoSeguridad'])) echo htmlspecialchars($_POST['txt_codigoSeguridad']);?>"/>
-				<span class="validation_message"><?php if(isset($reg_errores['txt_codigoSeguridad'])) echo ($reg_errores['txt_codigoSeguridad']);?></span>
-			</div>
 			<div class="item_requerid">Fecha de expiraci&oacute;n:</div>
 			<div class="form_requerid">
 			<?php
@@ -120,13 +114,12 @@
 			</div>
 			<div class="item_requerid">&nbsp;</div>
 			<div class="form_requerid">
-				<input type="checkbox" id="chk_guardar" name="chk_guardar" 
-				<?php if(isset($_POST['chk_guardar'])) echo 'checked="true"';?> /> 
-				Guardar para compra futuras
+				<input type="checkbox" id="chk_guardar" name="chk_guardar" checked="true" 
+				<?php if(isset($_POST['chk_guardar'])) echo 'checked="true"';?> />Guardar para compra futuras
 			</div>
 			<div class="item_requerid">&nbsp;</div>
 			<div class="form_requerid">
-				<input type="checkbox" id="chk_default" name="chk_default" 
+				<input type="checkbox" id="chk_default" name="chk_default"  
 				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como tarjeta predeterminada
 			</div>
 			
