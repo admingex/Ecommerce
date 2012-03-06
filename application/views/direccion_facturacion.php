@@ -33,7 +33,7 @@
 	<?php if($mensaje){
 	?>	
 		<div id="dialog" title="Mensaje del servidor" >
-			<p><?=$mensaje?></p>
+			<p><?php echo $mensaje;?></p>
 		</div>
 	<?php		
 	}
