@@ -23,7 +23,7 @@
 			autoOpen: true,					
 			buttons: {
 				"Ok" : function(){ 
-					       $(this).dialog("close"); 
+					       $(this).dialog("close"); 					       
 					   }
 			}
 		});		

@@ -123,7 +123,7 @@ class Direccion_Facturacion_model extends CI_Model {
 	}		
 	
 	function quitar_predeterminado($id_cliente){
-		$this->db->where(array('id_clienteIn' => $id_cliente));
+		$this->db->where(array('id_clienteIn' => $id_cliente, 'address_type'=>1));
 		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => 1));
 		if($resultado) {
 			return "actualizacion.";
