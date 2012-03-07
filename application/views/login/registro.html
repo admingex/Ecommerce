@@ -1,7 +1,7 @@
 <!--h1>Registro de clientes</h1-->
 
 <div id="body">	
-	<form id="form_registro_tc" action="<?php echo $this->config->item('base_url').'/index.php/registro'; ?>" method="POST">
+	<form id="form_registro_usuario" action="<?php echo $this->config->item('base_url').'/index.php/registro'; ?>" method="POST">
 		<span id="message" class="validation_message">
 			<h2><?php if(isset($registro_errores['user_reg'])) echo ($registro_errores['user_reg']);?></h2>
 		</span>
@@ -33,7 +33,7 @@
 		<div class="form_requerid">
 			<input type="password" name="password" id="password" size="20" 
 				value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
-				<small>[A, a, 0]</small>
+				<small>[A, a,s 0]</small>
 			<span class="validation_message">
 				<?php if(isset($registro_errores['password'])) echo($registro_errores['password']);?>
 			</span>
@@ -42,12 +42,11 @@
 		<div class="form_requerid">
 			<input type="password" name="password_2" id="password_2" size="20" 
 				value="<?php if(isset($_POST['password_2'])) echo htmlspecialchars($_POST['password_2']);?>" />
-				<span class="validation_message"><a href="#">&iquest;Olvidaste tu contrsae&ntilde;a?</a>
-				<?php if(isset($registro_errores['password_2'])) echo ($registro_errores['password_2']);?>
-			</span>
-		</div>
-		
-		
+				<span class="validation_message">
+					<?php if(isset($registro_errores['password_2'])) echo ($registro_errores['password_2']);?>
+					<a href="#">&iquest;Olvidaste tu contrase&ntilde;a?</a>				
+				</span>
+		</div>				
 		<div id="message" class="validation_message"></div>
 		<div class="form_button">
 			<input type="submit" id="enviar" value="Crear cuenta y continuar"/>

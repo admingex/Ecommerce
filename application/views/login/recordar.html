@@ -1,0 +1,14 @@
+
+<div id="body">	
+	<form id="form_recordar_password" action="<?php echo $this->config->item('base_url').'/index.php/recordar_password/enviar'; ?>" method="POST">		
+		<div class="item_requerid">Correo electr&oacute;nico:</div>
+		<div class="form_requerid">
+			<input type="text" name="email" id="email" size="40" maxlength="60" 
+				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
+			<span class="validation_message"><?php if(isset($login_errores['email'])) echo ($login_errores['email']);?></span>
+		</div>						
+		<div class="form_button">
+			<input type="submit" id="recordar_password" value="Recordar Contrase&ntilde;a"/>			
+		</div>
+	</form>
+</div>

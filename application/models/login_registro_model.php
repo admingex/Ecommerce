@@ -1,4 +1,4 @@
-<?php
+  <?php
 //include ('DTO/Tc_DTO.php');
 
 class Login_Registro_model extends CI_Model {
