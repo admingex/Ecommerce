@@ -1,7 +1,7 @@
 <h1>Direcciones guardadas de <?php echo $this->session->userdata('username');?></h1>
 
 <div id="body">
-	<form id="form_direccion_envio" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/" method="POST">
+	<form id="form_direccion_envio" action="<?php echo site_url("direccion_facturacion/"); ?>" method="POST">
 		<div id="list_headers">			
 			<div class="column_header">Calle y n&uacute;mero</div>
 			<div class="column_header">Colonia</div>
@@ -59,9 +59,9 @@
 			<h4>No tiene direcciones registradas</h4>	
 		<?php else: ?>
 			<div class="form_button">
-				<?php echo anchor("direccion_facturacion", "Usar esta direcc&oacute;n");?>
+				<?php //echo anchor("direccion_facturacion", "Usar esta direcc&oacute;n");?>
 				
-				<!---input type="button" id="usar_direccion" name="usar_direccion" value="Usar esta direccion"/-->
+				<input type="submit" id="usar_direccion" name="usar_direccion" value="Usar esta direccion"/>
 				<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
 			</div>
 		<?php endif ?>		
