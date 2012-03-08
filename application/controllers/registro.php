@@ -22,7 +22,7 @@ class Registro extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
 		//echo 'Session: '.$this->session->userdata('id_cliente');
-		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'> </script>";
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
 		$data['script'] = $script_file;
 		
 		if ($_POST)
@@ -104,18 +104,23 @@ class Registro extends CI_Controller {
 		} else {
 			$this->registro_errores['email'] = 'Ingrese una direcci&oacute;n v&aacute;lida.';
 		}
-		
-		$this->valida_password($_POST['email'], $_POST['password']);		 		
-		 
-		if (preg_match ('/^(\w*(?=\w*\d)(?=\w*[a-z])(?=\w*[A-Z])\w*){6,20}$/', $_POST['password']) ) {
-			if ($_POST['password'] == $_POST['password_2']) {
-				$datos['password'] = htmlspecialchars(trim($_POST['password']));
-			} else {
-				$this->registro_errores['password_2'] = 'Tus contrase&ntilde;as no coincden';
+		if(isset($_POST['email'])&& isset($_POST['password'])){
+			$this->valida_password($_POST['email'], $_POST['password']);
+			if (preg_match ('/^(\w*(?=\w*\d)(?=\w*[a-z])(?=\w*[A-Z])\w*){6,20}$/', $_POST['password']) ) {
+				if ($_POST['password'] == $_POST['password_2']) {
+					$datos['password'] = htmlspecialchars(trim($_POST['password']));
+				} 
+				else {
+					$this->registro_errores['password_2'] = 'Tus contrase&ntilde;as no coincden';
+				}
+			} 
+			else {
+				$this->registro_errores['password_2'] = 'Por favor ingresa una contrase&ntilde;a v&aacute;lida';
 			}
-		} else {
-			$this->registro_errores['password_2'] = 'Por favor ingresa una contrase&ntilde;a v&aacute;lida';
-		}
+		}					 			 
+		else{
+			$this->registro_errores['password'] = '&nbsp;';
+		}		
 		
 		return $datos;
 	}
