@@ -2,6 +2,13 @@
 
 class Recordar_Password extends CI_Controller {
 
+	public static $TIPO_ACTIVIDAD = array(
+		"BLOQUEO"=> 0, 
+		"DESBLOQUEO"=> 1, 
+		"SOLICITUD_PASSWORD"=>2,
+		"CAMBIO_PASSWORD"=>3
+	);	
+	
 	var $title = 'Recordar Password'; 		// Capitalize the first letter
 	var $subtitle = 'Recordar Password'; 	// Capitalize the first letter
 	var $login_errores = array();
@@ -40,11 +47,11 @@ class Recordar_Password extends CI_Controller {
 			if($datamail->num_rows()==1){
 				$data['enviado'] = TRUE;				
 				$data['cliente']=$datamail->row();
-				$data['password_temporal']=$p = substr(md5(uniqid(rand( ), true)), 0,10);
+				$data['password_temporal']= $p = substr(md5(uniqid(rand( ), true)), 0,10);
 				$this->load->helper('date');
-				$data['timestamp']= gmt_to_local(now(), 'UM8', true);
-				$this->modelo->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);								
-				//echo mdate('%Y/%m/%d - %h:%i:%s-%a',$data['timestamp']);													
+				$data['timestamp']= $t= mdate('%Y/%m/%d %h:%i:%s',time());
+				$this->modelo->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
+				$this->modelo->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);																										
 				$this->cargar_vista('', 'recordar_password', $data);	
 				//redirect('login');				
 				

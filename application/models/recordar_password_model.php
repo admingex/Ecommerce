@@ -2,6 +2,7 @@
 
 class Recordar_Password_model extends CI_Model {
 
+	
     function __construct(){
         // Call the Model constructor
         parent::__construct();
@@ -29,8 +30,13 @@ class Recordar_Password_model extends CI_Model {
 		}
 	}
 	
-	function agrega_historico(){
-		/////revisar 
+	function guarda_actividad_historico($id_cliente,$clave, $actividad, $time){
+		echo 
+		$campos = array('id_clienteIn' 	=> 	$id_cliente, 
+						'claveVc' => $clave,
+						'id_tipoActividadSi'=>$actividad,
+						'timestampTs'=>$time);
+		$this->db->insert('CMS_IntHistoricoCliente', $campos);		
 	}
 	
 	function registrar_cliente($cliente = array()){

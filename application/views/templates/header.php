@@ -1,7 +1,15 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
 <head>
-	<title><?php echo $title ?> - CMS GEX</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title><?php echo $title ?> - CMS GEX</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="<?php echo base_url();?>css/style.css">
+    <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->	
 	<link type="text/css" href="<?php echo base_url();?>css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 	<link type="text/css" href="<?php echo base_url();?>css/validacion.css" rel="stylesheet" />	
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-1.7.1.min.js"> </script>
@@ -9,13 +17,8 @@
 	
 	<?php if (isset($script)) echo $script; ?>
 	
-	<style type="text/css">
-		body {
-			background-color: #fff;
-			margin: 40px;
-			font: 13px/20px normal Helvetica, Arial, sans-serif;
-			color: #4F5155;
-		}
+	
+	<style type="text/css">		
 
 		a {
 			color: #003399;
@@ -26,8 +29,7 @@
 		h1 {
 			color: #444;
 			background-color: transparent;
-			border-bottom: 1px solid #D0D0D0;
-			font-size: 19px;
+			border-bottom: 1px solid #D0D0D0;			
 			font-weight: normal;
 			margin: 0 0 14px 0;
 			padding: 14px 15px 10px 15px;
@@ -36,7 +38,7 @@
 
 		code {
 			font-family: Consolas, Monaco, Courier New, Courier, monospace;
-			font-size: 12px;
+			
 			background-color: #f9f9f9;
 			border: 1px solid #D0D0D0;
 			color: #002166;
@@ -44,20 +46,14 @@
 			margin: 14px 0 14px 0;
 			padding: 12px 10px 12px 10px;
 		}
-
-		#body{
-			margin: 0 15px 0 15px;
-			border: 1px solid #000;
-			margin-bottom: 10px;
-			padding: 15px 5px 0px 5px;
-		}
+		
 		ul li{
 			/*width: %;		/*145px;*/
 			padding: 4px 0px 4px 4px;
 			list-style-type: none;
 			
 			
-			font-size: 13px;
+			
 			/*border: 1px solid #000;*/
 			text-align: left;
 			text-indent:0%;
@@ -65,20 +61,13 @@
 		}
 		p.footer{
 			text-align: right;
-			font-size: 11px;
+			
 			border-top: 1px solid #D0D0D0;
 			line-height: 32px;
 			padding: 0 10px 0 10px;
 			margin: 20px 0 0 0;
 		}
-
-		#container{
-			margin: 10px;
-			border: 1px solid #D0D0D0;
-			-webkit-box-shadow: 0 0 8px #D0D0D0;
-		}
 		
-		/*para formulario*/
 		
 		.item_requerid {
 			width: 170px;
@@ -101,8 +90,7 @@
 			/*border: 1px solid #000;*/
 			
 		}
-
-		/*para listado*/
+		
 		
 		#list_headers {
 			padding-left: 4px;
@@ -138,8 +126,7 @@
 			padding: 4px 0px 4px 4px;
 			list-style-type: none;
 			display: inline;
-			float: left;
-			font-size: 13px;
+			float: left;			
 			/*border: 1px solid #000;*/
 			text-align: left;
 			text-indent:0%;
@@ -166,3 +153,9 @@
 	</style>
 </head>
 <body>
+    <div id="header-container">
+        <header>
+            <a href='<?php echo base_url();?>'><img src="<?php echo base_url();?>images/logo_expansion.gif" alt="logo gex" width="52" height="52" /></a>            
+        </header>
+    </div>
+    <div id="main">
