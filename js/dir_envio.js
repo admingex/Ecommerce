@@ -5,7 +5,7 @@
 $(document).ready(function() {
 	//alert('hola mundo ecommerce GEx!');
 	$("#btn_cp").ajaxError(function() {
-		alert('Error Handler invoked when an error ocurs on CP field!');		//Ok
+		//alert('Error Handler invoked when an error ocurs on CP field!');		//Ok
 	});
 	
 	/*validacion_registro*/

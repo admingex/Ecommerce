@@ -105,8 +105,8 @@ class Forma_Pago extends CI_Controller {
 				 * esto con: $form_values['guardar']
 				 * si no se quiere guardar se continua con el proceso
 				 * */
-			echo var_dump($form_values);
-			exit();
+			//echo var_dump($form_values);
+			//exit();
 			if (empty($this->reg_errores)) {	
 				//si no hay errores y se solicita registrar la tarjeta
 				if (isset($form_values['guardar']) || isset($form_values['tc']['id_estatusSi'])) {
@@ -610,8 +610,6 @@ class Forma_Pago extends CI_Controller {
 			}
 		} 
 		
-		var_dump($datos);
-		exit();
 		//echo 'si no hay errores, $reg_errores esta vacio? '.empty($this->reg_errores).'<br/>';
 		return $datos;
 	}
