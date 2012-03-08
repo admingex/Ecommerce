@@ -55,14 +55,14 @@
 					modal: true,
 					buttons: {
 						"Ok": function() {
-							$( this ).dialog( "close" );
 							<?php
 							//Por default recirecciona a la raiz del módulo
 							$url_redirect = site_url("forma_pago");
-							if ($redirect) {
+							if (isset($redirect) && $redirect) {
 								$url_redirect = site_url('direccion_envio');
 							}
 							?>
+							$( this ).dialog( "close" );
 							window.location.href = "<?php echo $url_redirect; ?>";
 						}
 					}

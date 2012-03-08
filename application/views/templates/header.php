@@ -2,17 +2,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
 <head>
 	<title><?php echo $title ?> - CMS GEX</title>
-	<link type="text/css" href="<?php echo base_url();?>css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />	
+	<link type="text/css" href="<?php echo base_url();?>css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+	<link type="text/css" href="<?php echo base_url();?>css/validacion.css" rel="stylesheet" />	
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-1.7.1.min.js"> </script>
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-ui-1.8.18.custom.min.js"> </script>
-	<!--script type="text/javascript" src="<?php echo base_url();?>js/json2.js"> </script-->
+	
 	<?php if (isset($script)) echo $script; ?>
 	
 	<style type="text/css">
-		/*::selection{ background-color: #E13300; color: white; }
-		::moz-selection{ background-color: #E13300; color: white; }
-		::webkit-selection{ background-color: #E13300; color: white; }
-*/
 		body {
 			background-color: #fff;
 			margin: 40px;

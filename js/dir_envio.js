@@ -5,8 +5,48 @@
 $(document).ready(function() {
 	//alert('hola mundo ecommerce GEx!');
 	$("#btn_cp").ajaxError(function() {
-	//	alert('Error Handler invoked when an error ocurs!');		//Ok
+		alert('Error Handler invoked when an error ocurs on CP field!');		//Ok
 	});
+	
+	/*validacion_registro*/
+	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;	
+	
+	
+	
+	//amex
+	var email = $("#txt_email");
+	/*Inicio de Sesión*/
+	$("#guardar_tarjeta").click(function(e) {
+		e.preventDefault();	
+		$(".error").remove();	//limpiar mensajes de error
+		
+		//tc
+		if (!reg_email.test(email.val())) {
+			email.focus().after("<span class='error'>Ingresa una dirección de correco válida</span>");
+			//email.next().text('Ingresar una dirección de correco correcta');
+			es_valido = false;
+		} else if ($.trim(passwd.val()) == "" ) {
+			es_valido = false;
+			passwd.focus().after("<span class='error'>Ingresa tu contraseña</spam>");
+		}
+		
+		if (es_valido) {
+			$("form").submit();
+		}
+	});
+	
+	//fade out error messsage
+	email.change(function(){
+		if (reg_email.test(email.val())) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+	passwd.change(function(){
+		if ($.trim(passwd.val()) != "") {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+	
 	//cargar el catálogo de estados
 	/* 
 	$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/get_estados",
@@ -17,10 +57,9 @@ $(document).ready(function() {
 		}
 	);
 	*/
-		
+	
 	/*Ocultar campos abiertos de estado, ciudad, colonia*/
 	$('#div_otro_pais').hide();
-	
 	
 	//onChange:
 	$('#sel_pais').change(function() {
@@ -186,6 +225,14 @@ $(document).ready(function() {
 	$("form[id='form_direccion_envio']").submit(function(event) {
 		//event.preventDefault();
 	});
+	
+	$("#enviar").click(function(e) {
+		e.preventDefault();
+		alert("goning nowhere!");
+		
+		//alert("tipo_inicio: " + tipo_inicio.val() + " email: " + $.trim(email.val()) + " passw: " + $.trim(passwd.val()));
+	});
+	
 });
 
 function actualizar_ciudades(clave_estado) {
@@ -254,23 +301,4 @@ function actualizar_cp(clave_estado, ciudad, colonia) {
 		}, 
 		"json"
 	);
-}
-
-function carga_detalles_sepomex() {
-	/*Para la edición*/
-	/*
-	var form_edicion = $('#form_editar_direccion_envio');
-	
-	if (form_edicion.length != 0) {
-		//$('#btn_cp').click();
-		//od.
-		//carga_detalles_sepomex();
-	}*/
-	var edo = $('#sel_estados');
-	var cp = $('#txt_cp');
-	$('#btn_cp').trigger('click');
-	
-	if (edo.val() != '') {
-		//$('#sel_estados').trigger('change');		
-	}
 }

@@ -85,8 +85,8 @@ class Forma_Pago extends CI_Controller {
 		$lista_tipo_tarjeta = $this->lista_tipos_tarjeta_WS();
 		$data['lista_tipo_tarjeta'] = $lista_tipo_tarjeta;
 		
-		//se aloja como parte del objeto para obtener la descripcion, no necesario
-		//$this->lista_bancos =  $lista_tipo_tarjeta;
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/forma_pago.js'></script>";
+		$data['script'] = $script_file;
 				
 		//recuperar el listado de las tarjetas del cliente
 		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($id_cliente);
@@ -96,7 +96,7 @@ class Forma_Pago extends CI_Controller {
 			
 			//común
 			$form_values = array();	//alojará los datos previos a la inserción	
-			$form_values = $this->get_datos_tarjeta();
+			$form_values = $this->get_datos_tarjeta($form);
 			
 			$form_values['tc']['id_clienteIn'] = $id_cliente;
 			$form_values['tc']['id_TCSi'] = $consecutivo + 1;		//cambió
@@ -105,6 +105,8 @@ class Forma_Pago extends CI_Controller {
 				 * esto con: $form_values['guardar']
 				 * si no se quiere guardar se continua con el proceso
 				 * */
+			echo var_dump($form_values);
+			exit();
 			if (empty($this->reg_errores)) {	
 				//si no hay errores y se solicita registrar la tarjeta
 				if (isset($form_values['guardar']) || isset($form_values['tc']['id_estatusSi'])) {
@@ -237,8 +239,10 @@ class Forma_Pago extends CI_Controller {
 						$nueva_info['tc']['id_estatusSi'] = 1;
 					}					
 					//registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
-					$data['msg_actualizacion'] = 
-						$this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
+					$msg_actualizacion = $this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
+					$data['msg_actualizacion'] = $msg_actualizacion;
+						
+					$this->listar($msg_actualizacion);
 				} else {
 					echo "Error de actualización hacia CCTC.<br/>";	//redirect					
 				}
@@ -275,7 +279,7 @@ class Forma_Pago extends CI_Controller {
 		//echo $data['msg_eliminacion´];
 		
 		//cargar la lista
-		$this->listar($msg_eliminacion);
+		$this->listar($msg_eliminacion, FALSE);
 		//$this->cargar_vista('', 'forma_pago' , $data);
 	}
 	
@@ -480,52 +484,60 @@ class Forma_Pago extends CI_Controller {
 			} else if ($tipo == 'amex') {
 				$datos['tc']['id_tipo_tarjetaSi'] = 1;	//Amex
 				$datos['tc']['descripcionVc'] = 'AMERICAN EXPRESS';	//Amex
-				
+		
 			}
 			
 			if(array_key_exists('txt_numeroTarjeta', $_POST)) { 
 				//al final sólo será la terminación de la tarjeta, pero se deben validar los 16 digitos
-				if(preg_match('/^[0-9]{16,17}$/', $_POST['txt_numeroTarjeta'])) {
+				if(preg_match('/^4\d{15}$/', $_POST['txt_numeroTarjeta'])			//visa
+					|| preg_match('/^5[1-5]\d{14,15}$/', $_POST['txt_numeroTarjeta'])) {		//master card
 					$datos['tc']['terminacion_tarjetaVc'] = 
 					substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
 				} else {
 					$this->reg_errores['txt_numeroTarjeta'] = 'Por favor ingrese un numero de tarjeta v&aacute;lido';
 				}				
 			}
-			if(array_key_exists('txt_nombre', $_POST)) {
-				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_nombre'])) { 
+			if (array_key_exists('txt_nombre', $_POST)) {
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i', $_POST['txt_nombre'])) { 
 					$datos['tc']['nombre_titularVc'] = $_POST['txt_nombre'];
-					if ($tipo = 'amex') {
+					if ($tipo == 'amex') {
 						$datos['amex']['nombre_titularVc'] = $_POST['txt_nombre'];
 					}
 				} else {
 					$this->reg_errores['txt_nombre'] = 'Ingresa tu nombre correctamente';
 				}
 			}
-			if(array_key_exists('txt_apellidoPaterno', $_POST)) {
-				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_apellidoPaterno'])) { 
+			if (array_key_exists('txt_apellidoPaterno', $_POST)) {
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i', $_POST['txt_apellidoPaterno'])) { 
 					$datos['tc']['apellidoP_titularVc'] = $_POST['txt_apellidoPaterno'];
-					if ($tipo = 'amex') {
+					if ($tipo == 'amex') {
 						$datos['amex']['apellidoP_titularVc'] = $_POST['txt_apellidoPaterno'];
 					}
 				} else {
 					$this->reg_errores['txt_apellidoPaterno'] = 'Ingresa tu apellido correctamente';
 				}
 			}
-			if(array_key_exists('txt_apellidoMaterno', $_POST)) {
-				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_apellidoMaterno'])) {
+			if (array_key_exists('txt_apellidoMaterno', $_POST) && !empty($_POST['txt_apellidoMaterno'])) {
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i', $_POST['txt_apellidoMaterno'])) {
 					$datos['tc']['apellidoM_titularVc'] = $_POST['txt_apellidoMaterno'];
-					if ($tipo = 'amex') {
+					if ($tipo == 'amex') {
 						$datos['amex']['apellidoM_titularVc'] = $_POST['txt_apellidoMaterno'];
 					}
 				} else {
 					$this->reg_errores['txt_apellidoMaterno'] = 'Ingresa tu apellido correctamente';
 				}
+			} else {
+				$datos['tc']['apellidoM_titularVc'] = "";
+					if ($tipo == 'amex') {
+						$datos['amex']['apellidoM_titularVc'] = "";
+					}
 			}
+			/*
 			if(array_key_exists('txt_codigoSeguridad', $_POST)) {
 				//este código sólo se almaccena para solicitar el pago 
 				$datos['codigo_seguridad'] = $_POST['txt_codigoSeguridad']; 
 			}
+			*/
 			if(array_key_exists('sel_mes_expira', $_POST)) {
 				$datos['tc']['mes_expiracionVc'] = $_POST['sel_mes_expira']; 
 			}
@@ -598,7 +610,8 @@ class Forma_Pago extends CI_Controller {
 			}
 		} 
 		
-		//var_dump($datos);
+		var_dump($datos);
+		exit();
 		//echo 'si no hay errores, $reg_errores esta vacio? '.empty($this->reg_errores).'<br/>';
 		return $datos;
 	}

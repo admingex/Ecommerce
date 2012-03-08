@@ -209,12 +209,13 @@ class Direccion_Envio extends CI_Controller {
 				//var_dump($nueva_info);
 				//exit();
 				/*Para el modo estático*/
-				$data['msg_actualizacion'] = $this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
-				$msg_eliminacion = 
+				//$data['msg_actualizacion'] = $this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
+				$msg_actualizacion = 
 					$this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
+				$data['msg_actualizacion'] = $msg_actualizacion;
 				
 				//$this->cargar_vista('', 'direccion_envio' , $data);
-				$this->listar($msg_eliminacion);
+				$this->listar($msg_actualizacion);
 				/*$url = base_url().'/index.php/direccion_facturacion/';		//la sesion debe tomar el cliente
 				header("Location: $url");*/
 				//redirect("direccion_facturacion");
@@ -467,7 +468,7 @@ class Direccion_Envio extends CI_Controller {
 		if($_POST) {
 			//AMEX
 			if (array_key_exists('txt_calle', $_POST)) {
-				if(preg_match('/^[A-Z0-9 \'.-áéíóúÁÉÍÓÚÑñ]{1,50}$/i', $_POST['txt_calle'])) {
+				if(preg_match('/^[A-Z0-9áéíóúÁÉÍÓÚÑñ \'.-]{1,50}$/i', $_POST['txt_calle'])) {
 					$datos['direccion']['address1'] = $_POST['txt_calle'];
 				} else {
 					$this->reg_errores['txt_calle'] = 'Ingresa tu calle y n&uacute;mero correctamente';

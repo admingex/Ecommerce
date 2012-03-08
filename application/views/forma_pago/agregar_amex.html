@@ -40,10 +40,11 @@
 				<select id="sel_mes_expira" name="sel_mes_expira">
 					<?php 
 						for($i = 1; $i <= 12; $i++) {
+							$zero = ($i < 10) ? "0" : "";
 							if ($i == $mes)
-								echo "<option value='".$i."' selected='true'>$i</option>";
+								echo "<option value='$zero$i' selected='true'>$zero$i</option>";
 							else 
-								echo "<option value='".$i."'>$i</option>";
+								echo "<option value='$zero$i'>$zero$i</option>";
 						} 
 					?>
 				</select>

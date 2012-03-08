@@ -22,6 +22,10 @@ class Login extends CI_Controller {
 	{
 		//echo 'Session: '.$this->session->userdata('id_cliente');
 		//$this->load->view('login');
+		//inclusión de Scripts
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'></script>";
+		$data['script'] = $script_file;
+		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
 		
@@ -36,7 +40,7 @@ class Login extends CI_Controller {
 				//recupera y valida info de los campos
 				$login_info = array();
 				$login_info = $this->get_datos_login();
-				
+				$data['mensaje'] = "";
 				
 				if (empty($this->login_errores)) {
 					//verificar que el usuario esté registrado
@@ -47,17 +51,16 @@ class Login extends CI_Controller {
 					if ($resultado->num_rows() > 0) {
 						$cliente = $resultado->row();
 						
-						//$this->login_errores['user_login'] = "Usuario Logeado.";
-						echo "<h1>Usuario $cliente->id_cliente logeado: $cliente->nombre</h1>";
+						//echo "<h1>Usuario $cliente->id_cliente logeado: $cliente->nombre</h1>";
 						//exit();
 						$this->crear_sesion($cliente->id_cliente, $cliente->nombre);	//crear sesion,
-						
+						/*
 						$url = $this->config->item('base_url').'/index.php/forma_pago/'; 
-						header("Location: $url");
-						
-						//exit();
+						header("Location: $url");*/
+						redirect('forma_pago');
 					} else {
-						$this->login_errores['user_login'] = "Email o contrase&ntilde;a incorrectos."; 	
+						$this->login_errores['user_login'] = "Correo o contrase&ntilde;a incorrectos";
+						//$data['mensaje'] = "Correo o contrase&ntilde;a incorrectos" ;
 					}
 				} else {
 					$this->login_errores['user_login'] = "Revisar los campos";
@@ -66,10 +69,6 @@ class Login extends CI_Controller {
 		}
 		
 		$data['login_errores'] = $this->login_errores;
-		
-		//var_dump($data);
-		//echo var_dump($data)."<br/>pass ".$_POST['password']."<br/>tipo ".$_POST['tipo_inicio'];
-				
 		$this->cargar_vista('', 'login', $data);
 	}
 	
@@ -103,7 +102,7 @@ class Login extends CI_Controller {
 			'username' 	=> $nombre,
 			'id_cliente'=> $id_cliente
 		);
-		//creacion de la sessión
+		//creación de la sesión
 		$this->session->set_userdata($array_session);
 	}
 	

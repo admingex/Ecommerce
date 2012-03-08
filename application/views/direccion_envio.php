@@ -48,15 +48,15 @@
 					//height:140,
 					modal: true,
 					buttons: {
-						"Ok": function() {
-							$( this ).dialog( "close" );
+						"Ok": function() {	//ok
 							<?php
 							//Por default recirecciona a la raiz del módulo
 							$url_redirect = site_url("direccion_envio");
-							if ($redirect) {
+							if (isset($redirect) && $redirect) {
 								$url_redirect = site_url('direccion_facturacion');
 							}
 							?>
+							$( this ).dialog( "close" );
 							window.location.href = "<?php echo $url_redirect; ?>";
 						}
 					}

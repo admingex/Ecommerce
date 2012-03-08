@@ -29,19 +29,19 @@
 					?>
 				</select>
 			</div>
-			<div class="item_requerid">N&uacute;mero de tarjeta:</div>
+			<div class="item_requerid">* N&uacute;mero de tarjeta:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_numeroTarjeta" id="txt_numeroTarjeta" maxlength="16"
 					value="<?php if(isset($_POST['txt_numeroTarjeta'])) echo htmlspecialchars($_POST['txt_numeroTarjeta']);?>"/>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_numeroTarjeta'])) echo ($reg_errores['txt_numeroTarjeta']);?></span>
 			</div>
-			<div class="item_requerid">Nombre del Titular:</div>
+			<div class="item_requerid">* Nombre del Titular:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_nombre" id="txt_nombre" 
 					value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);?>"/>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_nombre'])) echo ($reg_errores['txt_nombre']);?></span>
 			</div>
-			<div class="item_requerid">Apellido Paterno:</div>
+			<div class="item_requerid">* Apellido Paterno:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" 
 					value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);?>"/>
@@ -59,15 +59,16 @@
 				$anio = isset($_POST['sel_anio_expira']) ? $_POST['sel_anio_expira'] : 0;
 				$anio_actual = date('Y');
 			?>
-			<div class="item_requerid">Fecha de expiraci&oacute;n:</div>
+			<div class="item_requerid">* Fecha de expiraci&oacute;n:</div>
 			<div class="form_requerid">
 				<select id="sel_mes_expira" name="sel_mes_expira">
 					<?php 
 						for($i = 1; $i <= 12; $i++) {
+							$zero = ($i < 10) ? "0" : "";
 							if ($i == $mes)
-								echo "<option value='".$i."' selected='true'>$i</option>";
+								echo "<option value='$zero$i' selected='true'>$zero$i</option>";
 							else 
-								echo "<option value='".$i."'>$i</option>";
+								echo "<option value='$zero$i'>$zero$i</option>";
 						} 
 					?>
 				</select>
@@ -96,7 +97,7 @@
 			</div>
 			
 			<div class="form_button">
-				<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="Guardar esta tarjeta"/>
+				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Guardar esta tarjeta"/>
 			</div>
 		</form>
 	</div>

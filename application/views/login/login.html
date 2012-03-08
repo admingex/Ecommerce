@@ -2,14 +2,14 @@
 
 <div id="body">	
 	<form id="form_registro_tc" action="<?php echo $this->config->item('base_url').'/index.php/login/'; ?>" method="POST">
-		<span id="message" class="validation_message">
-			<h2><?php if(isset($login_errores['user_login'])) echo ($login_errores['user_login']);?></h2>
-		</span>
-		<div class="item_requerid">Correo electr&oacute;nico:</div>
+		<!--span id="message" class="validation_message">
+			<h3><?php if(isset($login_errores['user_login'])) echo ($login_errores['user_login']);?></h3>
+		</span-->
+		<div class="item_requerid">* Correo electr&oacute;nico:</div>
 		<div class="form_requerid">
 			<input type="text" name="email" id="email" size="40" maxlength="60" 
 				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
-			<span class="validation_message"><?php if(isset($login_errores['email'])) echo ($login_errores['email']);?></span>
+			<span class="validation_message"> <?php if(isset($login_errores['email'])) echo ($login_errores['email']);?></span>
 		</div>
 		<div class="item_requerid">Iniciar sesi&oacute;n como:</div>
 		<div class="form_requerid">			
@@ -26,7 +26,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="item_requerid">Contrase&ntilde;a:</div>
+		<div class="item_requerid">* Contrase&ntilde;a:</div>
 		<div class="form_requerid">
 			<input type="password" name="password" id="password" size="20" 
 				value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
@@ -39,10 +39,12 @@
 			<a href="#">&iquest;Olvidaste tu contrsae&ntilde;a?</a>
 		</div>
 		
-		
-		<div id="message" class="validation_message"></div>
+		<div id="message" class="validation_message">
+			<?php if(isset($login_errores['user_login'])) echo "<span class='result_fail'>". $login_errores['user_login']. "</span>";?>
+		</div>
+			
 		<div class="form_button">
-			<input type="submit" id="enviar" value="Iniciar sesi&oacute;n / Registrar"/>
+			<input type="submit" id="enviar" name="enviar" value="Iniciar sesi&oacute;n / Registrar"/>
 			
 		</div>
 	</form>

@@ -19,17 +19,8 @@ class Login_Registro_model extends CI_Model {
 		$res = $this->db->query($qry);
 		
 		//echo $res->num_rows()." qey: ". $qry;
-		//exit();
 		
 		return $res;
-		/*
-		if ($res->num_rows() > 0) {
-				//return true;	//"Usuario logeado";
-		} else {
-			return false;	//"Usuario no registrado";
-		}
-		//$res->row();
-		 * */
 	}
 	
 	function verifica_registro_email($email='') {
@@ -47,11 +38,10 @@ class Login_Registro_model extends CI_Model {
 	
 	function registrar_cliente($cliente = array())
     {
-    	//var_dump($cliente);
     	$m5_pass = md5($cliente['email'].'|'.$cliente['password']);		//encriptaciónn definida en el registro de usuarios
     	$cliente['password'] = $m5_pass;
         $res = $this->db->insert('CMS_IntCliente', $cliente);		//true si se inserta
-        //echo '<bt/>Resultado: '.$res;
+
         return $res;	//true_false
     }
 	

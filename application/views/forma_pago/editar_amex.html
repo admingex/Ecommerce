@@ -125,14 +125,14 @@
 				<?php //si no viene del post y es default su estado inicial
 					if(isset($_POST['chk_default'])) { echo 'checked="true"'; }
 					//si no viene del post y es default su estado inicial
-					else if(!isset($_POST['guardar_tarjeta']) && $tarjeta_tc->id_estatusSi == 0)
+					else if($tarjeta_tc->id_estatusSi == 3)
 						{ echo 'checked="true"'; }
 				?> />Usar como tarjeta predeterminada
 			</div>
 			<div><?php if(isset($msg_actualizacion)) { echo $msg_actualizacion; } ?></div>
 			<div class="form_button">
 				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Actualizar tarjeta"/>
-				<a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/listar/';?>">Regresar a la Lista</a>
+				<a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/listar/';?>">Cancelar</a>
 			</div>			
 		</form>
 	</div>
