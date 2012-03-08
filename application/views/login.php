@@ -4,8 +4,7 @@
 	
 	<?php
 		//formulario
-		include ('login/login.html');
-		 
+		include ('login/login.html');		
 	?>
 	
 	<?php
