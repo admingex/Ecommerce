@@ -41,11 +41,6 @@ $(document).ready(function() {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
-	passwd.change(function(){
-		if ($.trim(passwd.val()) != "") {
-			$(this).siblings(".error").fadeOut();
-		}
-	});
 	
 	//cargar el catálogo de estados
 	/* 

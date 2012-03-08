@@ -41,8 +41,6 @@ $(document).ready(function() {
 			$("form").attr("action", "/ecommerce/index.php/registro/")
 			$("form").submit();
 		}
-		
-		
 	});
 	
 	//fade out error messsage
