@@ -23,7 +23,7 @@ class Recordar_Password extends CI_Controller {
 		$data['subtitle'] = $this->subtitle;
 		$data['enviado']=FALSE;
 		$data['mensaje']='';		
-		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'> </script>";
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
 		$data['script'] = $script_file;			
 		$this->cargar_vista('', 'recordar_password',$data);
 	}	
@@ -33,7 +33,7 @@ class Recordar_Password extends CI_Controller {
 		$data['subtitle'] = $this->subtitle;
 		$data['mensaje']='';
 		$data['enviado']=FALSE;
-		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'> </script>";
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
 		$data['script'] = $script_file;	
 		if($_POST){
 			$datamail=$this->modelo->revisa_mail($_POST['email']);			
