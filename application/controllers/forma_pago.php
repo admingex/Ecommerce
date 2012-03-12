@@ -72,8 +72,6 @@ class Forma_Pago extends CI_Controller {
 	
 	public function registrar($form = 'tc') 
 	{
-		//echo 'Session: '.$this->session->userdata('id_cliente');
-		
 		$id_cliente = $this->id_cliente;
 		
 		$consecutivo = $this->modelo->get_consecutivo($id_cliente);
@@ -108,23 +106,22 @@ class Forma_Pago extends CI_Controller {
 			//echo var_dump($form_values);
 			//exit();
 			if (empty($this->reg_errores)) {	
+				//si no hay errores configurar la información de la tarjeta
+				if ($form == 'tc') {
+					$form_values['tc']['descripcionVc'] = $lista_tipo_tarjeta[$form_values['tc']['id_tipo_tarjetaSi'] - 1]->descripcion;
+					$form_values['amex'] = null;	//para que no se tome encuenta.
+				} else if ($form == 'amex') {
+					$form_values['amex']['id_clienteIn'] = $id_cliente;
+					$form_values['amex']['id_TCSi'] = $consecutivo + 1;
+					$form_values['tc']['id_tipo_tarjetaSi'] = 1;
+					$form_values['tc']['descripcionVc'] = "AMERICAN EXPRESS";
+				}
+				//echo var_dump($form_values);
+				//exit();
+				$tarjeta = array('tc' => $form_values['tc'], 'amex' => $form_values['amex']);
 				//si no hay errores y se solicita registrar la tarjeta
 				if (isset($form_values['guardar']) || isset($form_values['tc']['id_estatusSi'])) {
 					//verificar que no exista la tarjeta activa en la BD
-					//var_dump($form_values);
-					//exit();
-					if ($form == 'tc') {
-						$form_values['tc']['descripcionVc'] = $lista_tipo_tarjeta[$form_values['tc']['id_tipo_tarjetaSi'] - 1]->descripcion;
-						$form_values['amex'] = null;	//para que no se tome encuenta.
-					} else if ($form == 'amex') {
-						$form_values['amex']['id_clienteIn'] = $id_cliente;
-						$form_values['amex']['id_TCSi'] = $consecutivo + 1;
-						$form_values['tc']['id_tipo_tarjetaSi'] = 1;
-						$form_values['tc']['descripcionVc'] = "AMERICAN EXPRESS";
-					}
-					//echo var_dump($form_values);
-					//exit();
-					
 					if($this->modelo->existe_tc($form_values['tc'])) {	//Redirect al listado por que ya existe
 						//$url = $this->config->item('base_url').'/index.php/forma_pago/listar/'.$id_cliente;
 						//header("Location: $url");
@@ -139,7 +136,12 @@ class Forma_Pago extends CI_Controller {
 							
 							//Registrar Localmente
 							if ($this->modelo->insertar_tc($form_values['tc'])) {
+								//cargar en sesión
+								$this->cargar_en_session($form_values['tc']['id_TCSi']);
+								
 								$this->listar("Tarjeta registrada correctamente.");
+								//subir a sesión
+								
 							} else {
 								$this->listar("Hubo un error en el registro en CMS.", FALSE);
 								//echo "<br/>Hubo un error en el registro en CMS";
@@ -151,8 +153,10 @@ class Forma_Pago extends CI_Controller {
 					}						
 				} else {
 					/*Poner en session la TC/AMEX*/
-					//si no se guardará la tc, almacenar la info para la venta  
-					echo "no se almacenará la TC >> Pasar a captura de dir. de envío<br/> Coming soon...";
+					//si no se guardará la tc, almacenar la info para la venta 
+					$this->cargar_en_session($tarjeta);
+					redirect('direccion_envio');
+					//echo "no se almacenará la TC >> Pasar a captura de dir. de envío<br/> Coming soon...";
 					//exit();	
 				}
 				//se envía la tc al WS de CCTC y de acuerdo a la respuesta...
@@ -227,7 +231,7 @@ class Forma_Pago extends CI_Controller {
 				}
 				//var_dump($nueva_info);
 				//exit();
-				
+				$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
 				//actualizar en CCTC
 				if($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
 				//if (1) {
@@ -235,16 +239,20 @@ class Forma_Pago extends CI_Controller {
 					//checar el estatus:
 					if (!isset($nueva_info['tc']['id_estatusSi'])) {	
 						//si no está como predeterminada se deja en activo
-						//echo "Activo!!!  ";
 						$nueva_info['tc']['id_estatusSi'] = 1;
-					}					
+					}
 					//registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
 					$msg_actualizacion = $this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
 					$data['msg_actualizacion'] = $msg_actualizacion;
-						
+					
+					//cargarla en la sesión
+					$this->cargar_en_session($consecutivo);
+					//echo 'tarjeta: '.$this->session->userdata('tarjeta').'<br/>';
+					//exit();	
 					$this->listar($msg_actualizacion);
 				} else {
-					echo "Error de actualización hacia CCTC.<br/>";	//redirect					
+					$data['msg_actualizacion'] = "Error de actualización hacia en el Servidor";
+					//echo "Error de actualización hacia CCTC.<br/>";	//redirect					
 				}
 			} else {	//sí hubo errores
 				$data['msg_actualizacion'] = "Campos incorrectos";
@@ -487,15 +495,18 @@ class Forma_Pago extends CI_Controller {
 		
 			}
 			
-			if(array_key_exists('txt_numeroTarjeta', $_POST)) { 
+			if(array_key_exists('txt_numeroTarjeta', $_POST)) {
+				if ($this->validar_tarjeta($datos['tc']['id_tipo_tarjetaSi'], trim($_POST['txt_numeroTarjeta']))) { 
 				//al final sólo será la terminación de la tarjeta, pero se deben validar los 16 digitos
-				if(preg_match('/^4\d{15}$/', $_POST['txt_numeroTarjeta'])			//visa
-					|| preg_match('/^5[1-5]\d{14,15}$/', $_POST['txt_numeroTarjeta'])) {		//master card
+				/*if(preg_match('/^4\d{15}$/', $_POST['txt_numeroTarjeta'])			//visa
+					|| preg_match('/^5[1-5]\d{14,15}$/', $_POST['txt_numeroTarjeta'])) {		
+				 * */
+				//Master Card, Visa
 					$datos['tc']['terminacion_tarjetaVc'] = 
-					substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
+						substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
 				} else {
 					$this->reg_errores['txt_numeroTarjeta'] = 'Por favor ingrese un numero de tarjeta v&aacute;lido';
-				}				
+				}
 			}
 			if (array_key_exists('txt_nombre', $_POST)) {
 				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i', $_POST['txt_nombre'])) { 
@@ -571,7 +582,7 @@ class Forma_Pago extends CI_Controller {
 				}
 			}
 			if(array_key_exists('txt_ciudad', $_POST)) {
-				if(preg_match('/^[A-Z0-9 \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_ciudad'])) {
+				if(preg_match('/^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_ciudad'])) {
 					$datos['amex']['ciudad'] = $_POST['txt_ciudad'];
 				} else {
 					$this->reg_errores['txt_ciudad'] = 'Ingresa tu ciudad correctamente';
@@ -602,7 +613,7 @@ class Forma_Pago extends CI_Controller {
 			}
 			
 			if(array_key_exists('txt_telefono', $_POST)) {
-				if(preg_match('/^[0-9 -]{2,15}$/i', $_POST['txt_telefono'])) {
+				if(preg_match('/^[0-9 -]{8,20}$/i', $_POST['txt_telefono'])) {
 					$datos['amex']['telefono'] = $_POST['txt_telefono'];
 				} else {
 					$this->reg_errores['txt_telefono'] = 'Ingresa tu tel&eacute;fono correctamente';
@@ -613,7 +624,65 @@ class Forma_Pago extends CI_Controller {
 		//echo 'si no hay errores, $reg_errores esta vacio? '.empty($this->reg_errores).'<br/>';
 		return $datos;
 	}
-
+	
+	private function validar_tarjeta($tipo_tarjeta, $num_tarjeta) {
+		$reg_visa 			= '/^4[0-9]{12}(?:[0-9]{3})?$/';
+		$reg_master_card 	= '/^5[1-5][0-9]{14}$/';
+		$reg_amex			= '/^3[47][0-9]{13}$/';
+		//1 => Aamex, >1 => PROSA
+		
+		if ($tipo_tarjeta > 1 && !preg_match($reg_visa, $num_tarjeta) && !preg_match($reg_master_card, $num_tarjeta)) {
+			return false;
+		} else if ($tipo_tarjeta == 0 && !preg_match($reg_amex, $num_tarjeta)) {
+			return false;
+		} else if (!$this->validarLuhn($num_tarjeta)) {
+			return false;
+		} 
+		
+		return true;		//tarjeta válida
+	}
+	
+	private function validarLuhn($num_tarjeta) {
+		$num_card = array(16);
+		$len = 0;
+		$tarjeta_valida = false;
+	
+		//Obtener los dígitos de la tarjeta
+		for ($i = 0; $i < strlen($num_tarjeta); $i++) {
+			$num_card[$len++] = (int)($num_tarjeta[$i]);
+		}
+			
+		//algoritmo Luhn
+		$checksum = 0;
+		for ($i = $len - 1; $i >= 0; $i--) {
+			if ($i % 2 == $len % 2) {
+				$n = $num_card[$i] * 2;
+				$checksum += (int)($n / 10) + ($n % 10);
+			} else {
+				$checksum += $num_card[$i];
+			}
+		}
+		
+		$tarjeta_valida = ($checksum % 10 == 0);
+		
+		return $tarjeta_valida;
+	}
+	
+	private function cargar_en_session($tarjeta = null)
+	{
+		//echo 'tarjeta: '.$tarjeta.'<br/> is int: ' . (int)($tarjeta) . '<br/>is array: ' . is_array($tarjeta) . '<br/>tipo: ' . gettype($tarjeta) . '<br/>';
+		if (is_array($tarjeta)) { //si no se guarda en BD
+			$this->session->set_userdata('tarjeta', $tarjeta);
+		} else if ( ((int)$tarjeta) != 0 && is_int((int)$tarjeta)) {	//si ya está regiustrada la tarjeta en BD sólo sube el consecutivo
+			$this->session->set_userdata('tarjeta', $tarjeta);
+		} else {	//si no es ninguno de los dos, elimina el elemento de la sesión
+			$this->session->unset_userdata('tarjeta');
+		}
+	}
+	
+	/*
+	 * Carga una vista agragando los componentes separados de la misma
+	 * */
 	private function cargar_vista($folder, $page, $data)
 	{	
 		//Para automatizar un poco el desplieguee

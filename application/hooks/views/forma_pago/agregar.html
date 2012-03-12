@@ -1,0 +1,68 @@
+<div id="tc_normal">
+	<h1>Tarjeta de Cr&eacute;dito</h1>
+	
+	<div id="body">	
+		<form id="form_registro_tc" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/forma_pago/registrar/tc" method="POST">
+			<div class="item_requerid">N&uacute;mero de tarjeta:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_numeroTarjeta" id="txt_numeroTarjeta" 
+					value="<?php if(isset($datos['numeroTarjeta'])) echo htmlspecialchars($datos['numeroTarjeta']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['email_falta'])) echo ($datos['email_falta']);?></span>
+			</div>
+			<div class="item_requerid">Titular de la tarjeta:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_titularTarjeta" id="txt_titularTarjeta" 
+					value="<?php if(isset($datos['titularTarjeta'])) echo htmlspecialchars($datos['titularTarjeta']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['email_falta'])) echo ($datos['email_falta']);?></span>
+			</div>
+			<div class="item_requerid">C&oacute;digo de seguridad:</div>
+			<div class="form_requerid">
+				<input type="text" name="txt_codigoSeguridad" id="txt_codigoSeguridad" maxlength="4" size="5"
+					value="<?php if(isset($datos['codigoSeguridad'])) echo htmlspecialchars($datos['codigoSeguridad']);?>"/>
+				<span class="validation_message"><?php if(isset($datos['email_falta'])) echo ($datos['email_falta']);?></span>
+			</div>
+			<div class="item_requerid">Fecha de expiraci&oacute;n:</div>
+			<div class="form_requerid">
+				<select id="sel_mes_expira" name="sel_anio_expira">
+					<option value="01">Enero</option>
+					<option value="02">Ferbero</option>
+					<option value="03">Marzo</option>
+					<option value="04">Abril</option>
+					<option value="05">Mayo</option>
+					<option value="06">Junio</option>
+					<option value="07">Julio</option>
+					<option value="08">Agosto</option>
+					<option value="09">Septiembre</option>
+					<option value="10">Octubre</option>
+					<option value="11">Noviembre</option>
+					<option value="12">Diciembre</option>
+				</select>
+				<select id="sel_anio_expira" name="sel_anio_expira">
+					<option value="12">2012</option>
+					<option value="13">2013</option>
+					<option value="14">2014</option>
+					<option value="15">2015</option>
+					<option value="16">2016</option>
+					<option value="17">2017</option>
+					<option value="18">2018</option>
+				</select>
+				
+				<span class="validation_message"><?php if(isset($datos['email_falta'])) echo ($datos['email_falta']);?></span>
+			</div>
+			
+			<div class="item_requerid"></div>
+			<div class="form_requerid">
+				<input type="checkbox" id="chk_guardar" name="chk_guardar" >Guardar para compra futuras</input>
+			</div>
+			
+			<div class="item_requerid"></div>
+			<div class="form_requerid">
+				<input type="checkbox" id="chk_predeterminada" name="chk_predeterminada" >Usar como tarjeta predeterminada</input>
+			</div>
+			
+			<div class="form_button">
+				<input type="submit" id="enviar" value="Guardar tarjeta"/>
+			</div>
+		</form>
+	</div>
+</div>
