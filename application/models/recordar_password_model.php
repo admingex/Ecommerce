@@ -30,8 +30,7 @@ class Recordar_Password_model extends CI_Model {
 		}
 	}
 	
-	function guarda_actividad_historico($id_cliente,$clave, $actividad, $time){
-		echo 
+	function guarda_actividad_historico($id_cliente,$clave, $actividad, $time){		
 		$campos = array('id_clienteIn' 	=> 	$id_cliente, 
 						'claveVc' => $clave,
 						'id_tipoActividadSi'=>$actividad,
@@ -39,13 +38,42 @@ class Recordar_Password_model extends CI_Model {
 		$this->db->insert('CMS_IntHistoricoCliente', $campos);		
 	}
 	
-	function registrar_cliente($cliente = array()){
-    	//var_dump($cliente);
-    	$m5_pass = md5($cliente['email'].'|'.$cliente['password']);		//encriptaciónn definida en el registro de usuarios
+	function cambia_password($id_cliente,$email,$password){
+		$pass = md5($email.'|'.$password);
+		$this->db->where(array('id_clienteIn' => $id_cliente));
+		$resultado = $this->db->update('CMS_IntCliente', array('clave_temporalVc' => NULL, 'password'=>$pass));
+		if($resultado) {
+			return 1;
+		} 
+		else {
+			return 0;
+		}	
+	}		
+	function obtiene_cliente($clave_temporal){
+		$qry = "SELECT *
+				FROM CMS_Inthistoricocliente
+				WHERE claveVc = '".$clave_temporal."'";
+		$res = $this->db->query($qry);
+		$row = $res->row();
+		
+		$qry2 = "SELECT *
+				FROM CMS_IntCliente
+				WHERE id_clienteIn = '".$row->id_clienteIn."'";
+		$res2 = $this->db->query($qry2);
+		$row2= $res2->row();
+		
+		return $row2;
+	}
+	
+	function obtiene_numero_historicos(){
+					
+	}	
+	
+	function registrar_cliente($cliente = array()){   	
+    	$m5_pass = md5($cliente['email'].'|'.$cliente['password']);	
     	$cliente['password'] = $m5_pass;
-        $res = $this->db->insert('CMS_IntCliente', $cliente);		//true si se inserta
-        //echo '<bt/>Resultado: '.$res;
-        return $res;	//true_false
+        $res = $this->db->insert('CMS_IntCliente', $cliente);		    
+        return $res;	
     }
 		
 }

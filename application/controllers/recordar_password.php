@@ -10,25 +10,23 @@ class Recordar_Password extends CI_Controller {
 	);	
 	
 	var $title = 'Recordar Password'; 		// Capitalize the first letter
-	var $subtitle = 'Recordar Password'; 	// Capitalize the first letter
-	var $login_errores = array();
+	var $subtitle = 'Recordar Password'; 	// Capitalize the first letter	
 	private $email;
 	private $password;
+	var $registro_errores = array();		//validación para los errores
 	
-	function __construct()
-    {
+	function __construct(){
         // Call the Model constructor
-        parent::__construct();
-		
+        parent::__construct();		
 		//cargar el modelo en el constructor
-		$this->load->model('recordar_password_model', 'modelo', true);
-		//la sesion se carga automáticamente
+		$this->load->model('recordar_password_model', 'modelo', true);		
     }
 	
 	public function index(){
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
 		$data['enviado']=FALSE;
+		$data['cambiar']=FALSE;	
 		$data['mensaje']='';		
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
 		$data['script'] = $script_file;			
@@ -40,6 +38,7 @@ class Recordar_Password extends CI_Controller {
 		$data['subtitle'] = $this->subtitle;
 		$data['mensaje']='';
 		$data['enviado']=FALSE;
+		$data['cambiar']=FALSE;	
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
 		$data['script'] = $script_file;	
 		if($_POST){
@@ -47,14 +46,13 @@ class Recordar_Password extends CI_Controller {
 			if($datamail->num_rows()==1){
 				$data['enviado'] = TRUE;				
 				$data['cliente']=$datamail->row();
-				$data['password_temporal']= $p = substr(md5(uniqid(rand( ), true)), 0,10);
+				$data['password_temporal']= $p = substr(md5(uniqid(rand( ), true)), 5,10);
 				$this->load->helper('date');
 				$data['timestamp']= $t= mdate('%Y/%m/%d %h:%i:%s',time());
 				$this->modelo->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
 				$this->modelo->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);																										
 				$this->cargar_vista('', 'recordar_password', $data);	
-				//redirect('login');				
-				
+				//redirect('login');								
 			}		
 			else{
 				$data['mensaje']='No se encuentra en nuestra base de datos';
@@ -64,6 +62,128 @@ class Recordar_Password extends CI_Controller {
 		else{
 			$this->cargar_vista('', 'recordar_password', $data);
 		}
+	}
+
+	public function cambiar($passtemp= ''){
+		$data['title'] = "Cambio password";
+		$data['subtitle'] = "Cambio password";
+		$data['mensaje']='';	
+		$data['cambiar']=TRUE;	
+		$data['enviado']=FALSE;	
+		$data['password_temporal']=$passtemp;		
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
+		$data['script'] = $script_file;	
+		if($_POST){
+			$resobc=$this->modelo->obtiene_cliente($_POST['password_temporal']);				
+			$this-> valida_password($resobc->email, $_POST['password']);
+			if (preg_match ('/^(\w*(?=\w*\d)(?=\w*[a-z])(?=\w*[A-Z])\w*){6,20}$/', $_POST['password']) ) {
+				if ($_POST['password'] == $_POST['password_2']) {
+					$datos['password'] = htmlspecialchars(trim($_POST['password']));
+				} 
+				else {
+					$this->registro_errores['password_2'] = 'Tus contrase&ntilde;as no coincden';
+				}
+			} 
+			else {
+				$this->registro_errores['password_2'] = 'Por favor ingresa una contrase&ntilde;a v&aacute;lida';
+			}
+			
+			if(empty($this->registro_errores)){
+																							
+				$this->modelo->cambia_password($resobc->id_clienteIn,$resobc->email,$_POST['password']);
+				$this->load->helper('date');
+				$t= mdate('%Y/%m/%d %h:%i:%s',time());
+				$this->modelo->guarda_actividad_historico($resobc->id_clienteIn, $resobc->password, self::$TIPO_ACTIVIDAD['CAMBIO_PASSWORD'], $t);
+				redirect('login');									
+			}
+			else{
+				$data['registro_errores'] = $this->registro_errores;	
+			}																 				 
+		}		
+		$this->cargar_vista('', 'recordar_password',$data);		
+					
+	}		
+	
+	private function contiene_mayuscula($cad){
+		$may='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		for($i=0; $i<strlen($cad); $i++){
+			if(strstr($may, $cad[$i])){
+				return TRUE;		
+			}
+		}	
+		return FALSE;
+	}
+
+	private function contiene_minuscula($cad){
+		$min='abcdefghijklmnopqrstuvwxyz';
+		for($i=0; $i<strlen($cad); $i++){
+			if(strstr($min, $cad[$i])){
+				return TRUE;		
+			}
+		}	
+		return FALSE;
+	}
+	
+	private function contiene_numero($cad){
+		$num='0123456789';
+		for($i=0; $i<strlen($cad); $i++){
+			if(strstr($num, $cad[$i])){
+				return TRUE;		
+			}
+		}	
+		return FALSE;
+	}
+
+	private function contiene_consecutivos($cad){
+		for($i=2; $i<strlen($cad); $i++){		
+			$term0=$cad[($i-2)];
+			$term1=$cad[($i-1)];
+			$term2=$cad[$i];									
+			if(($term0==$term1)&&($term1==$term2)){
+				return FALSE;
+			}		     		            			  		
+   		}   	
+   		return TRUE;
+	}
+
+	private function valida_password($correo, $pass){		
+		$cadlogin = explode('@',$correo);
+		if(strlen($pass)<8){		
+			$this->registro_errores['password'] = 'debe contener por lo menos 8 caracteres';
+		}
+		else{
+			if(preg_match('/[^a-zA-Z0-9]/', $pass)){
+				$this->registro_errores['password'] = 'deben ser numero y letras solamente';			
+			}
+			else{
+				if(stristr($pass,$cadlogin[0])){
+					$this->registro_errores['password'] = 'no debe contener login';				
+				}					
+				else{
+					if(!$this->contiene_mayuscula($pass)){
+						$this->registro_errores['password'] = 'debe contener por lo menos 1 mayuscula';					
+					}	
+					else{
+						if(!$this->contiene_minuscula($pass)){
+							$this->registro_errores['password'] = 'debe contener por lo menos 1 minuscula';						
+						}
+						else{
+							if(!$this->contiene_numero($pass)){
+								$this->registro_errores['password'] = 'debe contener por lo menos 1 numero';							
+							}
+							else{
+								if(!$this->contiene_consecutivos($pass)){
+									$this->registro_errores['password'] = 'contiene consecutivos';								
+								}
+								else{
+									$datos['password']=htmlspecialchars(trim($pass));
+								}
+							}
+						}				
+					}							
+				}
+			}
+		}		
 	}
 	
 	private function cargar_vista($folder, $page, $data){	

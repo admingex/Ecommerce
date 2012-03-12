@@ -37,8 +37,7 @@
 		}
 
 		code {
-			font-family: Consolas, Monaco, Courier New, Courier, monospace;
-			
+			font-family: Consolas, Monaco, Courier New, Courier, monospace;			
 			background-color: #f9f9f9;
 			border: 1px solid #D0D0D0;
 			color: #002166;
@@ -50,18 +49,14 @@
 		ul li{
 			/*width: %;		/*145px;*/
 			padding: 4px 0px 4px 4px;
-			list-style-type: none;
-			
-			
-			
+			list-style-type: none;				
 			/*border: 1px solid #000;*/
 			text-align: left;
 			text-indent:0%;
 			/*background-color: #fa3;*/
 		}
 		p.footer{
-			text-align: right;
-			
+			text-align: right;			
 			border-top: 1px solid #D0D0D0;
 			line-height: 32px;
 			padding: 0 10px 0 10px;
@@ -87,8 +82,7 @@
 			float: left;
 			clear: right;
 			padding: 2px 0 8px 2px;
-			/*border: 1px solid #000;*/
-			
+			/*border: 1px solid #000;*/			
 		}
 		
 		
@@ -96,8 +90,7 @@
 			padding-left: 4px;
 		}
 
-		.column_header {
-			width: 10%;	/*160px*/
+		.column_header {			
 			font-weight: bold;
 			padding: 4px 0px 4px 4px;
 			float: left;
@@ -121,8 +114,7 @@
 			clear: both;
 		}
 		
-		#list_results  ul li{
-			width: 10%;		/*145px;*/
+		#list_results  ul li{			
 			padding: 4px 0px 4px 4px;
 			list-style-type: none;
 			display: inline;
@@ -157,5 +149,8 @@
         <header>
             <a href='<?php echo base_url();?>'><img src="<?php echo base_url();?>images/logo_expansion.gif" alt="logo gex" width="52" height="52" /></a>            
         </header>
-    </div>
+    </div>    
     <div id="main">
+    		<?php
+				include "menu.html"; 
+			?>

@@ -1,0 +1,31 @@
+<div id="body">	
+	<form id="form_cambiar_password" action="<?php echo $this->config->item('base_url').'/index.php/recordar_password/cambiar'; ?>" method="POST">
+		<div class="item_requerid">
+			Clave Temporal:
+		</div>
+		<div class="form_requerid">
+			<input type="text" id="password_temporal" name="password_temporal" value="<?php if(isset($password_temporal)) echo $password_temporal; if(isset($_POST['password_temporal'])) echo htmlspecialchars($_POST['password_temporal']); ?>" />
+		</div>	
+		<div class="item_requerid">
+			Nuevo Password:
+		</div>
+		<div class="form_requerid">
+			<input type="text" id="password" name="password" value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
+			<span class="validation_message">
+				<?php if(isset($registro_errores['password'])) echo($registro_errores['password']);?>
+			</span>
+		</div>	
+		<div class="item_requerid">
+			Confirmar Password: 
+		</div>
+		<div class="form_requerid">
+			<input type="text" id="password_2" name="password_2" value="" />
+			<span class="validation_message">
+				<?php if(isset($registro_errores['password_2'])) echo($registro_errores['password_2']);?>
+			</span>
+		</div>
+		<div class="form_button">
+			<input type="submit" id="cambiar_password" name="cambiar_password" value="Cambiar Password"/>			
+		</div>
+	</form>			
+</div>

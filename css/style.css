@@ -74,3 +74,26 @@ ul
     {
         color: #b8091a;
     }
+
+#menu_navegacion{
+	float: right; 
+	font-size: 12px; 
+	padding: 3px; 
+	color: #FB3; 
+	font-weight: bold;
+	margin-top: 15px;
+}    
+
+.menu_opcion{
+	float: left; 
+	margin: 0px 5px	;
+	height: 35px;	
+}
+
+.menu_opcion a{
+	color: #063F84;
+	font-weight: bold;
+}
+.menu_opcion a:hover{
+	color: #FB3;
+}
