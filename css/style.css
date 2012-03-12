@@ -1,0 +1,76 @@
+@font-face
+{
+    font-family: 'Gotham-Book';
+    src: url(Gotham-Book.otf);
+    src: local('Gotham-Book'), local('Gotham-Book'), url(../css/Gotham-Book.otf) format('opentype');
+}
+html
+{
+    min-height: 100%;
+    padding-bottom: 1px;
+}
+body
+{
+    background: #000000;
+    margin: 0 auto;
+    width: 984px;
+}
+#header-container
+{
+    float: left;
+    width: 128px;
+}
+#header-container img
+{
+    margin: 13px 10px 0;
+}
+#main
+{
+    background: #FFF;
+    float: left;
+    width: 728px;
+    min-height: 728px;
+}
+#footer-container
+{
+    float: left;
+    width: 128px;
+    overflow: hidden;
+}
+#footer-container img
+{
+    margin: 65px 10px 0;
+}
+ul
+{
+    margin-left: 0px;
+    padding-left: 0px;
+    list-style-type: none;
+}
+    ul.menu-outer,
+    ul.menu-outer-right
+    {
+        margin-left: 10px;
+        margin-top: 74px;
+        font-family: Gotham-Book;
+        font-size: 0.78em;
+    }
+    ul.menu-outer-right
+    {
+        margin-top: 46px;
+        height: 136px;
+    }
+    ul.menu-outer li, ul.menu-outer-right li
+    {
+        list-style-type: none;
+        padding-bottom: 11px;
+    }
+    ul.menu-outer li a, ul.menu-outer-right li a
+    {
+        text-decoration: none;
+        color: #fff;
+    }
+    ul.menu-outer li a:hover, ul.menu-outer-right li a:hover
+    {
+        color: #b8091a;
+    }
