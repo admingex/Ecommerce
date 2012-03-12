@@ -37,6 +37,10 @@ class Direccion_Envio extends CI_Controller {
 	public function index()
 	{
 		//Recuperar el "id_ClienteNu" de la sesion
+		if ($_POST) {
+			if (array_key_exists('tajeta_selecionada', $_POST))
+				$this->session->set_userdata('tarjeta', $_POST['tajeta_selecionada']);
+		}
 		
 		//$id_cliente = $this->session->userdata('id_cliente');
 		
@@ -57,6 +61,7 @@ class Direccion_Envio extends CI_Controller {
 		$ano = date('m.d')	;
 		echo "date: ". $ano;
 		*/
+		echo 'tarjeta: '.$this->session->userdata('tarjeta').'<br/>';
 		//EL usuario se toma de la sesión...
 		
 		$data['title'] = $this->title;
@@ -120,6 +125,9 @@ class Direccion_Envio extends CI_Controller {
 					} else {
 						//Registrar en BD
 						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
+							//cargar en sesion
+							$this->cargar_en_session($form_values['id_consecutivoSi']);
+							//cargar la vista de las tarjetas
 							$this->listar("Direcci&oacute;n registrada correctamente.");
 						} else {
 							$this->listar("Hubo un error en el registro en CMS.", FALSE);
@@ -127,11 +135,14 @@ class Direccion_Envio extends CI_Controller {
 						}
 					}						
 				} else {
-					//si no se guardará la tc, almacenar la info para la venta en sesión temporalmente y pasar a direccón de facturación
-					$url = base_url().'/index.php/direccion_facturacion/';
+					//si no se guardará la dirección, almacenar la info para el cobro en sesión temporalmente y pasar a direccón de facturación
+					$this->cargar_en_session($form_values['direccion']);
+					redirect('direccion_envio');
+					/*$url = base_url().'/index.php/direccion_facturacion/';
 					header("Location: $url");
 					exit();	  
 					echo "No se guardar&aacute; la direcci&oacute;n>> Pasar a captura de dir. de facturación<br/> Coming soon...";
+					*/
 				}
 			} else {	//Si hubo errores en la captura
 				//carga de catálogos de sepomex si ya se hizo la seleccion de estado, ciudad, colonia
@@ -214,6 +225,8 @@ class Direccion_Envio extends CI_Controller {
 					$this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
 				$data['msg_actualizacion'] = $msg_actualizacion;
 				
+				//Cargar en sesión la dirección mmodificada
+				$this->cargar_en_session($consecutivo);
 				//$this->cargar_vista('', 'direccion_envio' , $data);
 				$this->listar($msg_actualizacion);
 				/*$url = base_url().'/index.php/direccion_facturacion/';		//la sesion debe tomar el cliente
@@ -579,10 +592,19 @@ class Direccion_Envio extends CI_Controller {
 				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC
 			}
 		} 
-		
 		//var_dump($datos);
-		//echo 'si no hay errores, $reg_errores esta vacio? '.empty($this->reg_errores).'<br/>';
 		return $datos;
+	}
+
+	private function cargar_en_session($direccion = null)
+	{
+		if (is_array($direccion)) { //si no se guarda en BD
+			$this->session->set_userdata('dir_envio', $direccion);
+		} else if ( ((int)$direccion) != 0 && is_int((int)$direccion)) {	//si ya está regiustrada la direccion en BD sólo sube el consecutivo
+			$this->session->set_userdata('dir_envio', $direccion);
+		} else {	//si no es ninguno de los dos, elimina el elemento de la sesión
+			$this->session->unset_userdata('dir_envio');
+		}
 	}
 
 	private function cargar_vista($folder, $page, $data)

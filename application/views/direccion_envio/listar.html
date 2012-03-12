@@ -1,7 +1,7 @@
 <h1>Direcciones guardadas de <?php echo $this->session->userdata('username');?></h1>
 
 <div id="body">
-	<form id="form_direccion_envio" action="<?php echo site_url("direccion_facturacion/"); ?>" method="POST">
+	<form id="form_direccion_envio" action="<?php echo site_url('direccion_facturacion'); ?>" method="POST">
 		<div id="list_headers">			
 			<div class="column_header">Calle y n&uacute;mero</div>
 			<div class="column_header">Colonia</div>
@@ -26,7 +26,7 @@
 			?>
 			<ul>
 				<li <?php echo $class;?>>
-					<input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check?>/>
+					<input type="radio" id="direccion_selecionada" name="direccion_selecionada" <?php echo $check."value='".$direccion['id_consecutivoSi']."'"?>/>
 					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?>
 				</li>
 				<li <?php echo $class;?>><?php echo $direccion['colonia']; ?></li> 

@@ -2,20 +2,20 @@
 	<h1>Editar Informaci&oacute;n de la Direcci&oacute;n</h1>
 	
 	<div id="body">
-		<form id="form_editar_direccion_envio" action="<?php echo base_url().'index.php/direccion_envio/editar/'.$direccion->id_consecutivoSi; ?>" method="POST">
-			<div class="item_requerid">Calle:</div>
+		<form id="form_editar_direccion_envio" action="<?php echo site_url('direccion_envio/editar/' . $direccion->id_consecutivoSi); ?>" method="POST">
+			<div class="item_requerid">* Calle:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_calle" id="txt_calle" size="30"
 					value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);
 						else echo $direccion->address1; ?>"/>
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>
 			</div>
-			<div class="item_requerid">N&uacute;mero exterior:</div>
+			<div class="item_requerid">* N&uacute;mero exterior:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_numero" id="txt_numero" maxlength="5" size="5" 
 					value="<?php if(isset($_POST['txt_numero'])) echo htmlspecialchars($_POST['txt_numero']);
 						else echo $direccion->address2; ?>"/>		
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_numero'])) echo ($reg_errores['txt_numero']);?></span>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_numero'])) echo ($reg_errores['txt_numero']);?></span>
 			</div>
 			<div class="item_requerid">N&uacute;mero interior:</div>
 			<div class="form_requerid">
@@ -24,18 +24,18 @@
 						else if (isset($direccion->address4)) echo $direccion->address4; ?>"/>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_num_int'])) echo ($reg_errores['txt_num_int']);?></span>
 			</div>
-			<div class="item_requerid">C&oacute;digo postal:</div>
+			<div class="item_requerid">* C&oacute;digo postal:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5"
 					value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);
 						else echo $direccion->zip; ?>"/>
 					<span><input type="button" id="btn_cp" name="btn_cp" value="Llenar"/></span>
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
 				<div>
 					<small>Ingresa tu c&oacute;digo postay y presiona "llenar" para acompletar los datos de Colonia, Ciudad y Estado</small>
 				</div>
 			</div>
-			<div class="item_requerid">Pa&iacute;s:</div>
+			<div class="item_requerid">* Pa&iacute;s:</div>
 			<div class="form_requerid">
 				<select id="sel_pais" name="sel_pais">
 					<?php
@@ -64,30 +64,30 @@
 				<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
 			</div>
 			<div id="div_otro_pais">
-				<div class="item_requerid">Estado:</div>
+				<div class="item_requerid">* Estado:</div>
 				<div class="form_requerid">
 					<input type="text" name="txt_estado" id="txt_estado" size="30"
 						value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);
 								else echo $direccion->state; ?>"/>
-					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
+					<span class="validation_message"><?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
 				</div>			
-				<div class="item_requerid">Ciudad:</div>
+				<div class="item_requerid">* Ciudad:</div>
 				<div class="form_requerid">
 					<input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
 						value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);
 								else echo $direccion->city; ?>"/>
-					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
+					<span class="validation_message"><?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
 				</div>
-				<div class="item_requerid">Colonia:</div>
+				<div class="item_requerid">* Colonia:</div>
 				<div class="form_requerid">
 					<input type="text" name="txt_colonia" id="txt_colonia" size="30"
 						value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);
 								else echo $direccion->address3; ?>"/>
-					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?></span>
+					<span class="validation_message"><?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?></span>
 				</div>
 			</div>
 			<div id="div_mexico">
-				<div class="item_requerid">Estado:</div>
+				<div class="item_requerid">* Estado:</div>
 				<div class="form_requerid">
 					<select id="sel_estados" name="sel_estados">
 						<option value="">Seleccionar</option>
@@ -112,10 +112,10 @@
 						}
 						?>
 					</select>
-					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_estados'])) echo ($reg_errores['sel_estados']);?></span>
+					<span class="validation_message"><?php if(isset($reg_errores['sel_estados'])) echo ($reg_errores['sel_estados']);?></span>
 				</div>
 				
-				<div class="item_requerid">Ciudad:</div>
+				<div class="item_requerid">* Ciudad:</div>
 				<div class="form_requerid">
 					<select id="sel_ciudades" name="sel_ciudades">
 						<option value="">Seleccionar</option>
@@ -149,9 +149,9 @@
 						}
 						?>
 					</select>
-					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_ciudades'])) echo ($reg_errores['sel_ciudades']);?></span>
+					<span class="validation_message"><?php if(isset($reg_errores['sel_ciudades'])) echo ($reg_errores['sel_ciudades']);?></span>
 				</div>
-				<div class="item_requerid">Colonia:</div>
+				<div class="item_requerid">* Colonia:</div>
 				<div class="form_requerid">
 					<select id="sel_colonias" name="sel_colonias">
 						<option value="">Seleccionar</option>
@@ -176,22 +176,22 @@
 						}
 						?>
 					</select>
-					<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['sel_colonias'])) echo ($reg_errores['sel_colonias']);?></span>
+					<span class="validation_message"><?php if(isset($reg_errores['sel_colonias'])) echo ($reg_errores['sel_colonias']);?></span>
 				</div>
 			</div>
-			<div class="item_requerid">Tel&eacute;fono:</div>
+			<div class="item_requerid">* Tel&eacute;fono:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_telefono" id="txt_telefono" size="30"
 					value="<?php if (isset($_POST['txt_telefono'])) echo htmlspecialchars($_POST['txt_telefono']);
 						else echo $direccion->phone; ?>" />
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_telefono'])) echo ($reg_errores['txt_telefono']);?></span>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_telefono'])) echo ($reg_errores['txt_telefono']);?></span>
 			</div>
-			<div class="item_requerid">Email:</div>
+			<div class="item_requerid">* Email:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_email" id="txt_email" size="30"
 					value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);
 						else echo $direccion->email; ?>" />
-				<span class="validation_message">&nbsp;*<?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
+				<span class="validation_message"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
 			</div>
 			<div class="item_requerid">Referencia:</div>
 			<div class="form_requerid">

@@ -1,0 +1,51 @@
+<h1>Tarjetas guardadas</h1>
+
+<div id="body">
+
+	<div id="list_headers">
+		<div class="column_header">Tarjeta</div>
+		<div class="column_header">Nombre</div>
+		<div class="column_header">Expira</div>
+		<div class="column_header">C&oacute;digo de seguridad</div>
+		<div class="column_header">&nbsp;</div>
+		<div class="column_header">&nbsp;</div>
+	</div>
+	<div id="list_results">
+	<?php
+		//if(array_key_exists('clientes', $data) && count($data['clientes']) > 0) {
+		if (isset($resultado)) {
+			$tarjetas = $resultado;
+			foreach($tarjetas->result_array() as $tarjeta) {
+		?>
+	<ul>
+		<li><?php echo $tarjeta['descripcionVc']; ?> </li>
+		<li><?php echo $tarjeta['nombre_titularVc']; ?></li> 
+		<li><?php echo $tarjeta['fecha_expiracionVc']; ?> </li>	
+		<li><input id="txt_codigoVerificador" name="txt_codigoVerificador" size="4"/></li>
+		<li><a href="#" title="editar">editar</a></li>
+		<li><a href="#" title="eliminar">eliminar</a></li>
+	</ul>
+		<?php 
+				
+			}
+			//echo " ", count($tarjetas);
+			//var_dump($tarjetas);
+		} else {
+		?>
+		<ul>
+			<li> -- </li> 
+			<li> -- </li>
+			<li> -- </li>
+			<li> -- </li>
+			<li> -- </li>
+		</ul>
+		<?php 
+		}
+		?>
+	</div>
+</div>
+
+<h1>Nueva Tarjeta:
+	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/registrar/tc">TC</a>
+	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/registrar/amex">AMEX</a>
+</h1>

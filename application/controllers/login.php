@@ -5,6 +5,8 @@ class Login extends CI_Controller {
 	var $title = 'Iniciar Sesi&oacute;n'; 		// Capitalize the first letter
 	var $subtitle = 'Iniciar Sesi&oacute;n Segura'; 	// Capitalize the first letter
 	var $login_errores = array();
+	
+	const NUEVO = "nuevo";
 	private $email;
 	private $password;
 	
@@ -15,13 +17,11 @@ class Login extends CI_Controller {
 		
 		//cargar el modelo en el constructor
 		$this->load->model('login_registro_model', 'modelo', true);
-		//la sesion se carga automáticamente
+
     }
 	
 	public function index()
-	{
-		//echo 'Session: '.$this->session->userdata('id_cliente');
-		//$this->load->view('login');
+	{	
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'></script>";
 		$data['script'] = $script_file;
@@ -32,7 +32,7 @@ class Login extends CI_Controller {
 		if ($_POST)
 		{
 			//si es usuario nuevo, se debe registrar
-			if (array_key_exists('tipo_inicio', $_POST) && $_POST['tipo_inicio'] == 'nuevo') {
+			if (array_key_exists('tipo_inicio', $_POST) && $_POST['tipo_inicio'] == $this::NUEVO) {
 				$url = $this->config->item('base_url').'/index.php/registro/';
 				header("Location: $url");
 				exit();

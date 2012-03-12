@@ -36,7 +36,7 @@ class Registro extends CI_Controller {
 					
 					$cliente_info['id_clienteIn'] = $this->modelo->next_cliente_id() + 1;	//id del cliente
 					
-					if($this->registrar_cliente($cliente_info)) {						//registro exitoso	
+					if($this->registrar_cliente($cliente_info)) {							//registro exitoso	
 						$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation']);	//crear sesion,
 						$url = $this->config->item('base_url').'/index.php/forma_pago/'; 
 						header("Location: $url");

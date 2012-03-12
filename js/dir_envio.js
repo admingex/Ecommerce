@@ -16,7 +16,7 @@ $(document).ready(function() {
 	//amex
 	var email = $("#txt_email");
 	/*Inicio de Sesión*/
-	$("#guardar_tarjeta").click(function(e) {
+	$("#guardar_tarjeta_").click(function(e) {
 		e.preventDefault();	
 		$(".error").remove();	//limpiar mensajes de error
 		
