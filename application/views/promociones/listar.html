@@ -1,0 +1,31 @@
+<div id='listar_promociones'>
+	<table>
+		<tr>
+			<td>Descripcion</td>
+			<td>Fecha Inicio</td>
+			<td>Fecha Termino</td>
+			<td>Precio</td>
+		</tr>
+		<?php
+		foreach($articulos->result_array() as $item){
+		
+			echo "<tr>
+				      <td>
+			    	      ".$item['descripcionVc']."
+			          </td>
+			      	  <td>
+			      	  	  ".$item['inicio_promocionDt']."
+			      	  </td>
+			      	  <td>
+			      	  	  ".$item['fin_promocionDt']."
+			      	  </td>
+			      	  <td>
+			      	  	  ".$item['precioF']."
+			      	  </td>		
+			  	  </tr>";	 
+			  			  
+		}		
+		?>
+	</table>
+</div>
+		

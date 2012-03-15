@@ -5,12 +5,15 @@
 		</div>
 		<div class="form_requerid">
 			<input type="text" id="password_temporal" name="password_temporal" value="<?php if(isset($password_temporal)) echo $password_temporal; if(isset($_POST['password_temporal'])) echo htmlspecialchars($_POST['password_temporal']); ?>" />
+			<span class="validation_message">
+				<?php if(isset($registro_errores['password_temporal'])) echo($registro_errores['password_temporal']);?>
+			</span>
 		</div>	
 		<div class="item_requerid">
 			Nuevo Password:
 		</div>
 		<div class="form_requerid">
-			<input type="text" id="password" name="password" value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
+			<input type="password" id="password" name="password" value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
 			<span class="validation_message">
 				<?php if(isset($registro_errores['password'])) echo($registro_errores['password']);?>
 			</span>
@@ -19,7 +22,7 @@
 			Confirmar Password: 
 		</div>
 		<div class="form_requerid">
-			<input type="text" id="password_2" name="password_2" value="" />
+			<input type="password" id="password_2" name="password_2" value="<?php if(isset($_POST['password_2'])) echo htmlspecialchars($_POST['password_2']); ?>" />
 			<span class="validation_message">
 				<?php if(isset($registro_errores['password_2'])) echo($registro_errores['password_2']);?>
 			</span>

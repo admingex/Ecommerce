@@ -6,7 +6,10 @@
 		if($enviado){
 			include ('login/password_enviado.html');
 		}
-		else{
+		if($cambiar){
+			include ('login/cambiar.html');
+		}
+		else if((!$enviado)&&(!$cambiar)){
 			include ('login/recordar.html');
 		}
 			
