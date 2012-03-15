@@ -18,6 +18,7 @@
 				foreach($tarjetas->result_array() as $tarjeta) {
 					$check = "";
 					$class = "";
+					$value_r = "value='".$tarjeta['id_TCSi']."'";
 					if ($tarjeta['id_estatusSi'] == 3){	//$default
 						$check = "checked='true'";
 						$class = "style='background-color: #E70030; color: #F6F6F6; height: 20px'";
@@ -25,7 +26,7 @@
 			?>
 			<ul>
 				<li <?php echo $class;?>>
-					<input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check. "value='".$tarjeta['id_TCSi']."'"?>/>
+					<input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check." ".$value_r; ?>/>
 					<?php echo $tarjeta['descripcionVc'].' terminaci&oacute;n '
 						.substr($tarjeta['terminacion_tarjetaVc'],strlen($tarjeta['terminacion_tarjetaVc']) - 4); ?>
 				</li>
@@ -36,7 +37,7 @@
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/eliminar/'.$tarjeta['id_TCSi']; ?>" title="eliminar">eliminar</a></li>
 			</ul>
 			<?php 
-					
+				
 				}
 				//echo " ", count($tarjetas);
 				//echo "num rows: ", $tarjetas->num_rows();

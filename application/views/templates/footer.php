@@ -1,3 +1,4 @@
+   <?php include ("promocion.html"); ?>
    </div>
     <div id="footer-container">
         <footer>

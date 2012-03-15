@@ -23,8 +23,22 @@
 			autoOpen: true,					
 			buttons: {
 				"Ok" : function(){ 
-					       $(this).dialog("close"); 					       
-					   }
+			       $(this).dialog("close");
+			       <?php
+					//Por default recirecciona a la raiz del módulo
+					$url_redirect = site_url("direccion_facturacion");
+					if (isset($redirect) && $redirect) {
+						//revisar si la redirección es hacia el resumen de la orden
+						if ($this->session->userdata("redirect_to_order")) {
+							$url_redirect = site_url($this->session->userdata("redirect_to_order"));
+						} else {
+							$url_redirect = site_url('orden_compra');
+						}
+					}
+					?>
+					$( this ).dialog( "close" );
+					window.location.href = "<?php echo $url_redirect; ?>";
+			   }
 			}
 		});		
 																						

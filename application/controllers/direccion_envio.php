@@ -11,7 +11,7 @@ class Direccion_Envio extends CI_Controller {
 	public static $TIPO_DIR = array(
 		"RESIDENCE"	=> 0, 
 		"BUSINESS"	=> 1, 
-		"OTHER"		=>	2
+		"OTHER"		=> 2
 	);
 	
 	//protected $lista_bancos = array();
@@ -21,13 +21,13 @@ class Direccion_Envio extends CI_Controller {
         // Call the Model constructor
         parent::__construct();
 		
-		//cargar el modelo en el constructor
-		$this->load->model('direccion_envio_model', 'modelo', true);
-		//la sesion se carga automáticamente
-		
 		//si no hay sesión
 		//manda al usuario a la... página de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
+		
+		//cargar el modelo en el constructor
+		$this->load->model('direccion_envio_model', 'modelo', true);
+		//la sesion se carga automáticamente
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
@@ -36,18 +36,16 @@ class Direccion_Envio extends CI_Controller {
 
 	public function index()
 	{
-		//Recuperar el "id_ClienteNu" de la sesion
 		if ($_POST) {
 			if (array_key_exists('tajeta_selecionada', $_POST))
 				$this->session->set_userdata('tarjeta', $_POST['tajeta_selecionada']);
+			if ($this->session->userdata('redirect_to_order'))
+				redirect("orden_compra");
 		}
-		
-		//$id_cliente = $this->session->userdata('id_cliente');
-		
-		//echo 'cliente_Id: '.$id_cliente;
 		
 		$this->listar();
 	}
+	
 	/**
 	 * Lista las direcciones registradas, si hay un mensaje, lo despliega y 
 	 * si debe haber redirección la aplica. 
@@ -59,10 +57,8 @@ class Direccion_Envio extends CI_Controller {
 		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
 		echo 'last_Activity: '.$this->session->userdata('last_activity').'<br/>';
 		$ano = date('m.d')	;
-		echo "date: ". $ano;
+		echo "date: ". $ano;	//mes año
 		*/
-		echo 'tarjeta: '.$this->session->userdata('tarjeta').'<br/>';
-		//EL usuario se toma de la sesión...
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;		
@@ -111,22 +107,25 @@ class Direccion_Envio extends CI_Controller {
 			$form_values['direccion']['id_consecutivoSi'] = $consecutivo + 1;		//cambió
 			$form_values['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
 						
-			if (empty($this->reg_errores)) {	
+			if (empty($this->reg_errores)) {
 				//si no hay errores en el formulario y se solicita registrar la direccion
 				if (isset($form_values['guardar']) || isset($form_values['direccion']['id_estatusSi'])) {
 					//verificar que no exista la direccion activa en la BD
 					if($this->modelo->existe_direccion($form_values['direccion'])) {	
 						//Redirect al listado por que ya existe
-						//$url = $this->config->item('base_url').'/index.php/direccion_envio/listar/'.$id_cliente;
-						//header("Location: $url");
 						$this->listar("La direcci&oacute;n ya est&aacute; registrada.", FALSE);
 						//echo "La direcci&oacute;n ya está registrada.";
-						//exit();
 					} else {
+						//sólo la primera que se registra se predetermina
+						if (isset($form_values['predeterminar']) || $consecutivo == 0) {
+							$this->modelo->quitar_predeterminado($id_cliente);
+							$form_values['direccion']['id_estatusSi'] = 3;
+						}
+						
 						//Registrar en BD
 						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
 							//cargar en sesion
-							$this->cargar_en_session($form_values['id_consecutivoSi']);
+							$this->cargar_en_session($form_values['direccion']['id_consecutivoSi']);
 							//cargar la vista de las tarjetas
 							$this->listar("Direcci&oacute;n registrada correctamente.");
 						} else {
@@ -136,13 +135,10 @@ class Direccion_Envio extends CI_Controller {
 					}						
 				} else {
 					//si no se guardará la dirección, almacenar la info para el cobro en sesión temporalmente y pasar a direccón de facturación
-					$this->cargar_en_session($form_values['direccion']);
-					redirect('direccion_envio');
-					/*$url = base_url().'/index.php/direccion_facturacion/';
-					header("Location: $url");
-					exit();	  
-					echo "No se guardar&aacute; la direcci&oacute;n>> Pasar a captura de dir. de facturación<br/> Coming soon...";
-					*/
+					$direccion = $form_values['direccion'];
+					$this->cargar_en_session($direccion);
+					$this->listar("Dirección capturada correctamente");
+					//redirect('direccion_facturacion');
 				}
 			} else {	//Si hubo errores en la captura
 				//carga de catálogos de sepomex si ya se hizo la seleccion de estado, ciudad, colonia
@@ -173,10 +169,8 @@ class Direccion_Envio extends CI_Controller {
 	/**
 	 * Edición de la dirección seleccionada
 	 */
-	public function editar($consecutivo)	//el consecutivo de la direccion
+	public function editar($consecutivo = 0)	//el consecutivo de la direccion
 	{
-		if($_GET) echo "GET";
-		
 		$id_cliente = $this->id_cliente;
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'></script>";
@@ -184,18 +178,38 @@ class Direccion_Envio extends CI_Controller {
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] =  $this->subtitle;
-		//$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
 		
 		//recuperar la información de la dirección
-		$detalle_direccion = $this->modelo->detalle_direccion($consecutivo, $id_cliente);
+		if (!$consecutivo && $this->session->userdata("dir_envio")) {
+			$envio_en_sesion = $this->session->userdata("dir_envio");
+			
+			$dir_envio = null;
+			//var_dump($envio_en_sesion);
+			//exit();
+			/*crear los objetos para la edición tc*/
+			foreach ($envio_en_sesion as $key => $value) {
+				$dir_envio->$key = $value;
+			}
+			//var_dump($dir_envio);
+			//exit();
+			$dir_envio->id_consecutivoSi = 0;	//el id_consecutivoSi (debe ser 0)
+			$detalle_direccion = $dir_envio;
+				
+		} else {
+			$detalle_direccion = $this->modelo->detalle_direccion($consecutivo, $id_cliente);
+		}
+		
 		$data['direccion'] = $detalle_direccion;
+		
+		//var_dump($detalle_direccion);
+		//exit();
 		
 		//catálogo de paises de think
 		$lista_paises_think = $this->modelo->listar_paises_think();
 		$data['lista_paises_think'] = $lista_paises_think;
 		
 		/*muestra lo de sepomex*/
-		//catalogo de estados
+		//catálogo de estados
 		$lista_estados = $this->consulta_estados();		
 		$data['lista_estados_sepomex'] = $lista_estados['estados'];
 		//ciudades		
@@ -213,34 +227,42 @@ class Direccion_Envio extends CI_Controller {
 			$nueva_info = $this->get_datos_direccion();
 			
 			if (empty($this->reg_errores)) {	//si no hubo errores
+				$nueva_info['direccion']['id_consecutivoSi'] = $consecutivo;
 			
-				$nueva_info['direccion']['id_clienteIn'] = $id_cliente;
-				$nueva_info['direccion']['id_consecutivoSi'] = $consecutivo;	//$this
+				if (isset($nueva_info['predeterminar'])) {
+					$this->modelo->quitar_predeterminado($id_cliente);
+				} else {	//si no es predeterminado se quda sólo como "activa"habilitado"
+					$nueva_info['direccion']['id_estatusSi'] = 1;
+				}
 				
-				//var_dump($nueva_info);
-				//exit();
-				/*Para el modo estático*/
-				//$data['msg_actualizacion'] = $this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
-				$msg_actualizacion = 
-					$this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
-				$data['msg_actualizacion'] = $msg_actualizacion;
+				if (!$consecutivo) {
+					$direccion = $nueva_info['direccion'];
+					$this->cargar_en_session($direccion);
+					
+					$msg_actualizacion = "Información actualizada";
+					$data['msg_actualizacion'] = $msg_actualizacion;
+					//var_dump($direccion);
+					//exit();
+					$this->listar($msg_actualizacion);
+				} else {
 				
-				//Cargar en sesión la dirección mmodificada
-				$this->cargar_en_session($consecutivo);
-				//$this->cargar_vista('', 'direccion_envio' , $data);
-				$this->listar($msg_actualizacion);
-				/*$url = base_url().'/index.php/direccion_facturacion/';		//la sesion debe tomar el cliente
-				header("Location: $url");*/
+					$msg_actualizacion = 
+						$this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
+					
+					$data['msg_actualizacion'] = $msg_actualizacion;
+					
+					//Cargar en sesión la dirección mmodificada
+					$this->cargar_en_session($consecutivo);
+					
+					$this->listar($msg_actualizacion);
+				}
 				//redirect("direccion_facturacion");
 				//exit();
-				
-				//$_POST = array();
-				//Actualiza y muestra de nuevo el formulario y el mensaje con el resultado de la actualización
-			} else {	//sí hubo errores
+			} else {	//ERRORES FORMULARIO
 				$data['msg_actualizacion'] = "Campos incorrectos!!";
 				$data['reg_errores'] = $this->reg_errores;
 			}	//ERRORES FORMULARIO
-		} else {//If POST
+		} else {	//If POST
 			$this->cargar_vista('', 'direccion_envio' , $data);
 		}
 	}
@@ -248,7 +270,7 @@ class Direccion_Envio extends CI_Controller {
 	/**
 	 * Eliminación lógica de la dirección en la BD
 	 */
-	public function eliminar($consecutivo=0)
+	public function eliminar($consecutivo = 0)
 	{
 		$id_cliente = $this->id_cliente;
 		$data['title'] = $this->title;
@@ -257,12 +279,10 @@ class Direccion_Envio extends CI_Controller {
 		$msg_eliminacion =
 			$this->modelo->eliminar_direccion($id_cliente, $consecutivo);
 		
-		
 		/*Pendiente el Redirect hacia la dirección de Facturación*/
 		//echo $data['msg_eliminacion´];
 		
 		//cargar la lista de direeciones
-		
 		$this->listar($msg_eliminacion, FALSE);
 	}
 	
@@ -276,7 +296,6 @@ class Direccion_Envio extends CI_Controller {
 		
 		echo json_encode($es_mexico);
 	}
-	
 	
 	/**
 	 * Regresa el listado de estados para poblar el select correspondiente
@@ -297,7 +316,7 @@ class Direccion_Envio extends CI_Controller {
 		try {
 			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
 		
-			$parameter = array(	);	
+			$parameter = array();	
 			
 			$obj_result = $cliente->ObtenerEstado($parameter);
 			$simple_result = $obj_result->ObtenerEstadoResult;		
@@ -587,7 +606,8 @@ class Direccion_Envio extends CI_Controller {
 				$datos['direccion']['id_estatusSi'] = 1;
 			}
 			if (array_key_exists('chk_default', $_POST)) {
-				$datos['direccion']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada	
+				$datos['direccion']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada
+				$datos['predeterminar'] = true;
 				//$_POST['chk_default'];
 				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC
 			}

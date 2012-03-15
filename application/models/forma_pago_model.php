@@ -1,6 +1,18 @@
 <?php
 
 class Forma_Pago_model extends CI_Model {
+	public static $CAT_ESTATUS = array(
+		"HABILITADA"	=> 1, 
+		"DESHABILITADA"	=> 2, 
+		"DEFAULT"		=> 3
+	);
+	
+	public static $TIPO_DIR = array(
+		"RESIDENCE"	=> 0, 
+		"BUSINESS"	=> 1, 
+		"OTHER"		=> 2
+	);
+	
 
     function __construct()
     {
@@ -13,7 +25,7 @@ class Forma_Pago_model extends CI_Model {
 		$this->db->select('id_TCSi, id_clienteIn, nombre_titularVc, apellidoP_titularVc, 
 			apellidoM_titularVc, mes_expiracionVc, anio_expiracionVc, descripcionVc, 
 			terminacion_tarjetaVc, id_tipo_tarjetaSi, id_estatusSi');
-		$this->db->where(array('id_clienteIn'=> $id_cliente, 'id_estatusSi !=' => 2));	//2 es deshabilitado
+		$this->db->where(array('id_clienteIn'=> $id_cliente, 'id_estatusSi !=' => self::$CAT_ESTATUS['DESHABILITADA']));	//2 es deshabilitado
 		        
 		
 		$resultado = $this->db->get('CMS_IntTC');
@@ -33,7 +45,7 @@ class Forma_Pago_model extends CI_Model {
 						'anio_expiracionVc' => 	$datos_tc['anio_expiracionVc'],
 						'terminacion_tarjetaVc' =>	$datos_tc['terminacion_tarjetaVc'],
 						'id_tipo_tarjetaSi'	=>	$datos_tc['id_tipo_tarjetaSi'],
-						'id_estatusSi !=' => 2);
+						'id_estatusSi !=' => self::$CAT_ESTATUS['DESHABILITADA']);
 						
 		$res = $this->db->get_where('CMS_IntTC', $campos);
 		
@@ -45,10 +57,20 @@ class Forma_Pago_model extends CI_Model {
 		}
 	}
 	
+	/**
+	 * Quitar la tarjeta predeterminada actual
+	 */
+	function quitar_predeterminado($id_cliente) {
+		$this->db->where(array
+							( 'id_clienteIn' => $id_cliente,
+							'id_estatusSi' => self::$CAT_ESTATUS['DEFAULT']));
+		$resultado = $this->db->update('CMS_IntTC', array('id_estatusSi' => self::$CAT_ESTATUS['HABILITADA']));
+	}
+	
 	function eliminar_tarjeta($id_cliente, $consecutivo)
 	{
 		$this->db->where(array(	'id_TCSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
-		$res = $this->db->update('CMS_IntTC', array('id_estatusSi' => 2));
+		$res = $this->db->update('CMS_IntTC', array('id_estatusSi' => self::$CAT_ESTATUS['DESHABILITADA']));	//Deshabilitar lógicamente
 		if($res) {
 			return "Tarjeta eliminada.";
 		} else {
@@ -109,15 +131,6 @@ class Forma_Pago_model extends CI_Model {
         $res = $this->db->insert('CMS_IntTC', $tc);		//true si se inserta
         //echo '<bt/>Resultado: '.$res;
         return $res;
-    }
-	
-	/**
-	 * Este método pasa los arreglos tc y amex al WS del CCTC,
-	 * almacena únicamente la parte de TC, así que no se utilizará 
-	 */
-	function insertar_amex($tc, $amex)
-    {
-    	
     }
 	
 }

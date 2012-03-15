@@ -29,6 +29,12 @@ class Login extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
 		
+		//se guarda la promoción en la session
+		if (array_key_exists("promo_id", $_GET)) {
+			$id_promocion = $_GET['promo_id'];
+			$this->session->set_userdata("id_promocion", $id_promocion);
+		}
+		
 		if ($_POST)
 		{
 			//si es usuario nuevo, se debe registrar

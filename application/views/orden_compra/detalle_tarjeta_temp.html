@@ -1,0 +1,30 @@
+<div id="detalle_tarjeta">
+	<div>
+		<div>
+		<?php
+			echo $tc['descripcionVc']. " con terminación " .
+				substr($tc['terminacion_tarjetaVc'], strlen($tc['terminacion_tarjetaVc']) - 4);
+		?>
+		<span><a href="<?php echo site_url('forma_pago/editar/')?>">Cambiar</a></span>
+		</div>
+		<div >C&oacute;digo de seguridad:</div>
+		<div class="form_requerid">
+			<input type="text" name="txt_codigo" id="txt_codigo" maxlength="5" size="5"
+				value="<?php if(isset($_POST['txt_codigo'])) echo htmlspecialchars($_POST['txt_codigo']);?>"/>
+			<span class="validation_message"><?php if(isset($reg_errores['txt_codigo'])) echo ($reg_errores['txt_codigo']);?></span>
+		</div>
+		<?php if (isset($amex)) : ?>
+		<br/>
+		<h4>Direcci&oacute;n Amex</h4>
+		<p>	<?php 
+				echo $amex['calle']."<br/>".
+				 $amex['codigo_postal']."<br/>".
+				 $amex['ciudad']."<br/>".
+				 $amex['estado']."<br/>".
+				 $amex['pais']."<br/>".
+				 $amex['telefono']."<br/>";
+			 ?>
+		</p>			
+		<?php endif ?>
+	</div>
+</div>

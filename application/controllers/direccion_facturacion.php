@@ -14,31 +14,38 @@ class Direccion_Facturacion extends CI_Controller {
 		"OTHER"		=>	2
 	);
 	 
-	function __construct(){
+	function __construct() {
         // Call the Model constructor
         parent::__construct();
+		
+		//si no hay sesión
+		//manda al usuario a la... página de login
+		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//cargar el modelo en el constructor
 		$this->load->model('direccion_facturacion_model', 'modelo', true);
 		//la sesion se carga automáticamente
 		
-		//si no hay sesión
-		//manda al usuario a la... página de login
-		//$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
-		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
     }
 
-	public function index(){		
+	public function index() {
+		if ($_POST) {
+			if (array_key_exists('direccion_selecionada', $_POST))
+				$this->session->set_userdata('dir_envio', $_POST['direccion_selecionada']);
+			if ($this->session->userdata('redirect_to_order'))
+				redirect("orden_compra");
+		}
 		$this->listar();
 	}
 	
-	public function listar($msg = ''){					
-		//EL usuario se tomará de la sesión...		
+	public function listar($msg = '',  $redirect = TRUE) {
+		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;		
 		$data['mensaje'] = $msg;
+		$data['redirect'] = $redirect;
 		
 		//listar por default las direcciones del cliente
 		$data['lista_direcciones'] = $this->modelo->listar_direcciones($this->id_cliente);
@@ -50,6 +57,7 @@ class Direccion_Facturacion extends CI_Controller {
 	public function registrar() {				
 		$id_cliente = $this->id_cliente;		
 		$consecutivo = $this->modelo->get_consecutivo($id_cliente);		
+		
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
 		$data['mensaje']='';
@@ -65,8 +73,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_facturacion.js'> </script>";
 		$data['script'] = $script_file;
 		
-		if ($_POST)	{	//si hay parámetros del formulario			
-											
+		if ($_POST)	{	//si hay parámetros del formulario
 			$form_values = array();	//alojará los datos previos a la inserción	
 			$form_values = $this->get_datos_direccion();			
 						
@@ -78,64 +85,110 @@ class Direccion_Facturacion extends CI_Controller {
 			if(empty($this->reg_errores)){
 			    if (isset($form_values['direccion']['id_estatusSi'])) {
 					if($this->modelo->existe_direccion($form_values['direccion'])) {
-							$this->listar("Direcci&oacute;n previamente registrada.");
+						$this->listar("Direcci&oacute;n previamente registrada.", FALSE);
 					}
 					else{
-						if(array_key_exists('chk_default', $_POST)){
+						if(array_key_exists('chk_default', $_POST) || $consecutivo == 0) {
 							$this->modelo->quitar_predeterminado($id_cliente);	
+							$form_values['direccion']['id_estatusSi'] = 3;
 						}
-																								
 						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
-							$this->listar("Direcci&oacute;n registrada.");
+							//cargar en sesion
+							$this->cargar_en_session($form_values['direccion']['id_consecutivoSi']);
+							
+							$this->listar("Direcci&oacute;n registrada.", TRUE);
 						} 	
 						else {
-							$this->listar("Hubo un error en el registro en CMS.");
+							$this->listar("Hubo un error en el registro en CMS.", FALSE);
 							echo "<br/>Hubo un error en el registro en CMS";
 						}
 					}											
-				} 	
+				} else {
+					$direccion = $form_values['direccion'];
+					$this->cargar_en_session($direccion);
+					$this->listar("Dirección capturada correctamente");
+					//$this->cargar_en_session($form_values['direccion']);
+					//redirect('orden_compra');
+				} 
 			}	
-			else{								
+			else{
 				$data['reg_errores'] = $this->reg_errores;				
 				$this->cargar_vista('', 'direccion_facturacion' , $data);	
-			}														
-					
-		} 
+			}
+		}
 		else {
 			$this->cargar_vista('', 'direccion_facturacion' , $data);
 		}
 	}
 
-	public function editar($consecutivo = ''){
+	public function editar($consecutivo = 0){
+			$id_cliente = $this->id_cliente;
 				
 			$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_facturacion.js'></script>";
 			$data['script'] = $script_file;
 			
 			$data['mensaje']='';
 			$data['editar'] = TRUE;
+			//no registradass
+			if (!$consecutivo && $this->session->userdata("dir_facturacion")) {
+				$facturacion_en_sesion = $this->session->userdata("dir_facturacion");
+				
+				$dir_facturacion = null;
+				/*crear los objetos para la edición tc*/
+				foreach ($facturacion_en_sesion as $key => $value) {
+					$dir_facturacion->$key = $value;
+				}
+				//var_dump($dir_facturacion);
+				//exit();
+				$dir_facturacion->id_consecutivoSi = 0;	//el id_consecutivoSi (debe ser 0)
+				$datos_direccion = $dir_facturacion;
+					
+			} else {
+				$datos_direccion = $this->modelo->obtener_direccion($id_cliente, $consecutivo);
+			}
 			
-			if($consecutivo){						
-				$id_cliente = $this->id_cliente;		
+			if ($consecutivo) {
+						
 				$data['title'] = $this->title;
 				$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
 				$data['consecutivo']=$consecutivo;
 	
-		
-				$datos_direccion = $this->modelo->obtener_direccion($id_cliente, $consecutivo);
-				$data['datos_direccion']=$datos_direccion;
+				$data['datos_direccion'] = $datos_direccion;
+				
 		
 				$lista_paises_think = $this->modelo->listar_paises_think();
 				$data['lista_paises_think'] = $lista_paises_think;
 																								
 				if($_POST){					
 					$form_values = array();	//alojará los datos previos a la inserción	
-					$form_values = $this->get_datos_direccion();	
-					if(empty($this->reg_errores)){
-						if(array_key_exists('chk_default', $_POST)){							
+					$form_values = $this->get_datos_direccion();
+						
+					if (empty($this->reg_errores)) {
+						$form_values['direccion']['id_consecutivoSi'] = $consecutivo;
+						
+						if (array_key_exists('chk_default', $_POST)) {							
 							$this->modelo->quitar_predeterminado($id_cliente);									
-						}								
-						$this->modelo->actualizar_direccion($id_cliente, $consecutivo, $form_values['direccion']);
-						$this->listar("Actualizacion correcta");
+						} else {
+							$form_values['direccion']['id_estatusSi'] = 1;
+						}
+						
+						if (!$consecutivo) {
+							$direccion = $form_values['direccion'];
+							$this->cargar_en_session($direccion);
+							
+							$msg_actualizacion = "Información actualizada";
+							$data['msg_actualizacion'] = $msg_actualizacion;
+							//var_dump($direccion);
+							//exit();
+							$this->listar($msg_actualizacion);
+						} else {
+							$this->modelo->actualizar_direccion($id_cliente, $consecutivo, $form_values['direccion']);
+							
+							//Cargar en sesión la dirección mmodificada
+							$this->cargar_en_session($consecutivo);
+							
+							$this->listar("Actualizacion correcta");
+						}
 					}
 					else{								
 						$data['reg_errores'] = $this->reg_errores;				
@@ -156,7 +209,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$data['title'] = $this->title;		
 		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
 		$this->modelo->eliminar_direccion($id_cliente, $consecutivo);
-		$this->listar('Registro eliminado');		
+		$this->listar('Registro eliminado', FALSE);		
 	}
 	
 	
@@ -182,10 +235,10 @@ class Direccion_Facturacion extends CI_Controller {
 					}
 					else {
 						$this->reg_errores['txt_rfc'] = 'Por favor ingrese un rfc correcto';
-					}					
-				} 				
-			}					
-		}			
+					}
+				}
+			}
+		}
 		else{
 			$this->reg_errores['txt_rfc'] = 'Por favor ingrese un rfc';				
 		}
@@ -243,8 +296,8 @@ class Direccion_Facturacion extends CI_Controller {
 			$this->reg_errores['txt_email'] = 'Por favor ingrese un correo valido';
 		}								
 		
-		$datos['direccion']['address4'] = $_POST['txt_num_int'];			
-		$datos['direccion']['codigo_paisVC'] = $_POST['sel_pais'];	
+		$datos['direccion']['address4'] = $_POST['txt_num_int'];
+		$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];	
 		
 		if (array_key_exists('chk_guardar', $_POST)) {
 			$datos['direccion']['id_estatusSi'] = 1;							
@@ -252,8 +305,20 @@ class Direccion_Facturacion extends CI_Controller {
 																
 		if (array_key_exists('chk_default', $_POST)) {
 			$datos['direccion']['id_estatusSi'] = 3;	//indica que será la direccion de facturacion predeterminada			
-		}																 	
+		}
+									 	
 		return $datos;
+	}
+
+	private function cargar_en_session($direccion = null)
+	{
+		if (is_array($direccion)) { //si no se guarda en BD
+			$this->session->set_userdata('dir_facturacion', $direccion);
+		} else if ( ((int)$direccion) != 0 && is_int((int)$direccion)) {	//si ya está regiustrada la direccion en BD sólo sube el consecutivo
+			$this->session->set_userdata('dir_facturacion', $direccion);
+		} else {	//si no es ninguno de los dos, elimina el elemento de la sesión
+			$this->session->unset_userdata('dir_facturacion');
+		}
 	}
 				
 	private function cargar_vista($folder, $page, $data){	

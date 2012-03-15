@@ -79,6 +79,17 @@ class Direccion_Envio_model extends CI_Model {
 	}
 	
 	/**
+	 * Quitar la dirección predeterminada actual
+	 */
+	function quitar_predeterminado($id_cliente) {
+		$this->db->where(array
+							( 'id_clienteIn' => $id_cliente,
+							'id_estatusSi' => self::$CAT_ESTATUS['DEFAULT']));
+		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => self::$CAT_ESTATUS['HABILITADA']));
+	}
+	 
+	
+	/**
 	 * Devuelve la lista de países del catálogo de Think
 	 * */
 	function listar_paises_think() {
@@ -91,7 +102,7 @@ class Direccion_Envio_model extends CI_Model {
 	 */
 	function eliminar_direccion($id_cliente, $consecutivo)
 	{
-		$this->db->where(array(	'id_consecutivoSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
+		$this->db->where(array('id_consecutivoSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => self::$CAT_ESTATUS['DESHABILITADA']));
 		if($resultado) {
 			return "Direcci&oacute;n eliminada.";

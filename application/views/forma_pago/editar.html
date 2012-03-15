@@ -75,7 +75,7 @@
 				<?php 
 					if(isset($_POST['chk_default'])) { echo 'checked="true"'; }
 					//si no viene del post y es default su estado inicial
-					else if($tarjeta_tc->id_estatusSi == 3)
+					else if(isset($tarjeta_tc->id_estatusSi) && $tarjeta_tc->id_estatusSi == 3)
 						{ echo 'checked="true"'; }
 				?> />
 				Usar como tarjeta predeterminada

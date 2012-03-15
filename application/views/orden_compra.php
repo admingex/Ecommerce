@@ -4,7 +4,7 @@
 	
 	<?php
 		//formulario
-		include ('login/login.html');		
+		include ('orden_compra/resumen.html');		
 	?>
 	
 	<?php

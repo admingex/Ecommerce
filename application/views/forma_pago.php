@@ -59,7 +59,12 @@
 							//Por default recirecciona a la raiz del módulo
 							$url_redirect = site_url("forma_pago");
 							if (isset($redirect) && $redirect) {
-								$url_redirect = site_url('direccion_envio');
+								//revisar si la redirección es hacia el resumen de la orden
+								if ($this->session->userdata("redirect_to_order")) {
+									$url_redirect = site_url($this->session->userdata("redirect_to_order"));
+								} else {
+									$url_redirect = site_url('direccion_envio');
+								}
 							}
 							?>
 							$( this ).dialog( "close" );

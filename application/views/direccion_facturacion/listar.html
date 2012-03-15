@@ -6,7 +6,7 @@
 			echo "mens";
 		}
 	?>
-	<form id="form_direccion_envio" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/" method="POST">
+	<form id="form_direccion_facturacion" action="<?php echo site_url('orden_compra'); ?>/" method="POST">
 		<div id="list_headers">			
 			<div class="column_header">R.F.C.</div>
 			<div class="column_header">Raz&oacute;n Social</div>
@@ -23,6 +23,7 @@
 			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {				
 				$direcciones = $lista_direcciones;
 				foreach($direcciones->result_array() as $direccion) {
+					$value_r = "value='".$direccion['id_consecutivoSi']."'";
 					if ($direccion['id_estatusSi']==3){
 						$check="checked='checked'";
 						$class="style='background-color: #E70030; color: #FFF; height: 20px'";
@@ -33,7 +34,7 @@
 					}						
 			?>
 			<ul>				
-				<li <?php echo $class; ?>><input type="radio" name="predeterminado" <?php echo $check;?> /><?php echo "&nbsp;".$direccion['rfc']; ?></li>
+				<li <?php echo $class; ?>><input type="radio" name="direccion_selecionada" id="direccion_selecionada" <?php echo $check." ".$value_r;?> /><?php echo "&nbsp;".$direccion['rfc']; ?></li>
 				<li <?php echo $class; ?>><?php echo $direccion['company']; ?></li>
 				<li <?php echo $class; ?>><?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?></li>
 				<li <?php echo $class; ?>><?php echo $direccion['colonia']; ?></li> 
@@ -53,7 +54,7 @@
 			?>
 		</div>	
 		<div id="list_results">
-			<input type="button" name="utilizar_registro" value="Utilizar " />
+			<input type="submit" name="utilizar_registro" value="Utilizar dirección" />
 		</div>	
 	</form>
 </div>

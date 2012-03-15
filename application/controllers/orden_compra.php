@@ -1,71 +1,104 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Orden_Compra extends CI_Controller {
-	var $title = 'Forma de Pago'; 		// Capitalize the first letter
-	var $subtitle = 'Seleccionar Forma de Pago'; 	// Capitalize the first letter
-	var $reg_errores = array();		//validación para los errores
-	//var $tc = array();
+	var $title = 'Orden de Compra';
+	var $subtitle = 'Orden de Compra';
+	var $reg_errores = array();				//validación para los errores
+	
 	private $id_cliente;
-	//protected $lista_bancos = array();
 	 
 	function __construct()
     {
         // Call the Model constructor
         parent::__construct();
 		
-		//cargar el modelo en el constructor
-		$this->load->model('forma_pago_model', 'modelo', true);
-		//la sesion se carga automáticamente
-		
 		//si no hay sesión
-				//manda al usuario a la... pagina de login
+		//manda al usuario a la... pagina de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
+		
+		//bandera de redirección
+		$this->session->set_userdata("redirect_to_order", "orden_compra");
+		
+		//cargar el modelo en el constructor
+		$this->load->model('forma_pago_model', 'tarjeta_modelo', true);
+		$this->load->model('direccion_envio_model', 'envio_modelo', true);
+		$this->load->model('direccion_facturacion_model', 'facturacion_modelo', true);
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
 
     }
 
-	public function index()	//Para pruebas se usa 1
+	public function index()	
 	{
-		//Recuperar el "id_ClienteNu" de la sesion
-		
-		//$id_cliente = $this->session->userdata('id_cliente');
-		
-		//echo 'cliente_Id: '.$id_cliente;
-		
-		//echo 'tipo '. gettype($tc);
-		//echo 'cliente_Id'.$tc->cliente_id;
-		//var_dump($tc);
-		
-		$this->listar();
+		if ($_POST) {
+			if (array_key_exists('direccion_selecionada', $_POST))
+				$this->session->set_userdata('dir_facturacion', $_POST['direccion_selecionada']);
+		}
+		$this->resumen();
 	}
 	
-	public function listar($msg = '', $redirect = TRUE) 
-	{	
-		/*asignación de la session*/
-		//$id_cliente = $this->session->userdata('id_cliente');
-		//$this->session->set_userdata('id_cliente', $id_cliente);
-		
-		/*
-		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
-		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
-		echo 'last_Activity: '.$this->session->userdata('last_activity').'<br/>';
-		*/	
-		
-		//EL usuario se tomará de la sesión...
-		
+	public function resumen($msg = '', $redirect = TRUE) 
+	{
 		$data['title'] = $this->title;
-		$data['subtitle'] = $this->subtitle;		
+		$data['subtitle'] = $this->subtitle;
 		$data['mensaje'] = $msg;
 		$data['redirect'] = $redirect;
 		
-		//listar por default las tarjetas del cliente
-		$data['lista_tarjetas'] = $this->modelo->listar_tarjetas($this->id_cliente);
+		/*Recuperar la info gral. de la orden*/
+		$id_cliente = $this->id_cliente;
+		
+		//Tarjeta
+		$consecutivo = $this->session->userdata('tarjeta');
+		
+		if (is_array($this->session->userdata('tarjeta'))) {
+			$detalle_tarjeta = $this->session->userdata('tarjeta');
+			
+			//echo var_dump($detalle_tarjeta);
+			
+			$data['tc'] = $detalle_tarjeta['tc'];
+			if ($detalle_tarjeta['tc']['id_tipo_tarjetaSi'] == 1) { //es AMERICAN EXPRESS
+				$data['amex'] = $detalle_tarjeta['amex'];
+				//en este caso se consultará la info del WS
+			}
+			
+		} else {
+			$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
+			$data['tc'] = $detalle_tarjeta;	//trae la tc
+		
+			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
+				$data['amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				//en este caso se consultará la info del WS
+			}
+		}
+		
+		//dir_envío
+		$consecutivo = $this->session->userdata('dir_envio');
+		if (is_array($consecutivo)) {
+			//$detalle_envio = $this->session->userdata('dir_envio');
+			$data['dir_envio'] = $consecutivo;
+		} else {
+			$detalle_envio = $this->envio_modelo->detalle_direccion($consecutivo, $id_cliente);
+			$data['dir_envio'] = $detalle_envio;	
+		}
+		
+		//dir_facturación
+		$consecutivo = $this->session->userdata('dir_facturacion');
+		if (is_array($consecutivo)) {
+			//$detalle_envio = $this->session->userdata('dir_envio');
+			$data['dir_facturacion'] = $consecutivo;
+		} else {
+			$detalle_facturacion = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo);
+			$data['dir_facturacion']=$detalle_facturacion;
+		}		
 		
 		//cargar vista	
-		$this->cargar_vista('', 'forma_pago', $data);
-		
+		$this->cargar_vista('', 'orden_compra', $data);
+	}
+	
+	public function checkout() {
+		/*Realizar el pago en CCTC*/
+		echo "El pago se realizará aquí.";	
 	}
 	
 	public function registrar($form = 'tc') 
@@ -279,6 +312,29 @@ class Orden_Compra extends CI_Controller {
 		//cargar la lista
 		$this->listar($msg_eliminacion, FALSE);
 		//$this->cargar_vista('', 'forma_pago' , $data);
+	}
+	
+	private function detalle_tarjeta_CCTC($id_cliente=0, $consecutivo=0)	//siempre será la información de AMEX
+	{
+		//Traer la info de amex
+		try {  
+			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+				
+			$parameter = array(	'id_clienteNu' => $id_cliente, 'consecutivo_cmsSi' => $consecutivo);
+			
+			$obj_result = $cliente->ConsultarAmex($parameter);
+			$tarjeta_amex = $obj_result->ConsultarAmexResult;	//regresa un objeto
+			
+			//print($simple_result);
+			
+			return $tarjeta_amex;
+			
+		} catch (SoapFault $exception) {
+			echo $exception;  
+			echo '<br/>error: <br/>'.$exception->getMessage();
+			//exit();
+			return false;
+		}
 	}
 
 	private function cargar_vista($folder, $page, $data)

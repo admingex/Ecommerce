@@ -69,7 +69,8 @@ $(document).ready(function() {
 		//amex
 		
 		//Ok
-		$("form[id^='form_registro_tc']").submit();
+		//$("form[id^='form_registro_tc']").submit();
+		$(this).parents("form").sumbit();
 	});
 	
 	//fade out error messsage
