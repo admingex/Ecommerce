@@ -1,4 +1,4 @@
-<div id="tc_amex">
+<div id="direccion_envio">
 	<h1>Editar Informaci&oacute;n de la Direcci&oacute;n</h1>
 	
 	<div id="body">
@@ -208,7 +208,7 @@
 					<?php 
 						if(isset($_POST['chk_default'])) { echo 'checked="true"'; }
 						//si no viene del post y es default su estado inicial
-						else if($direccion->id_estatusSi == 3)
+						else if(isset($direccion->id_estatusSi) && $direccion->id_estatusSi == 3)
 							{ echo 'checked="true"'; }?> />
 					Usar como direcci&oacute;n predeterminada
 			</div>

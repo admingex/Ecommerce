@@ -1,0 +1,23 @@
+<div id="detalle_facturacion">
+	<p>
+		<?php 
+		if ($dir_facturacion->company) {
+			echo "<strong>Raz&oacute;n Social: </strong>".
+				$dir_facturacion->company."<br/>".
+				"<strong>RFC: </strong>". $dir_facturacion->rfc. "<br/>".
+				"<strong>Enviar a : </strong>". $dir_facturacion->email. "<br/>";
+		} 
+		?>
+		<h4>Direcci&oacute;n de Facturac&oacute;n</h4>		
+		<?php 
+		
+			echo $dir_facturacion->calle. " " .$dir_facturacion->num_ext. " " . (!empty($dir_facturacion->num_int) ? ", Int. ".$dir_facturacion->num_int : "") . "<br/>";
+			echo 
+				$dir_facturacion->cp."<br/>".
+			 	$dir_facturacion->ciudad."<br/>".
+			 	$dir_facturacion->estado."<br/>".
+			 	$dir_facturacion->pais;
+		?>
+		<span><a href="<?php echo site_url('direccion_facturacion/editar/'.$this->session->userdata('dir_facturacion'))?>">Cambiar</a></span>
+	</p>
+</div>

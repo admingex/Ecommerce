@@ -1,7 +1,7 @@
 <div id="direccion_envio">
 	
 	<div id="body">
-		<form id="form_direccion_envio" action="<?php echo $this->config->item('base_url').'/index.php'; ?>/direccion_envio/registrar/" method="POST">
+		<form id="form_direccion_envio" action="<?php echo site_url('direccion_envio/registrar/');?>" method="POST">
 			<div class="item_requerid">Calle:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_calle" id="txt_calle" size="30"
@@ -198,7 +198,7 @@
 			</div>
 			
 			<div class="form_button">
-				<input type="submit" id="guardar_direccion" value="Guardar esta direcci&oacute;n"/>
+				<input type="submit" id="guardar_direccion" value="Usar esta direcci&oacute;n"/>
 			</div>			
 		</form>
 	</div>

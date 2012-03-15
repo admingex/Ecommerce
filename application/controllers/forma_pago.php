@@ -12,17 +12,16 @@ class Forma_Pago extends CI_Controller {
 	 
 	function __construct()
     {
-        // Call the Model constructor
+        //Call the Model constructor
         parent::__construct();
+		
+		//si no hay sesión
+		//manda al usuario a la... pagina de login
+		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//cargar el modelo en el constructor
 		$this->load->model('forma_pago_model', 'modelo', true);
-		//la sesion se carga automáticamente
-		
-		//si no hay sesión
-				//manda al usuario a la... pagina de login
-		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
-		
+
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
 
@@ -30,32 +29,18 @@ class Forma_Pago extends CI_Controller {
 
 	public function index()	//Para pruebas se usa 1
 	{
-		//Recuperar el "id_ClienteNu" de la sesion
-		
-		//$id_cliente = $this->session->userdata('id_cliente');
-		
-		//echo 'cliente_Id: '.$id_cliente;
-		
-		//echo 'tipo '. gettype($tc);
-		//echo 'cliente_Id'.$tc->cliente_id;
-		//var_dump($tc);
+		//echo 'id de la promoción: '.$id_cliente;
 		
 		$this->listar();
 	}
 	
 	public function listar($msg = '', $redirect = TRUE) 
 	{	
-		/*asignación de la session*/
-		//$id_cliente = $this->session->userdata('id_cliente');
-		//$this->session->set_userdata('id_cliente', $id_cliente);
-		
 		/*
 		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
 		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
 		echo 'last_Activity: '.$this->session->userdata('last_activity').'<br/>';
-		*/	
-		
-		//EL usuario se tomará de la sesión...
+		*/
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;		
@@ -99,12 +84,6 @@ class Forma_Pago extends CI_Controller {
 			$form_values['tc']['id_clienteIn'] = $id_cliente;
 			$form_values['tc']['id_TCSi'] = $consecutivo + 1;		//cambió
 				
-				/* Se debe validar si se quiere guardar la tarjeta antes de registrarla
-				 * esto con: $form_values['guardar']
-				 * si no se quiere guardar se continua con el proceso
-				 * */
-			//echo var_dump($form_values);
-			//exit();
 			if (empty($this->reg_errores)) {	
 				//si no hay errores configurar la información de la tarjeta
 				if ($form == 'tc') {
@@ -116,32 +95,35 @@ class Forma_Pago extends CI_Controller {
 					$form_values['tc']['id_tipo_tarjetaSi'] = 1;
 					$form_values['tc']['descripcionVc'] = "AMERICAN EXPRESS";
 				}
-				//echo var_dump($form_values);
-				//exit();
+				//para la sesion
 				$tarjeta = array('tc' => $form_values['tc'], 'amex' => $form_values['amex']);
+				
 				//si no hay errores y se solicita registrar la tarjeta
 				if (isset($form_values['guardar']) || isset($form_values['tc']['id_estatusSi'])) {
 					//verificar que no exista la tarjeta activa en la BD
+					//var_dump($form_values);
+					//exit();
 					if($this->modelo->existe_tc($form_values['tc'])) {	//Redirect al listado por que ya existe
-						//$url = $this->config->item('base_url').'/index.php/forma_pago/listar/'.$id_cliente;
-						//header("Location: $url");
 						$this->listar("La tarjeta ya está registrada.", FALSE);
 						//echo "La tarjeta ya está registrada.";
-						//exit();
 					} else {
-						//echo "se manda insertar en CCTC";
+						//sólo la primera que se registra se predetermina
+						if (isset($form_values['predeterminar']) || $consecutivo ==  0) {
+							$this->modelo->quitar_predeterminado($id_cliente);
+							$form_values['tc']['id_estatusSi'] = 3;
+						}
 						
+						//se manda insertar en CCTC
 						if ($this->registrar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {
-						//if (1) {	//echo "Se registró exitosamente! en CCTC";
-							
+						//Se registró exitosamente! en CCTC";
+							$form_values['tc']['terminacion_tarjetaVc'] = substr($form_values['tc']['terminacion_tarjetaVc'], strlen($form_values['tc']['terminacion_tarjetaVc']) - 4);
 							//Registrar Localmente
+							
 							if ($this->modelo->insertar_tc($form_values['tc'])) {
 								//cargar en sesión
 								$this->cargar_en_session($form_values['tc']['id_TCSi']);
 								
-								$this->listar("Tarjeta registrada correctamente.");
-								//subir a sesión
-								
+								$this->listar("Tarjeta registrada correctamente.");								
 							} else {
 								$this->listar("Hubo un error en el registro en CMS.", FALSE);
 								//echo "<br/>Hubo un error en el registro en CMS";
@@ -155,19 +137,9 @@ class Forma_Pago extends CI_Controller {
 					/*Poner en session la TC/AMEX*/
 					//si no se guardará la tc, almacenar la info para la venta 
 					$this->cargar_en_session($tarjeta);
-					redirect('direccion_envio');
-					//echo "no se almacenará la TC >> Pasar a captura de dir. de envío<br/> Coming soon...";
-					//exit();	
+					$this->listar("Tarjeta capturada correctamente");
+					//redirect('direccion_envio');
 				}
-				//se envía la tc al WS de CCTC y de acuerdo a la respuesta...
-				/*					
-				//De momento se regresará al listado de tarjetas
-				if ($this->modelo->insertar_tc($form_values['tc'])) {
-					$url = $this->config->item('base_url').'/index.php/forma_pago/listar/'.$id_cliente;
-					header("Location: $url");
-					exit();	
-				}
-				*/
 			} else {	//Si hubo errores
 				//vuelve a mostrar la info.
 				$data['reg_errores'] = $this->reg_errores;
@@ -178,30 +150,62 @@ class Forma_Pago extends CI_Controller {
 		}
 	}
 
-	public function editar($consecutivo)	//el consecutivo de la tarjeta
+	public function editar($consecutivo = 0)	//el consecutivo de la tarjeta
 	{
 		$id_cliente = $this->id_cliente;
+		
+		//$script_file = "<script type='text/javascript' src='". base_url() ."js/forma_pago.js'></script>";
+		//$data['script'] = $script_file;
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('editar Forma de Pago');
 		
-		//recuperar la información local de la tc
-		$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
-		//Siempre se trae la info para tc
-		$data['tarjeta_tc'] = $detalle_tarjeta;
-		//var_dump($detalle_tarjeta);
-		//exit();
+		if (!$consecutivo && $this->session->userdata("tarjeta")) {
+			$tarjeta_en_sesion = $this->session->userdata("tarjeta");
+			
+			$tarjeta_tc = null;
+						
+			/*crear los objetos para la edición tc*/
+			foreach ($tarjeta_en_sesion['tc'] as $key => $value) {
+				$tarjeta_tc->$key = $value;
+			}
+			
+			$tarjeta_tc->id_TCSi = 0;	//el id_TCSi (consecutivo debe ser 0)
+			
+			//recuperar la información de la tc de la sesión
+			$detalle_tarjeta = $tarjeta_tc;
+		} else {
+			//recuperar la información local de la tc
+			$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
+		}
 		
-		//array par al anueva información
+		//la info para tc
+		$data['tarjeta_tc'] = $detalle_tarjeta;
+		
+		//array para la nueva información
 		$nueva_info = array();
 		
 		if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
+			if (!$consecutivo) {	//existe la tarjeta en sesión
+				//recupera la info de amex de la sesión
+				$tarjeta_amex = null;
+				foreach ($tarjeta_en_sesion['amex'] as $key => $value) {
+					$tarjeta_amex->$key = $value;
+				}
+				//el id_TCSi (consecutivo debe ser 0)
+				$tarjeta_amex->id_TCSi = 0;
+				
+				$data['tarjeta_amex'] = $tarjeta_amex;
+			} else {
+				//en este caso se consultará la info del WS
+				$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+			}
+			//vista se edición
 			$data['vista_detalle'] = 'amex';
-			$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
-			//en este caso se consultará la info del WS
+			
 		} else  {	
 			//Si no es de tipo American Express, trae la info de la base local
-			//y especificat el tipo de la tarjeta y el numero.
+			//y especificat el tipo de la tarjeta y el número.
 			$data['vista_detalle'] = 'tc';
 		}
 
@@ -219,40 +223,52 @@ class Forma_Pago extends CI_Controller {
 				//preparar la petición al WS, campos comunes
 				$nueva_info['tc']['id_clienteIn'] = $id_cliente;
 				$nueva_info['tc']['id_TCSi'] = $consecutivo;
+				//
 				$nueva_info['tc']['terminacion_tarjetaVc'] = $detalle_tarjeta->terminacion_tarjetaVc;
+				//Por si no se almacena en BD
+				$nueva_info['tc']['descripcionVc'] = $detalle_tarjeta->descripcionVc;
 				//Preparación de la sol.
 				if ($tipo_tarjeta == 'tc') {
 					$nueva_info['amex'] = null;		
 					$nueva_info['tc']['id_tipo_tarjetaSi'] = $detalle_tarjeta->id_tipo_tarjetaSi;
-					
 				} else {
 					$nueva_info['amex']['id_clienteIn'] = $id_cliente;
 					$nueva_info['amex']['id_TCSi'] = $consecutivo;
 				}
+				
+				$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
+				
+				if (isset($nueva_info['predeterminar'])) {
+					$this->modelo->quitar_predeterminado($id_cliente);
+				} else {
+					$nueva_info['tc']['id_estatusSi'] = 1;
+				}
 				//var_dump($nueva_info);
 				//exit();
-				$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
-				//actualizar en CCTC
-				if($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
-				//if (1) {
-					//echo "Tarjeta actualizada en CCTC.<br/>";
-					//checar el estatus:
-					if (!isset($nueva_info['tc']['id_estatusSi'])) {	
-						//si no está como predeterminada se deja en activo
-						$nueva_info['tc']['id_estatusSi'] = 1;
-					}
-					//registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
-					$msg_actualizacion = $this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
-					$data['msg_actualizacion'] = $msg_actualizacion;
+				
+				if (!$consecutivo) {
+					$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
+					$this->cargar_en_session($tarjeta);
 					
-					//cargarla en la sesión
-					$this->cargar_en_session($consecutivo);
-					//echo 'tarjeta: '.$this->session->userdata('tarjeta').'<br/>';
-					//exit();	
+					$msg_actualizacion = "Información actualizada";
+					$data['msg_actualizacion'] = $msg_actualizacion;
 					$this->listar($msg_actualizacion);
 				} else {
-					$data['msg_actualizacion'] = "Error de actualización hacia en el Servidor";
-					//echo "Error de actualización hacia CCTC.<br/>";	//redirect					
+					//actualizar en CCTC, si el consecutivo es distinto de 0
+					if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+						//registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
+						$msg_actualizacion = $this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
+						$data['msg_actualizacion'] = $msg_actualizacion;
+						
+						//cargarla en la sesión
+						$this->cargar_en_session($consecutivo);
+						//echo 'tarjeta: '.$this->session->userdata('tarjeta').'<br/>';
+						//exit();	
+						$this->listar($msg_actualizacion);
+					} else {
+						$data['msg_actualizacion'] = "Error de actualización hacia en el Servidor";
+						//echo "Error de actualización hacia CCTC.<br/>";	//redirect					
+					}
 				}
 			} else {	//sí hubo errores
 				$data['msg_actualizacion'] = "Campos incorrectos";
@@ -260,9 +276,9 @@ class Forma_Pago extends CI_Controller {
 				//var_dump($this->reg_errores);
 			}
 			//print_r($nueva_info[$tipo_tarjeta]);
-		}//If POST
-		
-		$this->cargar_vista('', 'forma_pago' , $data);
+		} else {//If POST
+			$this->cargar_vista('', 'forma_pago' , $data);
+		}
 	}
 	
 	public function eliminar($consecutivo = '')
@@ -502,8 +518,8 @@ class Forma_Pago extends CI_Controller {
 					|| preg_match('/^5[1-5]\d{14,15}$/', $_POST['txt_numeroTarjeta'])) {		
 				 * */
 				//Master Card, Visa
-					$datos['tc']['terminacion_tarjetaVc'] = 
-						substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
+					$datos['tc']['terminacion_tarjetaVc'] = $_POST['txt_numeroTarjeta'];
+						//substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
 				} else {
 					$this->reg_errores['txt_numeroTarjeta'] = 'Por favor ingrese un numero de tarjeta v&aacute;lido';
 				}
@@ -560,7 +576,8 @@ class Forma_Pago extends CI_Controller {
 				$datos['tc']['id_estatusSi'] = 1;
 			}
 			if(array_key_exists('chk_default', $_POST)) {
-				$datos['tc']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada	
+				$datos['tc']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada
+				$datos['predeterminar'] = true;	
 				//$_POST['chk_default'];
 				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC
 			}

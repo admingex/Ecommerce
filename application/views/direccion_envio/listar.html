@@ -19,6 +19,7 @@
 				foreach($direcciones->result_array() as $direccion) {
 					$check = "";
 					$class = "";
+					$value_r = "value='".$direccion['id_consecutivoSi']."'";
 					if ($direccion['id_estatusSi']==3){	//$default
 						$check = "checked='true'";
 						$class = "style='background-color: #E70030; color: #F6F6F6; height: 20px'";
@@ -26,7 +27,7 @@
 			?>
 			<ul>
 				<li <?php echo $class;?>>
-					<input type="radio" id="direccion_selecionada" name="direccion_selecionada" <?php echo $check."value='".$direccion['id_consecutivoSi']."'"?>/>
+					<input type="radio" id="direccion_selecionada" name="direccion_selecionada" <?php echo $check." ".$value_r;?>/>
 					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?>
 				</li>
 				<li <?php echo $class;?>><?php echo $direccion['colonia']; ?></li> 

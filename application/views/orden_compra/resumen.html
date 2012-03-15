@@ -1,0 +1,43 @@
+<!--h1>Orden de Compra de <?php echo $this->session->userdata('username');?></h1-->
+
+<div id="body">
+	<h3>Verifica tu orden...</h3>
+	<form id="form_orden_compra" action="<?php echo site_url("orden_compra/checkout"); ?>" method="POST">
+		<div id="list_results">
+			<div>
+				<h4>Forma de Pago</h4>
+				<?php 
+				if (is_object($tc))
+					include("detalle_tarjeta.html");
+				else 
+					include("detalle_tarjeta_temp.html");
+				?>
+			</div>
+			<div>
+				<h4>Direcci&oacute;n de Env&iacute;o</h4>
+				<?php 
+				if (is_object($dir_envio))
+					include("detalle_envio.html"); 
+				else
+					include("detalle_envio_temp.html");
+				?>
+			</div>
+			<div>
+				<?php 
+				if (is_object($dir_facturacion))
+					include("detalle_facturacion.html"); 
+				else 
+					include("detalle_facturacion_temp.html");
+				?>
+			</div>
+		<?php
+		
+		?>
+		</div>
+		
+		<div class="form_button">
+			<input type="button" id="usar_tarjeta" name="usar_tarjeta" value="Realizar el pago"/>
+			<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
+		</div>
+	</form>
+</div>

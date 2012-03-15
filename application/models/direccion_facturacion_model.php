@@ -64,7 +64,7 @@ class Direccion_Facturacion_model extends CI_Model {
 	/**
 	 * Devuelve el consecutivo actual del cliente
 	 */
-	function get_consecutivo($id_cliente){
+	function get_consecutivo($id_cliente) {
 		$this->db->select_max('id_consecutivoSi', 'consecutivo');
 		$resultado = $this->db->get_where('CMS_IntDireccion', array('id_clienteIn' => $id_cliente));
 		$row = $resultado->row();	//regresa un objeto
@@ -91,7 +91,7 @@ class Direccion_Facturacion_model extends CI_Model {
 		}		
 	}	
 	
-	function obtener_direccion($id_cliente, $id_consecutivo){
+	function obtener_direccion($id_cliente, $id_consecutivo) {
 		$this->db->select('id_consecutivoSi, address_type, id_clienteIn, company, 
 			tax_id_number as rfc,
 			address1 as calle, 
