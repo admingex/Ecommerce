@@ -15,7 +15,38 @@ class Promociones extends CI_Controller {
     }
 	
 	public function index(){
-		$this->listar();
+		$data['detalle'] = TRUE;
+		$data['listar'] = FALSE;
+		$data['title']='Promocion';	
+		
+		if(!empty($_GET['sitio'])){
+			$rsitio= $this->modelo->obtener_sitio($_GET['sitio']);	
+			if($rsitio->num_rows()!=0){
+				$data['sitio']=$rsitio->row();
+			}				
+			
+		}										
+		
+		if(!empty($_GET['canal'])){
+			$rcanal= $this->modelo->obtener_canal($_GET['canal']);	
+			if($rcanal->num_rows()!=0){
+				$data['canal']=$rcanal->row();
+			}	
+		}
+		
+		if(!empty($_GET['promocion'])){
+			$rpromocion= $this->modelo->obtener_promocion($_GET['promocion']);	
+			if($rpromocion->num_rows()!=0){
+				$data['promocion']=$rpromocion->row();
+				$rarticulos= $this->modelo->obtener_articulos($_GET['promocion']);
+				if($rarticulos->num_rows()!=0){
+					$data['articulos']=$rarticulos->result_array();
+				}
+			}				
+		}
+		
+		$this->cargar_vista('', 'promociones', $data);									
+		
 	}
 	
 	public function listar(){
@@ -26,22 +57,6 @@ class Promociones extends CI_Controller {
 		$this->cargar_vista('', 'promociones', $data);				
 	}
 	
-	public function detalle(){
-		$data['detalle'] = TRUE;
-		$data['listar'] = FALSE;
-		$data['title']='Promociones';	
-		$get = $this->uri->uri_to_assoc();
-		if(!empty($get['sitio'])){
-			$data['id_sitio']=$get['sitio'];	
-		}										
-		if(!empty($get['promocion'])){
-			$data['id_promocion']=$get['promocion'];	
-		}
-		if(!empty($get['canal'])){
-			$data['id_canal']=$get['canal'];	
-		}		
-		$this->cargar_vista('', 'promociones', $data);
-	}	
 		
 	private function cargar_vista($folder, $page, $data){	
 		//Para automatizar un poco el desplieguee
