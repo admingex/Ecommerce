@@ -7,7 +7,7 @@
 		}
 	?>
 	<form id="form_direccion_facturacion" action="<?php echo site_url('orden_compra'); ?>/" method="POST">
-		<div id="list_headers">			
+		<div id="list_headers">					
 			<div class="column_header">R.F.C.</div>
 			<div class="column_header">Raz&oacute;n Social</div>
 			<div class="column_header">Calle y n&uacute;mero</div>
@@ -26,7 +26,7 @@
 					$value_r = "value='".$direccion['id_consecutivoSi']."'";
 					if ($direccion['id_estatusSi']==3){
 						$check="checked='checked'";
-						$class="style='background-color: #E70030; color: #FFF; height: 20px'";
+						$class="<br /><span style='color: #D81830; height: 20px; font-size: 11px; font-family: italic'>pago express</span>";
 					} 
 					else{
 						$check="";
@@ -34,13 +34,16 @@
 					}						
 			?>
 			<ul>				
-				<li <?php echo $class; ?>><input type="radio" name="direccion_selecionada" id="direccion_selecionada" <?php echo $check." ".$value_r;?> /><?php echo "&nbsp;".$direccion['rfc']; ?></li>
-				<li <?php echo $class; ?>><?php echo $direccion['company']; ?></li>
-				<li <?php echo $class; ?>><?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?></li>
-				<li <?php echo $class; ?>><?php echo $direccion['colonia']; ?></li> 
-				<li <?php echo $class; ?>><?php echo $direccion['cp']; ?> </li>	
-				<li <?php echo $class; ?>><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
-				<li <?php echo $class; ?>><?php echo $direccion['email']?></li>
+				<li><input type="radio" name="direccion_selecionada" id="direccion_selecionada" <?php echo $check." ".$value_r;?> />
+					<?php echo "&nbsp;".$direccion['rfc']; ?>
+					<?php echo $class; ?>
+				</li>					
+				<li><?php echo $direccion['company']; ?></li>
+				<li><?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?></li>
+				<li><?php echo $direccion['colonia']; ?></li> 
+				<li><?php echo $direccion['cp']; ?> </li>	
+				<li><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
+				<li><?php echo $direccion['email']?></li>
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a></li>
 				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a></li>
 			</ul>

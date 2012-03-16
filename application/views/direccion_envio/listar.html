@@ -22,17 +22,18 @@
 					$value_r = "value='".$direccion['id_consecutivoSi']."'";
 					if ($direccion['id_estatusSi']==3){	//$default
 						$check = "checked='true'";
-						$class = "style='background-color: #E70030; color: #F6F6F6; height: 20px'";
+						$class="<br /><span style='color: #D81830; height: 20px; font-size: 11px; font-family: italic'>pago express</span>";
 					}
 			?>
 			<ul>
-				<li <?php echo $class;?>>
+				<li>
 					<input type="radio" id="direccion_selecionada" name="direccion_selecionada" <?php echo $check." ".$value_r;?>/>
 					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?>
+					<?php echo $class;?>
 				</li>
-				<li <?php echo $class;?>><?php echo $direccion['colonia']; ?></li> 
-				<li <?php echo $class;?>><?php echo $direccion['cp']; ?> </li>	
-				<li <?php echo $class;?>><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
+				<li><?php echo $direccion['colonia']; ?></li> 
+				<li><?php echo $direccion['cp']; ?> </li>	
+				<li><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
 				<li><a href="<?php echo site_url("direccion_envio/editar/".$direccion['id_consecutivoSi']); ?>" title="editar">editar</a></li>
 				<li><a href="<?php echo site_url("direccion_envio/eliminar/".$direccion['id_consecutivoSi']); ?>" title="eliminar">eliminar</a></li>
 			</ul>
