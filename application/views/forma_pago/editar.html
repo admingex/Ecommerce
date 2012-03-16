@@ -3,22 +3,22 @@
 	
 	<div id="body">	
 		<form id="form_editar_tc" action="<?php echo site_url('forma_pago/editar/'.$tarjeta_tc->id_TCSi); ?>" method="POST">
-			<div class="item_requerid">Tipo de tarjeta:</div>
+			<div class="item_requerid">* Tipo de tarjeta:</div>
 			<div class="form_requerid">
 				<?php echo $tarjeta_tc->descripcionVc; ?>
 			</div>
-			<div class="item_requerid">N&uacute;mero de tarjeta:</div>
+			<div class="item_requerid">* N&uacute;mero de tarjeta:</div>
 			<div class="form_requerid"> 
 				**** **** **** <?php echo substr($tarjeta_tc->terminacion_tarjetaVc, strlen($tarjeta_tc->terminacion_tarjetaVc) -4);?>
 			</div>
-			<div class="item_requerid">Nombre del Titular:</div>
+			<div class="item_requerid">* Nombre del Titular:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_nombre" id="txt_nombre" 
 					value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);
 						else echo $tarjeta_tc->nombre_titularVc;?>"/>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_nombre'])) echo ($reg_errores['txt_nombre']);?></span>
 			</div>
-			<div class="item_requerid">Apellido Paterno:</div>
+			<div class="item_requerid">* Apellido Paterno:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" 
 					value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);
