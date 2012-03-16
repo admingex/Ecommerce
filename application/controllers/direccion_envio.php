@@ -261,6 +261,7 @@ class Direccion_Envio extends CI_Controller {
 			} else {	//ERRORES FORMULARIO
 				$data['msg_actualizacion'] = "Campos incorrectos!!";
 				$data['reg_errores'] = $this->reg_errores;
+				$this->cargar_vista('', 'direccion_envio' , $data);
 			}	//ERRORES FORMULARIO
 		} else {	//If POST
 			$this->cargar_vista('', 'direccion_envio' , $data);
