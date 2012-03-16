@@ -19,7 +19,8 @@ class Recordar_Password extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		//cargar el modelo en el constructor
-		$this->load->model('recordar_password_model', 'modelo', true);		
+		$this->load->model('recordar_password_model', 'modelo', true);	
+		date_default_timezone_set(‘America/Mexico_City’);	
     }
 	
 	public function index(){
