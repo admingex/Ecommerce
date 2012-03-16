@@ -28,7 +28,7 @@ $(document).ready(function() {
 		$(".error").remove();	//limpiar mensajes de error
 		
 		//tc-prosa
-		if (!validarTarjeta(tipo_tarjeta, $.trim(numero_tarjeta.val()))) {
+		if (numero_tarjeta.length > 0 && !validarTarjeta(tipo_tarjeta, $.trim(numero_tarjeta.val()))) {
 			numero_tarjeta.focus().after("<span class='error'>Ingresa un número de tarjeta válido</span>");
 			return false;
 		} else if (!reg_nombres.test($.trim(nombre.val()))) {
@@ -42,7 +42,7 @@ $(document).ready(function() {
 			return false;
 		}	
 		//Amex
-		else if (tipo_tarjeta.length == 0) {
+		else if (numero_tarjeta.length > 0 && tipo_tarjeta.length == 0) {
 			if (!reg_direccion.test($.trim(calle.val()))) {
 				calle.focus().after("<span class='error'>Ingresa calle y número correctamente</spam>");
 				return false;
@@ -69,8 +69,8 @@ $(document).ready(function() {
 		//amex
 		
 		//Ok
-		$("form[id^='form_registro_tc']").submit();
-		//$(this).parents("form").sumbit();
+		//$("form[id^='form_registro_tc']").submit();
+		$(this).parents("form").submit();
 	});
 	
 	//fade out error messsage

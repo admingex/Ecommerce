@@ -154,8 +154,8 @@ class Forma_Pago extends CI_Controller {
 	{
 		$id_cliente = $this->id_cliente;
 		
-		//$script_file = "<script type='text/javascript' src='". base_url() ."js/forma_pago.js'></script>";
-		//$data['script'] = $script_file;
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/forma_pago.js'></script>";
+		$data['script'] = $script_file;
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('editar Forma de Pago');
