@@ -43,6 +43,28 @@ $(document).ready(function() {
         else{  
         	$("#form_recordar_password").submit();      	     	
         }            		  				
+	});
+	$("#cambiar_password").click(function() {		
+		$(".error").remove();
+        if($("#password_temporal").val()==""){        	
+            $("#password_temporal").focus().after("<span class='error'>Ingresa una clave temporal</span>");            
+            return false;            
+        }   
+        else{
+        	if(!valida_password("aaa@",$("#password").val())){ 
+        		$("#password").focus().after("<span class='error'>Ingresa una contraseña valida</span>");            
+            	return false;            
+        	}
+        	else{
+        		if($("#password").val()!=$("#password_2").val()){
+        			$("#password_2").focus().after("<span class='error'>No coincide la contrase&ntilde;a</span>");
+        			return false;
+        		}
+        		else{        			
+        			$("#form_cambiar_password").submit();
+        		}        		        			
+        	}          	      	     
+        }            		  				
 	});	
 });
 

@@ -74,27 +74,46 @@ class Recordar_Password extends CI_Controller {
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
 		$data['script'] = $script_file;	
 		if($_POST){
-			$resobc=$this->modelo->obtiene_cliente($_POST['password_temporal']);				
-			$this-> valida_password($resobc->email, $_POST['password']);
-			if (preg_match ('/^(\w*(?=\w*\d)(?=\w*[a-z])(?=\w*[A-Z])\w*){6,20}$/', $_POST['password']) ) {
-				if ($_POST['password'] == $_POST['password_2']) {
-					$datos['password'] = htmlspecialchars(trim($_POST['password']));
-				} 
-				else {
-					$this->registro_errores['password_2'] = 'Tus contrase&ntilde;as no coincden';
-				}
-			} 
+			if(!empty($_POST['password_temporal'])){
+				$result=$this->modelo->obtiene_cliente($_POST['password_temporal']);
+				if($result->num_rows()==0){
+					$this->registro_errores['password_temporal']='clave temporal no encontrada';					
+				}			
+				else{
+					$resodc=$result->row();		
+					if(!empty($_POST['password'])){
+						$val_pass=$this-> valida_password($resodc->email, $_POST['password']);						
+						if (preg_match ('/^(\w*(?=\w*\d)(?=\w*[a-z])(?=\w*[A-Z])\w*){6,20}$/', $_POST['password']) ) {
+							if ($_POST['password'] != $_POST['password_2']) {
+								$this->registro_errores['password_2'] = 'Tus contrase&ntilde;as no coincden';									
+							} 	
+							else {
+								
+								$datos['password'] = htmlspecialchars(trim($_POST['password']));
+							}
+						}							
+					}				
+					else {
+						$this->registro_errores['password']='Ingrese una nueva contraseña';
+					}
+				}									 									
+			}									
 			else {
-				$this->registro_errores['password_2'] = 'Por favor ingresa una contrase&ntilde;a v&aacute;lida';
+				$this->registro_errores['password_temporal'] = 'Por favor ingresa una clave temporal v&aacute;lida';
 			}
 			
 			if(empty($this->registro_errores)){
-																							
-				$this->modelo->cambia_password($resobc->id_clienteIn,$resobc->email,$_POST['password']);
-				$this->load->helper('date');
-				$t= mdate('%Y/%m/%d %h:%i:%s',time());
-				$this->modelo->guarda_actividad_historico($resobc->id_clienteIn, $resobc->password, self::$TIPO_ACTIVIDAD['CAMBIO_PASSWORD'], $t);
-				redirect('login');									
+				if($this->modelo->historico_clave($resodc->id_clienteIn, $resodc->email,$_POST['password'])!=1){
+					$this->modelo->cambia_password($resodc->id_clienteIn, $resodc->email,$_POST['password']);
+					$this->load->helper('date');
+					$t= mdate('%Y/%m/%d %h:%i:%s',time());
+					$this->modelo->guarda_actividad_historico($resodc->id_clienteIn, $resodc->password, self::$TIPO_ACTIVIDAD['CAMBIO_PASSWORD'], $t);
+					redirect('login');	
+				}																						
+				else{					
+					$this->registro_errores['password']='no puedes utilizar esta hasta q se tengan 8 historicos';
+					$data['registro_errores'] = $this->registro_errores;					
+				}													
 			}
 			else{
 				$data['registro_errores'] = $this->registro_errores;	
