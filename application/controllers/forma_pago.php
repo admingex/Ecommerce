@@ -185,8 +185,10 @@ class Forma_Pago extends CI_Controller {
 		//array para la nueva información
 		$nueva_info = array();
 		
+		//echo "edicion " .( (!$consecutivo) ? ("es cero") : ("no es cero") ). " consecutivo: " . $consecutivo;
+		
 		if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
-			if (!$consecutivo) {	//existe la tarjeta en sesión
+			if (!$consecutivo) {						//existe la tarjeta en sesión
 				//recupera la info de amex de la sesión
 				$tarjeta_amex = null;
 				foreach ($tarjeta_en_sesion['amex'] as $key => $value) {
@@ -208,7 +210,7 @@ class Forma_Pago extends CI_Controller {
 			//y especificat el tipo de la tarjeta y el número.
 			$data['vista_detalle'] = 'tc';
 		}
-
+		
 		//Se intentará actualizar la información
 		if ($_POST) {
 			$tipo_tarjeta = $data['vista_detalle'];
@@ -243,8 +245,6 @@ class Forma_Pago extends CI_Controller {
 				} else {
 					$nueva_info['tc']['id_estatusSi'] = 1;
 				}
-				//var_dump($nueva_info);
-				//exit();
 				
 				if (!$consecutivo) {
 					$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
@@ -263,17 +263,18 @@ class Forma_Pago extends CI_Controller {
 						//cargarla en la sesión
 						$this->cargar_en_session($consecutivo);
 						//echo 'tarjeta: '.$this->session->userdata('tarjeta').'<br/>';
-						//exit();	
 						$this->listar($msg_actualizacion);
 					} else {
 						$data['msg_actualizacion'] = "Error de actualización hacia en el Servidor";
-						//echo "Error de actualización hacia CCTC.<br/>";	//redirect					
+						//echo "Error de actualización hacia CCTC.<br/>";	//redirect
+						$this->cargar_vista('', 'forma_pago' , $data);					
 					}
 				}
 			} else {	//sí hubo errores
 				$data['msg_actualizacion'] = "Campos incorrectos";
-				//echo "<br/>Campos incorrectos.<br/>";
+				$this->cargar_vista('', 'forma_pago' , $data);
 				//var_dump($this->reg_errores);
+				//echo "<br/>Campos incorrectos.<br/>";
 			}
 			//print_r($nueva_info[$tipo_tarjeta]);
 		} else {//If POST

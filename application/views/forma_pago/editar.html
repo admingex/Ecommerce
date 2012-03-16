@@ -40,6 +40,7 @@
 			</div-->
 			<?php 
 				//La primera vez se tomará la fecha guardada, si el boton fue enviado...se toma del post
+				date_default_timezone_set("America/Mexico_City");
 				$mes = isset($_POST['guardar_tarjeta']) ? $_POST['sel_mes_expira'] : $tarjeta_tc->mes_expiracionVc;
 				$anio = isset($_POST['guardar_tarjeta']) ? $_POST['sel_anio_expira'] : $tarjeta_tc->anio_expiracionVc;
 				//echo 'fecha exp. '.$mes.'/'.$anio;
