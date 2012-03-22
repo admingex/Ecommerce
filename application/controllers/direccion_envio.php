@@ -65,12 +65,15 @@ class Direccion_Envio extends CI_Controller {
 		$data['mensaje'] = $msg;
 		$data['redirect'] = $redirect;
 		
-		//listar por default las direcciones del cliente
-		$data['lista_direcciones'] = $this->modelo->listar_direcciones($this->id_cliente);
-		
-		//cargar vista	
-		$this->cargar_vista('', 'direccion_envio', $data);
-		
+		if ($this->input->is_ajax_request()) {
+			$direcciones = $this->modelo->listar_direcciones(4);
+			echo json_encode($direcciones->result());
+		} else {
+			//listar por default las direcciones del cliente
+			$data['lista_direcciones'] = $this->modelo->listar_direcciones($this->id_cliente);
+			//cargar vista	
+			$this->cargar_vista('', 'direccion_envio', $data);
+		}
 	}
 	
 	public function registrar() 

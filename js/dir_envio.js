@@ -3,13 +3,33 @@
  */
 
 $(document).ready(function() {
+	var reg_cp = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
+	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
+	var reg_nombres = /^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i;
+	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,50}$/i;
+	var reg_telefono = /^[0-9 ()+-]{8,20}$/
 	//alert('hola mundo ecommerce GEx!');
 	$("#btn_cp").ajaxError(function() {
 		//alert('Error Handler invoked when an error ocurs on CP field!');		//Ok
 	});
 	
 	/*validacion_registro*/
-	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
+/*
+ * 
+ * var tipo_tarjeta = $("#sel_tipo_tarjeta");
+	var numero_tarjeta	= $("#txt_numeroTarjeta");
+	var nombre 	= $("#txt_nombre");
+	var appP 	= $("#txt_apellidoPaterno");
+	var appM 	= $("#txt_apellidoMaterno");
+	
+	var calle	= $("#txt_calle");
+	var cp		= $("#txt_cp");
+	var ciudad 	= $("#txt_ciudad");
+	var estado 	= $("#txt_estado");
+	var pais 	= $("#txt_pais");
+	var email 	= $("#txt_email");
+	var telefono= $("#txt_telefono");
+ */	
 	
 	//amex
 	var email = $("#txt_email");
@@ -59,7 +79,7 @@ $(document).ready(function() {
 		/*hacer un toggle si es necesario*/
 		var es_mx = false; 
 		$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/es_mexico/" + $(this).val(),
-			function(data) {			
+			function(data) {
 				if (!data.result) {	//no es México
 					$('#div_mexico').hide();
 					$('#div_otro_pais').show();

@@ -27,7 +27,7 @@
 					<span><input type="button" id="btn_cp" name="btn_cp" value="Llenar"/></span>
 				<span class="validation_message">&nbsp;* <?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
 				<div>
-					<small>Ingresa tu c&oacute;digo postay y presiona "llenar" para acompletar los datos de Colonia, Ciudad y Estado</small>
+					<small>Ingresa tu c&oacute;digo postal y presiona "llenar" para completar los datos de Colonia, Ciudad y Estado</small>
 				</div>
 			</div>
 			<div class="item_requerid">Pa&iacute;s:</div>
@@ -194,11 +194,11 @@
 			<div class="item_requerid">&nbsp;</div>
 			<div class="form_requerid">
 				<input type="checkbox" name="chk_default" id="chk_default" 
-				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direcci&oacute;n predeterminada
+				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar para pago exprés
 			</div>
 			
 			<div class="form_button">
-				<input type="submit" id="guardar_direccion" value="Usar esta direcci&oacute;n"/>
+				<input type="submit" id="guardar_direccion" name="guardar_direccion" value="Usar esta direcci&oacute;n"/>
 			</div>			
 		</form>
 	</div>

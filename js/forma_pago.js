@@ -73,6 +73,13 @@ $(document).ready(function() {
 		$(this).parents("form").submit();
 	});
 	
+	//Amex tabs
+	if (tipo_tarjeta.length == 0) {
+		div_dir_amex = $("#div_dir_amex");
+		
+		//div_dir_amex.hide();
+		$( "#tabs" ).tabs();
+	}
 	//fade out error messsage
 	numero_tarjeta.change(function() {
 		if ( validarTarjeta(tipo_tarjeta, $.trim(numero_tarjeta.val())) ) {

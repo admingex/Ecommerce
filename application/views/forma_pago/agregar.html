@@ -13,16 +13,14 @@
 							$tipo_tarjeta_id = $_POST['sel_tipo_tarjeta'];
 						foreach($lista_tipo_tarjeta as $tipo_banco)
 						{
-							if ($tipo_banco->descripcion != "AMERICAN EXPRESS") {
-								if ($tipo_tarjeta_id == $tipo_banco->id_tipo_tarjeta) {
-									echo "<option value='".$tipo_banco->id_tipo_tarjeta."' selected='true'>".
-										$tipo_banco->descripcion.
-										"</option>";
-								} else {
-									echo "<option value='".$tipo_banco->id_tipo_tarjeta."'>".
-										$tipo_banco->descripcion.
-										"</option>";
-								}
+							if ($tipo_tarjeta_id == $tipo_banco->id_tipo_tarjeta) {
+								echo "<option value='".$tipo_banco->id_tipo_tarjeta."' selected='true'>".
+									$tipo_banco->descripcion.
+									"</option>";
+							} else {
+								echo "<option value='".$tipo_banco->id_tipo_tarjeta."'>".
+									$tipo_banco->descripcion.
+									"</option>";
 							}
 						}
 					}
@@ -94,7 +92,7 @@
 			<div class="item_requerid">&nbsp;</div>
 			<div class="form_requerid">
 				<input type="checkbox" id="chk_default" name="chk_default" 
-				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como tarjeta predeterminada
+				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar para pago exprés
 			</div>
 			
 			<div class="form_button">
