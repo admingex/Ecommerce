@@ -11,20 +11,18 @@ class Promociones extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		$this->load->model('promociones_model', 'modelo', true);				
-
     }
 	
 	public function index(){
 		$data['detalle'] = TRUE;
 		$data['listar'] = FALSE;
 		$data['title']='Promocion';	
-		
+						
 		if(!empty($_GET['sitio'])){
 			$rsitio= $this->modelo->obtener_sitio($_GET['sitio']);	
 			if($rsitio->num_rows()!=0){
 				$data['sitio']=$rsitio->row();
-			}				
-			
+			}							
 		}										
 		
 		if(!empty($_GET['canal'])){
@@ -45,6 +43,7 @@ class Promociones extends CI_Controller {
 			}				
 		}
 		
+		echo json_encode($data);
 		$this->cargar_vista('', 'promociones', $data);									
 		
 	}

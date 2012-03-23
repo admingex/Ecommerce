@@ -1,34 +1,24 @@
-<div id="body">	
-	<form id="form_cambiar_password" action="<?php echo $this->config->item('base_url').'/index.php/recordar_password/cambiar'; ?>" method="POST">
-		<div class="item_requerid">
-			Clave Temporal:
-		</div>
-		<div class="form_requerid">
-			<input type="text" id="password_temporal" name="password_temporal" value="<?php if(isset($password_temporal)) echo $password_temporal; if(isset($_POST['password_temporal'])) echo htmlspecialchars($_POST['password_temporal']); ?>" />
-			<span class="validation_message">
-				<?php if(isset($registro_errores['password_temporal'])) echo($registro_errores['password_temporal']);?>
-			</span>
-		</div>	
-		<div class="item_requerid">
-			Nuevo Password:
-		</div>
-		<div class="form_requerid">
+<div id="body">		
+	<form id="form_cambiar_password" action="<?php echo $this->config->item('base_url').'/index.php/password/cambiar'; ?>" method="POST">
+		<p><b>Escribe una nueva contraseña</b></p>
+		<p>Escribe una nueva contrase&ntilde;a y confirmala. La contrase&ntilde;a debe tener al menos 8 caracteres y contener letras mayusculas,minusculas y numeros</p>
+		<div>
+			Nueva contrase&ntilde;a:		
 			<input type="password" id="password" name="password" value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
 			<span class="validation_message">
 				<?php if(isset($registro_errores['password'])) echo($registro_errores['password']);?>
 			</span>
 		</div>	
-		<div class="item_requerid">
-			Confirmar Password: 
-		</div>
-		<div class="form_requerid">
+		<div>
+			Confirmar contrase&ntilde;a: 		
 			<input type="password" id="password_2" name="password_2" value="<?php if(isset($_POST['password_2'])) echo htmlspecialchars($_POST['password_2']); ?>" />
 			<span class="validation_message">
 				<?php if(isset($registro_errores['password_2'])) echo($registro_errores['password_2']);?>
 			</span>
 		</div>
 		<div class="form_button">
-			<input type="submit" id="cambiar_password" name="cambiar_password" value="Cambiar Password"/>			
+			<input type="submit" id="cambiar_password" name="cambiar_password" value="Continuar compra"/>
 		</div>
 	</form>			
 </div>
+

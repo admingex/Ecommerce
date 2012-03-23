@@ -74,6 +74,9 @@ class Direccion_Facturacion extends CI_Controller {
 		$data['script'] = $script_file;
 		
 		if ($_POST)	{	//si hay parámetros del formulario
+		
+				
+				
 			$form_values = array();	//alojará los datos previos a la inserción	
 			$form_values = $this->get_datos_direccion();			
 						
@@ -103,7 +106,8 @@ class Direccion_Facturacion extends CI_Controller {
 							echo "<br/>Hubo un error en el registro en CMS";
 						}
 					}											
-				} else {
+				} 
+				else {
 					$direccion = $form_values['direccion'];
 					$this->cargar_en_session($direccion);
 					$this->listar("Dirección capturada correctamente");

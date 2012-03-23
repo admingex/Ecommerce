@@ -3,7 +3,7 @@
 class Registro extends CI_Controller {
 
 	var $title = 'Inicio de Sesi&oacute;n'; 		// Capitalize the first letter
-	var $subtitle = 'Registro de  Cliente'; 	// Capitalize the first letter
+	var $subtitle = 'Crear cuenta de usuario'; 	// Capitalize the first letter
 	var $registro_errores = array();
 	
 	function __construct()

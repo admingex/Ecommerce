@@ -6,11 +6,13 @@
 			<h3><?php if(isset($login_errores['user_login'])) echo ($login_errores['user_login']);?></h3>
 		</span-->
 		<div class="item_requerid">* Correo electr&oacute;nico:</div>
-		<div class="form_requerid">
+		<div >
 			<input type="text" name="email" id="email" size="40" maxlength="60" 
 				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
 			<span class="validation_message"> <?php if(isset($login_errores['email'])) echo ($login_errores['email']);?></span>
 		</div>
+		<div>Solo usaremos tu correo para enviarte informacion relacionaa con tu compra</div>
+		
 		<div class="item_requerid">Iniciar sesi&oacute;n como:</div>
 		<div class="form_requerid">			
 			<ul>
@@ -33,10 +35,9 @@
 			<span class="validation_message">
 				<?php if(isset($login_errores['password'])) echo ($login_errores['password']);?>
 			</span>
-		</div>
-		<div class="item_requerid">&nbsp;</div>
+		</div>		
 		<div class="form_requerid">
-			<a href="<?php echo $this->config->item('base_url').'/index.php/recordar_password/'; ?>">&iquest;Olvidaste tu contrase&ntilde;a?</a>
+			<a href="<?php echo $this->config->item('base_url').'/index.php/password/'; ?>">&iquest;Olvidaste tu contrase&ntilde;a?</a>
 		</div>			
 		<div id="message" class="validation_message">
 			<?php if(isset($login_errores['user_login'])) echo "<span class='result_fail'>". $login_errores['user_login']. "</span>";?>

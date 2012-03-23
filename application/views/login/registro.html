@@ -1,7 +1,8 @@
 <!--h1>Registro de clientes</h1-->
 
-<div id="body">	
+<div>	
 	<form id="form_registro_usuario" action="<?php echo $this->config->item('base_url').'/index.php/registro'; ?>" method="POST">
+		<p>Para crear tu cuenta, escribe tu nimbre y la contrase&ntilde;a uq quieres usar. La contrase&ntilde;a debe tener al menos 8 caracteres, incluir mayusculas y minusculas y tener al menos un numero</p>
 		<span id="message" class="validation_message">
 			<h2><?php if(isset($registro_errores['user_reg'])) echo ($registro_errores['user_reg']);?></h2>
 		</span>
@@ -32,12 +33,12 @@
 		<div class="item_requerid">Contrase&ntilde;a:</div>
 		<div class="form_requerid">
 			<input type="password" name="password" id="password" size="20" 
-				value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
-				<small>[A, a,s 0]</small>
+				value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />				
 			<span class="validation_message">
 				<?php if(isset($registro_errores['password'])) echo($registro_errores['password']);?>
 			</span>
-		</div>
+			<div>Debe incluir mayusculas, minusculas y numeros</div>
+		</div>				
 		<div class="item_requerid">Confirmar Contrase&ntilde;a:</div>
 		<div class="form_requerid">
 			<input type="password" name="password_2" id="password_2" size="20" 
