@@ -26,7 +26,14 @@
 			background-color: transparent;
 			font-weight: normal;
 		}
-
+		p{
+			clear: both;
+		}
+		#pleca{
+			width: 100%;
+			height: 1px;
+			background-color: #CCC;	
+		}
 		h1 {
 			color: #444;
 			background-color: transparent;
@@ -91,7 +98,8 @@
 			padding-left: 4px;
 		}
 
-		.column_header {			
+		.column_header {	
+			width: 15%;	/*160px*/		
 			font-weight: bold;
 			padding: 4px 0px 4px 4px;
 			float: left;
@@ -115,7 +123,8 @@
 			clear: both;
 		}
 		
-		#list_results  ul li{			
+		#list_results  ul li{	
+			width: 15%;	/*145px;*/		
 			padding: 4px 0px 4px 4px;
 			list-style-type: none;
 			display: inline;
@@ -142,6 +151,15 @@
 			padding: 15px 0px 0px 15px;
 			clear: both;
 		}
+		
+		thead {			
+			vertical-align: top;
+			text-align: left;	
+			background-color: #ccc;													
+		}		
+		td{
+			border-bottom: solid 1px #CCC
+		}			
 				
 	</style>
 </head>

@@ -4,7 +4,7 @@ $(document).ready(function() {
 	var rfc1= /^([a-zA-Z]{3})+([0-9]{6})+([a-zA-Z0-9]{3})$/;
 	var rfc2= /^([a-zA-Z]{4})+([0-9]{6})+([a-zA-Z0-9]{3})$/;	
 	
-	$("#guardar_direccion").click(function() {		
+	$("#guardar_rs").click(function(){
 		$(".error").remove();
         if( $("#txt_razon_social").val() == "" ){
             $("#txt_razon_social").focus().after("<span class='error'>Ingrese su razon social</span>");            
@@ -23,8 +23,22 @@ $(document).ready(function() {
         		else if(($("#txt_rfc").val().length==13) && (!rfc2.test($("#txt_rfc").val()))){
         			$("#txt_rfc").focus().after("<span class='error'>Ingrese un R.F.C. correcto</span>");
         			return false;
-        		}
+        		}   
         		else{
+        			if($("#txt_email").val()=="" || !email.test($("#txt_email").val())){
+						$("#txt_email").focus().after("<span class='error'>Ingrese un correo electronico valido</span>");
+        				return false;
+        			}
+        			else{        										        				        				        				
+        				$('#form_agregar_rs').submit();	        				        				
+        			}    
+        		}     		
+        	}
+        }			
+	});
+	
+	$("#guardar_direccion").click(function() {		
+		$(".error").remove();        
         			if($("#txt_calle").val()==""){
         				$("#txt_calle").focus().after("<span class='error'>Ingrese una calle</span>");
         				return false;
@@ -54,22 +68,15 @@ $(document).ready(function() {
         									$("#txt_colonia").focus().after("<span class='error'>Ingrese una colonia</span>");
         									return false;
         								}	
-        								else{
-        									if($("#txt_email").val()=="" || !email.test($("#txt_email").val())){
-        										$("#txt_email").focus().after("<span class='error'>Ingrese un correo electronico valido</span>");
-        										return false;
-        									}
-        									else{        										
+        								else{        									        									
         										$(form_direccion_envio).submit();	
-        									}        									
+        									        									
         								}
         							}        						    
         						}        						
         					}        						
         				}        				
         			}        		            			
-        		}	        		
-        	}        	
-        }       		  				
+        				  				
 	});	
 });
