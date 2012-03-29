@@ -59,8 +59,8 @@ $(document).ready(function() {
         										$("#txt_email").focus().after("<span class='error'>Ingrese un correo electronico valido</span>");
         										return false;
         									}
-        									else{        										
-        										$(form_direccion_envio).submit();	
+        									else{
+        										$(form_direccion_envio).submit();
         									}        									
         								}
         							}        						    
