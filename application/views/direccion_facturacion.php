@@ -4,7 +4,12 @@
 			if($solicita_factura){
 	?>					
 			<p><b>¿requieres factura?</b></p>
-			<p><input type="submit" value="No requiero factura, continuar" /></p>	
+			<p>
+				<form id="form_agregar_direccion" action="<?php echo site_url('direccion_facturacion/requiere_factura');?>" method="POST">
+					<input type="hidden" name="requiere_factura" value="no" />
+					<input type="submit" value="No requiero factura, continuar" />	
+				</form>
+			</p>	
 			<div id="pleca">&nbsp;</div>
 							
 	<?php

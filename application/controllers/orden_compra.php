@@ -29,12 +29,18 @@ class Orden_Compra extends CI_Controller {
 
     }
 
-	public function index()	
-	{
+	public function index(){		
 		if ($_POST) {
-			if (array_key_exists('direccion_selecionada', $_POST))
-				$this->session->set_userdata('dir_facturacion', $_POST['direccion_selecionada']);
-		}
+			if (array_key_exists('razon_social_seleccionada', $_POST)){
+				$this->session->set_userdata('dir_facturacion', $_POST['razon_social_seleccionada']);
+				$this->session->set_userdata('requiere_factura', 'si');						
+			}						
+		}	
+		else if($this->session->userdata('id_rs')){
+			echo $id_rs=$this->session->userdata('id_rs');
+			$this->session->set_userdata('dir_facturacion',$id_rs);				
+		}		
+			
 		$this->resumen();
 	}
 	
@@ -88,7 +94,7 @@ class Orden_Compra extends CI_Controller {
 			//$detalle_envio = $this->session->userdata('dir_envio');
 			$data['dir_facturacion'] = $consecutivo;
 		} else {
-			$detalle_facturacion = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo);
+			$detalle_facturacion = $this->facturacion_modelo->obtener_rs($consecutivo);
 			$data['dir_facturacion']=$detalle_facturacion;
 		}		
 		
