@@ -1,9 +1,14 @@
 <div id="promocion">
-	<div class="menu_opcion">
-		<?php   
-		if (($this->session->userdata('username'))) {
-			echo "Promoción id : " .$this->session->userdata('id_promocion')." -aqu&iacute; va el detalle de la promoci&oacute;n-.";
-			}	
-		?>
-	</div>
+		<p>
+			<?php			
+			if($this->session->userdata('promociones')){
+				$res=$this->session->userdata('promociones');
+				echo "<br />Sitio: ".$res['sitio']->urlVc;
+				echo "<br />Descripcion: ".$res['promocion']->descripcionVc;	
+				echo "<br />Precio".$res['promocion']->precioF;
+				echo "<br />Ejemplares: ".$res['promocion']->terminoVc;
+				
+			}									
+			?>	
+		</p>	
 </div>

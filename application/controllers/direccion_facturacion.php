@@ -63,9 +63,10 @@ class Direccion_Facturacion extends CI_Controller {
 																								
 			if(empty($this->reg_errores)){								   															
 					if($this->modelo->insertar_rs($form_values['direccion'])){
-						$datars = array(
-                   			'id_rs'  => $this->db->insert_id()                   			
-               			);
+						$id_rs=$this->db->insert_id();
+						$datars=array(
+							'id_rs'=>$id_rs
+						);						
 						$this->session->set_userdata($datars);
 						redirect('direccion_facturacion/registrar_direccion');																	
 					}					 																							
@@ -85,8 +86,8 @@ class Direccion_Facturacion extends CI_Controller {
 			$data['nueva_direccion'] = TRUE;
 		}				
 		$data['registrar_direccion'] = TRUE;		//para indicar que se debe mostrar formulario de registro		
-				
-		$id_rs=$this->session->userdata('id_rs');
+										
+		echo $id_rs=$this->session->userdata('id_rs');
 		$id_cliente = $this->id_cliente;	
 		$data['title']=$this->title;	
 		$data['mensaje']='';	
@@ -361,9 +362,11 @@ class Direccion_Facturacion extends CI_Controller {
 		else{
 			$this->reg_errores['txt_razon_social'] = 'Por favor ingrese una razón social';
 		}
-		if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/', $_POST['txt_email'])) {    		
-			$datos['direccion']['email'] = $_POST['txt_email'];					
-		}  	
+		if(!empty($_POST['txt_email'])){
+			if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/', $_POST['txt_email'])) {    		
+				$datos['direccion']['email'] = $_POST['txt_email'];					
+			}	
+		}		  	
 		else{
 			$this->reg_errores['txt_email'] = 'Por favor ingrese un correo valido';
 		}	

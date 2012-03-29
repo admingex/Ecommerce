@@ -43,8 +43,10 @@ class Promociones extends CI_Controller {
 			}				
 		}
 		
-		echo json_encode($data);
-		$this->cargar_vista('', 'promociones', $data);									
+		//echo json_encode($data);
+		$this->session->set_userdata('promociones', $data);			
+		//$this->cargar_vista('', 'promociones', $data);
+		redirect('login');									
 		
 	}
 	
