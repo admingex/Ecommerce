@@ -2,7 +2,7 @@
 	<h1>Editar Tarjeta de Cr&eacute;dito/D&eacute;bito</h1>
 	
 	<div id="body">	
-		<form id="form_editar_tc" action="<?php echo site_url('forma_pago/editar/'.$tarjeta_tc->id_TCSi); ?>" method="POST">
+		<form id="form_editar_tc" action="<?php echo site_url('forma_pago/editar/tc/'.$tarjeta_tc->id_TCSi); ?>" method="POST">
 			<div class="item_requerid">* Tipo de tarjeta:</div>
 			<div class="form_requerid">
 				<?php echo $tarjeta_tc->descripcionVc; ?>
@@ -49,11 +49,12 @@
 			<div class="form_requerid">
 				<select id="sel_mes_expira" name="sel_mes_expira">
 					<?php 
-						for($i = 1; $i != 12; $i++) {
+						for($i = 1; $i <= 12; $i++) {
+							$zero = ($i < 10) ? "0" : "";
 							if ($i == $mes)
-								echo "<option value='".$i."' selected='true'>$i</option>";
+								echo "<option value='$zero$i' selected='true'>$zero$i</option>";
 							else 
-								echo "<option value='".$i."'>$i</option>";
+								echo "<option value='$zero$i'>$zero$i</option>";
 						} 
 					?>
 				</select>

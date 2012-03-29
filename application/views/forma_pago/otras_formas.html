@@ -1,0 +1,13 @@
+<form id="form_forma_pago" action="<?php echo site_url("direccion_envio"); ?>" method="POST">
+	<div>
+		<h1>Otras formas de pago:</h1>
+		
+		<h3><input type="radio" id="deposito_bancario" name="deposito_bancario" checked="true"/>Dep&oacute;sito Bancario</h3>
+		<p>Para pagar con dep&oacute;sito bancario deber&aacute;s depositar a la cuenta XXX de Bancomer con el 
+			n&uacute;mero de referencia xxxx y enviar la ficha de dep&oacute;sito a ...</p>
+		<div class="form_button">
+			<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="Pagar con depósito bancario"/>
+			<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
+		</div>
+	</div>
+</form>
