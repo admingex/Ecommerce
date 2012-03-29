@@ -12,14 +12,20 @@
 				include ('forma_pago/editar_amex.html');
 			}
 		} else {
-	 		include ('forma_pago/listar.html');
 			//si re registrará una nueva tarjeta, se incluyen las formas 
 			if (isset($form)) {
 				if($form == 'tc') {
-					include ('forma_pago/agregar.html'); 	
+					include ('forma_pago/listar.html');
+					include ('forma_pago/agregar.html');
+					//otras formas de pago
+					include ('forma_pago/otras_formas.html');
 				} else if ($form == 'amex') {
 					include ('forma_pago/agregar_amex.html');
 				}
+			} else {
+				include ('forma_pago/listar.html');
+				//otras formas de pago
+				include ('forma_pago/otras_formas.html');
 			}
 		} 
 	?>
@@ -27,7 +33,7 @@
 		if (!empty($mensaje)) {
 	?>
 	<div id="dialog" title="Resultado" >
-		<p><?php echo $mensaje?></p>
+		<p><?php echo $mensaje;?></p>
 	</div>
 	<?php
 		}

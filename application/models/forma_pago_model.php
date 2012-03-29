@@ -38,7 +38,8 @@ class Forma_Pago_model extends CI_Model {
 	
 	function existe_tc($datos_tc)
 	{
-		$campos = array('nombre_titularVc' 	=> 	$datos_tc['nombre_titularVc'], 
+		$campos = array('id_clienteIn' 	=> 	$datos_tc['id_clienteIn'],
+						'nombre_titularVc' 	=> 	$datos_tc['nombre_titularVc'], 
 						'apellidoP_titularVc' => $datos_tc['apellidoP_titularVc'],
 						'apellidoM_titularVc' => $datos_tc['apellidoM_titularVc'],
 						'mes_expiracionVc' 	=> 	$datos_tc['mes_expiracionVc'],
