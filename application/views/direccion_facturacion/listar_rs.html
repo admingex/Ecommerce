@@ -1,0 +1,83 @@
+<div id="body">	
+	<p><b>Si requieres factura, selecciona los datos de facturacion</b></p>
+	<form id="form_direccion_facturacion" action="<?php echo site_url('orden_compra'); ?>/" method="POST">
+		<table>
+			<thead>
+				<tr>
+					<th>&nbsp;</th>
+					<th>
+						Raz&oacute;n Social
+					</th>
+					<th>
+						R.F.C
+					</th>
+					<th>
+						Correo Electronico<br />de envio						
+					</th>					
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+			<?php							
+				if (isset($lista_direcciones)) {								
+					foreach($lista_direcciones as $direccion) {												
+			?>
+				<tr>
+					<td>
+						<input type="radio" name="direccion_selecionada" id="direccion_selecionada" onclick="cambia_boton(<?php echo $direccion->id_razonSocialIn ?>)" />
+					</td>
+					<td>						
+						<?php echo $direccion->company; ?>											
+					</td>
+					<td>
+						<?php echo "&nbsp;".$direccion->tax_id_number; ?>	
+					</td>
+					<td><?php echo $direccion->email;?></td>					
+					<td>
+						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_rs/'.$direccion->id_razonSocialIn; ?>" title="editar">editar</a>
+						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar_rs/'.$direccion->id_razonSocialIn; ?>" title="eliminar">eliminar</a>
+					</td>
+					<td id="<?php echo $direccion->id_razonSocialIn ?>">												
+						&nbsp;						
+					</td>
+				</tr>																								
+							
+			<?php 					
+				}				
+			} else {
+				$hay_direcciones = false;	
+			?>
+				<tr>
+					<td colspan="6">
+						<p>							
+							Aun no tienes razon social asociada.							
+						</p>						
+					</td>
+				</tr>
+			<?php				
+			?>			
+			<?php 
+			}
+			?>				
+			</tbody>	
+			<tfoot>
+				<tr>
+					<td colspan="7">
+						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/registrar_rs/nueva'; ?>" title="regustrar">+ Agregar nueva razon social</a>
+					</td>									
+				</tr>
+			</tfoot>		
+		</table>									
+	</form>
+</div>
+<script>
+	var id_ant=0;
+	function cambia_boton(id){
+		if(document.getElementById(id_ant)){
+			document.getElementById(id_ant).innerHTML='';
+		}				
+		document.getElementById(id).innerHTML='<input type="submit" name="utilizar_registro" value="Usar esta raz&oacute;n social" />';
+		id_ant=id;					
+	}
+</script>

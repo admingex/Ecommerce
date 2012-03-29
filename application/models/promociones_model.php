@@ -19,11 +19,11 @@ class Promociones_model extends CI_Model {
 		return $res;
 	}
 	function obtener_promocion($id_promocion){		
-		$res = $this->db->get_where('CMS_IntPromocion', array('id_promocionSi'=>$id_promocion));
+		$res = $this->db->get_where('CMS_IntPromocion', array('id_promocionIn'=>$id_promocion));
 		return $res;
 	}
 	function obtener_articulos($id_promocion){		
-		$res = $this->db->get_where('CMS_IntArticulo', array('id_promocionSi'=>$id_promocion));
+		$res = $this->db->get_where('CMS_IntArticulo', array('id_promocionIn'=>$id_promocion));
 		return $res;
 	}		
 }

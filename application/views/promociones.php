@@ -26,7 +26,7 @@
 			      Promocion
 			      <br />descripcion: ".$promocion->descripcionVc."
 			      <br />duracion: ".$promocion->inicio_promocionDt."-".$promocion->fin_promocionDt;
-				  echo json_encode($promocion);	
+				  echo "<br />".json_encode($promocion);	
 			if(!empty($articulos)){
 				echo "<br />
 			          <br />
@@ -35,7 +35,7 @@
 			    	echo "<br /><br />tipo producto: ".$articulo['tipo_productoVc']."
 			          <br />medio entrega ".$articulo['medio_entregaVc'];
 			    }  	
-				echo "<span style='background-color: #FFF'>".json_encode($articulos)."</span>";	  	      	  			    			         
+				echo "<br /><span style='background-color: #FFF'>".json_encode($articulos)."</span>";	  	      	  			    			         
 			}		  
 		}
 	}			

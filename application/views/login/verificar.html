@@ -1,0 +1,14 @@
+<div id="body">		
+	<form id="form_cambiar_password" action="<?php echo $this->config->item('base_url').'/index.php/password/verificar'; ?>" method="POST">
+		<p><b>Escribe la clave para una nueva contrase&ntilde;a</b></p>
+		<p>Esta es la clave que recibiste en tu correo electronico junto con la liga de esta pagina</p>
+		<div>
+			Clave:		
+			<input type="text" id="password_temporal" name="password_temporal" value="<?php if(isset($password_temporal)) echo $password_temporal; if(isset($_POST['password_temporal'])) echo htmlspecialchars($_POST['password_temporal']); ?>" />			
+			<input type="submit" id="cambiar_password" name="cambiar_password" value="Verificar clave"/>			
+			<span class="validation_message">
+				<?php if(isset($registro_errores['password_temporal'])) echo($registro_errores['password_temporal']);?>
+			</span>		
+		</div>
+	</form>			
+</div>

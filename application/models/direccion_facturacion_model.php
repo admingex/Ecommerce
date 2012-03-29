@@ -8,6 +8,18 @@ class Direccion_Facturacion_model extends CI_Model {
         parent::__construct();
     }
     
+	function listar_razon_social($id_cliente){					        		
+		$resultado = $this->db->get_where('cms_reldireccionrazonsocial', array('id_clienteIn'=>$id_cliente));               
+		$res=array();
+		foreach($resultado->result_array() as $relrsdir){			 
+			$resultado2 = $this->db->get_where('CMS_IntRazonSocial', array('id_razonSocialIn'=>$relrsdir['id_razonSocialIn'], 'id_estatusSi !=' =>2));
+			if($resultado2->num_rows()!=0){
+				$res[]=$resultado2->row();	
+			}							
+		}						
+		return $res;     		      
+    }
+	
 	function listar_direcciones($id_cliente){	
 		$this->db->select('id_consecutivoSi, address_type, id_clienteIn, company, 
 			tax_id_number as rfc,
@@ -38,11 +50,7 @@ class Direccion_Facturacion_model extends CI_Model {
 						'address4' =>	$datos['address4'],		//num int
 						'zip' =>	$datos['zip'],				//cp
 						'state' =>	$datos['state'],
-						'city' =>	$datos['city'],
-						'email' =>	$datos['email'],
-						'tax_id_number' =>	$datos['tax_id_number'],
-						'company' =>	$datos['company'],
-						'codigo_paisVC' =>	$datos['codigo_paisVC']
+						'city' =>	$datos['city']				
 						);
 										
 		$resultado = $this->db->get_where('CMS_IntDireccion', $campos);
@@ -77,17 +85,37 @@ class Direccion_Facturacion_model extends CI_Model {
 	}
 	
 	function insertar_direccion($direccion){    	
-        $resultado = $this->db->insert('CMS_IntDireccion', $direccion);		//true si se inserta        
+        $resultado = $this->db->insert('CMS_IntDireccion', $direccion);		//true si se inserta                
         return $resultado;
     }
+	
+	function insertar_rs_direccion($dr){
+		$resultado = $this->db->insert('CMS_RelDireccionRazonSocial', $dr);		//true si se inserta                
+        return $resultado;
+	}
+	
+	function insertar_rs($datos){
+		$resultado = $this->db->insert('CMS_IntRazonSocial', $datos);		//true si se inserta        
+        return $resultado;
+	}
 	
 	function eliminar_direccion($id_cliente,$id_consecutivo){
 		$this->db->where(array(	'id_consecutivoSi' => $id_consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => 2));
 		if($resultado) {
-			return "Tarjeta eliminada.";
+			return "Direccion eliminada";
 		} else {
-			return "Error al tratar de eliminar la tarjeta.";
+			return "Error al tratar de eliminar la direccion.";
+		}				
+	}	
+	
+	function eliminar_rs($id_rs){
+		$this->db->where(array(	'id_razonSocialIn' => $id_rs));
+		$resultado = $this->db->update('CMS_IntRazonSocial', array('id_estatusSi' => 2));
+		if($resultado) {
+			return "razon social eliminada";
+		} else {
+			return "Error al tratar de eliminar la razon social.";
 		}		
 	}	
 	
@@ -111,6 +139,13 @@ class Direccion_Facturacion_model extends CI_Model {
 		return $row;  		
 	}
 	
+	function obtener_rs($id_rs) {
+		$resultado = $this->db->get_where('cms_intrazonsocial', array('id_razonSocialIn'=>$id_rs));				
+		$row = $resultado->row();     
+		return $row;  		
+	}
+	
+	
 	function actualizar_direccion($id_cliente, $id_consecutivo,$datos){		
 		$this->db->where(array(	'id_consecutivoSi' => $id_consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', $datos);
@@ -121,6 +156,17 @@ class Direccion_Facturacion_model extends CI_Model {
 			return "Error al tratar de actualizar la tarjeta.";
 		}	
 	}		
+	
+	function actualizar_rs($id_rs,$datos){		
+		$this->db->where(array(	'id_razonSocialIn' => $id_rs));
+		$resultado = $this->db->update('cms_intrazonsocial', $datos);
+		if($resultado) {
+			return "actualizacion.";
+		} 
+		else {
+			return "Error al tratar de actualizar la tarjeta.";
+		}	
+	}
 	
 	function quitar_predeterminado($id_cliente){
 		$this->db->where(array('id_clienteIn' => $id_cliente, 'address_type'=>1));

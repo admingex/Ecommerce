@@ -1,68 +1,83 @@
-<h1>Direcciones guardadas de <?php echo $this->session->userdata('username');?></h1>
-
-<div id="body">
-	<?php
-		if(isset($msg)){
-			echo "mens";
-		}
-	?>
+<div id="body">	
+	<p><b>Selecciona una direccion de facturacion</b></p>
 	<form id="form_direccion_facturacion" action="<?php echo site_url('orden_compra'); ?>/" method="POST">
-		<div id="list_headers">					
-			<div class="column_header">R.F.C.</div>
-			<div class="column_header">Raz&oacute;n Social</div>
-			<div class="column_header">Calle y n&uacute;mero</div>
-			<div class="column_header">Colonia</div>
-			<div class="column_header">CP</div>
-			<div class="column_header">Ciudad y Estado</div>
-			<div class="column_header">E-mail</div>
-			<div class="column_header">&nbsp;</div>
-			<div class="column_header">&nbsp;</div>
-		</div>
-		<div id="list_results">
-		<?php
-			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {				
-				$direcciones = $lista_direcciones;
-				foreach($direcciones->result_array() as $direccion) {
-					$value_r = "value='".$direccion['id_consecutivoSi']."'";
-					if ($direccion['id_estatusSi']==3){
-						$check="checked='checked'";
-						$class="<br /><span style='color: #D81830; height: 20px; font-size: 11px; font-family: italic'>pago express</span>";
-					} 
-					else{
-						$check="";
-						$class="";
-					}						
+		<table>
+			<thead>
+				<tr>
+					<th>&nbsp;</th>
+					<th>
+						Direcciones guardadas
+					</th>
+									
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+			<?php
+				if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {				
+					$direcciones = $lista_direcciones;
+					foreach($direcciones->result_array() as $direccion) {										
 			?>
-			<ul>				
-				<li><input type="radio" name="direccion_selecionada" id="direccion_selecionada" <?php echo $check." ".$value_r;?> />
-					<?php echo "&nbsp;".$direccion['rfc']; ?>
-					<?php echo $class; ?>
-				</li>					
-				<li><?php echo $direccion['company']; ?></li>
-				<li><?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?></li>
-				<li><?php echo $direccion['colonia']; ?></li> 
-				<li><?php echo $direccion['cp']; ?> </li>	
-				<li><?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?></li>
-				<li><?php echo $direccion['email']?></li>
-				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a></li>
-				<li><a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a></li>
-			</ul>
+				<tr>
+					<td>
+						<input type="radio" name="direccion_selecionada" id="direccion_selecionada" onclick="cambia_boton(<?php echo $direccion['id_consecutivoSi'] ?>)"/>
+					</td>
+					<td>						
+						<?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?>
+						<br />
+						<?php echo $direccion['cp']; ?>
+						<br />
+						<?php echo $direccion['colonia']; ?>
+						<br />
+						<?php echo $direccion['ciudad']; ?>
+						<br />
+						<?php echo $direccion['estado']; ?>												
+					</td>										
+					<td>
+						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_direccion/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a>
+						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar_direccion/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a>
+					</td>
+					<td id="<?php echo $direccion['id_consecutivoSi'] ?>">&nbsp;						
+					</td>
+				</tr>																								
+							
 			<?php 					
 				}				
 			} else {
-				$hay_direcciones = false;				
+				$hay_direcciones = false;	
+			?>
+				<tr>
+					<td colspan="6">
+						<p>							
+							Aun no tienes direcciones asociadas.							
+						</p>						
+					</td>
+				</tr>
+			<?php				
 			?>			
 			<?php 
 			}
-			?>
-		</div>	
-		<div id="list_results">
-			<input type="submit" name="utilizar_registro" value="Utilizar dirección" />
-		</div>	
+			?>				
+			</tbody>	
+			<tfoot>
+				<tr>
+					<td colspan="7">
+						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/registrar_direccion/nueva'; ?>" title="registrar">+ Agregar nueva direccion</a>
+					</td>
+				</tr>
+			</tfoot>		
+		</table>									
 	</form>
 </div>
+<script>
+	var id_ant=0;
+	function cambia_boton(id){
+		if(document.getElementById(id_ant)){
+			document.getElementById(id_ant).innerHTML='';
+		}				
+		document.getElementById(id).innerHTML='<input type="submit" name="utilizar_registro" value="Usar esta direccion" />';
+		id_ant=id;					
+	}
+</script>
 
-<h1>
-	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/direccion_facturacion/registrar/">Nueva Direcci&oacute;n</a>
-	<a href="<?php echo $this->config->item('base_url'); ?>/index.php/direccion_facturacion/listar/">Listar</a>
-</h1>
