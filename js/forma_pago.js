@@ -3,8 +3,10 @@
  */
 
 $(document).ready(function() {
+	var forms = $("form[id*='registro']");
+	
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;	
-	var reg_nombres = /^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i;
+	var reg_nombres = /^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i;
 	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,50}$/i;
 	var reg_cp = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
 	var reg_telefono = /^[0-9 ()+-]{8,20}$/
@@ -23,12 +25,19 @@ $(document).ready(function() {
 	var email 	= $("#txt_email");
 	var telefono= $("#txt_telefono");
 	
+	//es registro
+	
+	if (forms.length > 0) {
+		//alert("cuantos hay: " + forms.length);
+		$("a.agregar_tarjeta").hide();
+	}
+	
 	$("#guardar_tarjeta").click(function(e) {
 		e.preventDefault();	
 		$(".error").remove();	//limpiar mensajes de error
 		
-		//tc-prosa
-		if (numero_tarjeta.length > 0 && !validarTarjeta(tipo_tarjeta, $.trim(numero_tarjeta.val()))) {
+		//tc-todas
+		if (!validarTarjeta(tipo_tarjeta.val(), $.trim(numero_tarjeta.val()))) {
 			numero_tarjeta.focus().after("<span class='error'>Ingresa un número de tarjeta válido</span>");
 			return false;
 		} else if (!reg_nombres.test($.trim(nombre.val()))) {
@@ -40,49 +49,42 @@ $(document).ready(function() {
 		} else if ($.trim(appM.val()) != "" && !reg_nombres.test($.trim(appM.val()))) {
 			appM.focus().after("<span class='error'>Ingresa tu appellido correctamente</spam>");
 			return false;
-		}	
-		//Amex
-		else if (numero_tarjeta.length > 0 && tipo_tarjeta.length == 0) {
-			if (!reg_direccion.test($.trim(calle.val()))) {
-				calle.focus().after("<span class='error'>Ingresa calle y número correctamente</spam>");
-				return false;
-			} else if (!reg_cp.test($.trim(cp.val()))) {
-				cp.focus().after("<span class='error'>Ingresa tu código postal correctamente</spam>");
-				return false;
-			} else if (!reg_direccion.test($.trim(ciudad.val()))) {
-				ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</spam>");
-				return false;
-			} else if (!reg_direccion.test($.trim(estado.val()))) {
-				estado.focus().after("<span class='error'>Ingresa tu estado correctamente</spam>");
-				return false;
-			} else if (!reg_direccion.test($.trim(pais.val()))) {
-				pais.focus().after("<span class='error'>Ingresa tu país correctamente</spam>");
-				return false;
-			} else if ($.trim(email.val()) != "" && !reg_email.test($.trim(email.val()))) {
-				email.focus().after("<span class='error'>Ingresa tu correo correctamente</spam>");
-				return false;
-			} else if (!reg_telefono.test($.trim(telefono.val()))) {		//no vacío
-				telefono.focus().after("<span class='error'>Ingresa tu teléfono correctamente</spam>");
-				return false;
-			} 
 		}
-		//amex
-		
-		//Ok
 		//$("form[id^='form_registro_tc']").submit();
 		$(this).parents("form").submit();
 	});
 	
-	//Amex tabs
-	if (tipo_tarjeta.length == 0) {
-		div_dir_amex = $("#div_dir_amex");
-		
-		//div_dir_amex.hide();
-		$( "#tabs" ).tabs();
-	}
+	$("#guardar_amex").click(function(e) {
+		//Amex
+		if (!reg_direccion.test($.trim(calle.val()))) {
+			calle.focus().after("<span class='error'>Ingresa calle y número correctamente</spam>");
+			return false;
+		} else if (!reg_cp.test($.trim(cp.val()))) {
+			cp.focus().after("<span class='error'>Ingresa tu código postal correctamente</spam>");
+			return false;
+		} else if (!reg_direccion.test($.trim(ciudad.val()))) {
+			ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</spam>");
+			return false;
+		} else if (!reg_direccion.test($.trim(estado.val()))) {
+			estado.focus().after("<span class='error'>Ingresa tu estado correctamente</spam>");
+			return false;
+		} else if (!reg_direccion.test($.trim(pais.val()))) {
+			pais.focus().after("<span class='error'>Ingresa tu país correctamente</spam>");
+			return false;
+		} else if ($.trim(email.val()) != "" && !reg_email.test($.trim(email.val()))) {
+			email.focus().after("<span class='error'>Ingresa tu correo correctamente</spam>");
+			return false;
+		} else if (!reg_telefono.test($.trim(telefono.val()))) {		//no vacío
+			telefono.focus().after("<span class='error'>Ingresa tu teléfono correctamente</spam>");
+			return false;
+		} 
+		//amex
+		$(this).parents("form").submit();
+	});
+	
 	//fade out error messsage
 	numero_tarjeta.change(function() {
-		if ( validarTarjeta(tipo_tarjeta, $.trim(numero_tarjeta.val())) ) {
+		if ( validarTarjeta(tipo_tarjeta.val(), $.trim(numero_tarjeta.val())) ) {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
@@ -153,9 +155,9 @@ function validarTarjeta(tipo_tarjeta, num_tarjeta) {
 	var reg_master_card = /^5[1-5][0-9]{14}$/;
 	var reg_amex		= /^3[47][0-9]{13}$/;
 		
-	if (tipo_tarjeta.length > 0 && !reg_visa.test(num_tarjeta) && !reg_master_card.test(num_tarjeta)) {
+	if (tipo_tarjeta > 1 && !reg_visa.test(num_tarjeta) && !reg_master_card.test(num_tarjeta)) {
 			return false;
-		} else if (tipo_tarjeta.length == 0 && !reg_amex.test(num_tarjeta)) {
+		} else if (tipo_tarjeta == 1 && !reg_amex.test(num_tarjeta)) {
 			return false;
 		} else if (!validarLuhn(num_tarjeta)) {
 			return false;
