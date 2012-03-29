@@ -9,7 +9,7 @@ class Direccion_Facturacion_model extends CI_Model {
     }
     
 	function listar_razon_social($id_cliente){					        		
-		$resultado = $this->db->get_where('cms_reldireccionrazonsocial', array('id_clienteIn'=>$id_cliente));               
+		$resultado = $this->db->get_where('CMS_RelDireccionRazonSocial', array('id_clienteIn'=>$id_cliente));               
 		$res=array();
 		foreach($resultado->result_array() as $relrsdir){			 
 			$resultado2 = $this->db->get_where('CMS_IntRazonSocial', array('id_razonSocialIn'=>$relrsdir['id_razonSocialIn'], 'id_estatusSi !=' =>2));
@@ -140,7 +140,7 @@ class Direccion_Facturacion_model extends CI_Model {
 	}
 	
 	function obtener_rs($id_rs) {
-		$resultado = $this->db->get_where('cms_intrazonsocial', array('id_razonSocialIn'=>$id_rs));				
+		$resultado = $this->db->get_where('CMS_IntRazonSocial', array('id_razonSocialIn'=>$id_rs));				
 		$row = $resultado->row();     
 		return $row;  		
 	}
@@ -159,7 +159,7 @@ class Direccion_Facturacion_model extends CI_Model {
 	
 	function actualizar_rs($id_rs,$datos){		
 		$this->db->where(array(	'id_razonSocialIn' => $id_rs));
-		$resultado = $this->db->update('cms_intrazonsocial', $datos);
+		$resultado = $this->db->update('CMS_IntRazonSocial', $datos);
 		if($resultado) {
 			return "actualizacion.";
 		} 
