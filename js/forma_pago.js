@@ -9,7 +9,7 @@ $(document).ready(function() {
 	var reg_nombres = /^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i;
 	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,50}$/i;
 	var reg_cp = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
-	var reg_telefono = /^[0-9 ()+-]{8,20}$/
+	var reg_telefono = /^[0-9 ()+-]{10,20}$/
 	
 	var tipo_tarjeta = $("#sel_tipo_tarjeta");
 	var numero_tarjeta	= $("#txt_numeroTarjeta");
@@ -32,7 +32,7 @@ $(document).ready(function() {
 		$("a.agregar_tarjeta").hide();
 	}
 	
-	$("#guardar_tarjeta").click(function(e) {
+	$("input[name='guardar_tarjeta']").click(function(e) {
 		e.preventDefault();	
 		$(".error").remove();	//limpiar mensajes de error
 		
