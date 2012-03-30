@@ -53,16 +53,18 @@ class Password extends CI_Controller {
 				$data['timestamp']= $t= mdate('%Y/%m/%d %h:%i:%s',time());
 				$this->modelo->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
 				$this->modelo->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);		
-				
-				$this->load->library('email');
-				$this->email->from('gio@correo.com', 'Giovanni');
-				$this->email->to('vagio_12345@hotmail.com');				
-				$this->email->subject('Email de Prueba');
-				$this->email->message('"http://10.177.73.120/ecommerce/index.php/password/verificar/".$p');
-				$this->email->send();				
-																												
-				$this->cargar_vista('', 'password', $data);	
-				//redirect('login');								
+												  
+				$headers="Content-type: text/html; charset=UTF-8\r\n";
+                $headers.="MIME-Version: 1.0\r\n";
+			    $headers .= "From: GexWeb<soporte@expansion.com.mx>\r\n";            					
+								
+				if(mail($data['cliente']->email, 'Recuperar password', "http://10.177.73.120/ecommerce/index.php/password/verificar".$p, $headers)){
+					$this->cargar_vista('', 'password', $data);	
+				}																														
+				else{
+					redirect('login');	
+				}					
+												
 			}		
 			else{
 				$data['mensaje']='No se encuentra en nuestra base de datos';
