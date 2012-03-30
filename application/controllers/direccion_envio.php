@@ -307,7 +307,8 @@ class Direccion_Envio extends CI_Controller {
 	 */
 	public function get_estados()
 	{
-		echo json_encode($this->consulta_estados());
+		//echo json_encode($this->consulta_estados());
+		echo json_encode($this->modelo->listar_estados_sepomex()->result_array());
 	}
 	
 	/*
@@ -317,31 +318,20 @@ class Direccion_Envio extends CI_Controller {
 	{
 		$resultado = array();
 		
-		try {
-			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-		
-			$parameter = array();	
-			
-			$obj_result = $cliente->ObtenerEstado($parameter);
-			$simple_result = $obj_result->ObtenerEstadoResult;		
-			
-			$resultado['estados'] = $simple_result->InformacionEstado;
-									
+		try
+		{
+			$resultado['estados'] = $this->modelo->listar_estados_sepomex()->result();
 			$resultado['success'] = true;
 			$resultado['msg'] = "Ok";
-			
 			return $resultado;
-			
-		} catch (Exception $e)	{
+		}
+		catch (Exception $e)
+		{
 			$resultado['exception'] =  $exception;
 			$resultado['msg'] = $exception->getMessage();
 			$resultado['error'] = true;
-			//echo "No se pudo recuperar el catálogo de SEPOMEX.<br/>";
-			//echo $e->getMessage();
-			//exit();
 			return $resultado;	
 		}
-		
 	}
 	
 	public function get_info_sepomex($cp = 0)
@@ -400,13 +390,29 @@ class Direccion_Envio extends CI_Controller {
 	 */
 	public function get_ciudades($estado = "")
 	{
-		$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
-		
-		echo json_encode($this->consulta_ciudades($estado));
+		$estado = $this->input->post('estado');
+		$resultado = array();
+		$resultado['ciudades'] = $this->modelo->listar_ciudades_sepomex($estado)->result_array();
+		echo json_encode($resultado);
+		//$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
+		//echo json_encode($this->consulta_ciudades($estado));
 	}
 	
 	private function consulta_ciudades($estado)
 	{
+		$resultado = array();			
+		try {
+			$resultado['ciudades'] = $this->modelo->listar_ciudades_sepomex($estado)->result();
+			$resultado['success'] = true;
+			$resultado['msg'] = "Ciudades Resultados";
+			return $resultado;
+		} catch (Exception $e) {
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			return $resultado;
+		}
+		/*
 		$resultado = array();	
 		try {
 			//URL del WS debe estar en archivo protegido
@@ -438,6 +444,7 @@ class Direccion_Envio extends CI_Controller {
 			//exit();
 			return $resultado;
 		}
+		*/
 	}
 	
 	/*
@@ -452,14 +459,33 @@ class Direccion_Envio extends CI_Controller {
 	
 	public function get_colonias($estado = "", $ciudad = "")
 	{
-		$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
+		$estado = $this->input->post('estado');
 		$ciudad = $this->input->post('ciudad');
+
+		$resultado = array();
+		$resultado['colonias'] = $this->modelo->listar_colonias_sepomex($estado, $ciudad)->result_array();
+		echo json_encode($resultado);
+		//$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
+		//$ciudad = $this->input->post('ciudad');
 		//echo "edo: ".$edo;
-		echo json_encode($this->consulta_colonias($estado, $ciudad));
+		//echo json_encode($this->consulta_colonias($estado, $ciudad));
 	}
 	
 	private function consulta_colonias($estado, $ciudad)
 	{
+		$resultado = array();
+		try {
+			$resultado['colonias'] = $this->modelo->listar_colonias_sepomex($estado, $ciudad)->result();
+			$resultado['success'] = true;
+			$resultado['msg'] = "Colonias Resultados";
+			return $resultado;
+		} catch (Exception $e) {
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			return $resultado;
+		}
+		/*
 		$resultado = array();
 		try {
 			//URL del WS debe estar en archivo protegido
@@ -491,6 +517,7 @@ class Direccion_Envio extends CI_Controller {
 			//exit();
 			return $resultado;
 		}
+		*/ 
 	}
 	
 	/**

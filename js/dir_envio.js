@@ -90,17 +90,17 @@ $(document).ready(function() {
 	});
 	
 	estado_s.change(function() {
-		if ( reg_direccion.test($.trim(estado.val())) ) {
+		if ( reg_direccion.test($.trim(estado_s.val())) ) {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
 	ciudad_s.change(function() {
-		if ( reg_direccion.test($.trim(ciudad.val())) ) {
+		if ( reg_direccion.test($.trim(ciudad_s.val())) ) {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
 	colonia_s.change(function() {
-		if ( reg_direccion.test($.trim(colonia.val())) ) {
+		if ( reg_direccion.test($.trim(colonia_s.val())) ) {
 			$(this).siblings(".error").fadeOut();
 		}
 	});	

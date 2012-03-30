@@ -96,6 +96,43 @@ class Direccion_Envio_model extends CI_Model {
 		$this->db->select('country_code2 as id_pais, country_name as pais');		
 		return $resultado = $this->db->get('CMS_CatPaisThink');
 	}
+
+	/**
+	 * Devuelve la lista de Estados del Catalogo Local de SEPOMEX //
+	 * */
+	function listar_estados_sepomex() {
+		$this->db->select('EDO as clave_estado, ESTADO as estado');
+		$this->db->order_by('estado asc');		
+		return $resultado = $this->db->get('CMS_CatEstado');
+	}
+
+	/**
+	 * Devuelve la lista de Ciudades del Catalogo local de SEPOMEX //
+	 * */
+	function listar_ciudades_sepomex($cve_estado) {
+		$this->db->select('CIUDAD as clave_ciudad, CIUDAD as ciudad');
+		$this->db->from('CMS_CatCiudad');
+		$this->db->join('CMS_CatEstado', 'CMS_CatEstado.cve_estado = CMS_CatCiudad.cve_estado');
+		$this->db->where('CMS_CatEstado.EDO', $cve_estado);
+		$this->db->order_by('ciudad asc');
+		$this->db->distinct();
+		return $resultado = $this->db->get();
+	}
+	
+	/**
+	 * Devuelve la lista de Colonias del Catalogo local de SEPOMEX //
+	 * */
+	function listar_colonias_sepomex($cve_estado, $cve_ciudad) {
+		$this->db->select('CMS_CatEstado.EDO as estado, CMS_CatCiudad.CIUDAD as ciudad, CMS_CatCodigoPostal.COLONIA AS colonia, CMS_CatCodigoPostal.ZIP as codigo_postal');
+		$this->db->from('CMS_CatCodigoPostal');
+		$this->db->join('CMS_CatCiudad', 'CMS_CatCiudad.cve_ciudad = CMS_CatCodigoPostal.cve_ciudad');
+		$this->db->join('CMS_CatEstado', 'CMS_CatEstado.cve_estado = CMS_CatCodigoPostal.cve_estado');
+		$this->db->where('CMS_CatEstado.cve_estado = CMS_CatCiudad.cve_estado');
+		$this->db->where(array( 'CMS_CatEstado.EDO' => $cve_estado, 'CMS_CatCiudad.CIUDAD' => $cve_ciudad));
+		$this->db->order_by('colonia asc');
+		$this->db->distinct();
+		return $resultado = $this->db->get();
+	}
 	
 	/**
 	 * Deshabilita de manera lógica la tarjeta especificada del cliente 
