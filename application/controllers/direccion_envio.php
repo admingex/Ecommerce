@@ -584,7 +584,6 @@ class Direccion_Envio extends CI_Controller {
 				}	
 			}
 			
-			
 			if (array_key_exists('txt_telefono', $_POST)) {
 				if(preg_match('/^[0-9 -]{2,15}$/i', $_POST['txt_telefono'])) {
 					$datos['direccion']['phone'] = $_POST['txt_telefono'];
@@ -596,19 +595,18 @@ class Direccion_Envio extends CI_Controller {
 			if(array_key_exists('txt_referencia', $_POST)) {
 				$datos['direccion']['referenciaVc'] = trim($_POST['txt_referencia']);
 			}
-			
-			
-			
+			/*
 			if (filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
 				$datos['direccion']['email'] = htmlspecialchars(trim($_POST['txt_email']));
 			} else {
 				$this->reg_errores['txt_email'] = 'Ingresa una direcci&oacute;n v&aacute;lida.';
 			}
-			
+			*/
 			if (array_key_exists('chk_guardar', $_POST)) {
 				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
 				$datos['direccion']['id_estatusSi'] = 1;
 			}
+
 			if (array_key_exists('chk_default', $_POST)) {
 				$datos['direccion']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada
 				$datos['predeterminar'] = true;

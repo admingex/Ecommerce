@@ -168,6 +168,8 @@ class Forma_Pago extends CI_Controller {
 	 * Registro de la información de la tarjeta
 	 * */
 	private function registrar_tc($id_cliente) {
+		$data['title'] = $this->title;
+		$data['subtitle'] = ucfirst('Nueva Forma de Pago');
 		
 		$consecutivo = $this->modelo->get_consecutivo($id_cliente);
 		$lista_tipo_tarjeta = $this->lista_tipos_tarjeta_WS();
@@ -183,8 +185,7 @@ class Forma_Pago extends CI_Controller {
 			$form_values['tc']['descripcionVc'] = $lista_tipo_tarjeta[$form_values['tc']['id_tipo_tarjetaSi'] - 1]->descripcion;
 			$form_values['amex'] = null;	//para que no se tome encuenta por el momento
 			
-			//para la session
-			$tarjeta = array('tc' => $form_values['tc'], 'amex' => NULL);				
+			$tipo = $form_values['tc']['id_tipo_tarjetaSi'];	//1 es AMEX
 			
 			//si no hay errores y se solicita registrar la tarjeta
 			if (isset($form_values['tc']['id_estatusSi'])) {
@@ -193,7 +194,6 @@ class Forma_Pago extends CI_Controller {
 				$num_completo = $form_values['tc']['terminacion_tarjetaVc'];
 				$num_temp = substr($num_completo, strlen($num_completo) - 4);
 				$form_values['tc']['terminacion_tarjetaVc'] = $num_temp;
-				$tipo = $form_values['tc']['id_tipo_tarjetaSi'];	//1 es AMEX
 				
 				if($this->modelo->existe_tc($form_values['tc'])) {	//Redirect al listado por que ya existe
 					$this->listar("La tarjeta ya está registrada.", FALSE);
@@ -235,6 +235,10 @@ class Forma_Pago extends CI_Controller {
 					}
 				}	//ya registrada						
 			} else {
+				$form_values['tc']['id_TCSi'] = 0;	//consec. es cero
+				//para la session
+				$tarjeta = array('tc' => $form_values['tc'], 'amex' => NULL);				
+				
 				/*Poner en session la TC*/
 				$this->cargar_en_session($tarjeta);
 				if ($tipo == 1)	{
@@ -252,23 +256,25 @@ class Forma_Pago extends CI_Controller {
 	}
 	
 	private function registrar_amex($id_cliente) {
-		//$this->session->set_userdata('tarjeta', '6');
+		$data['title'] = $this->title;
+		$data['subtitle'] = ucfirst('Nueva Forma de Pago');
+		
 		if ($this->session->userdata('tarjeta')) {
 			$tarjeta = $this->session->userdata('tarjeta');
-			echo "tarjeta: ". $tarjeta;
+			//echo "tarjeta: ". $tarjeta;
 			
 			if (is_array($tarjeta)) {
 				//para cuando no se guarda en BD, se toma de session
-				$tc = array();
+				$tc = (object)$tarjeta['tc'];
 			} else {
 				$tc = $this->modelo->detalle_tarjeta($tarjeta, $id_cliente);
 			}
 		
 			$form_values = array();		
 			$form_values = $this->get_datos_tarjeta();
-				
 			
-			
+			/*var_dump($tc);
+			exit();*/
 			if (empty($this->reg_errores)) {
 				$form_values['tc'] = (array)$tc;
 				$form_values['amex']['id_TCSi'] = $tc->id_TCSi;
@@ -321,7 +327,7 @@ class Forma_Pago extends CI_Controller {
 				$this->editar_amex($consecutivo);
 			}
 			//else, redireccionar/pantalla de error
-		} else {//If POST
+		} else {	//If POST
 			$script_file = "<script type='text/javascript' src='". base_url() ."js/forma_pago.js'></script>";
 			$data['script'] = $script_file;
 			
@@ -366,12 +372,14 @@ class Forma_Pago extends CI_Controller {
 				if ($tipo == 'tc') { 
 					//$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
 					$data['tarjeta_tc'] = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
-				} else {
+				} else if ($tipo == 'amex') {
 					$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
 				}
 	
 			}
-			
+			//echo "con: ".$consecutivo . " tipo: " . $tipo;
+			//var_dump($data);
+			//exit();
 			$data['vista_detalle'] = $tipo;		//selección de la vista para mostrar
 			$this->cargar_vista('', 'forma_pago' , $data);
 		}
@@ -379,66 +387,67 @@ class Forma_Pago extends CI_Controller {
 	
 	private function editar_tc($consecutivo = 0) {
 		$id_cliente = $this->id_cliente;
-		
-		//array para la nueva información
-		$nueva_info = array();
-		
-		//el detalle de la tarjeta en BD antes de actualizar
-		$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
-		$nueva_info = $this->get_datos_tarjeta();	//datos generales
-		
-		//errores
-		$data['reg_errores'] = $this->reg_errores;	
-		
-		if (empty($data['reg_errores'])) {	//si no hubo errores
-			//preparar la petición al WS, campos comunes
-			$nueva_info['tc']['id_clienteIn'] = $id_cliente;
-			$nueva_info['tc']['id_TCSi'] = $consecutivo;
-			$nueva_info['tc']['terminacion_tarjetaVc'] = $detalle_tarjeta->terminacion_tarjetaVc;
-			$nueva_info['tc']['descripcionVc'] = $detalle_tarjeta->descripcionVc;
-			$nueva_info['tc']['id_tipo_tarjetaSi'] = $detalle_tarjeta->id_tipo_tarjetaSi;
+		//echo "con: ".$consecutivo;
+		//Revisar en donde está la info
+		if ($this->session->userdata('tarjeta')) {
+			//tarjeta en sesion
+			$tarjeta = $this->session->userdata('tarjeta');
 			
-			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) {
-				$nueva_info['amex']['id_TCSi'] = $detalle_tarjeta->id_TCSi;
-				$nueva_info['amex']['id_clienteIn'] = $id_cliente;
-				$nueva_info['amex']['nombre_titularVc'] = $nueva_info['tc']['nombre_titularVc'];
-				$nueva_info['amex']['apellidoP_titularVc'] = $nueva_info['tc']['apellidoP_titularVc'];
-				$nueva_info['amex']['apellidoM_titularVc'] = $nueva_info['tc']['apellidoM_titularVc'];
-			}
+			var_dump($tarjeta);
+			exit();
 			
-			//$nueva_info['amex'] = null;
-			
-			if (isset($nueva_info['predeterminar'])) {
-				$this->modelo->quitar_predeterminado($id_cliente);
+			if (is_array($tarjeta)) {
+				//para cuando no se guarda en BD, se toma de session
+				$detalle_tarjeta = (object)$tarjeta['tc'];
+				$consecutivo = 0;
 			} else {
-				$nueva_info['tc']['id_estatusSi'] = 1;
+				//el detalle de la tarjeta en BD antes de actualizar
+				$detalle_tarjeta = $this->modelo->detalle_tarjeta($tarjeta, $id_cliente);
 			}
 			
+			//array para la nueva información
+			$nueva_info = array();
+			$nueva_info = $this->get_datos_tarjeta();	//datos generales
 			
-			//Tarjeta en session o en BD 
-			if (!$consecutivo) {
-				$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
-				$this->cargar_en_session($tarjeta);
+			var_dump($detalle_tarjeta);
+			echo "con: ".$consecutivo;
+			exit();
+			
+			//errores
+			$data['reg_errores'] = $this->reg_errores;	
+			
+			if (empty($data['reg_errores'])) {	//si no hubo errores
+				//preparar la petición al WS, campos comunes
+				$nueva_info['tc']['id_clienteIn'] = $id_cliente;
+				$nueva_info['tc']['id_TCSi'] = $detalle_tarjeta->id_TCSi;
+				$nueva_info['tc']['terminacion_tarjetaVc'] = $detalle_tarjeta->terminacion_tarjetaVc;
+				$nueva_info['tc']['descripcionVc'] = $detalle_tarjeta->descripcionVc;
+				$nueva_info['tc']['id_tipo_tarjetaSi'] = $detalle_tarjeta->id_tipo_tarjetaSi;
 				
-				$msg_actualizacion = "Información actualizada";
-				$data['msg_actualizacion'] = $msg_actualizacion;
-				
-				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
-					//si es AMEX
-					redirect('forma_pago/editar/amex/'.$consecutivo);
+				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1 ) {	//es AMEX y hay información
+					$detalle_amex = $tarjeta['amex'];
+					$nueva_info['amex'] = $detalle_amex;
+					$nueva_info['amex']['id_clienteIn'] = $id_cliente;
+					$nueva_info['amex']['id_TCSi'] = $detalle_tarjeta->id_TCSi;
+					$nueva_info['amex']['nombre_titularVc'] = $nueva_info['tc']['nombre_titularVc'];
+					$nueva_info['amex']['apellidoP_titularVc'] = $nueva_info['tc']['apellidoP_titularVc'];
+					$nueva_info['amex']['apellidoM_titularVc'] = $nueva_info['tc']['apellidoM_titularVc'];
 				} else {
-					$this->listar($msg_actualizacion);
+					$nueva_info['amex'] = NULL;
+					//echo "no es amex";
+					//exit();
 				}
-			} else {
-			//var_dump($nueva_info);
-			//exit();
-				//actualizar en CCTC, si el consecutivo es distinto de 0				
-				if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
-					//ahora para registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
-					$msg_actualizacion = $this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
-					//cargarla en la sesión
-					$this->cargar_en_session($consecutivo);
+				
+				var_dump($nueva_info);
+				echo "con: ". $consecutivo;
+				exit();
+				
+				//Tarjeta en session o en BD 
+				if (!$consecutivo) {
+					$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
+					$this->cargar_en_session($tarjeta);
 					
+					$msg_actualizacion = "Información actualizada";
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					
 					if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
@@ -448,67 +457,117 @@ class Forma_Pago extends CI_Controller {
 						$this->listar($msg_actualizacion);
 					}
 				} else {
-					$data['msg_actualizacion'] = "Error de actualización en el Servidor";
-					//echo "Error de actualización hacia CCTC.<br/>";	//redirect
-					$this->cargar_vista('', 'forma_pago' , $data);					
+					//actualizar en CCTC, si el consecutivo es distinto de 0				
+					if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+						//actualizar predeterminado
+						if (isset($nueva_info['predeterminar'])) {
+							$this->modelo->quitar_predeterminado($id_cliente);
+						} else {
+							$nueva_info['tc']['id_estatusSi'] = 1;
+						}
+						
+						//ahora para registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
+						$msg_actualizacion = $this->modelo->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
+						//cargarla en la sesión
+						$this->cargar_en_session($consecutivo);
+						
+						$data['msg_actualizacion'] = $msg_actualizacion;
+						
+						if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
+							//si es AMEX
+							redirect('forma_pago/editar/amex/'.$consecutivo);
+						} else {
+							$this->listar($msg_actualizacion);
+						}
+					} else {
+						$data['msg_actualizacion'] = "Error de actualización en el Servidor";
+						//echo "Error de actualización hacia CCTC.<br/>";	//redirect
+						$this->cargar_vista('', 'forma_pago' , $data);					
+					}
 				}
+			} else {	//sí hubo errores
+				$data['msg_actualizacion'] = "Campos incorrectos";
+				$this->cargar_vista('', 'forma_pago' , $data);
 			}
-		} else {	//sí hubo errores
-			$data['msg_actualizacion'] = "Campos incorrectos";
-			$this->cargar_vista('', 'forma_pago' , $data);
+		} else {
+			//error en el flujo
+			$this->listar("Error en la edición de la tarjeta", FALSE);
 		}
 	}
 	
 	private function editar_amex($consecutivo = 0) {
+		$data['title'] = $this->title;
+		$data['subtitle'] = ucfirst('Edicion direccion');
+		
 		$id_cliente = $this->id_cliente;
 		
-		//array para la nueva información
-		$nueva_info = array();
-		
-		//$tipo_tarjeta = $data['vista_detalle'];
-		//el detalle de la tarjeta en BD antes de actualizar
-		$detalle_tarjeta = $this->modelo->detalle_tarjeta($consecutivo, $id_cliente);
-		
-		$nueva_info = $this->get_datos_tarjeta();	//datos generales
-		
-		//errores
-		$data['reg_errores'] = $this->reg_errores;	
-		
-		if (empty($data['reg_errores'])) {	//si no hubo errores
-			//preparar la petición al WS, campos comunes
-			$nueva_info['tc'] = (array)$detalle_tarjeta;
+		if ($this->session->userdata('tarjeta')) {
+			//tarjeta en sesion
+			$tarjeta = $this->session->userdata('tarjeta');
 			
-			$nueva_info['amex']['id_clienteIn'] = $id_cliente;
-			$nueva_info['amex']['id_TCSi'] = $consecutivo;
-			$nueva_info['amex']['nombre_titularVc'] = $detalle_tarjeta->nombre_titularVc;
-			$nueva_info['amex']['apellidoP_titularVc'] = $detalle_tarjeta->apellidoP_titularVc;
-			$nueva_info['amex']['apellidoM_titularVc'] = $detalle_tarjeta->apellidoM_titularVc;
-			
-			if (!$consecutivo) {
-				$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
-				$this->cargar_en_session($tarjeta);
-				
-				$msg_actualizacion = "Información actualizada";
-				$data['msg_actualizacion'] = $msg_actualizacion;
-				$this->listar($msg_actualizacion);
+			if (is_array($tarjeta)) {
+				//para cuando no se guarda en BD, se toma de session
+				$detalle_tarjeta = (object)$tarjeta['tc'];
+				$consecutivo = 0;
 			} else {
-				//actualizar en CCTC, si el consecutivo es distinto de 0
-				if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
-					//registrar cambios sólo en CCTC
-					$this->cargar_en_session($consecutivo);
+				//el detalle de la tarjeta en BD antes de actualizar
+				$detalle_tarjeta = $this->modelo->detalle_tarjeta($tarjeta, $id_cliente);
+				
+			}
+		/*	
+		var_dump($tarjeta);
+		echo "con: ". $consecutivo;
+		exit();
+			*/
+			//array para la nueva información
+			$nueva_info = array();
+			$nueva_info = $this->get_datos_tarjeta();	//datos generales
+			
+			//errores
+			$data['reg_errores'] = $this->reg_errores;	
+			
+			if (empty($data['reg_errores'])) {	//si no hubo errores
+				//preparar la petición al WS, campos comunes
+				$nueva_info['tc'] = (array)$detalle_tarjeta;
+				
+				$nueva_info['amex']['id_clienteIn'] = $id_cliente;
+				$nueva_info['amex']['id_TCSi'] = $consecutivo;
+				$nueva_info['amex']['nombre_titularVc'] = $detalle_tarjeta->nombre_titularVc;
+				$nueva_info['amex']['apellidoP_titularVc'] = $detalle_tarjeta->apellidoP_titularVc;
+				$nueva_info['amex']['apellidoM_titularVc'] = $detalle_tarjeta->apellidoM_titularVc;
+				
+				//var_dump($nueva_info);
+				//exit();
+				
+				if (!$consecutivo) {
+					$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
+					$this->cargar_en_session($tarjeta);
 					
 					$msg_actualizacion = "Información actualizada";
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					$this->listar($msg_actualizacion);
+					
 				} else {
-					$data['msg_actualizacion'] = "Error de actualización hacia en el servidor";
-					//echo "Error de actualización hacia CCTC.<br/>";	//redirect
-					$this->cargar_vista('', 'forma_pago' , $data);					
+					//actualizar en CCTC, si el consecutivo es distinto de 0
+					if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+						//registrar cambios sólo en CCTC
+						$this->cargar_en_session($consecutivo);
+						
+						$msg_actualizacion = "Información actualizada en el sistema";
+						$data['msg_actualizacion'] = $msg_actualizacion;
+						$this->listar($msg_actualizacion);
+					} else {
+						$data['msg_actualizacion'] = "Error de actualización hacia en el servidor";
+						//echo "Error de actualización hacia CCTC.<br/>";	//redirect
+						$this->cargar_vista('', 'forma_pago' , $data);					
+					}
 				}
+			} else {	//si hubo errores
+				$data['msg_actualizacion'] = "Campos incorrectos";
+				$this->cargar_vista('', 'forma_pago' , $data);
 			}
-		} else {	//si hubo errores
-			$data['msg_actualizacion'] = "Campos incorrectos";
-			$this->cargar_vista('', 'forma_pago' , $data);
+		} else {
+			//error en la edicion
 		}
 	}
 	

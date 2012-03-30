@@ -55,6 +55,8 @@ $(document).ready(function() {
 	});
 	
 	$("#guardar_amex").click(function(e) {
+		e.preventDefault();	
+		$(".error").remove();
 		//Amex
 		if (!reg_direccion.test($.trim(calle.val()))) {
 			calle.focus().after("<span class='error'>Ingresa calle y número correctamente</spam>");

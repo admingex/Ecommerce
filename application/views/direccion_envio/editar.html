@@ -186,13 +186,6 @@
 						else echo $direccion->phone; ?>" />
 				<span class="validation_message"><?php if(isset($reg_errores['txt_telefono'])) echo ($reg_errores['txt_telefono']);?></span>
 			</div>
-			<div class="item_requerid">* Email:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_email" id="txt_email" size="30"
-					value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);
-						else echo $direccion->email; ?>" />
-				<span class="validation_message"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
-			</div>
 			<div class="item_requerid">Referencia:</div>
 			<div class="form_requerid">
 				<textarea type="text" name="txt_referencia" id="txt_referencia" cols="30" ><?php 
@@ -215,7 +208,7 @@
 		
 			<div><?php if(isset($msg_actualizacion)) { echo $msg_actualizacion; } ?></div>
 			<div class="form_button">
-				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Actualizar direcci&oacute;n"/>
+				<input type="submit" id="guardar_direccion" name="guardar_direccion" value="Actualizar direcci&oacute;n"/>
 				<a href="<?php echo site_url('direccion_envio'); ?>">Cancelar</a>
 			</div>			
 		</form>

@@ -6,60 +6,110 @@ $(document).ready(function() {
 	var reg_cp = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
 	var reg_nombres = /^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i;
+	var reg_numeros = /^[0-9]{1,6}$/i;
 	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,50}$/i;
 	var reg_telefono = /^[0-9 ()+-]{8,20}$/
+	
+	var calle	= $("#txt_calle");
+	var num_ext	= $("#txt_numero");
+	var cp		= $("#txt_cp");
+	var pais 	= $("#sel_pais");
+	var estado_t 	= $("#txt_estado");
+	var ciudad_t 	= $("#txt_ciudade");
+	var colonia_t	= $("#txt_colonia");
+	var estado_s 	= $("#sel_estados");
+	var ciudad_s 	= $("#sel_ciudades");
+	var colonia_s	= $("#sel_colonias");
+	var telefono= $("#txt_telefono");
+	var estado, ciudad, colonia;
 	//alert('hola mundo ecommerce GEx!');
 	$("#btn_cp").ajaxError(function() {
 		//alert('Error Handler invoked when an error ocurs on CP field!');		//Ok
 	});
-	
+
 	/*validacion_registro*/
-/*
- * 
- * var tipo_tarjeta = $("#sel_tipo_tarjeta");
-	var numero_tarjeta	= $("#txt_numeroTarjeta");
-	var nombre 	= $("#txt_nombre");
-	var appP 	= $("#txt_apellidoPaterno");
-	var appM 	= $("#txt_apellidoMaterno");
-	
-	var calle	= $("#txt_calle");
-	var cp		= $("#txt_cp");
-	var ciudad 	= $("#txt_ciudad");
-	var estado 	= $("#txt_estado");
-	var pais 	= $("#txt_pais");
-	var email 	= $("#txt_email");
-	var telefono= $("#txt_telefono");
- */	
-	
-	//amex
-	var email = $("#txt_email");
-	/*Inicio de Sesión*/
-	$("#guardar_tarjeta_").click(function(e) {
-		e.preventDefault();	
-		$(".error").remove();	//limpiar mensajes de error
+	$("#guardar_direccion").click(function(e) {
+		e.preventDefault();
+		$(".error").remove();
 		
-		//tc
-		if (!reg_email.test(email.val())) {
-			email.focus().after("<span class='error'>Ingresa una dirección de correco válida</span>");
-			//email.next().text('Ingresar una dirección de correco correcta');
-			es_valido = false;
-		} else if ($.trim(passwd.val()) == "" ) {
-			es_valido = false;
-			passwd.focus().after("<span class='error'>Ingresa tu contraseña</spam>");
+		estado 	= (estado_t.is("visible")) ? estado_t : estado_s;	
+		ciudad 	= (ciudad_t.is("visible")) ? ciudad_t : ciudad_s;
+		colonia	= (colonia_t.is("visible")) ? colonia_t : colonia_s;
+					
+		if (!reg_direccion.test($.trim(calle.val()))) {
+			calle.focus().after("<span class='error'>Ingresa la calle correctamente</spam>");
+			return false;
+		} else if (!reg_numeros.test($.trim(num_ext.val()))) {
+			num_ext.focus().after("<span class='error'>Ingresa tu código postal correctamente</spam>");
+			return false;
+		} else if (!reg_cp.test($.trim(cp.val()))) {
+			cp.focus().after("<span class='error'>Ingresa tu código postal correctamente</spam>");
+			return false;
+		}  else if (pais.val() == '') {
+			pais.focus().after("<span class='error'>Ingresa tu país correctamente</spam>");
+			return false;
+		} else if ((estado_t.is("visible") && !reg_direccion.test($.trim(estado_t.val()))) || estado_s.val() == '') {
+			
+			estado.focus().after("<span class='error'>Ingresa tu estado correctamente</spam>");
+			return false;
+		} else if ((ciudad_t.is("visible") && !reg_direccion.test($.trim(ciudad_t.val()))) || ciudad_s.val() == '') {
+			
+			ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</spam>");
+			return false;
+		} else if ((colonia_t.is("visible") && !reg_direccion.test($.trim(colonia_t.val()))) || colonia_s.val() == '') {
+			
+			colonia.focus().after("<span class='error'>Ingresa tu colonia correctamente</spam>");
+			return false;
+		} else if (!reg_telefono.test($.trim(telefono.val()))) {
+			telefono.focus().after("<span class='error'>Ingresa tu teléfono correctamente</spam>");
+			return false;
 		}
-		
-		if (es_valido) {
-			$("form").submit();
+		//alert('ok');
+		$(this).parents("form").submit();
+	});		
+	
+	calle.change(function() {
+		if ( reg_direccion.test($.trim(calle.val())) ) {
+			$(this).siblings(".error").fadeOut();
 		}
 	});
-	
-	//fade out error messsage
-	email.change(function(){
-		if (reg_email.test(email.val())) {
+	num_ext.change(function() {
+		if ( reg_direccion.test($.trim(num_ext.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+	cp.change(function() {
+		if ( reg_cp.test($.trim(cp.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+	pais.change(function() {
+		if ( reg_direccion.test($.trim(pais.val())) ) {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
 	
+	estado_s.change(function() {
+		if ( reg_direccion.test($.trim(estado.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+	ciudad_s.change(function() {
+		if ( reg_direccion.test($.trim(ciudad.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+	colonia_s.change(function() {
+		if ( reg_direccion.test($.trim(colonia.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});	
+	telefono.change(function() {
+		if ( reg_telefono.test($.trim(telefono.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+		
 	//cargar el catálogo de estados
 	/* 
 	$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/get_estados",
