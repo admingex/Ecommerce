@@ -341,11 +341,17 @@ class Direccion_Envio extends CI_Controller {
 		/*if (array_key_exists('codigo_postal', $_POST) && isset($_POST['codigo_postal']))
 			$cp = $_POST['codigo_postal'];*/
 		
-		$cp = $this->input->post('codigo_postal');
+		//$cp = $this->input->post('codigo_postal');
 		
 		//echo "<br/>Es llamada ajax?: ". $this->input->is_ajax_request() . "<br/>";
 		//echo "<script>alert('Peticion Ajax'); </script>";
-		echo json_encode($this->consulta_sepomex($cp));
+		//echo json_encode($this->consulta_sepomex($cp));
+		
+		$cp = $this->input->post('codigo_postal');
+		
+		//$resultado = array();
+		$resultado->sepomex = $this->modelo->obtener_direccion_sepomex($cp)->row();
+		echo json_encode($resultado);
 	}
 	
 	/*
@@ -353,6 +359,24 @@ class Direccion_Envio extends CI_Controller {
 	 */
 	private function consulta_sepomex($codigo_postal)
 	{
+		$resultado = array();
+		
+		try
+		{
+			$resultado['sepomex'] = $this->modelo->obtener_direccion_sepomex($codigo_postal)->result();
+			$resultado['success'] = true;
+			$resultado['msg'] = "Ok";
+			return $resultado;
+		}
+		catch (Exception $e)
+		{
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			return $resultado;	
+		}
+		
+		/*
 		$resultado = array();
 		
 		try {
@@ -382,6 +406,7 @@ class Direccion_Envio extends CI_Controller {
 			//exit();
 			return $resultado;	
 		}
+		*/
 	}
 	
 	/**

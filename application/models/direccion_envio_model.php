@@ -134,6 +134,22 @@ class Direccion_Envio_model extends CI_Model {
 		return $resultado = $this->db->get();
 	}
 	
+	
+	/**
+	 * Devuelve los datos de dirección por Código Postal  
+	**/
+	function obtener_direccion_sepomex($codigo_postal) {
+		$this->db->select('CMS_CatEstado.EDO as clave_estado, CMS_CatEstado.ESTADO as estado, CMS_CatCiudad.CIUDAD as ciudad, CMS_CatCodigoPostal.ZIP as codigo_postal');
+		$this->db->from('CMS_CatCodigoPostal');
+		$this->db->join('CMS_CatCiudad', 'CMS_CatCiudad.cve_ciudad = CMS_CatCodigoPostal.cve_ciudad');
+		$this->db->join('CMS_CatEstado', 'CMS_CatEstado.cve_estado = CMS_CatCodigoPostal.cve_estado');
+		$this->db->where('CMS_CatEstado.cve_estado = CMS_CatCiudad.cve_estado');
+		$this->db->where(array( 'CMS_CatCodigoPostal.ZIP' => $codigo_postal));
+		//$this->db->order_by('colonia asc');
+		$this->db->distinct();
+		return $resultado = $this->db->get();
+	}
+	
 	/**
 	 * Deshabilita de manera lógica la tarjeta especificada del cliente 
 	 */
