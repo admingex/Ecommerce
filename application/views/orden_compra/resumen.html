@@ -1,5 +1,4 @@
 <!--h1>Orden de Compra de <?php echo $this->session->userdata('username');?></h1-->
-
 <div id="body">
 	<h3>Verifica tu orden...</h3>
 	<form id="form_orden_compra" action="<?php echo site_url("orden_compra/checkout"); ?>" method="POST">
@@ -23,12 +22,33 @@
 				?>
 			</div>
 			<div>
-				<?php 
-				if (is_object($dir_facturacion))
-					include("detalle_facturacion.html"); 
-				else 
-					include("detalle_facturacion_temp.html");
+				<?php 			
+				$rf=$this->session->userdata('requiere_factura');
+				if($rf!="no"){									
+						$checksi="checked='checked'";
+						$checkno="";
+						$mdf=TRUE;											
+				}				
+				else{
+					$checksi="";
+					$checkno="checked='checked'";
+					$mdf=FALSE;																				
+				}
+				
+				?>		
+				<h4>Requiere factura</h4>		
+				<input type="radio" name="requiere_factura" value="si" <?php echo $checksi; ?> />si
+				<input type="radio" name="requiere_factura" value="no" <?php echo $checkno; ?> />no
+				<?php
+				if($mdf){
+					if (is_object($dir_facturacion))
+						include("detalle_facturacion.html"); 
+					else 
+						include("detalle_facturacion_temp.html");
+					
+				}		 
 				?>
+				
 			</div>
 		<?php
 		

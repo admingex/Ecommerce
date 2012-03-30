@@ -54,13 +54,12 @@ class Password extends CI_Controller {
 				$this->modelo->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
 				$this->modelo->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);		
 				
-				//$this->load->library('email');
-				//$this->email->from('gio@correo.com', 'Giovanni');
-				//$this->email->to('vagio_12345@hotmail.com');				
-				//$this->email->subject('Email de Prueba');
-				//$this->email->message('mesage');
-				//$this->email->send();
-				//echo $this->email->print_debugger();
+				$this->load->library('email');
+				$this->email->from('gio@correo.com', 'Giovanni');
+				$this->email->to('vagio_12345@hotmail.com');				
+				$this->email->subject('Email de Prueba');
+				$this->email->message('"http://10.177.73.120/ecommerce/index.php/password/verificar/".$p');
+				$this->email->send();				
 																												
 				$this->cargar_vista('', 'password', $data);	
 				//redirect('login');								

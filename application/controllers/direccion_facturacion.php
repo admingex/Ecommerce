@@ -30,7 +30,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$this->id_cliente = $this->session->userdata('id_cliente');
     }
 
-	public function index() {
+	public function index() {		
 		if ($_POST) {
 			if (array_key_exists('direccion_selecionada', $_POST))
 				$this->session->set_userdata('dir_envio', $_POST['direccion_selecionada']);
@@ -65,7 +65,7 @@ class Direccion_Facturacion extends CI_Controller {
 					if($this->modelo->insertar_rs($form_values['direccion'])){
 						$id_rs=$this->db->insert_id();
 						$datars=array(
-							'id_rs'=>$id_rs
+							'id_rs'=>$id_rs							
 						);						
 						$this->session->set_userdata($datars);
 						redirect('direccion_facturacion/registrar_direccion');																	
@@ -310,6 +310,16 @@ class Direccion_Facturacion extends CI_Controller {
 			}
 								
 	}
+
+	public function requiere_factura(){
+		if($_POST){
+			$datars=array(
+							'requiere_factura'=>$_POST['requiere_factura']
+			);						
+			$this->session->set_userdata($datars);
+			redirect('orden_compra');			
+		}	
+	}	
 	
 	public function eliminar_direccion($consecutivo = ''){		
 		$id_cliente = $this->id_cliente;

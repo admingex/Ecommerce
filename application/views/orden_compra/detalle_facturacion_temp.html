@@ -1,10 +1,10 @@
 <div id="detalle_facturacion">
 	<p>
 		<?php 
+		
 		if ($dir_facturacion['company']) {
 			echo "<strong>Raz&oacute;n Social: </strong>".
-				$dir_facturacion['company']."<br/>".
-				"<strong>RFC: </strong>". $dir_facturacion['tax_id_number']. "<br/>".
+				$dir_facturacion['company']."<br/>".				
 				"<strong>Enviar a : </strong>". $dir_facturacion['email']. "<br/>";
 		} 
 		?>
