@@ -48,16 +48,13 @@ $(document).ready(function() {
 		}  else if (pais.val() == '') {
 			pais.focus().after("<span class='error'>Ingresa tu país correctamente</spam>");
 			return false;
-		} else if ((estado_t.is("visible") && !reg_direccion.test($.trim(estado_t.val()))) || estado_s.val() == '') {
-			
+		} else if ((estado_t.is("visible") && !reg_direccion.test($.trim(estado_t.val()))) || (estado_s.is("visible") && estado_s.val() == '')) {
 			estado.focus().after("<span class='error'>Ingresa tu estado correctamente</spam>");
 			return false;
-		} else if ((ciudad_t.is("visible") && !reg_direccion.test($.trim(ciudad_t.val()))) || ciudad_s.val() == '') {
-			
+		} else if ((ciudad_t.is("visible") && !reg_direccion.test($.trim(ciudad_t.val()))) || (ciudad_s.is("visible") && ciudad_s.val() == '')) {
 			ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</spam>");
 			return false;
-		} else if ((colonia_t.is("visible") && !reg_direccion.test($.trim(colonia_t.val()))) || colonia_s.val() == '') {
-			
+		} else if ((colonia_t.is("visible") && !reg_direccion.test($.trim(colonia_t.val()))) || (colonia_s.is("visible") && colonia_s.val() == '')) {
 			colonia.focus().after("<span class='error'>Ingresa tu colonia correctamente</spam>");
 			return false;
 		} else if (!reg_telefono.test($.trim(telefono.val()))) {
