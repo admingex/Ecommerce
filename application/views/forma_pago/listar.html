@@ -1,15 +1,34 @@
+<script>
+	var id_ant=0;
+	function cambia_boton(id){
+		if(document.getElementById(id_ant)){
+			document.getElementById(id_ant).innerHTML='';
+		}				
+		document.getElementById(id).innerHTML='<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="Utilizar tarjeta"/>';
+		id_ant=id;					
+	}
+</script>
 <h1>Tarjetas guardadas de <?php echo $this->session->userdata('username');?></h1>
-
 <div id="body">
 	<form id="form_forma_pago" action="<?php echo site_url("direccion_envio"); ?>" method="POST">
-		<div id="list_headers">
-			<div class="column_header">Tarjeta</div>
-			<div class="column_header">Nombre</div>
-			<div class="column_header">Expira</div>
-			<div class="column_header">&nbsp;</div>
-			<div class="column_header">&nbsp;</div>
-		</div>
-		<div id="list_results">
+		<table>
+			<thead>
+				<tr>
+					<th>&nbsp;</th>
+					<th>
+						Tarjeta
+					</th>									
+					<th>
+						Nombre
+					</th>
+					<th>
+						Expira
+					</th>					
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>			
 		<?php
 			if (isset($lista_tarjetas) && $lista_tarjetas->num_rows()) {
 				$hay_tarjetas = true;
@@ -23,49 +42,52 @@
 						$class="<br /><span style='color: #D81830; height: 20px; font-size: 11px; font-family: italic'>pago express</span>";
 					}
 			?>
-			<ul>
-				<li>
-					<input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check." ".$value_r; ?>/>
-					<?php echo $tarjeta['descripcionVc'].' terminaci&oacute;n '.
-						substr($tarjeta['terminacion_tarjetaVc'],strlen($tarjeta['terminacion_tarjetaVc']) - 4); ?>
-					<?php echo $class;?>	
-				</li>
-				<li><?php echo $tarjeta['nombre_titularVc'].' '.$tarjeta['apellidoP_titularVc'].' '.$tarjeta['apellidoM_titularVc']; ?></li> 
-				<li><?php echo $tarjeta['mes_expiracionVc'].'/'.$tarjeta['anio_expiracionVc']; ?></li>	
-				<!--li <?php echo $class;?>><input id="txt_codigoVerificador" name="txt_codigoVerificador" maxlength="4" size="4"/> ?</li-->
-				<li><a href="<?php echo site_url('forma_pago/editar/tc/'.$tarjeta['id_TCSi']); ?>" title="editar">editar</a></li>
-				<li><a href="<?php echo site_url('forma_pago/eliminar/'.$tarjeta['id_TCSi']); ?>" title="eliminar">eliminar</a></li>
-			</ul>
+				<tr>
+					<td><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check." ".$value_r; ?> onclick="cambia_boton(<?php echo $tarjeta['id_TCSi'] ?>)"/></td>
+					<td>
+						<?php echo $tarjeta['descripcionVc'].' terminaci&oacute;n '.
+							substr($tarjeta['terminacion_tarjetaVc'],strlen($tarjeta['terminacion_tarjetaVc']) - 4); ?>
+						<?php echo $class;?>
+					</td>
+					<td>
+						<?php echo $tarjeta['nombre_titularVc'].' '.$tarjeta['apellidoP_titularVc'].' '.$tarjeta['apellidoM_titularVc']; ?>
+					</td>
+					<td><?php echo $tarjeta['mes_expiracionVc'].'/'.$tarjeta['anio_expiracionVc']; ?></td>
+					<td>
+						<a href="<?php echo site_url('forma_pago/editar/tc/'.$tarjeta['id_TCSi']); ?>" title="editar">editar</a>
+						<a href="<?php echo site_url('forma_pago/eliminar/'.$tarjeta['id_TCSi']); ?>" title="eliminar">eliminar</a>	
+					</td>
+					<td id="<?php echo $tarjeta['id_TCSi']?>">&nbsp;</td>
+				</tr>
+							
+							
 			<?php 
-				
+					if($tarjeta['id_estatusSi']==3){
+						echo "<script>cambia_boton(".$tarjeta['id_TCSi'].");</script>";
+					}
 				}
 			} else {
 				$hay_tarjetas = false;
-			?>
-			<ul>
-				<li> &nbsp; </li>
-				<li> &nbsp; </li>
-				<li> &nbsp; </li>
-				<li> &nbsp; </li>
-				<li> &nbsp; </li>
-				<li> &nbsp; </li>
-			</ul>
+			?>			
 			<?php 
 			}
-			?>
-		</div>
+			?>		
 		<?php if (!$hay_tarjetas): ?>
-			<h4>No tiene tarjetas registradas</h4>	
-		<?php else: ?>
-			<div class="form_button">
-				<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="Utilizar esta tarjeta"/>
-				<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
-			</div>
+			<h4>No tiene tarjetas registradas</h4>						
 		<?php endif ?> 
-	</form>
-	<h1>
-	<a class="agregar_tarjeta" href="<?php echo site_url('forma_pago/registrar/tc'); ?>">Agregar Tarjeta:</a>
-	<!--a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/registrar/amex">AMEX</a-->
-	<!--a href="<?php echo $this->config->item('base_url'); ?>/index.php/forma_pago/listar/">Listar</a-->
-	</h1>
+		</tbody>	
+			<tfoot>
+				<tr>
+					<td colspan="7">
+						<h3><?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="7">
+						<a class="agregar_tarjeta" href="<?php echo site_url('forma_pago/registrar/tc'); ?>">Agregar Tarjeta:</a>
+					</td>
+				</tr>
+			</tfoot>		
+		</table>	
+	</form>	
 </div>
