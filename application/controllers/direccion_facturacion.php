@@ -24,6 +24,7 @@ class Direccion_Facturacion extends CI_Controller {
 		
 		//cargar el modelo en el constructor
 		$this->load->model('direccion_facturacion_model', 'modelo', true);
+		$this->load->model('direccion_envio_model', 'modelo_envio', true);
 		//la sesion se carga automáticamente
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
@@ -52,7 +53,7 @@ class Direccion_Facturacion extends CI_Controller {
 		//recuperar el listado de las direcciones del cliente
 		$data['lista_direcciones'] = $this->modelo->listar_razon_social($id_cliente);						
 		$data['registrar_rs'] = TRUE;		//para indicar que se debe mostrar formulario de registro
-		$data['solicita_factura'] = TRUE;		
+		$data['solicita_factura'] = TRUE;						
 		
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_facturacion.js'> </script>";
 		$data['script'] = $script_file;
@@ -86,13 +87,15 @@ class Direccion_Facturacion extends CI_Controller {
 			$data['nueva_direccion'] = TRUE;
 		}				
 		$data['registrar_direccion'] = TRUE;		//para indicar que se debe mostrar formulario de registro		
+					
 										
 		echo $id_rs=$this->session->userdata('id_rs');
 		$id_cliente = $this->id_cliente;	
 		$data['title']=$this->title;	
 		$data['mensaje']='';	
 		
-		//catálogo de paises de think
+		$data['dir_envio']=$this->modelo_envio->listar_direcciones($id_cliente);		
+		
 		
 		$lista_paises_think = $this->modelo->listar_paises_think();
 		$data['lista_paises_think'] = $lista_paises_think;						 

@@ -1,5 +1,18 @@
 <div id="direccion_facturacion">	
 	<div id="body">
+		<div class="item_requerid">
+			Direcciones de envio guardadas	
+		</div>
+		<div class="form_requerid">
+			<select onchange="llena_formulario(this.value)">
+				<option value="0">Elige una opcion</option>
+				<?php
+				foreach($dir_envio->result_array() as $denvio) {
+					echo "<option value='".$denvio['calle'].",".$denvio['num_ext'].",".$denvio['num_int'].",".$denvio['cp'].",".$denvio['estado'].",".$denvio['ciudad'].",".$denvio['colonia']."'>".$denvio['calle']."&nbsp;".$denvio['num_ext']."&nbsp;".$denvio['num_int'].",&nbsp;".$denvio['cp'].",&nbsp;".$denvio['estado']."&nbsp;".$denvio['ciudad']."&nbsp;".$denvio['colonia']."</option>";
+				}
+				?>				 
+			</select>
+		</div>		
 		<form id="form_agregar_direccion" action="<?php echo site_url('direccion_facturacion/registrar_direccion');?>" method="POST">
 			<p></p>
 			<div class="item_requerid">Calle:</div>
@@ -80,3 +93,15 @@
 		</form>
 	</div>
 </div>
+<script>
+	function llena_formulario(val){
+		var datos = val.split(",");
+		document.getElementById('txt_calle').value=datos[0];
+		document.getElementById('txt_numero').value=datos[1];
+		document.getElementById('txt_num_int').value=datos[2];
+		document.getElementById('txt_cp').value=datos[3];	
+		document.getElementById('txt_estado').value=datos[4];
+		document.getElementById('txt_ciudad').value=datos[5];	
+		document.getElementById('txt_colonia').value=datos[6];		
+	}
+</script>
