@@ -5,14 +5,9 @@
 		<?php
 			if (isset($tarjeta_amex->consecutivo_cmsSi)){
 				$consecutivo = $tarjeta_amex->consecutivo_cmsSi;
-				//echo "cons: " .$consecutivo; 
-			} else {
-				$consecutivo = $tarjeta_amex->id_TCSi;
-				//echo "cons: " .$consecutivo;
 			}
-			//echo "cons: " .$consecutivo;
 		?>
-		<form id="form_editar_amex" action="<?php echo site_url('forma_pago/editar/amex/'.$consecutivo); ?>" method="POST">
+		<form id="form_editar_amex" action="<?php echo site_url('forma_pago/editar/amex/'.$tarjeta_amex->consecutivo_cmsSi); ?>" method="POST">
 			
 			<div class="item_requerid">* Calle y n&uacute;mero:</div>
 			<div class="form_requerid">
