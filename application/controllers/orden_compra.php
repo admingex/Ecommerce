@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+include ('DTOS/Tipos_Tarjetas.php');
+
 class Orden_Compra extends CI_Controller {
 	var $title = 'Orden de Compra';
 	var $subtitle = 'Orden de Compra';
@@ -104,7 +106,145 @@ class Orden_Compra extends CI_Controller {
 	
 	public function checkout() {
 		/*Realizar el pago en CCTC*/
-		echo "El pago se realizará aquí.";	
+		echo "El pago se realizará aquí.";
+		
+		/*Recuperar la info gral. de la orden*/
+		$id_cliente = $this->id_cliente;
+		$consecutivo = $this->session->userdata('tarjeta');
+		$id_promocionIn = 1;
+		$digito 		= "345";
+		
+		// Informaciòn de la Orden //
+		$informacion_orden = new InformacionOrden(
+			$id_cliente,
+			$consecutivo,
+			$id_promocionIn,
+			$digito
+		);
+		
+		// Si la información esta en la Session //
+		if (is_array($this->session->userdata('tarjeta'))) {
+			$detalle_tarjeta = $this->session->userdata('tarjeta');
+			$tc = $detalle_tarjeta['tc'];
+			$amex_soap = NULL;
+			if ($detalle_tarjeta['tc']['id_tipo_tarjetaSi'] == 1) { //es AMERICAN EXPRESS
+				$amex = $detalle_tarjeta['amex'];
+			}
+			// Intentamos el Pago con pasando los objetos a CCTC //
+			try {  
+				$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+				$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
+				$obj_result = $cliente->PagarTC($parameter);
+				$simple_result = $obj_result->PagarTCResult;
+
+				var_dump($simple_result);
+				//return $simple_result;
+			} catch (SoapFault $exception) { 
+				echo $exception;  
+				echo '<br/>error: <br/>'.$exception->getMessage();
+				return NULL;
+			}
+			
+		} else { // La informacion esta en la Base de Datos Local //
+		
+			$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
+			$tc = $detalle_tarjeta;	//trae la tc
+			$amex_soap = NULL;
+			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
+				// En este caso se consultará la info del WS //
+				$amex_soap = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				/*$amex = (array)$amex;
+		
+				$amex_soap = new Amex(
+					$tc['id_clienteIn'],
+					$tc['consecutivo_cmsSi'],
+					$tc['nombre'],
+					$tc['apellido_paterno'],
+					$tc['apellido_materno'],
+					$tc['pais'],
+					$tc['codigo_postal'],
+					$tc['calle'],
+					$tc['>ciudad'],
+					$tc['estado'],
+					$tc['mail'],
+					$tc['telefono']
+				);*/
+			}
+			
+			// Intentamos el Pago con los Id's en  CCTC //
+			try {  
+				$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+				$parameter = array('informacion_orden' => $informacion_orden);
+				$obj_result = $cliente->PagarTcUsandoId($parameter);
+				$simple_result = $obj_result->PagarTcUsandoIdResult;
+			
+				var_dump($simple_result);
+				//return $simple_result;
+			} catch (SoapFault $exception) {
+				//errores en desarrollo
+				echo $exception;  
+				echo '<br/>error: <br/>'.$exception->getMessage();
+				return NULL;
+			}
+		}
+		
+		//var_dump($tc);
+		//$tc = (array)$tc;
+		//var_dump($tc);
+		
+		/*
+		$tc['id_clienteIn'] = 4;
+		$tc['id_TCSi'] = 5;
+		$tc['id_tipo_tarjetaSi'] = 3;
+		$tc['nombre_titularVc'] = 'Armando';
+		$tc['apellidoP_titularVc'] = 'Barrales';
+		$tc['apellidoM_titularVc'] = 'Hernandez';
+		$tc['numero'] = '5105105105105100';
+		$tc['mes_expiracionVc'] = 05;
+		$tc['anio_expiracionVc'] = 2012;
+		*/
+		
+		
+		//exit();
+		/*
+		$tc = (array)$tc;
+		$tc_soap = new Tc(
+			$tc['id_clienteIn'],
+			$tc['id_TCSi'],
+			$tc['id_tipo_tarjetaSi'],
+			$tc['nombre_titularVc'],
+			$tc['apellidoP_titularVc'],
+			$tc['apellidoM_titularVc'],
+			$tc['numero'],
+			$tc['mes_expiracionVc'],
+			$tc['anio_expiracionVc']
+		);
+		
+		exit();
+		$amex_soap = NULL;
+		
+		// Informacion de la Orden //
+		$io['id_clienteIn'] 	= $tc['id_clienteIn'];
+		$io['id_TCSi'] 			= $tc['id_TCSi'];
+		$io['id_promocionIn'] 	= 1;
+		$io['digito']			= '123';
+
+		$informacion_orden = new InformacionOrden(
+			$io['id_clienteIn'],
+			$io['id_TCSi'],
+			$io['id_promocionIn'],
+			$io['digito']
+		);
+		/*
+		(object)$informacion_orden = NULL;
+		$informacion_orden->id_clienteIn		= $io['id_clienteIn'];
+		$informacion_orden->consecutivo_cmsSi 	= $io['id_TCSi'];
+		$informacion_orden->id_promocionIn 		= $io['id_promocionIn'];
+		$informacion_orden->digito 				= $io['digito'];
+		*/
+		//echo var_dump($tc_soap);
+		//echo var_dump($informacion_orden);
+		
 	}
 	
 	public function registrar($form = 'tc') 
