@@ -21,7 +21,7 @@
 			?>
 				<tr>
 					<td>
-						<input type="radio" name="direccion_selecionada" id="direccion_selecionada" onclick="cambia_boton(<?php echo $direccion['id_consecutivoSi'] ?>)"/>
+						<input type="radio" name="direccion_selecionada" id="direccion_selecionada" onclick="cambia_boton(<?php echo $direccion['id_consecutivoSi'] ?>)" value="<?php echo $direccion['id_consecutivoSi']; ?>"/>
 					</td>
 					<td>						
 						<?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?>

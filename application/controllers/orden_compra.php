@@ -37,9 +37,28 @@ class Orden_Compra extends CI_Controller {
 			}						
 		}	
 		else if($this->session->userdata('id_rs')){
-			echo $id_rs=$this->session->userdata('id_rs');
+			$id_rs=$this->session->userdata('id_rs');
 			$this->session->set_userdata('dir_facturacion',$id_rs);				
-		}		
+		}
+		
+		if ($_POST) {
+			if (array_key_exists('direccion_selecionada', $_POST)){
+				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);							
+			}	
+			else{
+			$id_cliente = $this->id_cliente;
+			$rs=$this->session->userdata('dir_facturacion');
+			$rdf=$this->facturacion_modelo->obtiene_rs_dir($id_cliente, $rs);		
+				foreach($rdf->result_array() as $dire) {					
+					$this->session->set_userdata('direccion_f',$dire['id_consecutivoSi']);
+				}			
+			}						
+		}
+				
+		else if($this->session->userdata('id_dir')){
+			echo "id".$id_dir=$this->session->userdata('id_dir');
+			$this->session->set_userdata('direccion_f',$id_dir);				
+		}							
 			
 		$this->resumen();
 	}
@@ -99,13 +118,26 @@ class Orden_Compra extends CI_Controller {
 			}
 		}
 		
-		//dir_facturación
-		$dir_facturacion = $this->session->userdata('dir_facturacion');
-		if (isset($dir_facturacion)) {
-			$consecutivo = (int)$dir_facturacion;
+		//rs_facturación
+		$consecutivo = $this->session->userdata('dir_facturacion');
+		if (is_array($consecutivo)) {
+			//$detalle_envio = $this->session->userdata('dir_envio');
+			$data['dir_facturacion'] = $consecutivo;
+		} else {
 			$detalle_facturacion = $this->facturacion_modelo->obtener_rs($consecutivo);
 			$data['dir_facturacion']=$detalle_facturacion;
 		}		
+		
+		//direccion facturacion
+		$consecutivo_dir = $this->session->userdata('direccion_f');
+		if (is_array($consecutivo_dir)) {
+			//$detalle_envio = $this->session->userdata('dir_envio');
+			$data['direccion_f'] = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo_dir);
+		} else {
+			$detalle_direccion = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo_dir);
+			$data['direccion_f']=$detalle_direccion;			
+		}	
+		
 		
 		//cargar vista	
 		$this->cargar_vista('', 'orden_compra', $data);
