@@ -192,6 +192,19 @@ class Direccion_Envio_model extends CI_Model {
 		$row_res = $resultado->row();
 		return $row_res;
 	}
+	/**
+	 * Regresa la dirección de envío predeterminada si es que tiene alguna
+	 */
+	function get_pago_express($id_cliente) 
+	{
+		$this->db->select('id_consecutivoSi');
+		$res = $this->db->get_where('CMS_IntDireccion',
+								array('id_clienteIn' => $id_cliente,
+										'address_type' => self::$TIPO_DIR['RESIDENCE'],
+										'id_estatusSi' => self::$CAT_ESTATUS['DEFAULT']));
+		$row_res = $res->row();
+		return $row_res;
+	}
 	
 	/**
 	 * Devuelve el máximo consecutivo actual del cliente

@@ -25,7 +25,11 @@ class Forma_Pago extends CI_Controller {
 
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
-
+		////
+		if ($this->session->userdata('hay_forma_pago')) {
+			echo "hay_forma_pago: " . var_dump($this->session->userdata('hay_forma_pago'));
+		}
+		
     }
 
 	public function index()	//Para pruebas se usa 1
@@ -377,6 +381,7 @@ class Forma_Pago extends CI_Controller {
 				$data['tarjeta_amex'] = $tarjeta_amex;
 			}
 			//var_dump($data['tarjeta_tc']);
+			echo "cons. " . $consecutivo;
 			//else redirecciona / sacar
 		} else {
 			//recuperar la información local de la tc, utilizando el consecutivo
@@ -420,7 +425,9 @@ class Forma_Pago extends CI_Controller {
 	
 	private function editar_tc($consecutivo = 0) {
 		$id_cliente = $this->id_cliente;
-		//echo "con: ".$consecutivo;
+		/*echo "con: ".isset($_POST['guardar_otra']);
+		echo "con: ".isset($_POST['guardar_tarjeta']);
+		exit();*/
 		$tarjeta = array();
 		
 		//Revisar en donde está la info
@@ -567,7 +574,7 @@ class Forma_Pago extends CI_Controller {
 		//Revisar en donde está la info
 		if ($consecutivo > 0) {
 			//edicion desde listado u Orden
-			echo "deben coincidir si es que hay info en session: ".$consecutivo . "(consec.) == (tarjeta)". $this->session->userdata('tarjeta')."<br/>";
+			//echo "deben coincidir si es que hay info en session: ".$consecutivo . "(consec.) == (tarjeta)". $this->session->userdata('tarjeta')."<br/>";
 			//exit();
 			
 			//el detalle de la tarjeta en BD antes de actualizar
@@ -941,7 +948,7 @@ class Forma_Pago extends CI_Controller {
 			
 			if(array_key_exists('txt_numeroTarjeta', $_POST)) {
 				if ($this->validar_tarjeta($datos['tc']['id_tipo_tarjetaSi'], trim($_POST['txt_numeroTarjeta']))) { 
-					$datos['tc']['terminacion_tarjetaVc'] = $_POST['txt_numeroTarjeta'];	//substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
+					$datos['tc']['terminacion_tarjetaVc'] = trim($_POST['txt_numeroTarjeta']);	//substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
 				} else {
 					$this->reg_errores['txt_numeroTarjeta'] = 'Por favor ingrese un numero de tarjeta v&aacute;lido';
 				}

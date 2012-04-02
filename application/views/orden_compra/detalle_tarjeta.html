@@ -5,7 +5,7 @@
 			echo $tc->descripcionVc. " con terminación " .substr($tc->terminacion_tarjetaVc, strlen($tc->terminacion_tarjetaVc) - 4);
 			
 		?>
-		<span><a href="<?php echo site_url('forma_pago/editar/tc/'.$this->session->userdata('tarjeta'))?>">Cambiar</a></span>
+		<span><a href="<?php echo site_url('forma_pago/editar/tc/'.$tc->id_TCSi);?>">Cambiar</a></span>
 		</div>
 		<div >C&oacute;digo de seguridad:</div>
 		<div class="form_requerid">
@@ -24,6 +24,7 @@
 				 $amex->pais."<br/>".
 				 $amex->telefono."<br/>";
 			 ?>
+			 <span><a href="<?php echo site_url('forma_pago/editar/amex/'.$tc->id_TCSi);?>">Cambiar</a></span>
 		</p>			
 		<?php endif ?>
 	</div>
