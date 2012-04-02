@@ -1,28 +1,20 @@
 <div id='listar_promociones'>
-	<table>
-		<tr>
-			<td>Descripcion</td>
-			<td>Fecha Inicio</td>
-			<td>Fecha Termino</td>
-			<td>Precio</td>
-		</tr>
-		<?php
-		foreach($articulos->result_array() as $item){		
-			echo "<tr>
-				      <td>
-			    	      ".$item['descripcionVc']."
-			          </td>
-			      	  <td>
-			      	  	  ".$item['inicio_promocionDt']."
-			      	  </td>
-			      	  <td>
-			      	  	  ".$item['fin_promocionDt']."
-			      	  </td>
-			      	  <td>
-			      	  	  ".$item['precioF']."
-			      	  </td>		
-			  	  </tr>";	 			  			  
-		}		
+		<?php		
+		if(isset($sitios)){
+			foreach($sitios as $sitio){
+				echo "<br /><a href='sitio/".$sitio['id_sitioSi']."'>".$sitio['urlVc']."</a>";
+			}	
+		}
+		if(isset($canales)){
+			foreach($canales as $canal){
+				echo "<br /><a href='".current_url()."/canal/".$canal['id_canalSi']."'>".$canal['descripcionVc']."</a>";
+			}	
+		}	
+		
+		if(isset($promociones)){
+			foreach($promociones as $promocion){
+				echo "<br /><a href='".current_url()."/promocion/".$promocion['id_promocionIn']."'>".$promocion['descripcionVc']."</a>";
+			}	
+		}					
 		?>
-	</table>
 </div>
