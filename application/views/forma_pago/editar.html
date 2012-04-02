@@ -1,5 +1,5 @@
 <div id="tc_normal">
-	<h1>Editar Tarjeta de Cr&eacute;dito/D&eacute;bito</h1>
+	<h3>Editar Informaci&oacute;n de la Tarjeta</h3>
 	
 	<div id="body">	
 		<form id="form_editar_tc" action="<?php echo site_url('forma_pago/editar/tc/'.$tarjeta_tc->id_TCSi); ?>" method="POST">
@@ -83,7 +83,9 @@
 			</div>
 			<div><?php if(isset($msg_actualizacion)) { echo $msg_actualizacion; } ?></div>
 			<div class="form_button">
-				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Actualizar cambios"/>
+				<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Usar esta tarjeta"/>
+				<!--input type="submit" id="guardar_otra" name="guardar_tarjeta" value="Usar esta tarjeta"/-->
+				<!--a href="<?php //echo site_url('forma_pago/listar/');?>">Guardar y usar otra</a-->
 				<a href="<?php echo site_url('forma_pago/listar/');?>">Cancelar</a>
 			</div>
 		</form>

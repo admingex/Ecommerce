@@ -178,4 +178,15 @@ class Direccion_Facturacion_model extends CI_Model {
 			return "Error al tratar de actualizar la tarjeta.";
 		}
 	}
+	
+	function get_pago_express($id_cliente) 
+	{
+		$this->db->select('id_consecutivoSi');
+		$res = $this->db->get_where('CMS_IntDireccion',
+								array('id_clienteIn' => $id_cliente,
+										'address_type' => 1,//self::$TIPO_DIR['BISINESS'],
+										'id_estatusSi' => 3));//self::$CAT_ESTATUS['DEFAULT']));
+		$row_res = $res->row();
+		return $row_res;
+	}
 }
