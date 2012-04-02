@@ -318,14 +318,14 @@ class Direccion_Facturacion extends CI_Controller {
 								
 	}
 
-	public function requiere_factura(){
-		if($_POST){
+	public function requiere_factura(){		
 			$datars=array(
-							'requiere_factura'=>$_POST['requiere_factura']
+				'requiere_factura'=>'no',
+				'id_dir'=>NULL,
+				'id_rs'=>NULL											
 			);						
 			$this->session->set_userdata($datars);
-			redirect('orden_compra');			
-		}	
+			redirect('orden_compra');					
 	}	
 	
 	public function eliminar_direccion($consecutivo = ''){		

@@ -38,7 +38,8 @@ class Orden_Compra extends CI_Controller {
 		}	
 		else if($this->session->userdata('id_rs')){
 			$id_rs=$this->session->userdata('id_rs');
-			$this->session->set_userdata('dir_facturacion',$id_rs);				
+			$this->session->set_userdata('dir_facturacion',$id_rs);		
+			$this->session->set_userdata('requiere_factura', 'si');					 		
 		}
 		
 		if ($_POST) {
@@ -52,12 +53,12 @@ class Orden_Compra extends CI_Controller {
 				foreach($rdf->result_array() as $dire) {					
 					$this->session->set_userdata('direccion_f',$dire['id_consecutivoSi']);
 				}			
-			}						
+			}								
 		}
 				
 		else if($this->session->userdata('id_dir')){
-			echo "id".$id_dir=$this->session->userdata('id_dir');
-			$this->session->set_userdata('direccion_f',$id_dir);				
+			$id_dir=$this->session->userdata('id_dir');
+			$this->session->set_userdata('direccion_f',$id_dir);								
 		}							
 			
 		$this->resumen();

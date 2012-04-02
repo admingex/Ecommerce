@@ -62,6 +62,10 @@ class Login extends CI_Controller {
 						//exit();
 						$this->crear_sesion($cliente->id_cliente, $cliente->nombre);	//crear sesion,
 						
+						$datars=array(
+							'requiere_factura'=>'no'
+						);						
+						$this->session->set_userdata($datars);
 						//a donde va
 						$flujo_pago = $this->get_estatus_flujo($cliente->id_cliente);
 						/*

@@ -39,8 +39,8 @@
 				
 				?>		
 				<h4>Requiere factura</h4>		
-				<input type="radio" name="requiere_factura" value="si" <?php echo $checksi; ?> />si
-				<input type="radio" name="requiere_factura" value="no" <?php echo $checkno; ?> />no
+				<input type="radio" name="requiere_factura" value="si" <?php echo $checksi; ?> onclick="location.href='<?php echo site_url("direccion_facturacion"); ?>'" />si
+				<input type="radio" name="requiere_factura" value="no" <?php echo $checkno; ?> onclick="location.href='<?php echo site_url("direccion_facturacion/requiere_factura"); ?>'"/>no
 				<?php
 				if($mdf){
 					if (is_object($dir_facturacion))
