@@ -140,7 +140,7 @@ class Direccion_Facturacion_model extends CI_Model {
 	}
 	
 	function obtiene_rs_dir($id_cliente, $id_rs){
-		$resultado = $this->db->get_where('CMS_reldireccionrazonsocial', array('id_razonSocialIn'=>$id_rs, 'id_clienteIn'=>$id_cliente));
+		$resultado = $this->db->get_where('CMS_RelDireccionRazonSocial', array('id_razonSocialIn'=>$id_rs, 'id_clienteIn'=>$id_cliente));
 		return $resultado;		
 	}
 	

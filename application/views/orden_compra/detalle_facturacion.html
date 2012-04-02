@@ -8,7 +8,7 @@
 				"<strong>Enviar a : </strong>". $dir_facturacion->email. "<br/>";
 		} 
 		?>
-		<span><a href="<?php echo site_url('direccion_facturacion/editar_rs/'.$this->session->userdata('dir_facturacion'))?>">Cambiar</a></span>
+		<span><a href="<?php echo site_url('direccion_facturacion/registrar_rs/');?>">Cambiar</a></span>
 		<p><b>Direcci&oacute;n de Facturac&oacute;n</b></p>		
 		<?php 
 		if($direccion_f->calle){
@@ -19,6 +19,6 @@
 			 	 $direccion_f->pais;
 		}	 	
 		?>
-		<span><a href="<?php echo site_url('direccion_facturacion/editar_direccion/'.$this->session->userdata('direccion_f'))?>">Cambiar</a></span>
+		<span><a href="<?php echo site_url('direccion_facturacion/registrar_direccion/');?>">Cambiar</a></span>
 	</p>
 </div>
