@@ -554,7 +554,6 @@ class Direccion_Envio extends CI_Controller {
 		$datos = array();
 		//no se usa la funcion de escape '$this->db->escape()', por que en la inserción ya se incluye 
 		if($_POST) {
-			//AMEX
 			if (array_key_exists('txt_calle', $_POST)) {
 				if(preg_match('/^[A-Z0-9áéíóúÁÉÍÓÚÑñ \'.-]{1,50}$/i', $_POST['txt_calle'])) {
 					$datos['direccion']['address1'] = $_POST['txt_calle'];
@@ -580,7 +579,7 @@ class Direccion_Envio extends CI_Controller {
 			}
 			if (array_key_exists('txt_cp', $_POST)) {
 				//regex usada en js
-				if(preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['txt_cp'])) {
+				if (preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['txt_cp'])) {
 					$datos['direccion']['zip'] = $_POST['txt_cp'];
 				} else {
 					$this->reg_errores['txt_cp'] = 'Ingresa tu c&oacute;digo postal correctamente';
@@ -616,22 +615,22 @@ class Direccion_Envio extends CI_Controller {
 				}
 			} else {
 			/*otros paises*/
-				if (array_key_exists('txt_colonia', $_POST) && $_POST['txt_colonia']!=""){
+				if (array_key_exists('txt_colonia', $_POST) && trim($_POST['txt_colonia']) != ""){
 					$datos['direccion']['address3'] = $_POST['txt_colonia'];
 				}
-				else{
-					$this->reg_errores['txt_colonia'] = 'Por favor ingrese una colonia valida';
+				else {
+					$this->reg_errores['txt_colonia'] = 'Ingresa una colonia válida';
 				}
-				if (array_key_exists('txt_ciudad', $_POST) && $_POST['txt_ciudad']!=""){
+				if (array_key_exists('txt_ciudad', $_POST) && !empty($_POST['txt_ciudad'])) {
 					$datos['direccion']['city'] = $_POST['txt_ciudad'];
 				}
-				else{
+				else {
 					$this->reg_errores['txt_ciudad'] = 'Por favor ingrese una ciudad valida';
 				}
-				if (array_key_exists('txt_estado', $_POST) && $_POST['txt_estado']!=""){
+				if (array_key_exists('txt_estado', $_POST) && !empty($_POST['txt_estado'])) {
 					$datos['direccion']['state'] = $_POST['txt_estado'];
 				}
-				else{
+				else {
 					$this->reg_errores['txt_estado'] = 'Por favor ingrese un estado valido';
 				}	
 			}

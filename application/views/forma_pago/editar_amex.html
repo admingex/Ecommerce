@@ -5,9 +5,13 @@
 		<?php
 			if (isset($tarjeta_amex->consecutivo_cmsSi)){
 				$consecutivo = $tarjeta_amex->consecutivo_cmsSi;
-			}
+				 
+			} else if (isset($tarjeta_amex->id_TCSi)){
+				$consecutivo = $tarjeta_amex->id_TCSi;	//siempre debe ser 0
+				
+			} 
 		?>
-		<form id="form_editar_amex" action="<?php echo site_url('forma_pago/editar/amex/'.$tarjeta_amex->consecutivo_cmsSi); ?>" method="POST">
+		<form id="form_editar_amex" action="<?php echo site_url('forma_pago/editar/amex/'.$consecutivo); ?>" method="POST">
 			
 			<div class="item_requerid">* Calle y n&uacute;mero:</div>
 			<div class="form_requerid">
@@ -61,8 +65,9 @@
 			
 			<div><?php if(isset($msg_actualizacion)) { echo $msg_actualizacion; } ?></div>
 			<div class="form_button">
-				<input type="submit" id="guardar_amex" name="guardar_amex" value="Actualizar direcci&oacute;n"/>
-				<a href="<?php echo $this->config->item('base_url').'/index.php/forma_pago/listar/';?>">Cancelar</a>
+				<input type="submit" id="guardar_amex" name="guardar_amex" value="Usar esta tarjeta"/>
+				<!--a href="<?php //echo site_url('forma_pago/listar/');?>">Guardar y usar otra</a-->
+				<a href="<?php echo site_url('forma_pago/listar/');?>">Cancelar</a>
 			</div>			
 		</form>
 	</div>

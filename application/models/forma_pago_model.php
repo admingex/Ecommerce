@@ -101,6 +101,16 @@ class Forma_Pago_model extends CI_Model {
 		return $row_res;
 	}
 	
+	function get_pago_express($id_cliente) 
+	{
+		$this->db->select('id_TCSi');
+		$res = $this->db->get_where('CMS_IntTC',
+								array('id_clienteIn' => $id_cliente,
+										'id_estatusSi' => self::$CAT_ESTATUS['DEFAULT']));
+		$row_res = $res->row();
+		return $row_res;
+	}
+	
 	function listar_tipos_tarjeta() 
 	{
 		//excepto AMEX, esto funciona con la BD local.

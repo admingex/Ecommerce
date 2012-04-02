@@ -39,9 +39,29 @@ class Orden_Compra extends CI_Controller {
 			}						
 		}	
 		else if($this->session->userdata('id_rs')){
-			echo $id_rs=$this->session->userdata('id_rs');
-			$this->session->set_userdata('dir_facturacion',$id_rs);				
-		}		
+			$id_rs=$this->session->userdata('id_rs');
+			$this->session->set_userdata('dir_facturacion',$id_rs);		
+			$this->session->set_userdata('requiere_factura', 'si');					 		
+		}
+		
+		if ($_POST) {
+			if (array_key_exists('direccion_selecionada', $_POST)){
+				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);							
+			}	
+			else{
+			$id_cliente = $this->id_cliente;
+			$rs=$this->session->userdata('dir_facturacion');
+			$rdf=$this->facturacion_modelo->obtiene_rs_dir($id_cliente, $rs);		
+				foreach($rdf->result_array() as $dire) {					
+					$this->session->set_userdata('direccion_f',$dire['id_consecutivoSi']);
+				}			
+			}								
+		}
+				
+		else if($this->session->userdata('id_dir')){
+			$id_dir=$this->session->userdata('id_dir');
+			$this->session->set_userdata('direccion_f',$id_dir);								
+		}							
 			
 		$this->resumen();
 	}
@@ -55,42 +75,53 @@ class Orden_Compra extends CI_Controller {
 		
 		/*Recuperar la info gral. de la orden*/
 		$id_cliente = $this->id_cliente;
-		
+
 		//Tarjeta
-		$consecutivo = $this->session->userdata('tarjeta');
-		
-		if (is_array($this->session->userdata('tarjeta'))) {
-			$detalle_tarjeta = $this->session->userdata('tarjeta');
+		$tarjeta = $this->session->userdata('tarjeta');
+		//si está en session la información
+		if ($tarjeta) {
+			if (is_array($this->session->userdata('tarjeta'))) {
+				$tarjeta = (object)$tarjeta;
+				$detalle_tarjeta = (object)$tarjeta->tc;
+				
+				//echo var_dump($detalle_tarjeta);
+				
+				$data['tc'] = $detalle_tarjeta;
+				
+				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
+					$data['amex'] = (object)$tarjeta->amex;
+					//en este caso se consultará la info del WS
+				}
+				//echo var_dump($data);
+				//exit();
+			} else if (is_integer((int)$this->session->userdata('tarjeta'))) {
+				
+				$consecutivo = $this->session->userdata('tarjeta');
+				
+				$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
+				$data['tc'] = $detalle_tarjeta;	//trae la tc
 			
-			//echo var_dump($detalle_tarjeta);
-			
-			$data['tc'] = $detalle_tarjeta['tc'];
-			if ($detalle_tarjeta['tc']['id_tipo_tarjetaSi'] == 1) { //es AMERICAN EXPRESS
-				$data['amex'] = $detalle_tarjeta['amex'];
-				//en este caso se consultará la info del WS
-			}
-			
-		} else {
-			$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
-			$data['tc'] = $detalle_tarjeta;	//trae la tc
-		
-			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
-				$data['amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
-				//en este caso se consultará la info del WS
+				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
+					$data['amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+					//en este caso se consultará la info del WS
+				}
 			}
 		}
 		
 		//dir_envío
-		$consecutivo = $this->session->userdata('dir_envio');
-		if (is_array($consecutivo)) {
-			//$detalle_envio = $this->session->userdata('dir_envio');
-			$data['dir_envio'] = $consecutivo;
-		} else {
-			$detalle_envio = $this->envio_modelo->detalle_direccion($consecutivo, $id_cliente);
-			$data['dir_envio'] = $detalle_envio;	
+		$dir_envio = $this->session->userdata('dir_envio');
+		if (isset($dir_envio)) {
+			if (is_array($dir_envio)) {
+				//$detalle_envio = $this->session->userdata('dir_envio');
+				$data['dir_envio'] = (object)$dir_envio;
+			} else if (is_integer((int)$dir_envio)){
+				$consecutivo = (int)$dir_envio;
+				$detalle_envio = $this->envio_modelo->detalle_direccion($consecutivo, $id_cliente);
+				$data['dir_envio'] = $detalle_envio;	
+			}
 		}
 		
-		//dir_facturación
+		//rs_facturación
 		$consecutivo = $this->session->userdata('dir_facturacion');
 		if (is_array($consecutivo)) {
 			//$detalle_envio = $this->session->userdata('dir_envio');
@@ -99,6 +130,17 @@ class Orden_Compra extends CI_Controller {
 			$detalle_facturacion = $this->facturacion_modelo->obtener_rs($consecutivo);
 			$data['dir_facturacion']=$detalle_facturacion;
 		}		
+		
+		//direccion facturacion
+		$consecutivo_dir = $this->session->userdata('direccion_f');
+		if (is_array($consecutivo_dir)) {
+			//$detalle_envio = $this->session->userdata('dir_envio');
+			$data['direccion_f'] = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo_dir);
+		} else {
+			$detalle_direccion = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo_dir);
+			$data['direccion_f']=$detalle_direccion;			
+		}	
+		
 		
 		//cargar vista	
 		$this->cargar_vista('', 'orden_compra', $data);

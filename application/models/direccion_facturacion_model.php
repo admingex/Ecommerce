@@ -139,6 +139,11 @@ class Direccion_Facturacion_model extends CI_Model {
 		return $row;  		
 	}
 	
+	function obtiene_rs_dir($id_cliente, $id_rs){
+		$resultado = $this->db->get_where('CMS_RelDireccionRazonSocial', array('id_razonSocialIn'=>$id_rs, 'id_clienteIn'=>$id_cliente));
+		return $resultado;		
+	}
+	
 	function obtener_rs($id_rs) {
 		$resultado = $this->db->get_where('CMS_IntRazonSocial', array('id_razonSocialIn'=>$id_rs));				
 		$row = $resultado->row();     
@@ -177,5 +182,16 @@ class Direccion_Facturacion_model extends CI_Model {
 		else {
 			return "Error al tratar de actualizar la tarjeta.";
 		}
+	}
+	
+	function get_pago_express($id_cliente) 
+	{
+		$this->db->select('id_consecutivoSi');
+		$res = $this->db->get_where('CMS_IntDireccion',
+								array('id_clienteIn' => $id_cliente,
+										'address_type' => 1,//self::$TIPO_DIR['BISINESS'],
+										'id_estatusSi' => 3));//self::$CAT_ESTATUS['DEFAULT']));
+		$row_res = $res->row();
+		return $row_res;
 	}
 }

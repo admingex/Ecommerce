@@ -8,17 +8,17 @@
 				"<strong>Enviar a : </strong>". $dir_facturacion->email. "<br/>";
 		} 
 		?>
-		<h4>Direcci&oacute;n de Facturac&oacute;n</h4>		
+		<span><a href="<?php echo site_url('direccion_facturacion/registrar_rs/');?>">Cambiar</a></span>
+		<p><b>Direcci&oacute;n de Facturac&oacute;n</b></p>		
 		<?php 
-		/*
-			echo $dir_facturacion->calle. " " .$dir_facturacion->num_ext. " " . (!empty($dir_facturacion->num_int) ? ", Int. ".$dir_facturacion->num_int : "") . "<br/>";
-			echo 
-				$dir_facturacion->cp."<br/>".
-			 	$dir_facturacion->ciudad."<br/>".
-			 	$dir_facturacion->estado."<br/>".
-			 	$dir_facturacion->pais;
-		*/	 	
+		if($direccion_f->calle){
+			echo $direccion_f->calle."&nbsp;".$direccion_f->num_ext."&nbsp;".(!empty($direccion_f->num_int) ? ", Int. ".$direccion_f->num_int : "") . "<br/>";
+			echo $direccion_f->cp."<br/>".
+			 	 $direccion_f->ciudad."<br/>".
+			 	 $direccion_f->estado."<br/>".
+			 	 $direccion_f->pais;
+		}	 	
 		?>
-		<!--<span><a href="<?php echo site_url('direccion_facturacion/editar_direccion/'.$this->session->userdata('dir_facturacion'))?>">Cambiar</a></span>-->
+		<span><a href="<?php echo site_url('direccion_facturacion/registrar_direccion/');?>">Cambiar</a></span>
 	</p>
 </div>

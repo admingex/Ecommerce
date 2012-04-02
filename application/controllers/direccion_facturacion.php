@@ -89,7 +89,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$data['registrar_direccion'] = TRUE;		//para indicar que se debe mostrar formulario de registro		
 					
 										
-		echo $id_rs=$this->session->userdata('id_rs');
+		$id_rs=$this->session->userdata('id_rs');
 		$id_cliente = $this->id_cliente;	
 		$data['title']=$this->title;	
 		$data['mensaje']='';	
@@ -128,6 +128,11 @@ class Direccion_Facturacion extends CI_Controller {
 							$form_values['direccion']['id_estatusSi'] = 3;
 						}
 						if ($this->modelo->insertar_direccion($form_values['direccion'])) {							
+							$datadire=array(
+								'id_dir'=>$form_values['direccion']['id_consecutivoSi']							
+							);						
+							$this->session->set_userdata($datadire);						
+													
 							//cargar en sesion		
 							$this->load->helper('date');
 							$fecha=mdate('%Y/%m/%d',time());
@@ -137,8 +142,7 @@ class Direccion_Facturacion extends CI_Controller {
                    				'id_razonSocialIn' => $id_rs,
                    				'fecha_registroDt' => $fecha                    				                    		
                				);																										
-							$this->modelo->insertar_rs_direccion($datadir);
-							$this->cargar_en_session($form_values['direccion']['id_consecutivoSi']);	
+							$this->modelo->insertar_rs_direccion($datadir);															
 							redirect('orden_compra');													
 						} 	
 						else {
@@ -314,14 +318,14 @@ class Direccion_Facturacion extends CI_Controller {
 								
 	}
 
-	public function requiere_factura(){
-		if($_POST){
+	public function requiere_factura(){		
 			$datars=array(
-							'requiere_factura'=>$_POST['requiere_factura']
+				'requiere_factura'=>'no',
+				'id_dir'=>NULL,
+				'id_rs'=>NULL											
 			);						
 			$this->session->set_userdata($datars);
-			redirect('orden_compra');			
-		}	
+			redirect('orden_compra');					
 	}	
 	
 	public function eliminar_direccion($consecutivo = ''){		
@@ -436,8 +440,13 @@ class Direccion_Facturacion extends CI_Controller {
 			$this->reg_errores['txt_estado'] = 'Por favor ingrese un estado valido';
 		}													
 		
-		$datos['direccion']['address4'] = $_POST['txt_num_int'];
-		$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];	
+		if(array_key_exists('txt_num_int', $_POST)){
+		    $datos['direccion']['address4'] = $_POST['txt_num_int'];	
+		}
+		
+		if(array_key_exists('sel_pais', $_POST)){
+			$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];
+		}			
 																
 		if (array_key_exists('chk_default', $_POST)) {
 			$datos['direccion']['id_estatusSi'] = 3;	//indica que será la direccion de facturacion predeterminada			
