@@ -58,7 +58,7 @@ class Password extends CI_Controller {
                 $headers.="MIME-Version: 1.0\r\n";
 			    $headers .= "From: GexWeb<soporte@expansion.com.mx>\r\n";            					
 								
-				if(mail($data['cliente']->email, 'Recuperar password', "http://10.177.73.120/ecommerce/index.php/password/verificar".$p, $headers)){
+				if(mail($data['cliente']->email, 'Recuperar password', "http://10.177.73.120/ecommerce/index.php/password/verificar/".$p, $headers)){
 					$this->cargar_vista('', 'password', $data);	
 				}																														
 				else{
