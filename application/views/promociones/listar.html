@@ -2,7 +2,7 @@
 		<?php		
 		if(isset($sitios)){
 			foreach($sitios as $sitio){
-				echo "<br /><a href='sitio/".$sitio['id_sitioSi']."'>".$sitio['urlVc']."</a>";
+				echo "<br /><a href='".current_url()."/sitio/".$sitio['id_sitioSi']."'>".$sitio['urlVc']."</a>";
 			}	
 		}
 		if(isset($canales)){
