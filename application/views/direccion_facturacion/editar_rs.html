@@ -24,9 +24,8 @@
 			<input type="checkbox" id="chk_default" name="chk_default" <?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como razon social para pago express
 		</div>																						
 		<div class="form_button">
-			<input type="submit" id="guardar_rs" value="Usar esta razon social"/>
-			o
-			<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/actualizar_rs'; ?>" title="actualizar">guardar y usar otra</a>
+			<input type="submit" id="guardar_rs" value="Usar esta razon social"/>			
+			<!--<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/actualizar_rs'; ?>" title="actualizar">guardar y usar otra</a>-->
 			o
 			<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/'; ?>" title="actualizar">cancelar</a>
 		</div>								

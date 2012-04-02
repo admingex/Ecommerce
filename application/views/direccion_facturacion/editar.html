@@ -74,9 +74,8 @@
 				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direccion de facturacion para pago exprés
 			</div>			
 			<div class="form_button">
-				<input type="submit" id="guardar_direccion" value="Usar nueva direccion"/>
-				o
-				<a href="">Guardar y usar otra</a>
+				<input type="submit" id="guardar_direccion" value="Usar nueva direccion"/>				
+				<!--<a href="">Guardar y usar otra</a>-->
 				o 
 				<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/registrar_direccion'; ?>" title="actualizar">cancelar</a>				
 			</div>	
