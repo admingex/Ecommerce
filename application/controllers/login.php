@@ -167,7 +167,7 @@ class Login extends CI_Controller {
 	private function cargar_vista($folder, $page, $data)
 	{	
 		//Para automatizar un poco el desplieguee
-		$this->load->view('templates/header', $data);
+		$this->load->view('templates/header', $data);		
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
 	}
