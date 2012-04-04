@@ -1,23 +1,24 @@
 <div id="container">	
 	<h1><?php echo $title; ?></h1>
-	<?php 	
-	
+	<?php 		
 	if($listar){
-		include('promociones/listar.html');
+		include('api/listar.html');
 	}
 	if($detalle){
 		if(!empty($sitio)){
-			echo "<br />sitio: <a href='".$sitio->urlVc."' target='new'>".$sitio->urlVc."</a>";
-			echo json_encode($sitio);	
+			echo "<br />
+				  <b>sitio</b>
+				  <br /> <a href='".$sitio->urlVc."' target='new'>".$sitio->urlVc."</a>";
+				  echo json_encode($sitio);	
 		}		
 			
 		if(!empty($canal)){
 			echo "<br/>
 				  <br />
-				  Canal:
+				  <b>Canal</b>
 				  <br />descripcion: ".$canal->descripcionVc."
 				  <br />addkey: ".$canal->addKeyVc;
-				  echo json_encode($canal);				
+				  echo json_encode($canal);						  		
 		}		
 		
 		if(!empty($promocion)){

@@ -1,0 +1,20 @@
+<div id='listar_promociones'>
+		<?php		
+		if(isset($sitios)){
+			foreach($sitios as $sitio){
+				echo "<br /><a href='".str_replace(current_url(), 'html', '').$sitio['id_sitioSi']."/html'>".$sitio['urlVc']."</a>";
+			}	
+		}
+		if(isset($canales)){
+			foreach($canales as $canal){
+				echo "<br /><a href='".str_replace(current_url(), 'html', '').$canal['id_canalSi']."/html'>".$canal['descripcionVc']."</a>";
+			}	
+		}	
+		
+		if(isset($promociones)){
+			foreach($promociones as $promocion){
+				echo "<br /><a href='".str_replace(current_url(), 'html', '').$promocion['id_promocionIn']."/html'>".$promocion['descripcionVc']."--".$promocion['inicio_promocionDt']."</a>";
+			}	
+		}					
+		?>
+</div>

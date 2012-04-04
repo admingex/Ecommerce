@@ -39,6 +39,13 @@
 */
 
 $route['default_controller'] = "login";
+
+$route['api/(:any)/(:any)/(:any)/(:any)'] = "api/listar/$1/$2/$3/$4";
+$route['api/(:any)/(:any)/(:any)'] = "api/listar/$1/$2/$3";
+$route['api/(:any)/(:any)'] = "api/listar/$1/$2";
+$route['api/(:any)'] = "api/listar/$1";
+$route['api'] = "api/listar";
+
 $route['404_override'] = '';
 
 
