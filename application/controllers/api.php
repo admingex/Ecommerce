@@ -24,7 +24,7 @@ class Api extends CI_Controller {
 		
 		$segm=$this->uri->total_segments();
 		if($segm==2){
-			echo "cadena".$cad=$this->uri->segment(2);
+			$cad=$this->uri->segment(2);
 			if(($cad=="json")||($cad=="xml")||($cad=="html")){
 				$sitio="";
 				$formato=$cad;
@@ -129,11 +129,80 @@ class Api extends CI_Controller {
 			
 	private function formato($formato, $data){		
 		if((empty($formato)) || ($formato=='json')){
-			echo json_encode($data);
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));			
 		}
 		else{
 			if($formato=="xml"){
-				echo "xml";
+																				
+				$response ='<?xml version="1.0" encoding="utf-8"?>';
+				
+				if(!empty($data['sitios'])){
+					if(is_array($data['sitios'])){
+						$response .= "<sitio>";	
+						foreach($data['sitios'] as $sit){
+							$response .="<id_sitioSi>";
+							$response .=$sit['id_sitioSi'];
+							$response .="</id_sitioSi>";
+							
+							$response .="<urlVc>";
+							$response .=$sit['urlVc'];
+							$response .="</urlVc>";					
+						}
+						$response .='</sitio>';		
+					}					
+				}
+				if(!empty($data['canales'])){
+					if(is_array($data['canales'])){
+						$response .= "<canal>";	
+						foreach($data['canales'] as $can){
+							$response .="<id_canalSi>";
+							$response .=$can['id_canalSi'];
+							$response .="</id_canalSi>";
+							
+							$response .="<descripcionVc>";
+							$response .=$can['descripcionVc'];
+							$response .="</descripcionVc>";					
+						}
+						$response .='</canal>';		
+					}					
+				}
+				if(!empty($data['promociones'])){
+					if(is_array($data['promociones'])){
+						$response .= "<promocion>";	
+						foreach($data['promociones'] as $prom){
+							$response .="<id_promocionIn>";
+							$response .=$prom['id_promocionIn'];
+							$response .="</id_promocionIn>";
+							
+							$response .="<descripcionVc>";
+							$response .=$prom['descripcionVc'];
+							$response .="</descripcionVc>";					
+						}
+						$response .='</promocion>';		
+					}					
+				}
+				
+				if(!empty($data['sitio'])){
+					$response .="<detalle>";										
+					$response .="<sitio>";
+					$response .=$data['sitio']->urlVc;
+					$response .="</sitio>";
+					$response .="<canal>";
+					$response .=$data['canal']->id_canalSi;
+					$response .="</canal>";
+					$response .="<promocion>";
+					$response .=$data['promocion']->descripcionVc;
+					$response .="</promocion>";					
+					
+					foreach($data['articulos'] as $articulo){
+						$response .="<articulo>";
+						$response .=$articulo['tipo_productoVc'];
+						$response .="</articulo>";
+					}																
+											 
+					$response .="</detalle>";			 										
+				}					
+				$this->output->set_content_type("content-type: text/xml")->set_output($response);																									        		        								                																																				
 			}
 			else if($formato=="html"){				
 				$this->cargar_vista('', 'api', $data);	
