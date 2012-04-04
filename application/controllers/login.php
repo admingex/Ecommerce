@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-include('util/FLujo_Pago.php');
+include('util/Flujo_Pago.php');
 
 class Login extends CI_Controller {
 
