@@ -1,15 +1,14 @@
 <div id="promocion">
 		<p>
-			<?php	
-			if(is_object($this->session->userdata('promociones'))){
-				if($this->session->userdata('promociones')){
-					$res=$this->session->userdata('promociones');
-					echo "<br />Sitio: ".$res['sitio']->urlVc;	
-					echo "<br />Descripcion: ".$res['promocion']->descripcionVc;	
-					echo "<br />Precio".$res['promocion']->precioF;
-					echo "<br />Ejemplares: ".$res['promocion']->terminoVc;				
-				}				
-			}													
+			<?php							
+				if($this->session->userdata('promociones')){					
+						$res=$this->session->userdata('promociones');	
+											
+						echo "<br />Sitio: ".$res['sitio']->id_sitioSi.$res['sitio']->urlVc."<br />";															
+						echo "<br />Descripcion: ".$res['promocion']->descripcionVc;	
+						echo "<br />Precio".$res['promocion']->precioF;
+						echo "<br />Ejemplares: ".$res['promocion']->terminoVc;																										
+				}													
 			?>	
 		</p>	
 </div>

@@ -15,7 +15,7 @@ $(document).ready(function() {
 	var cp		= $("#txt_cp");
 	var pais 	= $("#sel_pais");
 	var estado_t 	= $("#txt_estado");
-	var ciudad_t 	= $("#txt_ciudade");
+	var ciudad_t 	= $("#txt_ciudad");
 	var colonia_t	= $("#txt_colonia");
 	var estado_s 	= $("#sel_estados");
 	var ciudad_s 	= $("#sel_ciudades");
@@ -32,9 +32,9 @@ $(document).ready(function() {
 		e.preventDefault();
 		$(".error").remove();
 		
-		estado 	= (estado_t.is("visible")) ? estado_t : estado_s;	
-		ciudad 	= (ciudad_t.is("visible")) ? ciudad_t : ciudad_s;
-		colonia	= (colonia_t.is("visible")) ? colonia_t : colonia_s;
+		estado 	= (estado_t.is(":visible")) ? estado_t : estado_s;	
+		ciudad 	= (ciudad_t.is(":visible")) ? ciudad_t : ciudad_s;
+		colonia	= (colonia_t.is(":visible")) ? colonia_t : colonia_s;
 					
 		if (!reg_direccion.test($.trim(calle.val()))) {
 			calle.focus().after("<span class='error'>Ingresa la calle correctamente</spam>");
@@ -48,13 +48,13 @@ $(document).ready(function() {
 		}  else if (pais.val() == '') {
 			pais.focus().after("<span class='error'>Ingresa tu país correctamente</spam>");
 			return false;
-		} else if ((estado_t.is("visible") && !reg_direccion.test($.trim(estado_t.val()))) || (estado_s.is("visible") && estado_s.val() == '')) {
+		} else if ((estado_t.is(":visible") && !reg_direccion.test($.trim(estado_t.val()))) || (estado_s.is(":visible") && estado_s.val() == '')) {
 			estado.focus().after("<span class='error'>Ingresa tu estado correctamente</spam>");
 			return false;
-		} else if ((ciudad_t.is("visible") && !reg_direccion.test($.trim(ciudad_t.val()))) || (ciudad_s.is("visible") && ciudad_s.val() == '')) {
+		} else if ((ciudad_t.is(":visible") && !reg_direccion.test($.trim(ciudad_t.val()))) || (ciudad_s.is(":visible") && ciudad_s.val() == '')) {
 			ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</spam>");
 			return false;
-		} else if ((colonia_t.is("visible") && !reg_direccion.test($.trim(colonia_t.val()))) || (colonia_s.is("visible") && colonia_s.val() == '')) {
+		} else if ((colonia_t.is(":visible") && !reg_direccion.test($.trim(colonia_t.val()))) || (colonia_s.is(":visible") && colonia_s.val() == '')) {
 			colonia.focus().after("<span class='error'>Ingresa tu colonia correctamente</spam>");
 			return false;
 		} else if (!reg_telefono.test($.trim(telefono.val()))) {
@@ -101,22 +101,26 @@ $(document).ready(function() {
 			$(this).siblings(".error").fadeOut();
 		}
 	});	
+	estado_t.change(function() {
+		if ( reg_direccion.test($.trim(estado_t.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+	ciudad_t.change(function() {
+		if ( reg_direccion.test($.trim(ciudad_t.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
+	colonia_t.change(function() {
+		if ( reg_direccion.test($.trim(colonia_t.val())) ) {
+			$(this).siblings(".error").fadeOut();
+		}
+	});
 	telefono.change(function() {
 		if ( reg_telefono.test($.trim(telefono.val())) ) {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
-		
-	//cargar el catálogo de estados
-	/* 
-	$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/get_estados",
-		function(data) {
-			$.each(data.estados, function(indice, estado) {
-				$("<option></option>").attr("value", estado.clave_estado).html(estado.estado).appendTo("#sel_estados");
-			});
-		}
-	);
-	*/
 	
 	/*Ocultar campos abiertos de estado, ciudad, colonia*/
 	$('#div_otro_pais').hide();
@@ -175,7 +179,7 @@ $(document).ready(function() {
 		var cp = $.trim($("#txt_cp").val());	//.val();
 		
 		//validar cp
-		if (!cp) {
+		if (!cp || !reg_cp.test($.trim(cp))) {
 			alert('Por favor ingresa un código válido');
 			return false
 		}
@@ -190,30 +194,20 @@ $(document).ready(function() {
 			async: false,
 			success: function(data) {
 				//alert("success: " + data.msg);
-				if (typeof data.sepomex != null)	{	//si enecontró algun cp válido
+				if (typeof data.sepomex != null)	{	//regresa un array con las colonias
 					//alert('data is ok, tipo: ' + typeof(data));
-					var sepomex = data.sepomex;
-					var codigo_postal = sepomex.codigo_postal;
-					var clave_estado = sepomex.clave_estado;
+					var sepomex = data.sepomex;			//colonias
+					var codigo_postal = sepomex[0].codigo_postal;
+					var clave_estado = sepomex[0].clave_estado;
 					
-					var estado = sepomex.estado;
-					var ciudad = sepomex.ciudad;
-											
-					$("#resultado").text('estado: ' + sepomex.estado);
+					var estado = sepomex[0].estado;
+					var ciudad = sepomex[0].ciudad;
 											
 					$("#sel_estados").val(clave_estado);
 					
-					//catálogo estados
-					/*
-					$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/get_estados", function(data) {
-						$.each(data.estados, function(indice, estado) {
-							$("<option></option>").attr("value", estado.clave_estado).html(estado.estado).appendTo("#sel_estados");
-						});
-					})
-					.complete(function() { 
-						//alert("Estado: " + estado + ", ciudad: " + ciudad + ", cp: " + codigo_postal); 
-					});	
-					*/
+					//alert("Estado: " + estado + ", ciudad: " + ciudad + ", cp: " + codigo_postal);
+					//$("#sel_estados").trigger('change');
+					
 					
 					//carga del catálogo ciudades y selección
 					$.post( 'http://localhost/ecommerce/index.php/direccion_envio/get_ciudades',
@@ -237,38 +231,27 @@ $(document).ready(function() {
 									}
 								});
 							}
-							/*
-							var ciudades = datos.ciudades;
-							$.each(datos.ciudades, function(indice, ciudad) {
-								if (ciudad.clave_ciudad != '') {
-									$("<option></option>").attr("value", ciudad.clave_ciudad).html(ciudad.ciudad).appendTo("#sel_ciudades");
-								}
-							});
-							*/
 							//select choosen city
 							$("#sel_ciudades").val(ciudad);
+							
 							//trigger ciudades change 
-							$("#sel_ciudades").trigger('change');
+							//$("#sel_ciudades").trigger('change');
+							
+							//Cargar las colonias
+							$("#sel_colonias").empty();
+							if (sepomex.length > 1)
+								$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_colonias");
+							$.each(sepomex, function(indice, colonia) {
+								if (colonia.colonia != '') {
+									$("<option></option>").attr("value", colonia.colonia).html(colonia.colonia).appendTo("#sel_colonias");
+								}
+							});
 						}, 
 						"json"
 					);
-					/*
-					$.ajax({
-						type: "POST",
-						data: {'codigo_postal' : cp},
-						url: "http://localhost/ecommerce/index.php/direccion_envio/get_info_sepomex",
-						dataType: "json",				
-						async: false,
-						success: function(data) {
-						}
-					});
-					*/
 					
-					//$("#sel_ciudades [value='" + ciudad + "']").attr('selected', 'true');
 					
 				}
-				//var ciudad 
-				$("#estados").text(data.msg);
 			},
 			error: function(data) {
 				alert("error: " + data.error);
@@ -280,19 +263,6 @@ $(document).ready(function() {
 		});
 	});
 
-
-	//submit validation
-	$("form[id='form_direccion_envio']").submit(function(event) {
-		//event.preventDefault();
-	});
-	
-	$("#enviar").click(function(e) {
-		e.preventDefault();
-		alert("goning nowhere!");
-		
-		//alert("tipo_inicio: " + tipo_inicio.val() + " email: " + $.trim(email.val()) + " passw: " + $.trim(passwd.val()));
-	});
-	
 });
 
 function actualizar_ciudades(clave_estado) {
@@ -310,10 +280,8 @@ function actualizar_ciudades(clave_estado) {
 					$("<option></option>").attr("value", ciudades.clave_ciudad).html(ciudades.ciudad).appendTo("#sel_ciudades");
 					$("#sel_ciudades").trigger('change');	//trigger cities' change event
 				} else {							//ciudades.length == 'undefined'
-					$("<option></option>").attr("value", '').html('Selecionar').appendTo("#sel_ciudades");
 					$.each(ciudades, function(indice, ciudad) {
 						if (ciudad.clave_ciudad != '') {
-						
 							$("<option></option>").attr("value", ciudad.clave_ciudad).html(ciudad.ciudad).appendTo("#sel_ciudades");
 						}
 					});
@@ -327,7 +295,7 @@ function actualizar_ciudades(clave_estado) {
 function actualizar_colonias(clave_estado, ciudad) {
 	$.post( 'http://localhost/ecommerce/index.php/direccion_envio/get_colonias',
 		// when the Web server responds to the request
-		{ 'estado': clave_estado, 'ciudad': ciudad},
+		{ 'estado': clave_estado, 'ciudad': ciudad },
 		function(datos) {
 			var colonias = datos.colonias;
 			
@@ -339,8 +307,6 @@ function actualizar_colonias(clave_estado, ciudad) {
 					$("<option></option>").attr("value", colonia.colonia).html(colonia.colonia).appendTo("#sel_colonias");
 				});
 			}
-			//seleecionar la ciudad seleccionada
-			//$("#sel_ciudades").val(ciudad);
 		}, 
 		"json"
 	);

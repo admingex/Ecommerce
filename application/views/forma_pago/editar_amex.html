@@ -43,11 +43,39 @@
 			</div>
 			<div class="item_requerid">* Pa&iacute;s:</div>
 			<div class="form_requerid">
+				<select id="sel_pais" name="sel_pais">
+					<?php
+					if (isset($lista_paises_think)) {
+						$id_pais = "MX";				//Mexico por default
+						if (isset($tarjeta_amex->pais))
+							$id_pais = $tarjeta_amex->pais;
+						if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
+							$id_pais = $_POST['sel_pais'];
+							
+						foreach($lista_paises_think->result() as $pais)
+						{
+							if ($id_pais == $pais->id_pais) {
+								echo "<option value='".$pais->id_pais."' selected='true'>".
+									$pais->pais.
+									"</option>";
+							} else {
+								echo "<option value='".$pais->id_pais."'>".
+									$pais->pais.
+									"</option>";
+							}
+						}
+					}
+					?>
+				</select>
+				<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
+			</div>
+			
+			<!--div class="form_requerid">
 				<input type="text" name="txt_pais" id="txt_pais" size="30"
 					value="<?php if(isset($_POST['txt_pais'])) echo htmlspecialchars($_POST['txt_pais']);
 					else if (isset($tarjeta_amex->pais)) echo $tarjeta_amex->pais; ?>"/>
 				<span class="validation_message"><?php if(isset($reg_errores['txt_pais'])) echo ($reg_errores['txt_pais']);?></span>
-			</div>
+			</div-->
 			<div class="item_requerid">Email:</div>
 			<div class="form_requerid">
 				<input type="text" name="txt_email" id="txt_email" size="30"
