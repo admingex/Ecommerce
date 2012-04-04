@@ -30,14 +30,43 @@
 				</div>
 				<div class="item_requerid">* Pa&iacute;s:</div>
 				<div class="form_requerid">
+					<select id="sel_pais" name="sel_pais">
+						<?php
+						if (isset($lista_paises_think)) {
+							$id_pais = "MX";				//Mexico por default
+							if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
+								$id_pais = $_POST['sel_pais'];
+								
+							foreach($lista_paises_think->result() as $pais)
+							{
+								if ($id_pais == $pais->id_pais) {
+									echo "<option value='".$pais->id_pais."' selected='true'>".
+										$pais->pais.
+										"</option>";
+								} else {
+									echo "<option value='".$pais->id_pais."'>".
+										$pais->pais.
+										"</option>";
+								}
+							}
+						}
+						?>
+					</select>
+					
+					<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
+				</div>
+				
+				<!--div class="item_requerid">* Pa&iacute;s:</div>
+				<div class="form_requerid">
 					<input type="text" name="txt_pais" id="txt_pais" size="30"
 						value="<?php if(isset($_POST['txt_pais'])) echo htmlspecialchars($_POST['txt_pais']);?>"/>
 					<span class="validation_message"><?php if(isset($reg_errores['txt_pais'])) echo ($reg_errores['txt_pais']);?></span>
-				</div>
+				</div-->
 				<div class="item_requerid">Email:</div>
 				<div class="form_requerid">
 					<input type="text" name="txt_email" id="txt_email" size="30"
-						value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);?>"/>
+						value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);
+									else echo $this->session->userdata('email');?>"/>
 					<span class="validation_message"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
 				</div>
 				<div class="item_requerid">* Tel&eacute;fono:</div>
@@ -47,17 +76,6 @@
 					<span class="validation_message"><?php if(isset($reg_errores['txt_telefono'])) echo ($reg_errores['txt_telefono']);?></span>
 				</div>
 			</div>
-			
-			<!--div class="item_requerid">&nbsp;</div>
-			<div class="form_requerid">
-				<input type="checkbox" id="chk_guardar" name="chk_guardar" checked="true" 
-				<?php if(isset($_POST['chk_guardar'])) echo 'checked="true"';?> />Guardar para compra futuras
-			</div>
-			<div class="item_requerid">&nbsp;</div>
-			<div class="form_requerid">
-				<input type="checkbox" id="chk_default" name="chk_default"  
-				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar para pago exprés
-			</div-->
 			
 			<div class="form_button">
 				<input type="submit" id="guardar_amex" name="guardar_amex" value="Usar esta tarjeta"/>

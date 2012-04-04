@@ -67,4 +67,19 @@ class Amex {
 	}
 }
 
+class InformacionOrden {
+    private $id_clienteIn;				//el cliente asociado
+    private $consecutivo_cmsSi;			//$id_TCSi;	//el consecutivo
+    private $id_promocionIn;
+    private $digito;
+    
+	public function __construct($id_clienteIn, $id_TCSi, $id_promocionIn, $digito) 
+	{
+		$this->id_clienteIn = $id_clienteIn;
+		$this->consecutivo_cmsSi = $id_TCSi;
+		$this->id_promocionIn = $id_promocionIn;
+		$this->digito = $digito;
+	}
+}
+
 ?>

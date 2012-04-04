@@ -93,8 +93,8 @@ class Direccion_Envio extends CI_Controller {
 		//recuperar el listado de las direcciones del cliente
 		$data['lista_direcciones'] = $this->modelo->listar_direcciones($id_cliente);
 		
-		//catalogo de estados
-		$lista_estados = $this->consulta_estados();		
+		//catálogo de estados
+		$lista_estados = $this->consulta_estados();
 		$data['lista_estados_sepomex'] = $lista_estados['estados'];
 		
 		$data['registrar'] = TRUE;		//se debe mostrar formulario de registro
@@ -347,10 +347,12 @@ class Direccion_Envio extends CI_Controller {
 		//echo "<script>alert('Peticion Ajax'); </script>";
 		//echo json_encode($this->consulta_sepomex($cp));
 		
+		if (!$cp)
 		$cp = $this->input->post('codigo_postal');
 		
 		//$resultado = array();
-		$resultado->sepomex = $this->modelo->obtener_direccion_sepomex($cp)->row();
+		//$resultado->sepomex = $this->modelo->obtener_direccion_sepomex($cp)->result();
+		$resultado = $this->consulta_sepomex($cp);
 		echo json_encode($resultado);
 	}
 	
@@ -471,7 +473,7 @@ class Direccion_Envio extends CI_Controller {
 		}
 		*/
 	}
-	
+
 	/*
 	 * Regresa la lista de colonias correspondientes
 	 * params:

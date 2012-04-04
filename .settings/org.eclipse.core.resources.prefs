@@ -1,6 +1,7 @@
-#Wed Mar 28 19:01:50 CST 2012
+#Mon Apr 02 08:29:14 CDT 2012
 eclipse.preferences.version=1
 encoding//application/config/config.php=UTF-8
+encoding//application/controllers/orden_compra.php=UTF-8
 encoding//application/views/login/login.html=UTF-8
 encoding//js/dir_facturacion.js=UTF-8
 encoding//js/login.js=UTF-8

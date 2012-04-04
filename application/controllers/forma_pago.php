@@ -27,7 +27,7 @@ class Forma_Pago extends CI_Controller {
 		$this->id_cliente = $this->session->userdata('id_cliente');
 		////
 		if ($this->session->userdata('hay_forma_pago')) {
-			echo "hay_forma_pago: " . var_dump($this->session->userdata('hay_forma_pago'));
+			//echo "hay_forma_pago: " . var_dump($this->session->userdata('hay_forma_pago'));
 		}
 		
     }
@@ -75,6 +75,10 @@ class Forma_Pago extends CI_Controller {
 		if ($tipo == "tc") {
 			$lista_tipo_tarjeta = $this->lista_tipos_tarjeta_WS();
 			$data['lista_tipo_tarjeta'] = $lista_tipo_tarjeta;
+		} else if ($tipo == "amex") {
+			//catálogo de paises de think
+			$lista_paises_think = $this->modelo->listar_paises_think();
+			$data['lista_paises_think'] = $lista_paises_think;
 		}
 		
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/forma_pago.js'></script>";
@@ -218,9 +222,7 @@ class Forma_Pago extends CI_Controller {
 					}
 					//para registrar en CCTC	
 					$form_values['tc']['terminacion_tarjetaVc'] = $num_completo;
-					//var_dump($form_values);
-					//echo "boton: " . $_POST['guardar_tarjeta'];
-					//exit();
+					
 					//se manda insertar en CCTC
 					if ($this->registrar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
 						//Sólo registrar los últimos 4 dígitos de la TC
@@ -289,7 +291,7 @@ class Forma_Pago extends CI_Controller {
 		
 			$form_values = array();		
 			$form_values = $this->get_datos_tarjeta();
-			
+			//var_dump($this->reg_errores);
 			if (empty($this->reg_errores)) {
 				$form_values['tc'] = (array)$tc;
 				$form_values['amex']['id_TCSi'] = $tc->id_TCSi;
@@ -379,9 +381,13 @@ class Forma_Pago extends CI_Controller {
 				$tarjeta_amex->id_TCSi = 0;	//el id_TCSi (consecutivo debe ser 0 si está en session)
 				
 				$data['tarjeta_amex'] = $tarjeta_amex;
+				//lista paises
+				$lista_paises_think = $this->modelo->listar_paises_think();
+				$data['lista_paises_think'] = $lista_paises_think;
+				
 			}
 			//var_dump($data['tarjeta_tc']);
-			echo "cons. " . $consecutivo;
+
 			//else redirecciona / sacar
 		} else {
 			//recuperar la información local de la tc, utilizando el consecutivo
@@ -391,6 +397,9 @@ class Forma_Pago extends CI_Controller {
 				//var_dump($data['tarjeta_tc']);
 			} else if ($tipo == 'amex') {
 				$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				//lista paises
+				$lista_paises_think = $this->modelo->listar_paises_think();
+				$data['lista_paises_think'] = $lista_paises_think;
 				/*if ($data['tarjeta_amex']->consecutivo_cmsSi == 0)
 					$data['tarjeta_amex']->consecutivo_cmsSi = $consecutivo;*/
 				//var_dump($data['tarjeta_amex']);
@@ -766,13 +775,9 @@ class Forma_Pago extends CI_Controller {
 	
 	private function editar_tarjeta_CCTC($tc, $amex = null)
 	{
-		
 		//var_dump($tc);
 		//var_dump($amex);
 		//exit();
-		
-			
-			
 		$resultado = FALSE;
 		//mapeo de la tc
 		$tc_soap = new Tc(
@@ -1039,14 +1044,21 @@ class Forma_Pago extends CI_Controller {
 					$this->reg_errores['txt_estado'] = 'Ingresa tu estado correctamente';
 				}
 			}
-			if(array_key_exists('txt_pais', $_POST)) {
+			if (array_key_exists('txt_pais', $_POST)) {
 				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_pais'])) {
 					$datos['amex']['pais'] = $_POST['txt_pais'];
 				} else {
 					$this->reg_errores['txt_pais'] = 'Ingresa tu pa&iacute;s correctamente';
 				}
 			}
-			if(array_key_exists('txt_email', $_POST) && trim($_POST['txt_email']) != "") {
+			if (array_key_exists('sel_pais', $_POST)) {
+				if ($_POST['sel_pais'] != "") {
+					$datos['amex']['pais'] = $_POST['sel_pais'];
+				} else {
+					$this->reg_errores['sel_pais'] = 'Selecciona tu pa&iacute;s';
+				}
+			}
+			if (array_key_exists('txt_email', $_POST) && trim($_POST['txt_email']) != "") {
 				if(filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
 					$datos['amex']['mail'] = $_POST['txt_email'];
 				} else {
@@ -1056,7 +1068,7 @@ class Forma_Pago extends CI_Controller {
 				$datos['amex']['mail'] = '';
 			}
 			
-			if(array_key_exists('txt_telefono', $_POST)) {
+			if (array_key_exists('txt_telefono', $_POST)) {
 				if(preg_match('/^[0-9 -]{8,20}$/i', $_POST['txt_telefono'])) {
 					$datos['amex']['telefono'] = $_POST['txt_telefono'];
 				} else {

@@ -21,7 +21,7 @@ $(document).ready(function() {
 	var cp		= $("#txt_cp");
 	var ciudad 	= $("#txt_ciudad");
 	var estado 	= $("#txt_estado");
-	var pais 	= $("#txt_pais");
+	var pais 	= $("#sel_pais");
 	var email 	= $("#txt_email");
 	var telefono= $("#txt_telefono");
 	

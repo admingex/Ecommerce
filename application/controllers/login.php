@@ -60,7 +60,7 @@ class Login extends CI_Controller {
 												
 						//echo "<h1>Usuario $cliente->id_cliente logeado: $cliente->nombre</h1>";
 						//exit();
-						$this->crear_sesion($cliente->id_cliente, $cliente->nombre);	//crear sesion,
+						$this->crear_sesion($cliente->id_cliente, $cliente->nombre, $this->email);	//crear sesion,
 						
 						$datars=array(
 							'requiere_factura'=>'no'
@@ -153,12 +153,13 @@ class Login extends CI_Controller {
 		} 
 	}
 	
-	private function crear_sesion($id_cliente, $nombre)
+	private function crear_sesion($id_cliente, $nombre, $email)
 	{
 		$array_session = array(
 			'logged_in' => TRUE,
 			'username' 	=> $nombre,
-			'id_cliente'=> $id_cliente
+			'id_cliente'=> $id_cliente,
+			'email' 	=> $email
 		);
 		//creación de la sesión
 		$this->session->set_userdata($array_session);

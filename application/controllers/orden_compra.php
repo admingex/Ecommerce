@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+include ('DTOS/Tipos_Tarjetas.php');
+
 class Orden_Compra extends CI_Controller {
 	var $title = 'Orden de Compra';
 	var $subtitle = 'Orden de Compra';
@@ -146,7 +148,99 @@ class Orden_Compra extends CI_Controller {
 	
 	public function checkout() {
 		/*Realizar el pago en CCTC*/
-		echo "El pago se realizará aquí.";	
+		echo "El pago se realizará aquí. CVV: ".$_POST['txt_codigo'];
+		
+		/*Recuperar la info gral. de la orden*/
+		$id_cliente 	= $this->id_cliente;
+		$consecutivo 	= $this->session->userdata('tarjeta');
+		$id_promocionIn = 1;
+		$digito 		= $_POST['txt_codigo'];
+		
+		// Informaciòn de la Orden //
+		$informacion_orden = new InformacionOrden(
+			$id_cliente,
+			$consecutivo,
+			$id_promocionIn,
+			$digito
+		);
+		
+		$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+		//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
+		
+		// Si la información esta en la Session //
+		if (is_array($this->session->userdata('tarjeta'))) {
+			$detalle_tarjeta = $this->session->userdata('tarjeta');
+			$tc = $detalle_tarjeta['tc'];
+			$tc = (array)$tc;
+			
+			echo var_dump($tc);
+			
+			$tc_soap = new Tc(
+				$tc['id_clienteIn'],
+				$tc['id_TCSi'],
+				$tc['id_tipo_tarjetaSi'],
+				$tc['nombre_titularVc'],
+				$tc['apellidoP_titularVc'],
+				$tc['apellidoM_titularVc'],
+				$tc['terminacion_tarjetaVc'],
+				$tc['mes_expiracionVc'],
+				$tc['anio_expiracionVc']
+			);
+			
+			$amex_soap = NULL;
+			if ($detalle_tarjeta['tc']['id_tipo_tarjetaSi'] == 1) { //es AMERICAN EXPRESS
+				$amex = $detalle_tarjeta['amex'];
+				if (isset($amex)) {
+					$amex_soap = new Amex(
+						$amex['id_clienteIn'],
+						$amex['id_TCSi'],
+						$amex['nombre_titularVc'],
+						$amex['apellidoP_titularVc'],
+						$amex['apellidoM_titularVc'],
+						$amex['pais'],
+						$amex['codigo_postal'],
+						$amex['calle'],
+						$amex['ciudad'],
+						$amex['estado'],
+						$amex['mail'],
+						$amex['telefono']
+					);
+				}
+			}
+
+			// Intentamos el Pago con pasando los objetos a CCTC //
+			try {  
+				$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
+				$obj_result = $cliente->PagarTC($parameter);
+				$simple_result = $obj_result->PagarTCResult;
+
+				var_dump($simple_result);
+				//return $simple_result;
+			} catch (SoapFault $exception) { 
+				echo $exception;  
+				echo '<br/>error: <br/>'.$exception->getMessage();
+				return NULL;
+			}
+			
+		} else { // La informacion esta en la Base de Datos Local //
+			echo "La informacion esta en la Base de Datos Local";
+			$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
+			$tc = $detalle_tarjeta;	//trae la tc
+			// Intentamos el Pago con los Id's en  CCTC //
+			try {  
+				$parameter = array('informacion_orden' => $informacion_orden);
+				$obj_result = $cliente->PagarTcUsandoId($parameter);
+				$simple_result = $obj_result->PagarTcUsandoIdResult;
+			
+				var_dump($simple_result);
+				//return $simple_result;
+			} catch (SoapFault $exception) {
+				//errores en desarrollo
+				echo $exception;  
+				echo '<br/>error: <br/>'.$exception->getMessage();
+				return NULL;
+			}
+		}
 	}
 	
 	public function registrar($form = 'tc') 
