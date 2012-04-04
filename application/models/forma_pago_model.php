@@ -36,6 +36,14 @@ class Forma_Pago_model extends CI_Model {
         //return $query->result();
     }
 	
+	/**
+	 * Devuelve la lista de países del catálogo de Think
+	 * */
+	function listar_paises_think() {
+		$this->db->select('country_code2 as id_pais, country_name as pais');		
+		return $resultado = $this->db->get('CMS_CatPaisThink');
+	}
+	
 	function existe_tc($datos_tc)
 	{
 		$campos = array('id_clienteIn' 	=> 	$datos_tc['id_clienteIn'],

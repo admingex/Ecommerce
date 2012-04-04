@@ -8,7 +8,7 @@ $(document).ready(function() {
 	var registro = false;
 	
 	/*tipo inicio*/
-	$("input[id='tipo_inicio']").bind('click',function(){
+	$("input[id='tipo_inicio']").bind('click', function() {
 		var tipo_inicio = $("#tipo_inicio:checked");	//val()
 		if (tipo_inicio.val() == "nuevo") {
 			passwd.attr("disabled", true);

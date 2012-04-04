@@ -139,7 +139,7 @@ class Direccion_Envio_model extends CI_Model {
 	 * Devuelve los datos de dirección por Código Postal  
 	**/
 	function obtener_direccion_sepomex($codigo_postal) {
-		$this->db->select('CMS_CatEstado.EDO as clave_estado, CMS_CatEstado.ESTADO as estado, CMS_CatCiudad.CIUDAD as ciudad, CMS_CatCodigoPostal.ZIP as codigo_postal');
+		$this->db->select('CMS_CatEstado.EDO as clave_estado, CMS_CatEstado.ESTADO as estado, CMS_CatCiudad.CIUDAD as ciudad, CMS_CatCodigoPostal.ZIP as codigo_postal, CMS_CatCodigoPostal.COLONIA AS colonia,');
 		$this->db->from('CMS_CatCodigoPostal');
 		$this->db->join('CMS_CatCiudad', 'CMS_CatCiudad.cve_ciudad = CMS_CatCodigoPostal.cve_ciudad');
 		$this->db->join('CMS_CatEstado', 'CMS_CatEstado.cve_estado = CMS_CatCodigoPostal.cve_estado');
