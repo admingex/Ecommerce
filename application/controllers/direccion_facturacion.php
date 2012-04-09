@@ -69,6 +69,7 @@ class Direccion_Facturacion extends CI_Controller {
 							'id_rs'=>$id_rs							
 						);						
 						$this->session->set_userdata($datars);
+						$this->session->userdata('id_rs');
 						redirect('direccion_facturacion/registrar_direccion');																	
 					}					 																							
 			}	

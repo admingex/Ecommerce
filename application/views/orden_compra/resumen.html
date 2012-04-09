@@ -43,10 +43,8 @@
 				<input type="radio" name="requiere_factura" value="no" <?php echo $checkno; ?> onclick="location.href='<?php echo site_url("direccion_facturacion/requiere_factura"); ?>'"/>no
 				<?php
 				if($mdf){
-					if (is_object($dir_facturacion))
-						include("detalle_facturacion.html"); 
-					else 
-						include("detalle_facturacion_temp.html");																											
+					if (isset($dir_facturacion))
+						include("detalle_facturacion.html"); 																																
 				}		 
 				?>
 				

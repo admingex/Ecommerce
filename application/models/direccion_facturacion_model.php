@@ -150,6 +150,15 @@ class Direccion_Facturacion_model extends CI_Model {
 		return $row;  		
 	}
 	
+	function busca_relacion($cte, $rs, $ds){
+		$resultado = $this->db->get_where('CMS_RelDireccionRazonSocial', 
+										   array('id_razonSocialIn'=>$rs,
+										         'id_clienteIn'=>$cte,
+										         'id_consecutivoSi'=> $ds, 
+										   )
+										 );
+		return $resultado;								 
+	}
 	
 	function actualizar_direccion($id_cliente, $id_consecutivo,$datos){		
 		$this->db->where(array(	'id_consecutivoSi' => $id_consecutivo, 'id_clienteIn' => $id_cliente));

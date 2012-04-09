@@ -34,23 +34,40 @@ class Orden_Compra extends CI_Controller {
 	public function index(){		
 		if ($_POST) {
 			if (array_key_exists('razon_social_seleccionada', $_POST)){
-				$this->session->set_userdata('dir_facturacion', $_POST['razon_social_seleccionada']);
+				$this->session->set_userdata('razon_social', $_POST['razon_social_seleccionada']);
 				$this->session->set_userdata('requiere_factura', 'si');						
 			}						
 		}	
 		else if($this->session->userdata('id_rs')){
 			$id_rs=$this->session->userdata('id_rs');
-			$this->session->set_userdata('dir_facturacion',$id_rs);		
+			$this->session->set_userdata('razon_social', $id_rs);		
 			$this->session->set_userdata('requiere_factura', 'si');					 		
 		}
 		
 		if ($_POST) {
 			if (array_key_exists('direccion_selecionada', $_POST)){
-				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);							
+				echo $cte=$this->id_cliente;
+				echo "este".$rs=$this->session->userdata('id_rs');				
+				$this->session->set_userdata('razon_social', $rs);				
+				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);
+				echo $ds=$this->session->userdata('direccion_f');
+				$rbr=$this->facturacion_modelo->busca_relacion($cte, $rs, $ds);
+				if($rbr->num_rows()==0){					
+					$this->load->helper('date');
+					$fecha=mdate('%Y/%m/%d',time());
+					$data_dir = array(
+                   		'id_clienteIn'  => $cte,
+                   		'id_consecutivoSi' => $ds,
+                   		'id_razonSocialIn' => $rs,
+                   		'fecha_registroDt' => $fecha                    				                    		
+               		);																										
+					$this->facturacion_modelo->insertar_rs_direccion($data_dir);		
+					$this->session->set_userdata('requiere_factura', 'si');	
+				}																			
 			}	
 			else{
 			$id_cliente = $this->id_cliente;
-			$rs=$this->session->userdata('dir_facturacion');
+			$rs=$this->session->userdata('razon_social');
 			$rdf=$this->facturacion_modelo->obtiene_rs_dir($id_cliente, $rs);		
 				foreach($rdf->result_array() as $dire) {					
 					$this->session->set_userdata('direccion_f',$dire['id_consecutivoSi']);
@@ -122,21 +139,15 @@ class Orden_Compra extends CI_Controller {
 		}
 		
 		//rs_facturación
-		$consecutivo = $this->session->userdata('dir_facturacion');
-		if (is_array($consecutivo)) {
-			//$detalle_envio = $this->session->userdata('dir_envio');
-			$data['dir_facturacion'] = $consecutivo;
-		} else {
-			$detalle_facturacion = $this->facturacion_modelo->obtener_rs($consecutivo);
-			$data['dir_facturacion']=$detalle_facturacion;
+		$consecutivors = $this->session->userdata('razon_social');
+		if (isset($consecutivors)) {
+			$detalle_facturacion = $this->facturacion_modelo->obtener_rs($consecutivors);
+			$data['dir_facturacion']=$detalle_facturacion;		
 		}		
 		
 		//direccion facturacion
 		$consecutivo_dir = $this->session->userdata('direccion_f');
-		if (is_array($consecutivo_dir)) {
-			//$detalle_envio = $this->session->userdata('dir_envio');
-			$data['direccion_f'] = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo_dir);
-		} else {
+		if (isset($consecutivo_dir)) {			
 			$detalle_direccion = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo_dir);
 			$data['direccion_f']=$detalle_direccion;			
 		}	
