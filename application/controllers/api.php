@@ -20,7 +20,7 @@ class Api extends CI_Controller {
 	public function listar($sitio= "", $canal= "", $promocion= "", $formato= ""){								
 		$data['title']='Promociones';		
 		$data['listar'] = TRUE;
-		$data['detalle'] = FALSE;					
+		$data['detalle'] = FALSE;						
 		
 		$segm=$this->uri->total_segments();
 		if($segm==2){
@@ -43,12 +43,7 @@ class Api extends CI_Controller {
 				$promocion="";
 				$formato=$cad;
 			}
-		}		
-		$pago=FALSE;
-		if($this->uri->segment($segm)=="pago"){
-			$pago=TRUE;
-		}		
-			
+		}														
 		
 		if((empty($sitio)) && (empty($canal)) && (empty($promocion))){			
 			$sitios=$this->modelo->obtener_sitios();
@@ -89,17 +84,17 @@ class Api extends CI_Controller {
 		}
 		
 		else if(($sitio) && ($canal) && ($promocion)){
-						
-			$this->detalle($sitio, $canal, $promocion, $formato, $pago);
+			$ultimosegmento=$this->uri->segment($segm);									
+			$this->detalle($sitio, $canal, $promocion, $formato, $ultimosegmento);
 		}			
 	}
 	
-	public function detalle($sitio, $canal, $promocion, $formato, $pago){
+	public function detalle($sitio, $canal, $promocion, $formato, $ultimosegmento){
 	  	
     	$data['detalle'] = TRUE;	  	
     	$data['listar'] = FALSE;	  	
     	$data['title']='Promociones';  
-	  	    	
+	  	$pago=FALSE;	    	
 	  	
     	if(!empty($sitio)){	  
 	  		$rsitio= $this->modelo->obtener_sitio($sitio);	
@@ -122,6 +117,9 @@ class Api extends CI_Controller {
 				$rarticulos= $this->modelo->obtener_articulos($promocion);
 				if($rarticulos->num_rows()!=0){
 					$data['articulos']=$rarticulos->result_array();
+				}
+				if($ultimosegmento=="pago"){									
+					$pago=TRUE;
 				}
 			}      		
     	}		
