@@ -44,7 +44,11 @@ class Api extends CI_Controller {
 				$formato=$cad;
 			}
 		}		
-					
+		$pago=FALSE;
+		if($this->uri->segment($segm)=="pago"){
+			$pago=TRUE;
+		}		
+			
 		
 		if((empty($sitio)) && (empty($canal)) && (empty($promocion))){			
 			$sitios=$this->modelo->obtener_sitios();
@@ -86,11 +90,11 @@ class Api extends CI_Controller {
 		
 		else if(($sitio) && ($canal) && ($promocion)){
 						
-			$this->detalle($sitio, $canal, $promocion, $formato);
+			$this->detalle($sitio, $canal, $promocion, $formato, $pago);
 		}			
 	}
 	
-	public function detalle($sitio, $canal, $promocion, $formato){
+	public function detalle($sitio, $canal, $promocion, $formato, $pago){
 	  	
     	$data['detalle'] = TRUE;	  	
     	$data['listar'] = FALSE;	  	
@@ -122,8 +126,11 @@ class Api extends CI_Controller {
 			}      		
     	}		
 		$this->session->set_userdata('promociones', $data);
-		$this->formato($formato,$data);	  	       		
-		//redirect('login'); 			  	    		  		
+		$this->formato($formato,$data);	  
+		if($pago){
+			redirect('login');
+		}	       		
+		 			  	    		  		
   }  
 		
 			
@@ -217,7 +224,7 @@ class Api extends CI_Controller {
 				
 				if(!empty($data['sitio'])){
 					$response .="<detalle>";	
-														
+					$response .="<sitios>";									
 					$response .="<sitio>";
 					$response .="<id_sitioSi>";
 					$response .=$data['sitio']->id_sitioSi;
@@ -226,7 +233,9 @@ class Api extends CI_Controller {
 					$response .=$data['sitio']->urlVc;
 					$response .="</urlVc>";													
 					$response .="</sitio>";
+					$response .="</sitios>";
 					
+					$response .="<canales>";
 					$response .="<canal>";
 					$response .="<id_canalSi>";
 					$response .=$data['canal']->id_canalSi;
@@ -235,7 +244,9 @@ class Api extends CI_Controller {
 					$response .=$data['canal']->descripcionVc;
 					$response .="</descripcionVc>";					
 					$response .="</canal>";
+					$response .="</canales>";
 					
+					$response .="<promociones>";
 					$response .="<promocion>";
 					$response .="<id_promocionIn>";
 					$response .=$data['promocion']->id_promocionIn;
@@ -261,13 +272,78 @@ class Api extends CI_Controller {
 					$response .="<precioF>";
 					$response .=$data['promocion']->precioF;
 					$response .="</precioF>";						
-					$response .="</promocion>";					
-					
+					$response .="</promocion>";	
+					$response .="</promociones>";
+									
+					$response .="<articulos>";
 					foreach($data['articulos'] as $articulo){
-						$response .="<articulo>";
+						$response .="<articulo>";							
+						$response .="<id_articuloIn>";
+						$response .=$articulo['id_articuloIn'];
+						$response .="</id_articuloIn>";
+						$response .="<id_promocionIn>";
+						$response .=$articulo['id_promocionIn'];
+						$response .="</id_promocionIn>";
+						$response .="<order_code_type>";
+						$response .=$articulo['order_code_type'];
+						$response .="</order_code_type>";
+						$response .="<order_code_id>";
+						$response .=$articulo['order_code_id'];
+						$response .="</order_code_id>";																		
+						$response .="<source_code_id>";
+						$response .=$articulo['source_code_id'];
+						$response .="</source_code_id>";
+						$response .="<oc_id>";
+						$response .=$articulo['oc_id'];
+						$response .="</oc_id>";
+						$response .="<tipo_productoVc>";
 						$response .=$articulo['tipo_productoVc'];
+						$response .="</tipo_productoVc>";
+						$response .="<medio_entregaVc>";
+						$response .=$articulo['medio_entregaVc'];
+						$response .="</medio_entregaVc>";
+						$response .="<product_id>";
+						$response .=$articulo['product_id'];
+						$response .="</product_id>";
+						$response .="<tarifaDc>";
+						$response .=$articulo['tarifaDc'];
+						$response .="</tarifaDc>";
+						$response .="<monedaVc>";
+						$response .=$articulo['monedaVc'];
+						$response .="</monedaVc>";
+						$response .="<taxableBi>";
+						$response .=$articulo['taxableBi'];
+						$response .="</taxableBi>";
+						$response .="<renovacion_automaticaBi>";
+						$response .=$articulo['renovacion_automaticaBi'];
+						$response .="</renovacion_automaticaBi>";
+						$response .="<id_tipo_distribucionSi>";
+						$response .=$articulo['id_tipo_distribucionSi'];
+						$response .="</id_tipo_distribucionSi>";						
+						$response .="<numero_ejemplares>";
+						$response .=$articulo['numero_ejemplares'];
+						$response .="</numero_ejemplares>";
+						$response .="<product_color>";
+						$response .=$articulo['product_color'];
+						$response .="</product_color>";
+						$response .="<product_size>";
+						$response .=$articulo['product_size'];
+						$response .="</product_size>";
+						$response .="<product_style>";
+						$response .=$articulo['product_style'];
+						$response .="</product_style>";
+						$response .="<qty>";
+						$response .=$articulo['qty'];
+						$response .="</qty>";
+						$response .="<issue_id>";
+						$response .=$articulo['issue_id'];
+						$response .="</issue_id>";
+						$response .="<id_tipoArticuloSi>";
+						$response .=$articulo['id_tipoArticuloSi'];
+						$response .="</id_tipoArticuloSi>";
 						$response .="</articulo>";
-					}																											
+					}
+					$response .="</articulos>";																											
 					$response .="</detalle>";			 										
 				}					
 				$this->output->set_content_type("content-type: text/xml")->set_output($response);																									        		        								                																																				
