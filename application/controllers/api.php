@@ -132,12 +132,11 @@ class Api extends CI_Controller {
 			$this->output->set_content_type('application/json')->set_output(json_encode($data));			
 		}
 		else{
-			if($formato=="xml"){
-																				
-				$response ='<?xml version="1.0" encoding="utf-8"?>';
-				
+			if($formato=="xml"){																				
+				$response ='<?xml version="1.0" encoding="utf-8"?>';				
 				if(!empty($data['sitios'])){
 					if(is_array($data['sitios'])){
+						$response .="<detalle>";	
 						$response .= "<sitio>";	
 						foreach($data['sitios'] as $sit){
 							$response .="<id_sitioSi>";
@@ -149,11 +148,13 @@ class Api extends CI_Controller {
 							$response .="</urlVc>";					
 						}
 						$response .='</sitio>';		
+						$response .="</detalle>";	
 					}					
 				}
 				if(!empty($data['canales'])){
 					if(is_array($data['canales'])){
-						$response .= "<canal>";	
+						$response .="<detalle>";	
+						$response .= "<canal>";
 						foreach($data['canales'] as $can){
 							$response .="<id_canalSi>";
 							$response .=$can['id_canalSi'];
@@ -164,10 +165,12 @@ class Api extends CI_Controller {
 							$response .="</descripcionVc>";					
 						}
 						$response .='</canal>';		
+						$response .="</detalle>";	
 					}					
 				}
 				if(!empty($data['promociones'])){
 					if(is_array($data['promociones'])){
+						$response .="<detalle>";	
 						$response .= "<promocion>";	
 						foreach($data['promociones'] as $prom){
 							$response .="<id_promocionIn>";
@@ -176,30 +179,90 @@ class Api extends CI_Controller {
 							
 							$response .="<descripcionVc>";
 							$response .=$prom['descripcionVc'];
-							$response .="</descripcionVc>";					
+							$response .="</descripcionVc>";
+							
+							$response .="<inicio_promocionDt>";
+							$response .=$prom['inicio_promocionDt'];
+							$response .="</inicio_promocionDt>";
+							
+							$response .="<fin_promocionDt>";
+							$response .=$prom['fin_promocionDt'];
+							$response .="</fin_promocionDt>";
+							
+							$response .="<terminoVc>";
+							$response .=$prom['terminoVc'];
+							$response .="</terminoVc>";
+							
+							$response .="<fecha_creacionDt>";
+							$response .=$prom['fecha_creacionDt'];
+							$response .="</fecha_creacionDt>";
+							
+							$response .="<email_usuario_altaVc>";
+							$response .=$prom['email_usuario_altaVc'];
+							$response .="</email_usuario_altaVc>";		
+							
+							$response .="<precioF>";
+							$response .=$prom['precioF'];
+							$response .="</precioF>";											
 						}
-						$response .='</promocion>';		
+						$response .='</promocion>';
+						$response .="</detalle>";			
 					}					
 				}
 				
 				if(!empty($data['sitio'])){
-					$response .="<detalle>";										
+					$response .="<detalle>";	
+														
 					$response .="<sitio>";
+					$response .="<id_sitioSi>";
+					$response .=$data['sitio']->id_sitioSi;
+					$response .="</id_sitioSi>";							
+					$response .="<urlVc>";
 					$response .=$data['sitio']->urlVc;
+					$response .="</urlVc>";													
 					$response .="</sitio>";
+					
 					$response .="<canal>";
+					$response .="<id_canalSi>";
 					$response .=$data['canal']->id_canalSi;
+					$response .="</id_canalSi>";							
+					$response .="<descripcionVc>";
+					$response .=$data['canal']->descripcionVc;
+					$response .="</descripcionVc>";					
 					$response .="</canal>";
+					
 					$response .="<promocion>";
+					$response .="<id_promocionIn>";
+					$response .=$data['promocion']->id_promocionIn;
+					$response .="</id_promocionIn>";							
+					$response .="<descripcionVc>";
 					$response .=$data['promocion']->descripcionVc;
+					$response .="</descripcionVc>";							
+					$response .="<inicio_promocionDt>";
+					$response .=$data['promocion']->inicio_promocionDt;
+					$response .="</inicio_promocionDt>";							
+					$response .="<fin_promocionDt>";
+					$response .=$data['promocion']->fin_promocionDt;
+					$response .="</fin_promocionDt>";							
+					$response .="<terminoVc>";
+					$response .=$data['promocion']->terminoVc;
+					$response .="</terminoVc>";							
+					$response .="<fecha_creacionDt>";
+					$response .=$data['promocion']->fecha_creacionDt;
+					$response .="</fecha_creacionDt>";							
+					$response .="<email_usuario_altaVc>";
+					$response .=$data['promocion']->email_usuario_altaVc;
+					$response .="</email_usuario_altaVc>";
+					$response .="<precioF>";
+					$response .=$data['promocion']->precioF;
+					$response .="</precioF>";						
 					$response .="</promocion>";					
 					
 					foreach($data['articulos'] as $articulo){
 						$response .="<articulo>";
 						$response .=$articulo['tipo_productoVc'];
 						$response .="</articulo>";
-					}																
-											 
+					}																											
 					$response .="</detalle>";			 										
 				}					
 				$this->output->set_content_type("content-type: text/xml")->set_output($response);																									        		        								                																																				

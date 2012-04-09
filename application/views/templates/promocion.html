@@ -2,8 +2,7 @@
 		<p>
 			<?php							
 				if($this->session->userdata('promociones')){					
-						$res=$this->session->userdata('promociones');	
-											
+						$res=$this->session->userdata('promociones');												
 						echo "<br />Sitio: ".$res['sitio']->id_sitioSi.$res['sitio']->urlVc."<br />";															
 						echo "<br />Descripcion: ".$res['promocion']->descripcionVc;	
 						echo "<br />Precio".$res['promocion']->precioF;

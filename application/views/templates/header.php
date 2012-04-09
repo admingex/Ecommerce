@@ -172,5 +172,5 @@
     <div id="main">
     		<?php
 				include "menu.html"; 
-			    include ("promocion.html");
+			    include "promocion.html";
 			?>
