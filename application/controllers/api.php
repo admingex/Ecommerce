@@ -137,42 +137,46 @@ class Api extends CI_Controller {
 				if(!empty($data['sitios'])){
 					if(is_array($data['sitios'])){
 						$response .="<detalle>";	
-						$response .= "<sitio>";	
+						$response .= "<sitios>";	
 						foreach($data['sitios'] as $sit){
+							$response .= "<sitio>";
 							$response .="<id_sitioSi>";
 							$response .=$sit['id_sitioSi'];
 							$response .="</id_sitioSi>";
 							
 							$response .="<urlVc>";
 							$response .=$sit['urlVc'];
-							$response .="</urlVc>";					
+							$response .="</urlVc>";
+							$response .= "</sitio>";					
 						}
-						$response .='</sitio>';		
+						$response .='</sitios>';		
 						$response .="</detalle>";	
 					}					
 				}
 				if(!empty($data['canales'])){
 					if(is_array($data['canales'])){
 						$response .="<detalle>";	
-						$response .= "<canal>";
+						$response .= "<canales>";
 						foreach($data['canales'] as $can){
+							$response .= "<canal>";
 							$response .="<id_canalSi>";
 							$response .=$can['id_canalSi'];
-							$response .="</id_canalSi>";
-							
+							$response .="</id_canalSi>";							
 							$response .="<descripcionVc>";
-							$response .=$can['descripcionVc'];
-							$response .="</descripcionVc>";					
+							$response .=$can['descripcionVc'];							
+							$response .="</descripcionVc>";		
+							$response .= "</canal>";			
 						}
-						$response .='</canal>';		
+						$response .='</canales>';		
 						$response .="</detalle>";	
 					}					
 				}
 				if(!empty($data['promociones'])){
 					if(is_array($data['promociones'])){
 						$response .="<detalle>";	
-						$response .= "<promocion>";	
+						$response .= "<promociones>";	
 						foreach($data['promociones'] as $prom){
+							$response .= "<promocion>";
 							$response .="<id_promocionIn>";
 							$response .=$prom['id_promocionIn'];
 							$response .="</id_promocionIn>";
@@ -203,9 +207,10 @@ class Api extends CI_Controller {
 							
 							$response .="<precioF>";
 							$response .=$prom['precioF'];
-							$response .="</precioF>";											
+							$response .="</precioF>";	
+							$response .= "</promocion>";										
 						}
-						$response .='</promocion>';
+						$response .='</promociones>';
 						$response .="</detalle>";			
 					}					
 				}
