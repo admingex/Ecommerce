@@ -45,14 +45,14 @@
 			<div class="form_requerid">
 				<select id="sel_pais" name="sel_pais">
 					<?php
-					if (isset($lista_paises_think)) {
-						$id_pais = "MX";				//Mexico por default
+					if (isset($lista_paises_amex)) {
+						$id_pais = "MEX";				//Mexico por default
 						if (isset($tarjeta_amex->pais))
 							$id_pais = $tarjeta_amex->pais;
 						if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
 							$id_pais = $_POST['sel_pais'];
 							
-						foreach($lista_paises_think->result() as $pais)
+						foreach($lista_paises_amex->result() as $pais)
 						{
 							if ($id_pais == $pais->id_pais) {
 								echo "<option value='".$pais->id_pais."' selected='true'>".

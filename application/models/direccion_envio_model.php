@@ -93,7 +93,8 @@ class Direccion_Envio_model extends CI_Model {
 	 * Devuelve la lista de países del catálogo de Think
 	 * */
 	function listar_paises_think() {
-		$this->db->select('country_code2 as id_pais, country_name as pais');		
+		$this->db->select('country_code2 as id_pais, country_name as pais');
+		$this->db->order_by('pais', 'asc');		
 		return $resultado = $this->db->get('CMS_CatPaisThink');
 	}
 
@@ -197,11 +198,28 @@ class Direccion_Envio_model extends CI_Model {
 	 */
 	function get_pago_express($id_cliente) 
 	{
-		$this->db->select('id_consecutivoSi');
+		$this->db->select('id_consecutivoSi as consecutivo');
 		$res = $this->db->get_where('CMS_IntDireccion',
 								array('id_clienteIn' => $id_cliente,
 										'address_type' => self::$TIPO_DIR['RESIDENCE'],
 										'id_estatusSi' => self::$CAT_ESTATUS['DEFAULT']));
+		if ($res->num_rows() == 0) {
+			//echo "no hay direccion para pago express: ";
+			
+			//entonces recupera la primer tarjeta activa
+			$this->db->select_min('id_consecutivoSi', 'consecutivo');
+			$res = $this->db->get_where('CMS_IntDireccion',
+								array('id_clienteIn' => $id_cliente,
+										'address_type' => self::$TIPO_DIR['RESIDENCE'],
+										'id_estatusSi' => self::$CAT_ESTATUS['HABILITADA']));
+			/*
+			echo "<pre>";
+			print_r($res->row());
+			echo "</pre>";
+			*/
+			//exit();
+		}
+		
 		$row_res = $res->row();
 		return $row_res;
 	}

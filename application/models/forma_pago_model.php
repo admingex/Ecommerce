@@ -37,13 +37,19 @@ class Forma_Pago_model extends CI_Model {
     }
 	
 	/**
-	 * Devuelve la lista de países del catálogo de Think
+	 * Devuelve la lista de países del catálogo de Amex local
 	 * */
-	function listar_paises_think() {
-		$this->db->select('country_code2 as id_pais, country_name as pais');		
-		return $resultado = $this->db->get('CMS_CatPaisThink');
+	function listar_paises_amex() {
+		$this->db->select('valorVc as id_pais, descripcionVc as pais');
+		$this->db->order_by('pais', 'asc');		
+		return $resultado = $this->db->get('CMS_CatPaisAmex');
 	}
 	
+	/**
+	 * Revisa si existe la tarjeta con estatus activo.
+	 * Revisa el id del cliente, el consecutivo, la terminación, el nombre del titular y
+	 * la fecha de expiración.
+	 */
 	function existe_tc($datos_tc)
 	{
 		$campos = array('id_clienteIn' 	=> 	$datos_tc['id_clienteIn'],
@@ -75,7 +81,9 @@ class Forma_Pago_model extends CI_Model {
 							'id_estatusSi' => self::$CAT_ESTATUS['DEFAULT']));
 		$resultado = $this->db->update('CMS_IntTC', array('id_estatusSi' => self::$CAT_ESTATUS['HABILITADA']));
 	}
-	
+	/**
+	 * Deshabilita lógicamente la tarjeta en la base de datus cambiando su estatus.
+	 */
 	function eliminar_tarjeta($id_cliente, $consecutivo)
 	{
 		$this->db->where(array(	'id_TCSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
@@ -87,6 +95,9 @@ class Forma_Pago_model extends CI_Model {
 		}
 	}
 	
+	/**
+	 * Actualiza la información dela tarjeta.
+	 */
 	function actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info)
 	{
 		$this->db->where(array(	'id_TCSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
@@ -100,6 +111,9 @@ class Forma_Pago_model extends CI_Model {
 		}
 	}
 	
+	/**
+	 * Recupera la información de una tarjeta en específico.
+	 */
 	function detalle_tarjeta($id_TCSi, $id_cliente)
 	{
 		$res = $this->db->get_where('CMS_IntTC', 
@@ -109,21 +123,50 @@ class Forma_Pago_model extends CI_Model {
 		return $row_res;
 	}
 	
+	/**
+	 * Revisa si existe alguna tarjeta marcada para pago exprés y si no devuelve la primer tarjeta registrada
+	 * para ser utilizada para el cobro.
+	 */
 	function get_pago_express($id_cliente) 
 	{
-		$this->db->select('id_TCSi');
+		$this->db->select('id_TCSi as consecutivo');
 		$res = $this->db->get_where('CMS_IntTC',
 								array('id_clienteIn' => $id_cliente,
 										'id_estatusSi' => self::$CAT_ESTATUS['DEFAULT']));
+										
+		if ($res->num_rows() == 0) {
+			//echo "no hay para pago express: ";
+			
+			//entonces recupera la primer tarjeta activa
+			$this->db->select_min('id_TCSi', 'consecutivo');
+			$res = $this->db->get_where('CMS_IntTC',
+								array('id_clienteIn' => $id_cliente,
+										'id_estatusSi' => self::$CAT_ESTATUS['HABILITADA']));
+			/*
+			echo "<pre>";
+			print_r($res->row());
+			echo "</pre>";
+			*/
+			exit();
+		}
+			
 		$row_res = $res->row();
+		
 		return $row_res;
 	}
 	
+	/**
+	 * Recupera los tipos de tarjeta que se listarán en el catálogo para el registro de la forma de pago.
+	 */
 	function listar_tipos_tarjeta() 
 	{
 		//excepto AMEX, esto funciona con la BD local.
-		$this->db->not_like('descripcionVc', 'AMERICAN EXPRESS');	
-		return $this->db->get_where('CMS_CatTipoTarjeta', array('estatusBi' => TRUE));	
+		//$this->db->not_like('descripcionVc', 'AMERICAN EXPRESS');
+		$this->db->select('id_tipo_tarjetaSi as id_tipo_tarjeta, descripcionVc as descripcion');
+		$this->db->order_by('descripcion');
+		$res =  $this->db->get_where('CMS_CatTipoTarjeta', array('estatusBi' => TRUE));
+		
+		return $res->result();	
 	}
 	
 	/**

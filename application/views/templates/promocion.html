@@ -1,13 +1,49 @@
 <div id="promocion">
-		<p>
-			<?php							
-				if($this->session->userdata('promociones')){					
-						$res=$this->session->userdata('promociones');												
-						echo "<br />Sitio: ".$res['sitio']->id_sitioSi.$res['sitio']->urlVc."<br />";															
-						echo "<br />Descripcion: ".$res['promocion']->descripcionVc;	
-						echo "<br />Precio".$res['promocion']->precioF;
-						echo "<br />Ejemplares: ".$res['promocion']->terminoVc;																										
-				}													
-			?>	
-		</p>	
+	<?php
+		if($this->session->userdata('promociones')) {
+			$res = $this->session->userdata('promociones');
+			$total = 0;
+			foreach ($res['articulos'] as $a) {
+				$total += $a['tarifaDc'];
+			}
+	?>
+		<table>
+			<thead>
+				<tr class="promocion">
+					<th>
+					<?php echo $res['promocion']->descripcionVc; ?>
+						
+					</th>
+					<th>
+						Total
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="articulo">
+						<ul>
+							<?php 
+								foreach($res['articulos'] as $articulo) {                                    
+								    echo "<li>" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'] . "</li>";								 	                                        
+								}
+							?>
+						</ul>
+					</td>
+					<td>$<?php echo $total; ?></td>		
+				</tr>		
+								
+					<?php
+					/*												
+					echo "<br />Sitio: ".$res['sitio']->id_sitioSi.$res['sitio']->urlVc."<br />";															
+					echo "<br />Descripcion: ".$res['promocion']->descripcionVc;	
+					echo "<br />Precio".$res['promocion']->precioF;
+					echo "<br />Ejemplares: ".$res['promocion']->terminoVc;
+					echo "<br />Productos:";     
+					
+					*/
+					?>	
+			</tbody>
+		</table>	
+	<?php } ?>
 </div>

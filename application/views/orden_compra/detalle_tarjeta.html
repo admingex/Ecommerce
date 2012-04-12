@@ -13,7 +13,7 @@
 				value="<?php if(isset($_POST['txt_codigo'])) echo htmlspecialchars($_POST['txt_codigo']);?>"/>
 			<span class="validation_message"><?php if(isset($reg_errores['txt_codigo'])) echo ($reg_errores['txt_codigo']);?></span>
 		</div>
-		<?php if (isset($amex)) : ?>
+		<?php if (isset($amex) && !empty($amex)) : ?>
 		<br/>
 		<h4>Direcci&oacute;n Amex</h4>
 		<p>	<?php 

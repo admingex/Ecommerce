@@ -20,7 +20,7 @@ class Api extends CI_Controller {
 	public function listar($sitio= "", $canal= "", $promocion= "", $formato= ""){								
 		$data['title']='Promociones';		
 		$data['listar'] = TRUE;
-		$data['detalle'] = FALSE;					
+		$data['detalle'] = FALSE;						
 		
 		$segm=$this->uri->total_segments();
 		if($segm==2){
@@ -43,12 +43,7 @@ class Api extends CI_Controller {
 				$promocion="";
 				$formato=$cad;
 			}
-		}		
-		$pago=FALSE;
-		if($this->uri->segment($segm)=="pago"){
-			$pago=TRUE;
-		}		
-			
+		}														
 		
 		if((empty($sitio)) && (empty($canal)) && (empty($promocion))){			
 			$sitios=$this->modelo->obtener_sitios();
@@ -89,17 +84,17 @@ class Api extends CI_Controller {
 		}
 		
 		else if(($sitio) && ($canal) && ($promocion)){
-						
-			$this->detalle($sitio, $canal, $promocion, $formato, $pago);
+			$ultimosegmento=$this->uri->segment($segm);	
+			$this->detalle($sitio, $canal, $promocion, $formato, $ultimosegmento);
 		}			
 	}
 	
-	public function detalle($sitio, $canal, $promocion, $formato, $pago){
+	public function detalle($sitio, $canal, $promocion, $formato, $ultimosegmento){
 	  	
     	$data['detalle'] = TRUE;	  	
     	$data['listar'] = FALSE;	  	
     	$data['title']='Promociones';  
-	  	    	
+	  	$pago=FALSE;	    	
 	  	
     	if(!empty($sitio)){	  
 	  		$rsitio= $this->modelo->obtener_sitio($sitio);	
@@ -123,6 +118,9 @@ class Api extends CI_Controller {
 				if($rarticulos->num_rows()!=0){
 					$data['articulos']=$rarticulos->result_array();
 				}
+				if($ultimosegmento=="pago"){									
+					$pago=TRUE;
+				}
 			}      		
     	}		
 		$this->session->set_userdata('promociones', $data);
@@ -136,7 +134,7 @@ class Api extends CI_Controller {
 			
 	private function formato($formato, $data){		
 		if((empty($formato)) || ($formato=='json')){
-			$this->output->set_content_type('application/json')->set_output(json_encode($data));			
+			$this->output->set_output(json_encode($data));			
 		}
 		else{
 			if($formato=="xml"){																				
@@ -312,10 +310,10 @@ class Api extends CI_Controller {
 						$response .=$articulo['monedaVc'];
 						$response .="</monedaVc>";
 						$response .="<taxableBi>";
-						$response .=$articulo['taxableBi'];
+						$response .=(int)$articulo['taxableBi'];
 						$response .="</taxableBi>";
 						$response .="<renovacion_automaticaBi>";
-						$response .=$articulo['renovacion_automaticaBi'];
+						$response .=(int)$articulo['renovacion_automaticaBi'];
 						$response .="</renovacion_automaticaBi>";
 						$response .="<id_tipo_distribucionSi>";
 						$response .=$articulo['id_tipo_distribucionSi'];
@@ -341,12 +339,15 @@ class Api extends CI_Controller {
 						$response .="<id_tipoArticuloSi>";
 						$response .=$articulo['id_tipoArticuloSi'];
 						$response .="</id_tipoArticuloSi>";
+						$response .="<requiere_envioBi>";
+						$response .=(int)$articulo['requiere_envioBi'];
+						$response .="</requiere_envioBi>";
 						$response .="</articulo>";
 					}
 					$response .="</articulos>";																											
 					$response .="</detalle>";			 										
 				}					
-				$this->output->set_content_type("content-type: text/xml")->set_output($response);																									        		        								                																																				
+				$this->output->set_output($response);																									        		        								                																																				
 			}
 			else if($formato=="html"){				
 				$this->cargar_vista('', 'api', $data);	

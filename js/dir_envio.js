@@ -3,6 +3,8 @@
  */
 
 $(document).ready(function() {
+	var forms = $("form[id*='registro']");
+	
 	var reg_cp = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
 	var reg_nombres = /^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i;
@@ -22,6 +24,12 @@ $(document).ready(function() {
 	var colonia_s	= $("#sel_colonias");
 	var telefono= $("#txt_telefono");
 	var estado, ciudad, colonia;
+	
+	if (forms.length > 0) {
+		//alert("cuantos hay: " + forms.length);
+		$("a.agregar_direccion").hide();
+	}
+	
 	//alert('hola mundo ecommerce GEx!');
 	$("#btn_cp").ajaxError(function() {
 		//alert('Error Handler invoked when an error ocurs on CP field!');		//Ok

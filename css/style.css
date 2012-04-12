@@ -84,6 +84,24 @@ ul
 	margin-top: 15px;
 }    
 
+#promocion {
+	float: left;
+	color: #FB3; 
+	font-weight: bold;
+	margin-top: 15px;
+	padding-left: 15px;
+}
+.promocion th {
+	font-size: 14px;
+	padding: 4px;
+}
+
+.articulo ul {
+	font-size: 12px;
+	padding: 4px;
+	
+}
+
 .menu_opcion{
 	float: left; 
 	margin: 0px 5px	;

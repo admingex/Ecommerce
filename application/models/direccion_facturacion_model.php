@@ -195,11 +195,23 @@ class Direccion_Facturacion_model extends CI_Model {
 	
 	function get_pago_express($id_cliente) 
 	{
-		$this->db->select('id_consecutivoSi');
+		$this->db->select('id_consecutivoSi as consecutivo');
 		$res = $this->db->get_where('CMS_IntDireccion',
 								array('id_clienteIn' => $id_cliente,
 										'address_type' => 1,//self::$TIPO_DIR['BISINESS'],
 										'id_estatusSi' => 3));//self::$CAT_ESTATUS['DEFAULT']));
+
+		if ($res->num_rows() == 0) {
+			//echo "no hay direccion para pago express: ";
+			
+			//entonces recupera la primer tarjeta activa
+			$this->db->select_min('id_consecutivoSi', 'consecutivo');
+			$res = $this->db->get_where('CMS_IntDireccion',
+								array('id_clienteIn' => $id_cliente,
+										'address_type' => 1,//self::$TIPO_DIR['RESIDENCE'],
+										'id_estatusSi' => 1));//self::$CAT_ESTATUS['HABILITADA']));
+		}
+
 		$row_res = $res->row();
 		return $row_res;
 	}

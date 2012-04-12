@@ -73,12 +73,12 @@ class Forma_Pago extends CI_Controller {
 		
 		//catálogo que se obtendrá del CCTC
 		if ($tipo == "tc") {
-			$lista_tipo_tarjeta = $this->lista_tipos_tarjeta_WS();
+			$lista_tipo_tarjeta = $this->listar_tipos_tarjeta();	//listar_tipos_tarjeta_WS();
 			$data['lista_tipo_tarjeta'] = $lista_tipo_tarjeta;
 		} else if ($tipo == "amex") {
 			//catálogo de paises de think
-			$lista_paises_think = $this->modelo->listar_paises_think();
-			$data['lista_paises_think'] = $lista_paises_think;
+			$lista_paises_amex = $this->modelo->listar_paises_amex();
+			$data['lista_paises_amex'] = $lista_paises_amex;
 		}
 		
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/forma_pago.js'></script>";
@@ -188,7 +188,7 @@ class Forma_Pago extends CI_Controller {
 		$data['subtitle'] = ucfirst('Nueva Forma de Pago');
 		
 		$consecutivo = $this->modelo->get_consecutivo($id_cliente);
-		$lista_tipo_tarjeta = $this->lista_tipos_tarjeta_WS();
+		$lista_tipo_tarjeta = $this->modelo->listar_tipos_tarjeta();	//$this->listar_tipos_tarjeta_WS();
 		
 		$form_values = array();		
 		$form_values = $this->get_datos_tarjeta();
@@ -382,8 +382,8 @@ class Forma_Pago extends CI_Controller {
 				
 				$data['tarjeta_amex'] = $tarjeta_amex;
 				//lista paises
-				$lista_paises_think = $this->modelo->listar_paises_think();
-				$data['lista_paises_think'] = $lista_paises_think;
+				$lista_paises_amex = $this->modelo->listar_paises_amex();
+				$data['lista_paises_amex'] = $lista_paises_amex;
 				
 			}
 			//var_dump($data['tarjeta_tc']);
@@ -398,8 +398,8 @@ class Forma_Pago extends CI_Controller {
 			} else if ($tipo == 'amex') {
 				$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
 				//lista paises
-				$lista_paises_think = $this->modelo->listar_paises_think();
-				$data['lista_paises_think'] = $lista_paises_think;
+				$lista_paises_amex = $this->modelo->listar_paises_amex();
+				$data['lista_paises_amex'] = $lista_paises_amex;
 				/*if ($data['tarjeta_amex']->consecutivo_cmsSi == 0)
 					$data['tarjeta_amex']->consecutivo_cmsSi = $consecutivo;*/
 				//var_dump($data['tarjeta_amex']);
@@ -894,7 +894,7 @@ class Forma_Pago extends CI_Controller {
 	/*
 	 * Consulta del catálogo de tarjetas de Banco de CCTC
 	 * */
-	private function lista_tipos_tarjeta_WS() 
+	private function listar_tipos_tarjeta_WS() 
 	{	
 		try {
 			//URL del WS debe estar en archivo protegido  
@@ -933,10 +933,10 @@ class Forma_Pago extends CI_Controller {
 	/*
 	 * Consulta del catálogo de tarjetad de Banco local
 	 * */
-	private function lista_tipos_tarjeta() 
+	private function listar_tipos_tarjeta() 
 	{	
 		$lista_tipo_tarjeta = $this->modelo->listar_tipos_tarjeta();
-		return $lista_tipo_tarjeta->result();
+		return $lista_tipo_tarjeta;
 	}
 	
 	private function get_datos_tarjeta()
