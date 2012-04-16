@@ -44,6 +44,9 @@ class Api extends CI_Controller {
 				$formato=$cad;
 			}
 		}														
+		if($formato=="pago"){
+		    $formato="";
+		}		
 		
 		if((empty($sitio)) && (empty($canal)) && (empty($promocion))){			
 			$sitios=$this->modelo->obtener_sitios();
@@ -132,7 +135,7 @@ class Api extends CI_Controller {
 				if($rarticulos->num_rows()!=0){
 					$data['articulos']=$rarticulos->result_array();
 					if($ultimosegmento=="pago"){									
-						$pago=TRUE;
+						$pago=TRUE;						
 					}
 				}
 				else{
@@ -142,12 +145,14 @@ class Api extends CI_Controller {
 			else{
 				$data['error']['promocion']="no existe informacion de esta promocion";
 			}
-    	}		
-		$this->session->set_userdata('promociones', $data);
-		$this->formato($formato,$data);	  
+    	}							  
 		if($pago){
+			$this->session->set_userdata('promocion', array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));
 			redirect('login');
 		}	       		
+		else{
+			$this->formato($formato,$data);
+		}
 		 			  	    		  		
   }  
 		
