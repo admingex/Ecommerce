@@ -34,7 +34,7 @@ class Registro extends CI_Controller {
 				$email_registrado = $this->modelo->verifica_registro_email($cliente_info['email']);
 				if($email_registrado->num_rows() == 0) {	//email no está registrado
 					
-					$cliente_info['id_clienteIn'] = $this->modelo->next_cliente_id() + 1;	//id del cliente
+					$cliente_info['id_clienteIn'] = $this->modelo->next_cliente_id();	//id del cliente
 					
 					if($this->registrar_cliente($cliente_info)) {							//registro exitoso	
 						$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation']);	//crear sesion,
