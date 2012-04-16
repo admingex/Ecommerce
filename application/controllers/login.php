@@ -126,7 +126,7 @@ class Login extends CI_Controller {
 		
 		//se crea el objeto con la informción del pago exprés
 		$pago_express = new Pago_Express($forma_pago_express, $dir_envio_express, $dir_facturacion_express);
-				
+		
 		//revisar si requiere forma de envío
 		$requiere_envio = FALSE;		
 		if ($this->session->userdata('promociones')) {

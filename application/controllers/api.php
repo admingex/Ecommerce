@@ -11,7 +11,7 @@ class Api extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		$this->load->model('api_model', 'modelo', true);	
-		$this->session->set_userdata('promociones', array());			
+		//$this->session->set_userdata('promociones', array());			
     }
 	
 	public function index(){												

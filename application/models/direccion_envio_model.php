@@ -219,7 +219,8 @@ class Direccion_Envio_model extends CI_Model {
 			*/
 			//exit();
 		}
-		
+		//print_r($res->row());
+		//exit();
 		$row_res = $res->row();
 		return $row_res;
 	}
