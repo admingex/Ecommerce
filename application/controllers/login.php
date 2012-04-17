@@ -20,12 +20,15 @@ class Login extends CI_Controller {
 		
 		//cargar el modelo en el constructor
 		$this->load->model('login_registro_model', 'login_registro_model', true);
+		//cargar los modelos para revisar el pago exprés
+		$this->load->model('forma_pago_model');
+		$this->load->model('direccion_envio_model');
+		$this->load->model('direccion_facturacion_model');
 		$this->api = new Api();
     }
 	
 	public function index()
-	{
-		print_r($this->session->all_userdata());	
+	{		
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'></script>";
 		$data['script'] = $script_file;
@@ -67,7 +70,9 @@ class Login extends CI_Controller {
 												
 						$this->session->set_userdata($datars);
 						
-						//$this->api->detalle($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'), '', '');
+						$res69=$this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));
+						$this->session->set_userdata('promociones', $res69);
+						
 						//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
 						$destino = $this->obtener_destino($cliente->id_cliente);
 						
@@ -115,11 +120,7 @@ class Login extends CI_Controller {
 	 * y coloca en sesión lo necesario para el pago exprés
 	 */
 	private function obtener_destino($id_cliente) 
-	{
-		//cargar los modelos para revisar el pago exprés
-		$this->load->model('forma_pago_model', 'forma_pago_model', true);
-		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
-		$this->load->model('direccion_facturacion_model', 'direccion_facturacion_model', true);
+	{		
 		
 		$forma_pago_express = $this->forma_pago_model->get_pago_express($id_cliente);		//devolverá un obj
 		$dir_envio_express = $this->direccion_envio_model->get_pago_express($id_cliente);		//devolverá un obj
@@ -179,7 +180,7 @@ class Login extends CI_Controller {
 		$this->session->set_userdata($array_session);
 	}
 	
-	private function cargar_vista($folder, $page, $data)
+	public function cargar_vista($folder, $page, $data)
 	{	
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);		

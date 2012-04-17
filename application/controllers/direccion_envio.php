@@ -26,7 +26,7 @@ class Direccion_Envio extends CI_Controller {
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//cargar el modelo en el constructor
-		//$this->load->model('direccion_envio_model', 'modelo', true);
+		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
 		//la sesion se carga automáticamente
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro

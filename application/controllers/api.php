@@ -10,7 +10,7 @@ class Api extends CI_Controller {
 	function __construct(){
         // Call the Model constructor
         parent::__construct();		
-		//$this->load->model('api_model', 'api_model', true);			
+		$this->load->model('api_model', 'api_model', true);			
     }
 	
 	public function index(){												
@@ -150,11 +150,51 @@ class Api extends CI_Controller {
 			redirect('login');
 		}	       		
 		else{
+			$this->session->set_userdata('promociones',$data);
 			$this->formato($formato,$data);
 		}
 		 			  	    		  		
   }  
 		
+	public function obtener_detalle_promo($sitio, $canal, $promocion){
+		if(!empty($sitio)){	  
+	  		$rsitio= $this->api_model->obtener_sitio($sitio);	
+			if($rsitio->num_rows()!=0){
+				$data['sitio']=$rsitio->row();
+			}		 
+			else{
+				$data['error']['sitio']="no existe informacion de este sitio";
+			} 
+    	}
+		
+		if(!empty($canal)){
+	  		$rcanal= $this->api_model->obtener_canal($canal);	
+			if($rcanal->num_rows()!=0){
+				$data['canal']=$rcanal->row();
+			}      
+			else{
+				$data['error']['canal']="no existe informacion de este canal";
+			}	  	
+    	}                    
+	  	
+    	if(!empty($promocion)){	  
+	  		$rpromocion= $this->api_model->obtener_promocion($promocion);	
+			if($rpromocion->num_rows()!=0){
+				$data['promocion']=$rpromocion->row();
+				$rarticulos= $this->api_model->obtener_articulos($promocion);
+				if($rarticulos->num_rows()!=0){
+					$data['articulos']=$rarticulos->result_array();					
+				}
+				else{
+					$data['error']['articulos']="no existen articulos en esta promocion";
+				}				
+			}      		
+			else{
+				$data['error']['promocion']="no existe informacion de esta promocion";
+			}
+    	}	
+		return $data;
+	}	
 			
 	private function formato($formato, $data){		
 		if((empty($formato)) || ($formato=='json')){			
