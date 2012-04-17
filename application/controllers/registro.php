@@ -12,7 +12,7 @@ class Registro extends CI_Controller {
         parent::__construct();
 		
 		//cargar el modelo en el constructor
-		$this->load->model('login_registro_model', 'modelo', true);
+		$this->load->model('login_registro_model', 'login_registro_model', true);
 		//la sesion se carga automáticamente
     }
 	
@@ -31,10 +31,10 @@ class Registro extends CI_Controller {
 			$cliente_info = $this->get_datos_login();
 			
 			if(empty($this->registro_errores)) {			//verificar la existencia de email y password.
-				$email_registrado = $this->modelo->verifica_registro_email($cliente_info['email']);
+				$email_registrado = $this->login_registro_model->verifica_registro_email($cliente_info['email']);
 				if($email_registrado->num_rows() == 0) {	//email no está registrado
 					
-					$cliente_info['id_clienteIn'] = $this->modelo->next_cliente_id();	//id del cliente
+					$cliente_info['id_clienteIn'] = $this->login_registro_model->next_cliente_id();	//id del cliente
 					
 					if($this->registrar_cliente($cliente_info)) {							//registro exitoso	
 						$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation']);	//crear sesion,
@@ -73,12 +73,12 @@ class Registro extends CI_Controller {
 	
 	private function registrar_cliente($cliente = array())
 	{
-		//$cliente_id = $this->modelo->next_cliente_id();
+		//$cliente_id = $this->login_registro_model->next_cliente_id();
 		//$cliente['id_clienteIn'] = $cliente_id;
 		
 		//var_dump($cliente);		
 		//exit();
-		return $this->modelo->registrar_cliente($cliente);
+		return $this->login_registro_model->registrar_cliente($cliente);
 	}
 	
 	private function get_datos_login()

@@ -23,8 +23,8 @@ class Direccion_Facturacion extends CI_Controller {
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//cargar el modelo en el constructor
-		$this->load->model('direccion_facturacion_model', 'modelo', true);
-		$this->load->model('direccion_envio_model', 'modelo_envio', true);
+		$this->load->model('direccion_facturacion_model', 'direccion_facturacion_model', true);
+		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
 		//la sesion se carga automáticamente
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
@@ -51,7 +51,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$data['mensaje']='';											 
 		
 		//recuperar el listado de las direcciones del cliente
-		$data['lista_direcciones'] = $this->modelo->listar_razon_social($id_cliente);						
+		$data['lista_direcciones'] = $this->direccion_facturacion_model->listar_razon_social($id_cliente);						
 		$data['registrar_rs'] = TRUE;		//para indicar que se debe mostrar formulario de registro
 		$data['solicita_factura'] = TRUE;						
 		
@@ -63,7 +63,7 @@ class Direccion_Facturacion extends CI_Controller {
 			$form_values = $this->get_datos_rs();			
 																								
 			if(empty($this->reg_errores)){								   															
-					if($this->modelo->insertar_rs($form_values['direccion'])){
+					if($this->direccion_facturacion_model->insertar_rs($form_values['direccion'])){
 						$id_rs=$this->db->insert_id();
 						$datars=array(
 							'id_rs'=>$id_rs							
@@ -95,14 +95,14 @@ class Direccion_Facturacion extends CI_Controller {
 		$data['title']=$this->title;	
 		$data['mensaje']='';	
 		
-		$data['dir_envio']=$this->modelo_envio->listar_direcciones($id_cliente);		
+		$data['dir_envio']=$this->direccion_envio_model->listar_direcciones($id_cliente);		
 		
 		
-		$lista_paises_think = $this->modelo->listar_paises_think();
+		$lista_paises_think = $this->direccion_facturacion_model->listar_paises_think();
 		$data['lista_paises_think'] = $lista_paises_think;						 
 		
 		//recuperar el listado de las direcciones del cliente
-		$data['lista_direcciones'] = $this->modelo->listar_direcciones($id_cliente);
+		$data['lista_direcciones'] = $this->direccion_facturacion_model->listar_direcciones($id_cliente);
 		
 		
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_facturacion.js'> </script>";
@@ -112,7 +112,7 @@ class Direccion_Facturacion extends CI_Controller {
 				
 			$form_values = array();	//alojará los datos previos a la inserción	
 			$form_values = $this->get_datos_direccion();			
-			$consecutivo=$this->modelo->get_consecutivo($id_cliente);			
+			$consecutivo=$this->direccion_facturacion_model->get_consecutivo($id_cliente);			
 			$form_values['direccion']['id_clienteIn'] = $id_cliente;
 			$form_values['direccion']['id_consecutivoSi'] = $consecutivo + 1;		//cambió
 			$form_values['direccion']['address_type'] = self::$TIPO_DIR['BUSINESS'];		//address_type			
@@ -120,15 +120,15 @@ class Direccion_Facturacion extends CI_Controller {
 			if(empty($this->reg_errores)){
 				
 			    if (isset($form_values['direccion']['id_estatusSi'])) {
-					if($this->modelo->existe_direccion($form_values['direccion'])) {
+					if($this->direccion_facturacion_model->existe_direccion($form_values['direccion'])) {
 						//$this->listar("Direcci&oacute;n previamente registrada.", FALSE);
 					}
 					else{
 						if(array_key_exists('chk_default', $_POST) || $consecutivo == 0) {
-							$this->modelo->quitar_predeterminado($id_cliente);	
+							$this->direccion_facturacion_model->quitar_predeterminado($id_cliente);	
 							$form_values['direccion']['id_estatusSi'] = 3;
 						}
-						if ($this->modelo->insertar_direccion($form_values['direccion'])) {							
+						if ($this->direccion_facturacion_model->insertar_direccion($form_values['direccion'])) {							
 							$datadire=array(
 								'id_dir'=>$form_values['direccion']['id_consecutivoSi']							
 							);						
@@ -143,7 +143,7 @@ class Direccion_Facturacion extends CI_Controller {
                    				'id_razonSocialIn' => $id_rs,
                    				'fecha_registroDt' => $fecha                    				                    		
                				);																										
-							$this->modelo->insertar_rs_direccion($datadir);															
+							$this->direccion_facturacion_model->insertar_rs_direccion($datadir);															
 							redirect('orden_compra');													
 						} 	
 						else {
@@ -186,7 +186,7 @@ class Direccion_Facturacion extends CI_Controller {
 				$datos_direccion = $dir_facturacion;
 					
 			} else {
-				$datos_direccion = $this->modelo->obtener_rs($consecutivo);
+				$datos_direccion = $this->direccion_facturacion_model->obtener_rs($consecutivo);
 			}
 			
 			if ($consecutivo) {
@@ -197,7 +197,7 @@ class Direccion_Facturacion extends CI_Controller {
 	
 				$data['datos_direccion'] = $datos_direccion;				
 		
-				$lista_paises_think = $this->modelo->listar_paises_think();
+				$lista_paises_think = $this->direccion_facturacion_model->listar_paises_think();
 				$data['lista_paises_think'] = $lista_paises_think;
 																								
 				if($_POST){					
@@ -209,7 +209,7 @@ class Direccion_Facturacion extends CI_Controller {
 						$form_values['direccion']['id_razonSocialIn'] = $consecutivo;
 						
 						if (array_key_exists('chk_default', $_POST)) {							
-							$this->modelo->quitar_predeterminado($id_cliente);									
+							$this->direccion_facturacion_model->quitar_predeterminado($id_cliente);									
 						} else {
 							$form_values['direccion']['id_estatusSi'] = 1;
 						}
@@ -223,7 +223,7 @@ class Direccion_Facturacion extends CI_Controller {
 														
 						} 
 						else {
-							$this->modelo->actualizar_rs($consecutivo, $form_values['direccion']);
+							$this->direccion_facturacion_model->actualizar_rs($consecutivo, $form_values['direccion']);
 														
 							$this->cargar_en_session($consecutivo);							
 							redirect('direccion_facturacion/registrar_direccion');
@@ -264,7 +264,7 @@ class Direccion_Facturacion extends CI_Controller {
 				$datos_direccion = $dir_facturacion;
 					
 			} else {
-				$datos_direccion = $this->modelo->obtener_direccion($id_cliente, $consecutivo);
+				$datos_direccion = $this->direccion_facturacion_model->obtener_direccion($id_cliente, $consecutivo);
 			}
 			
 			if ($consecutivo) {
@@ -275,7 +275,7 @@ class Direccion_Facturacion extends CI_Controller {
 	
 				$data['datos_direccion'] = $datos_direccion;				
 		
-				$lista_paises_think = $this->modelo->listar_paises_think();
+				$lista_paises_think = $this->direccion_facturacion_model->listar_paises_think();
 				$data['lista_paises_think'] = $lista_paises_think;
 																								
 				if($_POST){					
@@ -287,7 +287,7 @@ class Direccion_Facturacion extends CI_Controller {
 						$form_values['direccion']['id_ConsecutivoSi'] = $consecutivo;
 						
 						if (array_key_exists('chk_default', $_POST)) {							
-							$this->modelo->quitar_predeterminado($id_cliente);									
+							$this->direccion_facturacion_model->quitar_predeterminado($id_cliente);									
 						} else {
 							$form_values['direccion']['id_estatusSi'] = 1;
 						}
@@ -301,7 +301,7 @@ class Direccion_Facturacion extends CI_Controller {
 														
 						} 
 						else {
-							$this->modelo->actualizar_direccion($id_cliente,$consecutivo, $form_values['direccion']);
+							$this->direccion_facturacion_model->actualizar_direccion($id_cliente,$consecutivo, $form_values['direccion']);
 														
 							$this->cargar_en_session($consecutivo);							
 							redirect('direccion_facturacion/registrar_direccion');
@@ -333,7 +333,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$id_cliente = $this->id_cliente;
 		$data['title'] = $this->title;		
 		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
-		$this->modelo->eliminar_direccion($id_cliente, $consecutivo);
+		$this->direccion_facturacion_model->eliminar_direccion($id_cliente, $consecutivo);
 		redirect('direccion_facturacion/registrar_direccion');			
 	}
 	
@@ -341,7 +341,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$id_cliente = $this->id_cliente;
 		$data['title'] = $this->title;		
 		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
-		$this->modelo->eliminar_rs($id_rs);
+		$this->direccion_facturacion_model->eliminar_rs($id_rs);
 		redirect('direccion_facturacion');			
 	}
 	

@@ -23,9 +23,9 @@ class Orden_Compra extends CI_Controller {
 		$this->session->set_userdata("redirect_to_order", "orden_compra");
 		
 		//cargar el modelo en el constructor
-		$this->load->model('forma_pago_model', 'tarjeta_modelo', true);
-		$this->load->model('direccion_envio_model', 'envio_modelo', true);
-		$this->load->model('direccion_facturacion_model', 'facturacion_modelo', true);
+		$this->load->model('forma_pago_model', 'forma_pago_model', true);
+		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
+		$this->load->model('direccion_facturacion_model', 'direccion_facturacion_model', true);
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
@@ -52,7 +52,7 @@ class Orden_Compra extends CI_Controller {
 				$this->session->set_userdata('razon_social', $rs);				
 				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);
 				echo $ds = $this->session->userdata('direccion_f');
-				$rbr = $this->facturacion_modelo->busca_relacion($cte, $rs, $ds);
+				$rbr = $this->direccion_facturacion_model->busca_relacion($cte, $rs, $ds);
 				if ($rbr->num_rows() == 0){					
 					$this->load->helper('date');
 					$fecha = mdate('%Y/%m/%d',time());
@@ -62,14 +62,14 @@ class Orden_Compra extends CI_Controller {
                    		'id_razonSocialIn' => $rs,
                    		'fecha_registroDt' => $fecha                    				                    		
                		);																										
-					$this->facturacion_modelo->insertar_rs_direccion($data_dir);		
+					$this->direccion_facturacion_model->insertar_rs_direccion($data_dir);		
 					$this->session->set_userdata('requiere_factura', 'si');	
 				}																			
 			}	
 			else {
 			$id_cliente = $this->id_cliente;
 			$rs = $this->session->userdata('razon_social');
-			$rdf = $this->facturacion_modelo->obtiene_rs_dir($id_cliente, $rs);		
+			$rdf = $this->direccion_facturacion_model->obtiene_rs_dir($id_cliente, $rs);		
 				foreach ($rdf->result_array() as $dire) {					
 					$this->session->set_userdata('direccion_f',$dire['id_consecutivoSi']);
 				}			
@@ -126,7 +126,7 @@ class Orden_Compra extends CI_Controller {
 				
 				$consecutivo = $this->session->userdata('tarjeta');
 				
-				$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
+				$detalle_tarjeta = $this->forma_pago_model->detalle_tarjeta($consecutivo, $id_cliente);
 				$data['tc'] = $detalle_tarjeta;	//trae la tc
 			
 				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
@@ -146,7 +146,7 @@ class Orden_Compra extends CI_Controller {
 			} else if (is_integer((int)$dir_envio)){
 				//recupera info de la BD
 				$consecutivo = (int)$dir_envio;
-				$detalle_envio = $this->envio_modelo->detalle_direccion($consecutivo, $id_cliente);
+				$detalle_envio = $this->direccion_envio_model->detalle_direccion($consecutivo, $id_cliente);
 				$data['dir_envio'] = $detalle_envio;	
 			}
 		}
@@ -154,14 +154,14 @@ class Orden_Compra extends CI_Controller {
 		//rs_facturación
 		$consecutivors = $this->session->userdata('razon_social');
 		if (isset($consecutivors)) {
-			$detalle_facturacion = $this->facturacion_modelo->obtener_rs($consecutivors);
+			$detalle_facturacion = $this->direccion_facturacion_model->obtener_rs($consecutivors);
 			$data['dir_facturacion']=$detalle_facturacion;		
 		}		
 		
 		//direccion facturación
 		$consecutivo_dir = $this->session->userdata('direccion_f');
 		if (isset($consecutivo_dir)) {			
-			$detalle_direccion = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo_dir);
+			$detalle_direccion = $this->direccion_facturacion_model->obtener_direccion($id_cliente, $consecutivo_dir);
 			$data['direccion_f']=$detalle_direccion;			
 		}
 		
@@ -262,7 +262,7 @@ class Orden_Compra extends CI_Controller {
 					
 				} else { // La informacion esta en la Base de Datos Local //
 					echo "La informacion esta en la Base de Datos Local";
-					$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
+					$detalle_tarjeta = $this->forma_pago_model->detalle_tarjeta($consecutivo, $id_cliente);
 					$tc = $detalle_tarjeta;	//trae la tc
 					// Intentamos el Pago con los Id's en  CCTC //
 					try {  
