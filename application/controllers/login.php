@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 include('util/Pago_Express.php');
+include('api.php');
 
 class Login extends CI_Controller {
 
@@ -18,12 +19,13 @@ class Login extends CI_Controller {
         parent::__construct();
 		
 		//cargar el modelo en el constructor
-		$this->load->model('login_registro_model', 'modelo', true);
-
+		$this->load->model('login_registro_model', 'login_registro_model', true);
+		$this->api = new Api();
     }
 	
 	public function index()
-	{	
+	{
+		print_r($this->session->all_userdata());	
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'></script>";
 		$data['script'] = $script_file;
@@ -55,7 +57,7 @@ class Login extends CI_Controller {
 					$this->email = $login_info['email'];
 					$this->password = $login_info['password'];
 					
-					$resultado = $this->modelo->verifica_cliente($this->email, $this->password);
+					$resultado = $this->login_registro_model->verifica_cliente($this->email, $this->password);
 					if ($resultado->num_rows() > 0) {
 						$cliente = $resultado->row();
 						
@@ -65,6 +67,7 @@ class Login extends CI_Controller {
 												
 						$this->session->set_userdata($datars);
 						
+						//$this->api->detalle($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'), '', '');
 						//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
 						$destino = $this->obtener_destino($cliente->id_cliente);
 						
@@ -114,15 +117,15 @@ class Login extends CI_Controller {
 	private function obtener_destino($id_cliente) 
 	{
 		//cargar los modelos para revisar el pago exprés
-		$this->load->model('forma_pago_model', 'tarjeta_modelo', true);
-		$this->load->model('direccion_envio_model', 'envio_modelo', true);
-		$this->load->model('direccion_facturacion_model', 'facturacion_modelo', true);
+		$this->load->model('forma_pago_model', 'forma_pago_model', true);
+		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
+		$this->load->model('direccion_facturacion_model', 'direccion_facturacion_model', true);
 		
-		$forma_pago_express = $this->tarjeta_modelo->get_pago_express($id_cliente);		//devolverá un obj
-		$dir_envio_express = $this->envio_modelo->get_pago_express($id_cliente);		//devolverá un obj
+		$forma_pago_express = $this->forma_pago_model->get_pago_express($id_cliente);		//devolverá un obj
+		$dir_envio_express = $this->direccion_envio_model->get_pago_express($id_cliente);		//devolverá un obj
 		
 		//dirección de facturación queda excluida de esta validación, se preguntará en el resumen de la orden
-		$dir_facturacion_express = $this->facturacion_modelo->get_pago_express($id_cliente);	//devolverá un obj
+		$dir_facturacion_express = $this->direccion_facturacion_model->get_pago_express($id_cliente);	//devolverá un obj
 		
 		//se crea el objeto con la informción del pago exprés
 		$pago_express = new Pago_Express($forma_pago_express, $dir_envio_express, $dir_facturacion_express);

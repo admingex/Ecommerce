@@ -10,8 +10,7 @@ class Api extends CI_Controller {
 	function __construct(){
         // Call the Model constructor
         parent::__construct();		
-		$this->load->model('api_model', 'modelo', true);	
-		//$this->session->set_userdata('promociones', array());			
+		//$this->load->model('api_model', 'api_model', true);			
     }
 	
 	public function index(){												
@@ -49,9 +48,9 @@ class Api extends CI_Controller {
 		}		
 		
 		if((empty($sitio)) && (empty($canal)) && (empty($promocion))){			
-			$sitios=$this->modelo->obtener_sitios();
+			$sitios=$this->api_model->obtener_sitios();
 			foreach($sitios->result_array() as $siti){
-				$res=$this->modelo->obtener_sitio($siti['id_sitioSi']);
+				$res=$this->api_model->obtener_sitio($siti['id_sitioSi']);
 				$sit=$res->row();				
 				$data['sitios'][]=array('urlVc'=>$sit->urlVc, 'id_sitioSi'=>$sit->id_sitioSi);
 			}								
@@ -59,10 +58,10 @@ class Api extends CI_Controller {
 		}
 		
 		else if(($sitio) && (empty($canal)) && (empty($promocion))){			
-			$canales=$this->modelo->obtener_canales_sitio($sitio);
+			$canales=$this->api_model->obtener_canales_sitio($sitio);
 			if($canales->num_rows()!=0){
 				foreach($canales->result_array() as $cana){
-					$res=$this->modelo->obtener_canal($cana['id_canalSi']);
+					$res=$this->api_model->obtener_canal($cana['id_canalSi']);
 					$can=$res->row();
 					$data['canales'][]=array('id_canalSi'=>$can->id_canalSi , 'descripcionVc'=>$can->descripcionVc, 'addKeyVc'=>$can->addKeyVc);				
 				}	
@@ -73,10 +72,10 @@ class Api extends CI_Controller {
 			$this->formato($formato, $data);					
 		}
 		else if(($sitio) && ($canal) && (empty($promocion))){					
-			$promocion=$this->modelo->obtener_promociones_canales_sitio($sitio, $canal);
+			$promocion=$this->api_model->obtener_promociones_canales_sitio($sitio, $canal);
 			if($promocion->num_rows()!=0){
 				foreach($promocion->result_array() as $promo){
-					$res=$this->modelo->obtener_promocion($promo['id_promocionIn']);
+					$res=$this->api_model->obtener_promocion($promo['id_promocionIn']);
 					$prom=$res->row();
 					$data['promocion'][]=array('id_promocionIn'=>$prom->id_promocionIn, 
 						                     'descripcionVc'=>$prom->descripcionVc, 
@@ -108,7 +107,7 @@ class Api extends CI_Controller {
 	  	$pago=FALSE;	    
 		  
     	if(!empty($sitio)){	  
-	  		$rsitio= $this->modelo->obtener_sitio($sitio);	
+	  		$rsitio= $this->api_model->obtener_sitio($sitio);	
 			if($rsitio->num_rows()!=0){
 				$data['sitio']=$rsitio->row();
 			}		 
@@ -118,7 +117,7 @@ class Api extends CI_Controller {
     	}
 		
 		if(!empty($canal)){
-	  		$rcanal= $this->modelo->obtener_canal($canal);	
+	  		$rcanal= $this->api_model->obtener_canal($canal);	
 			if($rcanal->num_rows()!=0){
 				$data['canal']=$rcanal->row();
 			}      
@@ -128,10 +127,10 @@ class Api extends CI_Controller {
     	}                    
 	  	
     	if(!empty($promocion)){	  
-	  		$rpromocion= $this->modelo->obtener_promocion($promocion);	
+	  		$rpromocion= $this->api_model->obtener_promocion($promocion);	
 			if($rpromocion->num_rows()!=0){
 				$data['promocion']=$rpromocion->row();
-				$rarticulos= $this->modelo->obtener_articulos($promocion);
+				$rarticulos= $this->api_model->obtener_articulos($promocion);
 				if($rarticulos->num_rows()!=0){
 					$data['articulos']=$rarticulos->result_array();
 					if($ultimosegmento=="pago"){									
@@ -147,7 +146,7 @@ class Api extends CI_Controller {
 			}
     	}							  
 		if($pago){
-			$this->session->set_userdata('promocion', array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));
+			$this->session->set_userdata(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));
 			redirect('login');
 		}	       		
 		else{
