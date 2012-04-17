@@ -6,7 +6,7 @@ include('util/Pago_Express.php');
 class Orden_Compra extends CI_Controller {
 	var $title = 'Orden de Compra';
 	var $subtitle = 'Orden de Compra';
-	var $reg_errores = array();				//validación para los errores
+	var $registro_errores = array();				//validación para los errores
 	
 	private $id_cliente;
 	 
@@ -32,30 +32,30 @@ class Orden_Compra extends CI_Controller {
 
     }
 
-	public function index(){		
+	public function index() {		
 		if ($_POST) {
 			if (array_key_exists('razon_social_seleccionada', $_POST)){
 				$this->session->set_userdata('razon_social', $_POST['razon_social_seleccionada']);
 				$this->session->set_userdata('requiere_factura', 'si');						
 			}						
 		}	
-		else if($this->session->userdata('id_rs')){
+		else if($this->session->userdata('id_rs')) {
 			$id_rs=$this->session->userdata('id_rs');
 			$this->session->set_userdata('razon_social', $id_rs);		
 			$this->session->set_userdata('requiere_factura', 'si');					 		
 		}
 		
 		if ($_POST) {
-			if (array_key_exists('direccion_selecionada', $_POST)){
+			if (array_key_exists('direccion_selecionada', $_POST))  {
 				echo $cte=$this->id_cliente;
 				echo "este".$rs=$this->session->userdata('id_rs');				
 				$this->session->set_userdata('razon_social', $rs);				
 				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);
-				echo $ds=$this->session->userdata('direccion_f');
-				$rbr=$this->facturacion_modelo->busca_relacion($cte, $rs, $ds);
-				if($rbr->num_rows()==0){					
+				echo $ds = $this->session->userdata('direccion_f');
+				$rbr = $this->facturacion_modelo->busca_relacion($cte, $rs, $ds);
+				if ($rbr->num_rows() == 0){					
 					$this->load->helper('date');
-					$fecha=mdate('%Y/%m/%d',time());
+					$fecha = mdate('%Y/%m/%d',time());
 					$data_dir = array(
                    		'id_clienteIn'  => $cte,
                    		'id_consecutivoSi' => $ds,
@@ -66,20 +66,19 @@ class Orden_Compra extends CI_Controller {
 					$this->session->set_userdata('requiere_factura', 'si');	
 				}																			
 			}	
-			else{
+			else {
 			$id_cliente = $this->id_cliente;
-			$rs=$this->session->userdata('razon_social');
-			$rdf=$this->facturacion_modelo->obtiene_rs_dir($id_cliente, $rs);		
-				foreach($rdf->result_array() as $dire) {					
+			$rs = $this->session->userdata('razon_social');
+			$rdf = $this->facturacion_modelo->obtiene_rs_dir($id_cliente, $rs);		
+				foreach ($rdf->result_array() as $dire) {					
 					$this->session->set_userdata('direccion_f',$dire['id_consecutivoSi']);
 				}			
 			}								
-		}
-				
-		else if($this->session->userdata('id_dir')){
+		} else if($this->session->userdata('id_dir')){
 			$id_dir=$this->session->userdata('id_dir');
 			$this->session->set_userdata('direccion_f',$id_dir);								
 		}
+		
 		$this->resumen();
 	}
 	
@@ -93,6 +92,9 @@ class Orden_Compra extends CI_Controller {
 		$data['mensaje'] = $msg;
 		$data['redirect'] = $redirect;
 		
+		//Validación del lado del cliente
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/orden_compra.js'> </script>";
+		$data['script'] = $script_file;
 		/*
 		echo "<pre>";
 		print_r($pe=$this->session->userdata('pago_express'));
@@ -156,12 +158,17 @@ class Orden_Compra extends CI_Controller {
 			$data['dir_facturacion']=$detalle_facturacion;		
 		}		
 		
-		//direccion facturacion
+		//direccion facturación
 		$consecutivo_dir = $this->session->userdata('direccion_f');
 		if (isset($consecutivo_dir)) {			
 			$detalle_direccion = $this->facturacion_modelo->obtener_direccion($id_cliente, $consecutivo_dir);
 			$data['direccion_f']=$detalle_direccion;			
 		}
+		
+		//Si acaso hay errores
+		if($_POST && $this->registro_errores) {
+			$data['reg_errores'] = $this->registro_errores;
+		}		
 		
 		//cargar vista	
 		$this->cargar_vista('', 'orden_compra', $data);
@@ -172,98 +179,112 @@ class Orden_Compra extends CI_Controller {
 	 */
 	public function checkout() {
 		/*Realizar el pago en CCTC*/
-		echo "El pago se realizará aquí. CVV: ".$_POST['txt_codigo'];
 		
-		/*Recuperar la info gral. de la orden*/
-		$id_cliente 	= $this->id_cliente;
-		$consecutivo 	= $this->session->userdata('tarjeta');
-		$id_promocionIn = 1;
-		$digito 		= $_POST['txt_codigo'];
-		
-		// Informaciòn de la Orden //
-		$informacion_orden = new InformacionOrden(
-			$id_cliente,
-			$consecutivo,
-			$id_promocionIn,
-			$digito
-		);
-		
-		$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-		//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
-		
-		// Si la información esta en la Session //
-		if (is_array($this->session->userdata('tarjeta'))) {
-			$detalle_tarjeta = $this->session->userdata('tarjeta');
-			$tc = $detalle_tarjeta['tc'];
-			$tc = (array)$tc;
-			
-			echo var_dump($tc);
-			
-			$tc_soap = new Tc(
-				$tc['id_clienteIn'],
-				$tc['id_TCSi'],
-				$tc['id_tipo_tarjetaSi'],
-				$tc['nombre_titularVc'],
-				$tc['apellidoP_titularVc'],
-				$tc['apellidoM_titularVc'],
-				$tc['terminacion_tarjetaVc'],
-				$tc['mes_expiracionVc'],
-				$tc['anio_expiracionVc']
-			);
-			
-			$amex_soap = NULL;
-			if ($detalle_tarjeta['tc']['id_tipo_tarjetaSi'] == 1) { //es AMERICAN EXPRESS
-				$amex = $detalle_tarjeta['amex'];
-				if (isset($amex)) {
-					$amex_soap = new Amex(
-						$amex['id_clienteIn'],
-						$amex['id_TCSi'],
-						$amex['nombre_titularVc'],
-						$amex['apellidoP_titularVc'],
-						$amex['apellidoM_titularVc'],
-						$amex['pais'],
-						$amex['codigo_postal'],
-						$amex['calle'],
-						$amex['ciudad'],
-						$amex['estado'],
-						$amex['mail'],
-						$amex['telefono']
+		if ($_POST) {
+			$orden_info = array();		
+			$orden_info = $this->get_datos_orden();
+						
+			if (empty($this->registro_errores)) {
+				
+				//echo "El pago se realizará aquí. CVV: ".$_POST['txt_codigo'];
+				
+				/*Recuperar la info gral. de la orden*/
+				$id_cliente 	= $this->id_cliente;
+				$consecutivo 	= $this->session->userdata('tarjeta');
+				$id_promocionIn = 1;
+				$digito 		= $_POST['txt_codigo'];
+				
+				// Informaciòn de la Orden //
+				$informacion_orden = new InformacionOrden(
+					$id_cliente,
+					$consecutivo,
+					$id_promocionIn,
+					$digito
+				);
+				
+				$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+				//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
+				
+				// Si la información esta en la Session //
+				if (is_array($this->session->userdata('tarjeta'))) {
+					$detalle_tarjeta = $this->session->userdata('tarjeta');
+					$tc = $detalle_tarjeta['tc'];
+					$tc = (array)$tc;
+					
+					echo var_dump($tc);
+					
+					$tc_soap = new Tc(
+						$tc['id_clienteIn'],
+						$tc['id_TCSi'],
+						$tc['id_tipo_tarjetaSi'],
+						$tc['nombre_titularVc'],
+						$tc['apellidoP_titularVc'],
+						$tc['apellidoM_titularVc'],
+						$tc['terminacion_tarjetaVc'],
+						$tc['mes_expiracionVc'],
+						$tc['anio_expiracionVc']
 					);
+					
+					$amex_soap = NULL;
+					if ($detalle_tarjeta['tc']['id_tipo_tarjetaSi'] == 1) { //es AMERICAN EXPRESS
+						$amex = $detalle_tarjeta['amex'];
+						if (isset($amex)) {
+							$amex_soap = new Amex(
+								$amex['id_clienteIn'],
+								$amex['id_TCSi'],
+								$amex['nombre_titularVc'],
+								$amex['apellidoP_titularVc'],
+								$amex['apellidoM_titularVc'],
+								$amex['pais'],
+								$amex['codigo_postal'],
+								$amex['calle'],
+								$amex['ciudad'],
+								$amex['estado'],
+								$amex['mail'],
+								$amex['telefono']
+							);
+						}
+					}
+		
+					// Intentamos el Pago con pasando los objetos a CCTC //
+					try {  
+						$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
+						$obj_result = $cliente->PagarTC($parameter);
+						$simple_result = $obj_result->PagarTCResult;
+		
+						var_dump($simple_result);
+						//return $simple_result;
+					} catch (SoapFault $exception) { 
+						echo $exception;  
+						echo '<br/>error: <br/>'.$exception->getMessage();
+						return NULL;
+					}
+					
+				} else { // La informacion esta en la Base de Datos Local //
+					echo "La informacion esta en la Base de Datos Local";
+					$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
+					$tc = $detalle_tarjeta;	//trae la tc
+					// Intentamos el Pago con los Id's en  CCTC //
+					try {  
+						$parameter = array('informacion_orden' => $informacion_orden);
+						$obj_result = $cliente->PagarTcUsandoId($parameter);
+						$simple_result = $obj_result->PagarTcUsandoIdResult;
+					
+						var_dump($simple_result);
+						//return $simple_result;
+					} catch (SoapFault $exception) {
+						//errores en desarrollo
+						echo $exception;  
+						echo '<br/>error: <br/>'.$exception->getMessage();
+						return NULL;
+					}
 				}
+			} else {
+				//redirect('orden_compra', 'refresh');
+				$this->resumen("El formato del código es incorrecto", TRUE);
 			}
-
-			// Intentamos el Pago con pasando los objetos a CCTC //
-			try {  
-				$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
-				$obj_result = $cliente->PagarTC($parameter);
-				$simple_result = $obj_result->PagarTCResult;
-
-				var_dump($simple_result);
-				//return $simple_result;
-			} catch (SoapFault $exception) { 
-				echo $exception;  
-				echo '<br/>error: <br/>'.$exception->getMessage();
-				return NULL;
-			}
-			
-		} else { // La informacion esta en la Base de Datos Local //
-			echo "La informacion esta en la Base de Datos Local";
-			$detalle_tarjeta = $this->tarjeta_modelo->detalle_tarjeta($consecutivo, $id_cliente);
-			$tc = $detalle_tarjeta;	//trae la tc
-			// Intentamos el Pago con los Id's en  CCTC //
-			try {  
-				$parameter = array('informacion_orden' => $informacion_orden);
-				$obj_result = $cliente->PagarTcUsandoId($parameter);
-				$simple_result = $obj_result->PagarTcUsandoIdResult;
-			
-				var_dump($simple_result);
-				//return $simple_result;
-			} catch (SoapFault $exception) {
-				//errores en desarrollo
-				echo $exception;  
-				echo '<br/>error: <br/>'.$exception->getMessage();
-				return NULL;
-			}
+		} else { //si llega sin una petición
+			redirect('orden_compra', 'refresh');
 		}
 	}
 
@@ -291,6 +312,28 @@ class Orden_Compra extends CI_Controller {
 			//exit();
 			return false;
 		}
+	}
+	
+	/**
+	 * Obtiene los datos para solicitar el cobro de la orden de compra
+	 */
+	private function get_datos_orden() {
+		$datos = array();
+		
+		if (array_key_exists("txt_codigo", $_POST)) {
+			if (preg_match('/^[0-9]{3,4}$/', $_POST['txt_codigo'])) { 
+				$datos['cvv'] = $_POST['txt_codigo'];
+			} else {
+				$this->registro_errores['txt_codigo'] = 'Ingresa un código de seguridad válido';
+			}
+		}
+		/*
+		echo "cvv ok: " . preg_match('/^[0-9]{3,4}$/', $_POST['txt_codigo']);
+		var_dump($datos);
+		var_dump($this->registro_errores);
+		exit();
+		*/
+		return $datos;
 	}
 	
 	/**
