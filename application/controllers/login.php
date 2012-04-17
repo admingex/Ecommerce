@@ -70,11 +70,8 @@ class Login extends CI_Controller {
 												
 						$this->session->set_userdata($datars);
 						
-						$res69=$this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));
-						$this->session->set_userdata('promociones', $res69);
-						
 						//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
-						$destino = $this->obtener_destino($cliente->id_cliente);
+						$destino = $this->obtener_destino($cliente->id_cliente);						
 						
 						redirect($destino);
 					} else {
@@ -122,6 +119,16 @@ class Login extends CI_Controller {
 	private function obtener_destino($id_cliente) 
 	{		
 		
+		
+		$respromo=$this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));								
+		foreach($respromo['articulos'] as $res){
+			$temp[]=array('tarifaDc'=>$res['tarifaDc'], 'tipo_productoVc'=>$res['tipo_productoVc'], 'medio_entregaVc'=>$res['medio_entregaVc'], 'requiere_envioBi'=>(bool)$res['requiere_envioBi']);
+		}
+		$this->session->set_userdata('sitio', $respromo['sitio']);
+		$this->session->set_userdata('promocion', $respromo['promocion']);
+		$this->session->set_userdata('articulos', $temp);				
+		$this->session->set_userdata('promociones', TRUE);
+		
 		$forma_pago_express = $this->forma_pago_model->get_pago_express($id_cliente);		//devolverá un obj
 		$dir_envio_express = $this->direccion_envio_model->get_pago_express($id_cliente);		//devolverá un obj
 		
@@ -133,12 +140,12 @@ class Login extends CI_Controller {
 		
 		//revisar si requiere forma de envío
 		$requiere_envio = FALSE;		
-		if ($this->session->userdata('promociones')) {
-			$promociones = $this->session->userdata('promociones'); 
-			$articulos = $promociones['articulos'];
+		
+		if ($this->session->userdata('promociones')) {			
+			$articulos = $this->session->userdata('articulos');
 			
-			foreach($articulos as $articulo) {
-				if ($articulo['requiere_envioBi']) {
+			foreach($articulos as $articulo) {				
+				if ($articulo['requiere_envioBi']!=FALSE) {
 					$requiere_envio = TRUE;
 					//echo "requiere envio";
 					break;

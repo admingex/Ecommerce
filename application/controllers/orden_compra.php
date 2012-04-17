@@ -32,7 +32,7 @@ class Orden_Compra extends CI_Controller {
 
     }
 
-	public function index() {		
+	public function index() {			
 		if ($_POST) {
 			if (array_key_exists('razon_social_seleccionada', $_POST)){
 				$this->session->set_userdata('razon_social', $_POST['razon_social_seleccionada']);
