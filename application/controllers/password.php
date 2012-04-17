@@ -19,7 +19,7 @@ class Password extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		//cargar el modelo en el constructor
-		$this->load->model('password_model', 'modelo', true);			
+		$this->load->model('password_model', 'password_model', true);			
     }
 	
 	public function index(){
@@ -44,15 +44,15 @@ class Password extends CI_Controller {
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
 		$data['script'] = $script_file;	
 		if($_POST){
-			$datamail=$this->modelo->revisa_mail($_POST['email']);			
+			$datamail=$this->password_model->revisa_mail($_POST['email']);			
 			if($datamail->num_rows()==1){
 				$data['enviado'] = TRUE;				
 				$data['cliente']=$datamail->row();
 				$data['password_temporal']= $p = substr(md5(uniqid(rand( ), true)), 5,10);
 				$this->load->helper('date');
 				$data['timestamp']= $t= mdate('%Y/%m/%d %h:%i:%s',time());
-				$this->modelo->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
-				$this->modelo->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);		
+				$this->password_model->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
+				$this->password_model->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);		
 												  
 				$headers="Content-type: text/html; charset=UTF-8\r\n";
                 $headers.="MIME-Version: 1.0\r\n";
@@ -106,11 +106,11 @@ class Password extends CI_Controller {
 			$password=$this->session->userdata('password');
 			$nombre=$this->session->userdata('salutation');
 						
-			if($this->modelo->historico_clave($id_clienteIn, $email, $_POST['password'])!=1){
-				$this->modelo->cambia_password($id_clienteIn, $email,$_POST['password']);
+			if($this->password_model->historico_clave($id_clienteIn, $email, $_POST['password'])!=1){
+				$this->password_model->cambia_password($id_clienteIn, $email,$_POST['password']);
 				$this->load->helper('date');
 				$t= mdate('%Y/%m/%d %h:%i:%s',time());
-				$this->modelo->guarda_actividad_historico($id_clienteIn, $password, self::$TIPO_ACTIVIDAD['CAMBIO_PASSWORD'], $t);
+				$this->password_model->guarda_actividad_historico($id_clienteIn, $password, self::$TIPO_ACTIVIDAD['CAMBIO_PASSWORD'], $t);
 				//creación de la sesión
 				$array_session = array(
 									'logged_in' => TRUE,
@@ -146,7 +146,7 @@ class Password extends CI_Controller {
 		$data['script'] = $script_file;	
 		if($_POST){
 			if(!empty($_POST['password_temporal'])){
-				$result=$this->modelo->obtiene_cliente($_POST['password_temporal']);
+				$result=$this->password_model->obtiene_cliente($_POST['password_temporal']);
 				if($result->num_rows()==0){
 					$this->registro_errores['password_temporal']='clave temporal no encontrada';										
 				}			

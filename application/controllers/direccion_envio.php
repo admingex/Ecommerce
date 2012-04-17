@@ -26,7 +26,7 @@ class Direccion_Envio extends CI_Controller {
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//cargar el modelo en el constructor
-		$this->load->model('direccion_envio_model', 'modelo', true);
+		//$this->load->model('direccion_envio_model', 'modelo', true);
 		//la sesion se carga automáticamente
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
@@ -66,11 +66,11 @@ class Direccion_Envio extends CI_Controller {
 		$data['redirect'] = $redirect;
 		
 		if ($this->input->is_ajax_request()) {
-			$direcciones = $this->modelo->listar_direcciones(4);
+			$direcciones = $this->direccion_envio_model->listar_direcciones(4);
 			echo json_encode($direcciones->result());
 		} else {
 			//listar por default las direcciones del cliente
-			$data['lista_direcciones'] = $this->modelo->listar_direcciones($this->id_cliente);
+			$data['lista_direcciones'] = $this->direccion_envio_model->listar_direcciones($this->id_cliente);
 			//cargar vista	
 			$this->cargar_vista('', 'direccion_envio', $data);
 		}
@@ -87,11 +87,11 @@ class Direccion_Envio extends CI_Controller {
 		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
 		
 		//catálogo de paises de think
-		$lista_paises_think = $this->modelo->listar_paises_think();
+		$lista_paises_think = $this->direccion_envio_model->listar_paises_think();
 		$data['lista_paises_think'] = $lista_paises_think;
 				
 		//recuperar el listado de las direcciones del cliente
-		$data['lista_direcciones'] = $this->modelo->listar_direcciones($id_cliente);
+		$data['lista_direcciones'] = $this->direccion_envio_model->listar_direcciones($id_cliente);
 		
 		//catálogo de estados
 		$lista_estados = $this->consulta_estados();
@@ -101,7 +101,7 @@ class Direccion_Envio extends CI_Controller {
 				
 		if ($_POST)	{	
 			//Petición de registro
-			$consecutivo = $this->modelo->get_consecutivo($id_cliente);			
+			$consecutivo = $this->direccion_envio_model->get_consecutivo($id_cliente);			
 			
 			$form_values = array();		//alojará los datos ingresados previos a la inserción	
 			$form_values = $this->get_datos_direccion();			
@@ -114,19 +114,19 @@ class Direccion_Envio extends CI_Controller {
 				//si no hay errores en el formulario y se solicita registrar la direccion
 				if (isset($form_values['guardar']) || isset($form_values['direccion']['id_estatusSi'])) {
 					//verificar que no exista la direccion activa en la BD
-					if($this->modelo->existe_direccion($form_values['direccion'])) {	
+					if($this->direccion_envio_model->existe_direccion($form_values['direccion'])) {	
 						//Redirect al listado por que ya existe
 						$this->listar("La direcci&oacute;n ya est&aacute; registrada.", FALSE);
 						//echo "La direcci&oacute;n ya está registrada.";
 					} else {
 						//sólo la primera que se registra se predetermina
 						if (isset($form_values['predeterminar']) || $consecutivo == 0) {
-							$this->modelo->quitar_predeterminado($id_cliente);
+							$this->direccion_envio_model->quitar_predeterminado($id_cliente);
 							$form_values['direccion']['id_estatusSi'] = 3;
 						}
 						
 						//Registrar en BD
-						if ($this->modelo->insertar_direccion($form_values['direccion'])) {
+						if ($this->direccion_envio_model->insertar_direccion($form_values['direccion'])) {
 							//cargar en sesion
 							$this->cargar_en_session($form_values['direccion']['id_consecutivoSi']);
 							//cargar la vista de las tarjetas
@@ -199,7 +199,7 @@ class Direccion_Envio extends CI_Controller {
 			$detalle_direccion = $dir_envio;
 				
 		} else {
-			$detalle_direccion = $this->modelo->detalle_direccion($consecutivo, $id_cliente);
+			$detalle_direccion = $this->direccion_envio_model->detalle_direccion($consecutivo, $id_cliente);
 		}
 		
 		$data['direccion'] = $detalle_direccion;
@@ -208,7 +208,7 @@ class Direccion_Envio extends CI_Controller {
 		//exit();
 		
 		//catálogo de paises de think
-		$lista_paises_think = $this->modelo->listar_paises_think();
+		$lista_paises_think = $this->direccion_envio_model->listar_paises_think();
 		$data['lista_paises_think'] = $lista_paises_think;
 		
 		/*muestra lo de sepomex*/
@@ -233,7 +233,7 @@ class Direccion_Envio extends CI_Controller {
 				$nueva_info['direccion']['id_consecutivoSi'] = $consecutivo;
 			
 				if (isset($nueva_info['predeterminar'])) {
-					$this->modelo->quitar_predeterminado($id_cliente);
+					$this->direccion_envio_model->quitar_predeterminado($id_cliente);
 				} else {	//si no es predeterminado se quda sólo como "activa"habilitado"
 					$nueva_info['direccion']['id_estatusSi'] = 1;
 				}
@@ -250,7 +250,7 @@ class Direccion_Envio extends CI_Controller {
 				} else {
 				
 					$msg_actualizacion = 
-						$this->modelo->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
+						$this->direccion_envio_model->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
 					
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					
@@ -281,7 +281,7 @@ class Direccion_Envio extends CI_Controller {
 		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
 		
 		$msg_eliminacion =
-			$this->modelo->eliminar_direccion($id_cliente, $consecutivo);
+			$this->direccion_envio_model->eliminar_direccion($id_cliente, $consecutivo);
 		
 		/*Pendiente el Redirect hacia la dirección de Facturación*/
 		//echo $data['msg_eliminacion´];
@@ -308,7 +308,7 @@ class Direccion_Envio extends CI_Controller {
 	public function get_estados()
 	{
 		//echo json_encode($this->consulta_estados());
-		echo json_encode($this->modelo->listar_estados_sepomex()->result_array());
+		echo json_encode($this->direccion_envio_model->listar_estados_sepomex()->result_array());
 	}
 	
 	/*
@@ -320,7 +320,7 @@ class Direccion_Envio extends CI_Controller {
 		
 		try
 		{
-			$resultado['estados'] = $this->modelo->listar_estados_sepomex()->result();
+			$resultado['estados'] = $this->direccion_envio_model->listar_estados_sepomex()->result();
 			$resultado['success'] = true;
 			$resultado['msg'] = "Ok";
 			return $resultado;
@@ -351,7 +351,7 @@ class Direccion_Envio extends CI_Controller {
 		$cp = $this->input->post('codigo_postal');
 		
 		//$resultado = array();
-		//$resultado->sepomex = $this->modelo->obtener_direccion_sepomex($cp)->result();
+		//$resultado->sepomex = $this->direccion_envio_model->obtener_direccion_sepomex($cp)->result();
 		$resultado = $this->consulta_sepomex($cp);
 		echo json_encode($resultado);
 	}
@@ -365,7 +365,7 @@ class Direccion_Envio extends CI_Controller {
 		
 		try
 		{
-			$resultado['sepomex'] = $this->modelo->obtener_direccion_sepomex($codigo_postal)->result();
+			$resultado['sepomex'] = $this->direccion_envio_model->obtener_direccion_sepomex($codigo_postal)->result();
 			$resultado['success'] = true;
 			$resultado['msg'] = "Ok";
 			return $resultado;
@@ -419,7 +419,7 @@ class Direccion_Envio extends CI_Controller {
 	{
 		$estado = $this->input->post('estado');
 		$resultado = array();
-		$resultado['ciudades'] = $this->modelo->listar_ciudades_sepomex($estado)->result_array();
+		$resultado['ciudades'] = $this->direccion_envio_model->listar_ciudades_sepomex($estado)->result_array();
 		echo json_encode($resultado);
 		//$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
 		//echo json_encode($this->consulta_ciudades($estado));
@@ -429,7 +429,7 @@ class Direccion_Envio extends CI_Controller {
 	{
 		$resultado = array();			
 		try {
-			$resultado['ciudades'] = $this->modelo->listar_ciudades_sepomex($estado)->result();
+			$resultado['ciudades'] = $this->direccion_envio_model->listar_ciudades_sepomex($estado)->result();
 			$resultado['success'] = true;
 			$resultado['msg'] = "Ciudades Resultados";
 			return $resultado;
@@ -490,7 +490,7 @@ class Direccion_Envio extends CI_Controller {
 		$ciudad = $this->input->post('ciudad');
 
 		$resultado = array();
-		$resultado['colonias'] = $this->modelo->listar_colonias_sepomex($estado, $ciudad)->result_array();
+		$resultado['colonias'] = $this->direccion_envio_model->listar_colonias_sepomex($estado, $ciudad)->result_array();
 		echo json_encode($resultado);
 		//$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
 		//$ciudad = $this->input->post('ciudad');
@@ -502,7 +502,7 @@ class Direccion_Envio extends CI_Controller {
 	{
 		$resultado = array();
 		try {
-			$resultado['colonias'] = $this->modelo->listar_colonias_sepomex($estado, $ciudad)->result();
+			$resultado['colonias'] = $this->direccion_envio_model->listar_colonias_sepomex($estado, $ciudad)->result();
 			$resultado['success'] = true;
 			$resultado['msg'] = "Colonias Resultados";
 			return $resultado;
