@@ -147,7 +147,6 @@ class Forma_Pago_model extends CI_Model {
 			print_r($res->row());
 			echo "</pre>";
 			*/
-			exit();
 		}
 			
 		$row_res = $res->row();
