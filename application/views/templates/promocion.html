@@ -1,17 +1,19 @@
 <div id="promocion">
 	<?php
-		if($this->session->userdata('promociones')) {
+		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
+			echo "promo: " .$this->session->userdata('promociones');
 			$articulos = $this->session->userdata('articulos');
 			$total = 0;
-			foreach ($articulos as $a) {
-				$total += $a['tarifaDc'];
+			if (!empty($articulos)) {
+				foreach ($articulos as $a) 
+					$total += $a['tarifaDc'];
 			}
 	?>
 		<table>
 			<thead>
 				<tr class="promocion">
 					<th>
-					<?php echo $this->session->userdata('promocion')->descripcionVc; 
+					<?php if ($this->session->userdata('promocion')) echo $this->session->userdata('promocion')->descripcionVc;
 					?>
 						
 					</th>
@@ -25,9 +27,9 @@
 					<td class="articulo">
 						<ul>
 							<?php 
-								foreach($articulos as $articulo) {                                    
-								    echo "<li>" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'] . "</li>";								 	                                        
-								}
+								if (!empty($articulos))
+								foreach($articulos as $articulo)                                     
+								    echo "<li>" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'] . "</li>";
 							?>
 						</ul>
 					</td>
@@ -35,5 +37,8 @@
 				</tr>															
 			</tbody>
 		</table>	
-	<?php } ?>
+	<?php } else { ?>
+		<h2>No existe promoci&oacute;n para realizar el pago</h2>
+		<?php //echo anchor('/', 'Ir a la tienda'); ?>
+	<?php }?>
 </div>

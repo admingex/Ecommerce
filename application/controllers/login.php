@@ -117,62 +117,69 @@ class Login extends CI_Controller {
 	 * y coloca en sesión lo necesario para el pago exprés
 	 */
 	private function obtener_destino($id_cliente) 
-	{		
-		
-		
-		$respromo=$this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));								
-		foreach($respromo['articulos'] as $res){
-			$temp[]=array('tarifaDc'=>$res['tarifaDc'], 'tipo_productoVc'=>$res['tipo_productoVc'], 'medio_entregaVc'=>$res['medio_entregaVc'], 'requiere_envioBi'=>(bool)$res['requiere_envioBi']);
-		}
-		$this->session->set_userdata('sitio', $respromo['sitio']);
-		$this->session->set_userdata('promocion', $respromo['promocion']);
-		$this->session->set_userdata('articulos', $temp);				
-		$this->session->set_userdata('promociones', TRUE);
-		
-		$forma_pago_express = $this->forma_pago_model->get_pago_express($id_cliente);		//devolverá un obj
-		$dir_envio_express = $this->direccion_envio_model->get_pago_express($id_cliente);		//devolverá un obj
-		
-		//dirección de facturación queda excluida de esta validación, se preguntará en el resumen de la orden
-		$dir_facturacion_express = $this->direccion_facturacion_model->get_pago_express($id_cliente);	//devolverá un obj
-		
-		//se crea el objeto con la informción del pago exprés
-		$pago_express = new Pago_Express($forma_pago_express, $dir_envio_express, $dir_facturacion_express);
-		
-		//revisar si requiere forma de envío
-		$requiere_envio = FALSE;		
-		
-		if ($this->session->userdata('promociones')) {			
-			$articulos = $this->session->userdata('articulos');
+	{
+		//Procesar la promoción	
+		$respromo = $this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));
+		if ($respromo) {
+			foreach ($respromo['articulos'] as $res) {
+			$temp[] = array('tarifaDc'=>$res['tarifaDc'], 'tipo_productoVc'=>$res['tipo_productoVc'], 'medio_entregaVc'=>$res['medio_entregaVc'], 'requiere_envioBi'=>(bool)$res['requiere_envioBi']);
+			}
 			
-			foreach($articulos as $articulo) {				
-				if ($articulo['requiere_envioBi']!=FALSE) {
-					$requiere_envio = TRUE;
-					//echo "requiere envio";
-					break;
+			$this->session->set_userdata('sitio', $respromo['sitio']);
+			$this->session->set_userdata('promocion', $respromo['promocion']);
+			$this->session->set_userdata('articulos', $temp);				
+			$this->session->set_userdata('promociones', TRUE);
+			
+			$forma_pago_express = $this->forma_pago_model->get_pago_express($id_cliente);		//devolverá un obj
+			$dir_envio_express = $this->direccion_envio_model->get_pago_express($id_cliente);		//devolverá un obj
+			
+			//dirección de facturación queda excluida de esta validación, se preguntará en el resumen de la orden
+			$dir_facturacion_express = $this->direccion_facturacion_model->get_pago_express($id_cliente);	//devolverá un obj
+			
+			//se crea el objeto con la informción del pago exprés
+			$pago_express = new Pago_Express($forma_pago_express, $dir_envio_express, $dir_facturacion_express);
+			
+			//revisar si requiere forma de envío
+			$requiere_envio = FALSE;		
+			
+			if ($this->session->userdata('promociones')) {			
+				$articulos = $this->session->userdata('articulos');
+				
+				foreach($articulos as $articulo) {				
+					if ($articulo['requiere_envioBi']!=FALSE) {
+						$requiere_envio = TRUE;
+						//echo "requiere envio";
+						break;
+					}
 				}
 			}
+
+			//obtener el array de lo que se subirá a sesion
+			$flujo_pago_express = $pago_express->definir_destino($requiere_envio);
+			
+			//Colocar en sesión lo necesario
+			if (array_key_exists('tarjeta', $flujo_pago_express))
+				$this->session->set_userdata('tarjeta', $pago_express->get_forma_pago());
+			if (array_key_exists('dir_envio', $flujo_pago_express))
+				$this->session->set_userdata('dir_envio', $pago_express->get_dir_envio());
+			
+			//se coloca el objeto en sesión para ocuparlo en los demás controladores
+			$this->session->set_userdata('pago_express', $pago_express);
+			
+			/*
+			echo "<br/>requiere: ". $requiere_envio	;
+			echo "<pre>";
+			print_r($flujo_pago_express);
+			echo "</pre>";
+			exit();
+			*/
+			
+			
+			return $pago_express->get_destino();	
+		} else {
+			//enviar a página de mensaje "La promoción que solicitó ya no existe...etc."
+			return "orden_compra";
 		}
-		//obtener el array de lo que se subirá a sesion
-		$flujo_pago_express = $pago_express->definir_destino($requiere_envio);
-		
-		//Colocar en sesión lo necesario
-		if (array_key_exists('tarjeta', $flujo_pago_express))
-			$this->session->set_userdata('tarjeta', $pago_express->get_forma_pago());
-		if (array_key_exists('dir_envio', $flujo_pago_express))
-			$this->session->set_userdata('dir_envio', $pago_express->get_dir_envio());
-		
-		//se coloca el objeto en sesión para ocuparlo en los demás controladores
-		$this->session->set_userdata('pago_express', $pago_express);
-		
-		/*
-		echo "<pre>";
-		print_r($flujo_pago_express);
-		echo "</pre>";
-		exit();
-		*/
-		
-		
-		return $pago_express->get_destino();
 	}
 	
 	private function crear_sesion($id_cliente, $nombre, $email)

@@ -11,6 +11,7 @@ class Pago_Express {
     
 	public function __construct($forma_pago, $dir_envio, $dir_facturacion) 
 	{
+		/*son objetos con un consecutivo*/
 		$this->forma_pago = $forma_pago;
 		$this->dir_envio = $dir_envio;
 		$this->dir_facturacion = $dir_facturacion;
@@ -41,12 +42,11 @@ class Pago_Express {
 		//regresar el arreglo con las variables de sesión de pago y envío
 		$flujo_pago_express = array();
 		
-		if ($this->forma_pago) {	//tiene forma de pago
-			
+		if ($this->get_forma_pago()) {	//tiene forma de pago
 			//indicar qué partes se colocarán en sesión y el id
 			$flujo_pago_express['tarjeta'] = $this->forma_pago->consecutivo;
 			if ($requiere_envio) {
-				if ($this->dir_envio) {
+				if ($this->get_dir_envio()) {
 					//poner en sesion y pasar a la orden
 					$flujo_pago_express['dir_envio'] = $this->dir_envio->consecutivo;
 					
@@ -62,7 +62,7 @@ class Pago_Express {
 				$this->destino = "orden_compra";
 			}
 		} else {	//no tiene forma de pago
-			if ($requiere_envio && $this->dir_envio) {	//se revisa por si acaso
+			if ($requiere_envio && $this->get_dir_envio()) {	//se revisa por si acaso
 				//poner en sesión la dirección
 				$flujo_pago_express['dir_envio'] = $this->dir_envio->consecutivo;
 			} 
