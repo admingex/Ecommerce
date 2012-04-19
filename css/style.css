@@ -9,28 +9,33 @@ html
     min-height: 100%;
     padding-bottom: 1px;
 }
+
 body
 {
-    background: #000000;
+    background: #000;
     margin: 0 auto;
-    width: 984px;
+    width: 1024px;
 }
+
 #header-container
 {
     float: left;
     width: 128px;
 }
+
 #header-container img
 {
     margin: 13px 10px 0;
 }
+
 #main
 {
     background: #FFF;
     float: left;
-    width: 728px;
+    width: 768px;
     min-height: 728px;
 }
+
 #footer-container
 {
     float: left;
@@ -41,77 +46,116 @@ body
 {
     margin: 65px 10px 0;
 }
-ul
-{
-    margin-left: 0px;
-    padding-left: 0px;
-    list-style-type: none;
+
+#encabezado{	
+	margin-top: 50px;
+	margin-bottom: 40px;
+	width: 100%;
+	display: block;	
 }
-    ul.menu-outer,
-    ul.menu-outer-right
-    {
-        margin-left: 10px;
-        margin-top: 74px;
-        font-family: Gotham-Book;
-        font-size: 0.78em;
-    }
-    ul.menu-outer-right
-    {
-        margin-top: 46px;
-        height: 136px;
-    }
-    ul.menu-outer li, ul.menu-outer-right li
-    {
-        list-style-type: none;
-        padding-bottom: 11px;
-    }
-    ul.menu-outer li a, ul.menu-outer-right li a
-    {
-        text-decoration: none;
-        color: #fff;
-    }
-    ul.menu-outer li a:hover, ul.menu-outer-right li a:hover
-    {
-        color: #b8091a;
-    }
 
-#menu_navegacion{
-	float: right; 
-	font-size: 12px; 
-	padding: 3px; 
-	color: #FB3; 
-	font-weight: bold;
-	margin-top: 15px;
-}    
+#encabezado header{
+	margin: 0px 0px 40px 35px;		
+}
 
-#promocion {
+#encabezado nav{	
+	margin: 0px 56px 0px 56px;	
+	height: 33px;		
+}
+
+#encabezado nav .izquierda{
 	float: left;
-	color: #FB3; 
-	font-weight: bold;
-	margin-top: 15px;
-	padding-left: 15px;
-}
-.promocion th {
-	font-size: 14px;
-	padding: 4px;
 }
 
-.articulo ul {
+
+#encabezado nav .derecha{
+	float: right;	
+	width: 170px
+}
+
+#encabezado .txt-proceso-pago{	
+	color: #e4e4e4;
 	font-size: 12px;
-	padding: 4px;
-	
+	height: 25px;
+	display: block;		
 }
 
-.menu_opcion{
-	float: left; 
-	margin: 0px 5px	;
-	height: 35px;	
+#encabezado .txt-proceso-pago-select{	
+	color: #C90002;
+	font-size: 12px;
+	height: 25px;
+	display: block;		
 }
 
-.menu_opcion a{
-	color: #063F84;
-	font-weight: bold;
+.proceso-pago{
+	float: left;	
+	margin-right: 40px;					
 }
-.menu_opcion a:hover{
-	color: #FB3;
+
+.img-proceso-pago{	
+	width: 31px;	
+	height: 32px;
+	margin-left: auto;
+	margin-right: auto;					
 }
+.img-inicio{		
+	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;	
+	background-position: -14px -11px;		
+}
+.img-inicio-select{		
+	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background-position: -14px -42px;	
+}
+
+.img-pago-envio{
+	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background-position: -45px -11px;
+}
+.img-pago-envio-select{
+	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background-position: -45px -42px;
+}
+
+.img-facturacion{
+	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background-position: -76px -11px;
+}
+.img-facturacion-select{
+	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background-position: -76px -42px;
+}
+
+.img-compra{
+	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background-position: -107px -11px;
+}
+.img-compra-select{
+	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background-position: -107px -42px;
+}
+
+.necesita-ayuda{
+	width: 170px;	
+	height: 32px;			
+}
+.img-ayuda{
+	background: url('../images/css-sprite_btnAyuda.jpg') no-repeat;
+	background-position: -28px -14px;
+}
+
+#pleca-punteada{
+	display: block;			
+	height: 4px;
+	margin-left: 40px;
+	background: url('../images/css-sprite_Plecas.jpg') no-repeat;	
+	background-position: 0px -49px;	
+}
+
+#detalle-promocion{			
+	display: block;
+	margin: 5px 56px;	
+}
+
+
+
+
