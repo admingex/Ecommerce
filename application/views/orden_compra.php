@@ -1,6 +1,6 @@
 <div id="container">
 	
-	<h1><?php echo $subtitle; ?></h1>
+	<?php echo $subtitle; ?>
 	
 	<?php
 		//formulario				

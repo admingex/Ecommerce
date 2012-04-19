@@ -77,14 +77,16 @@ body
 	color: #e4e4e4;
 	font-size: 12px;
 	height: 25px;
-	display: block;		
+	display: block;
+	text-decoration: none;		
 }
 
 #encabezado .txt-proceso-pago-select{	
 	color: #C90002;
 	font-size: 12px;
 	height: 25px;
-	display: block;		
+	display: block;	
+	text-decoration: none;	
 }
 
 .proceso-pago{
@@ -154,8 +156,15 @@ body
 #detalle-promocion{			
 	display: block;
 	margin: 5px 56px;	
+	min-height: 75px;		
 }
 
-
+#detalle-promocion .img-producto-compra{	
+	width: 60px;
+	height: 75px;	
+	background: url('../images/css-sprite_icons.jpg') no-repeat;	
+	background-position: -13px -11px;
+	float: left;	
+}
 
 
