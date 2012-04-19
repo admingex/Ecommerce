@@ -9,19 +9,88 @@ class Orden_Compra_model extends CI_Model {
         parent::__construct();
     }
     
-	function verifica_cliente($email = '', $password = '')
+	/**
+	 * Inserta la orden en la tabla de compras y a su vez registra el estatus de la
+	 * compra en la tabla de bitácora;  
+	 */
+	function insertar_compra($id_cliente)
 	{
-		$m5_pass = md5($email.'|'.$password);		//encriptaciónn definida en el registro de usuarios
-		$qry = "SELECT id_clienteIn as id_cliente, salutation as nombre 
-				FROM CMS_IntCliente
-				WHERE email = '".$email."' AND password = '".$m5_pass."'
-				LIMIT 1";
-		$res = $this->db->query($qry);
+		$id_compra = $this->get_consecutivo() + 1;
 		
-		//echo $res->num_rows()." qey: ". $qry;
+		$info_compra = array( 'id_compraIn' => $id_compra,
+							'id_clienteIn' => $id_cliente);
+		//var_dump($info_compra);
 		
+		/*					
+		$this->db->trans_start();
+			$res = $this->db->insert('CMS_IntCompra', $info_compra);
+		$this->db->trans_complete();
+		*/
+		$res = $this->db->insert('CMS_IntCompra', $info_compra);
+		
+		return $id_compra;
+	}
+	
+	/**
+	 * Registra el estatus de la compra en la bitácora
+	 */
+	function insertar_estatus_compra($info_estatus)
+	{
+		$res = $this->db->insert('CMS_RelCompraEstatus', $info_estatus);
 		return $res;
 	}
+	
+	/**
+	 * Insertar la forma de pago asociada a la compra, si es tarjeta, 
+	 * también el consecutivo de la misma
+	 */
+	function insertar_pago_compra($info_pago_compra) 
+	{
+		$res = $this->db->insert('CMS_RelCompraPago', $info_pago_compra);
+		return $res;
+	}
+	
+	/**
+	 * Insertar articulo por promoción
+	 * Recibe un array con: $id_articulo, $id_compra, $id_cliente
+	 */
+	function insertar_articulo_compra($info_articulo_compra) 
+	{
+		$res = $this->db->insert('CMS_RelArticuloCompra', $info_articulo_compra);
+		return $res;
+	}
+	
+	/**
+	 * Regresa los ids de artículos de una promoción 
+	 */
+	function obtener_articulos_promocion($id_promocion)
+	{
+		$this->db->select('id_articuloIn as id_articulo');
+		$this->db->where('id_promocionIn', $id_promocion);
+		$res = $this->db->get('CMS_IntArticulo');
+		
+		return $res->result();
+	}
+	
+	/**
+	 * Devuelve el consecutivo actual de la última compra
+	 */
+	function get_consecutivo() 
+	{
+		$this->db->select_max('id_compraIn', 'consecutivo');
+		$resultado = $this->db->get_where('CMS_IntCompra');
+		$row = $resultado->row();	//regresa un objeto de un sólo registro
+		
+		if(!$row->consecutivo)	{//si regresa null
+			return 0;
+		} else {
+			return $row->consecutivo;	
+		}
+		//echo " numrows: $resultado->num_rows<br/>";
+		//var_dump($resultado->row());
+	}
+	
+	
 	
 	function verifica_registro_email($email='') {
 		//verificar que el email no esté registrado
