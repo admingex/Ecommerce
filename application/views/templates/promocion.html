@@ -1,7 +1,7 @@
-<div id="promocion">
+ <div id="promocion">
 	<?php
 		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
-			echo "promo: " .$this->session->userdata('promociones');
+			
 			$articulos = $this->session->userdata('articulos');
 			$total = 0;
 			if (!empty($articulos)) {
@@ -15,7 +15,7 @@
 					<th>
 					<?php if ($this->session->userdata('promocion')) echo $this->session->userdata('promocion')->descripcionVc;
 					?>
-						
+
 					</th>
 					<th>
 						Total
@@ -37,7 +37,7 @@
 				</tr>															
 			</tbody>
 		</table>	
-	<?php } else { ?>
+	<?php } else if ($this->session->userdata('logged_in')){ ?>
 		<h2>No existe promoci&oacute;n para realizar el pago</h2>
 		<?php //echo anchor('/', 'Ir a la tienda'); ?>
 	<?php }?>
