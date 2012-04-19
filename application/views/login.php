@@ -1,21 +1,25 @@
-
-<div id="container">
-	
-	<h1><?php echo $subtitle; ?></h1>
-	
-	<?php
-		//formulario
-		include ('login/login.html');		
-	?>
-	
-	<?php
-		if (!empty($mensaje)) {
-	?>
-	<div id="dialog" title="Resultado" >
-		<p><?php echo $mensaje?></p>
+<section id="descripcion-proceso">
+	<div class="titulo-proceso-img">&nbsp;		
+	</div>			
+	<div class="titulo-proceso">
+		<?php echo $subtitle; ?>	
 	</div>
+</section>
+<div id="pleca-punteada"></div>
+<section class="contenedor">	
+	<div class="contenedor-gris">
+		<?php		
+		include ('login/login.html');		
+		?>
+	</div>		
 	<?php
-		}
+	if (!empty($mensaje)) {
+	?>
+		<div id="dialog" title="Resultado" >
+			<p><?php echo $mensaje?></p>
+		</div>
+	<?php
+	}
 	?>
 	<div id="scripts">
 		<script type="text/javascript">
@@ -36,6 +40,5 @@
 				});
 			});
 		</script>
-	</div>
-	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
-</div>
+	</div>	
+<section>

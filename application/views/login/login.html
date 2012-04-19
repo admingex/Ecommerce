@@ -1,50 +1,61 @@
-<!--h1>Login</h1-->
-
-<div id="body">	
-	<form id="form_registro_tc" action="<?php echo $this->config->item('base_url').'/index.php/login/'; ?>" method="POST">
-		<!--span id="message" class="validation_message">
-			<h3><?php if(isset($login_errores['user_login'])) echo ($login_errores['user_login']);?></h3>
-		</span-->
-		<div class="item_requerid">* Correo electr&oacute;nico:</div>
-		<div >
-			<input type="text" name="email" id="email" size="40" maxlength="60" 
+<table>
+<form id="form_registro_tc" action="<?php echo $this->config->item('base_url').'/index.php/login/'; ?>" method="POST">
+	<tr>
+		<td class="label">
+			Mi correo electr&oacute;nico es	
+		</td>
+		<td colspan="2">
+			<input type="text" name="email" id="email"
 				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
 			<span class="validation_message"> <?php if(isset($login_errores['email'])) echo ($login_errores['email']);?></span>
-		</div>
-		<div>Solo usaremos tu correo para enviarte informacion relacionaa con tu compra</div>
-		
-		<div class="item_requerid">Iniciar sesi&oacute;n como:</div>
-		<div class="form_requerid">			
-			<ul>
-				<li>
-					<input type="radio" id="tipo_inicio" name="tipo_inicio" value="nuevo">
-						Cliente nuevo</input>
-				</li>
-				<li>
-					<input type="radio" id="tipo_inicio" name="tipo_inicio" value="registrado" 
-						checked="<?php if(isset($_POST['tipo_inicio']) && $_POST['tipo_inicio'] == 'registrado') echo 'true'; ?>" >
-						Cliente Registrado
-					</input>
-				</li>
-			</ul>
-		</div>
-		<div class="item_requerid">* Contrase&ntilde;a:</div>
-		<div class="form_requerid">
+		</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td colspan="2">
+			<div class="instrucciones">S&oacute;lo usaremos tu correo para enviarte informaci&oacute;n relacionada con tu compra</div>
+		</td>
+	</tr>	
+	<tr>
+		<td rowspan="5" valign="top" class="label">
+			Iniciar sesi&oacute;n como
+		</td>
+		<td>
+			<input type="radio" id="tipo_inicio" name="tipo_inicio" value="nuevo" />
+		</td>
+		<td class="label_izq">	
+			Cliente nuevo	
+		</td>
+	<tr>		
+	<tr>
+		<td>
+			<input type="radio" id="tipo_inicio" name="tipo_inicio" value="registrado" 
+						checked="<?php if(isset($_POST['tipo_inicio']) && $_POST['tipo_inicio'] == 'registrado') echo 'true'; ?>" />
+		</td>
+		<td class="label_izq">				
+			Cliente registrado									
+		</td>
+	</tr>		
+	<tr>
+		<td>&nbsp;</td>
+		<td class="label_izq">
+			Contrase&ntilde;a		
 			<input type="password" name="password" id="password" size="20" 
 				value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
 			<span class="validation_message">
+				<a href="<?php echo $this->config->item('base_url').'/index.php/password/'; ?>">&iquest;Olvidaste tu contrase&ntilde;a?</a>
 				<?php if(isset($login_errores['password'])) echo ($login_errores['password']);?>
 			</span>
-		</div>		
-		<div class="form_requerid">
-			<a href="<?php echo $this->config->item('base_url').'/index.php/password/'; ?>">&iquest;Olvidaste tu contrase&ntilde;a?</a>
-		</div>			
-		<div id="message" class="validation_message">
-			<?php if(isset($login_errores['user_login'])) echo "<span class='result_fail'>". $login_errores['user_login']. "</span>";?>
-		</div>
-		<div class="form_button">
-			<input type="submit" id="enviar" name="enviar" value="Iniciar sesi&oacute;n / Registrar"/>
-			
-		</div>
-	</form>
-</div>
+			<div id="message" class="validation_message">
+				<?php if(isset($login_errores['user_login'])) echo "<span class='result_fail'>". $login_errores['user_login']. "</span>";?>
+			</div>				
+		</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td colspan="2">
+			<input type="submit" id="enviar" name="enviar" value="&nbsp;" class="boton_login"/>
+		</td>
+	</tr>																					
+</form>	
+</table>

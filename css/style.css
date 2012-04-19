@@ -1,9 +1,16 @@
 @font-face
 {
-    font-family: 'Gotham-Book';
-    src: url(Gotham-Book.otf);
-    src: local('Gotham-Book'), local('Gotham-Book'), url(../css/Gotham-Book.otf) format('opentype');
+    font-family: 'Gotham-Book';  
+    src: local('Gotham-Book'), url('css/Gotham-Book.otf') format('opentype');
 }
+/*@font-face {
+  font-family: 'Muli';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Muli'), url('http://themes.googleusercontent.com/static/fonts/muli/v4/kU4XYdV4jtS72BIidPtqyw.woff') format('woff');
+}
+*/
+
 html
 {
     min-height: 100%;
@@ -15,6 +22,7 @@ body
     background: #000;
     margin: 0 auto;
     width: 1024px;
+    font-family: 'Gotham-Book', 'Arial';
 }
 
 #header-container
@@ -33,7 +41,7 @@ body
     background: #FFF;
     float: left;
     width: 768px;
-    min-height: 728px;
+    min-height: 728px;   
 }
 
 #footer-container
@@ -52,6 +60,7 @@ body
 	margin-bottom: 40px;
 	width: 100%;
 	display: block;	
+	position: relative;
 }
 
 #encabezado header{
@@ -59,7 +68,7 @@ body
 }
 
 #encabezado nav{	
-	margin: 0px 56px 0px 56px;	
+	margin: 0px 56px 0px 28px;	
 	height: 33px;		
 }
 
@@ -78,7 +87,8 @@ body
 	font-size: 12px;
 	height: 25px;
 	display: block;
-	text-decoration: none;		
+	text-decoration: none;
+	text-align: center;		
 }
 
 #encabezado .txt-proceso-pago-select{	
@@ -87,11 +97,13 @@ body
 	height: 25px;
 	display: block;	
 	text-decoration: none;	
+	text-align: center;
 }
 
 .proceso-pago{
 	float: left;	
-	margin-right: 40px;					
+	margin-right: 32px;	
+	width: 90px;			
 }
 
 .img-proceso-pago{	
@@ -151,12 +163,14 @@ body
 	margin-left: 40px;
 	background: url('../images/css-sprite_Plecas.jpg') no-repeat;	
 	background-position: 0px -49px;	
+	clear: both;
 }
 
-#detalle-promocion{			
+#detalle-promocion{	
+	position: relative;		
 	display: block;
 	margin: 5px 56px;	
-	min-height: 75px;		
+	min-height: 75px;			
 }
 
 #detalle-promocion .img-producto-compra{	
@@ -165,6 +179,101 @@ body
 	background: url('../images/css-sprite_icons.jpg') no-repeat;	
 	background-position: -13px -11px;
 	float: left;	
+}
+
+#detalle-promocion .izquierda{
+	float: left;
+	padding-left: 15px;
+}
+
+#detalle-promocion .derecha{
+	float: right;
+}
+
+.titulo-promo-rojo{
+	color: #C90002;
+	font-size: 14px;		
+}
+
+.titulo-promo-negro{
+	color: #292929;
+	font-size: 15px;	
+	line-height: 20px;	
+}
+
+#descripcion-proceso{
+	position: relative;		
+	display: block;
+	margin: 40px 56px 0px 59px;	
+	clear: both;		
+}
+
+.titulo-proceso-img{	
+	height: 10px;
+	width: 6px;
+	margin-top: 4px;		
+	background: url('../images/css-sprite_icons.jpg') no-repeat;	
+	background-position: -198px -11px;	
+	float: left;		
+}
+.titulo-proceso{
+	padding-left: 3px;	
+	font-size: 16px;
+	font-weight: bold;
+	float: left;	
+}
+
+.contenedor{			
+	height: auto;	
+	background-color: #FFF;		
+}
+.contenedor-gris{
+	background-color: #e5e5e5;
+	margin: 5px 56px 0px 65px;	
+	padding: 10px;
+}
+
+
+.label{
+	color: #000;
+	font-size: 12px;	
+	text-align: right;
+	font-weight: bold;		
+}
+
+.label_izq{
+	color: #000;
+	font-size: 12px;		
+	font-weight: bold;
+}
+input .text{
+	width: 200px;	
+	
+}
+
+.instrucciones{
+	font-size: 12px;
+	color: #4e4e4e;
+}
+a{
+	color: #094C86;
+	font-size: 12px;		
+}
+a: visited{
+	color: #094C86;
+}
+
+.boton_login{
+	border: none;
+	height: 24px;
+	width: 152px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -13px -15px;
+}
+
+.boton_login_hover{
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -13px -190px;
 }
 
 

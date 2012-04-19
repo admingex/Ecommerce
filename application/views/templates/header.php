@@ -27,5 +27,7 @@
     <div id="main">
     		<?php    	    					
 				include "menu.html"; 
-			    include "promocion.html";
+				if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
+					include "promocion.html";	
+				}			    
 			?>

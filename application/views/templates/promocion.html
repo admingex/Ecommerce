@@ -11,27 +11,30 @@
 	?>	
 	
 		<div class="img-producto-compra"></div>
-	
-		<table>							
-			<tbody>
-				<tr>
-					<td>
-						imagen
-					</td>
-					<td>
-						<?php if ($this->session->userdata('promocion')) echo $this->session->userdata('promocion')->descripcionVc;?>
-						
-							<?php 
+		<div class="producto-compra">
+			<div class="izquierda">
+				<div class="titulo-promo-rojo">Est&aacute;s comprando:</div>
+				<div class="titulo-promo-negro">
+					<?php 
+						if ($this->session->userdata('promocion')) echo $this->session->userdata('promocion')->descripcionVc;												 
 								if (!empty($articulos))
-								foreach($articulos as $articulo)                                     
-								    echo "<br />" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'];
-							?>						
-					</td>
-					<td>$<?php echo $total; ?></td>		
-				</tr>															
-			</tbody>
-			</table>																	
-	<?php } else if ($this->session->userdata('logged_in')){ ?>
-		<h2>No existe promoci&oacute;n para realizar el pago</h2>		
-	<?php }?>
+									foreach($articulos as $articulo)                                     
+								    	echo "<br />" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'];
+					?>														
+				</div>					
+			</div>
+			<div class="derecha">
+				<div class="titulo-promo-rojo">
+					Total
+				</div>
+				<div class="titulo-promo-negro">
+					$<?php echo $total; ?>
+				</div>									
+			</div>					
+		</div>
+																			
+	<?php 
+		} 
+	?>
 </section>
+<div id="pleca-punteada"></div>
