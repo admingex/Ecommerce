@@ -255,13 +255,11 @@ input .text{
 	font-size: 12px;
 	color: #4e4e4e;
 }
-
-.instrucciones-proceso {
-	padding-left: 66px;	
-	font-size: 12px;
-	color: #4e4e4e;
-	//float: left;	
-	clear: both;
+.intrucciones_mensaje{
+	color: #6e6e6e;
+	font-size: 11px;
+	text-justify: distribute;	
+	margin: 3px 56px 5px 65px;
 }
 a{
 	color: #094C86;
@@ -279,19 +277,27 @@ a: visited{
 	background-position: -13px -15px;
 }
 
-.boton_login_hover{
+.boton_login:hover{
+	border: none;
+	height: 24px;
+	width: 152px;
 	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
-	background-position: -13px -190px;
+	background-position: -13px -39px;	
 }
 
-.boton_agregar_tc {
-	
+.boton_enviar_instrucciones{
+	border: none;
+	height: 24px;
+	width: 150px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -1138px -15px;
 }
 
-.boton_agregar_amex {
-	
+.boton_enviar_instrucciones:hover{
+	border: none;
+	height: 24px;
+	width: 150px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;
+	background-position: -1138px -39px;		
 }
 
-.nuevo-registro {
-/*para las nuevas tarjetas, etc.*/
-}
