@@ -1,7 +1,23 @@
-<div id="container">
-	
-	<h1><?php echo $subtitle; ?></h1>
-	
+<section id="descripcion-proceso">
+	<div class="titulo-proceso-img">&nbsp;		
+	</div>			
+	<div class="titulo-proceso">
+		<?php echo $subtitle; ?>	
+	</div>
+</section>
+<div id="pleca-punteada"></div>
+
+<section class="contenedor">
+	<?php
+	if((!$enviado)&&(!$cambiar)&&(!$verificar)){
+	?>		
+		<div class="intrucciones_mensaje">
+			Para recuperar tu contrase&ntilde;a, escribe tu correo electronico. Te enviaremos un correo con las instrucciones que debes seguir
+		</div>
+	<?php
+	}		
+	?>
+	<div class="contenedor-gris">				
 	<?php
 		if($enviado){
 			include ('login/password_enviado.html');
@@ -17,6 +33,7 @@
 		}
 			
 	?>
+	</div>
 	<script type="text/javascript">
 	$(function(){
 		$('#dialog').dialog({
@@ -39,9 +56,7 @@
 			<p><?php echo $mensaje;?></p>
 		</div>
 	<?php		
-	}
-			
+	}			
 	?>	
-	
-	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
-</div>
+
+</section>
