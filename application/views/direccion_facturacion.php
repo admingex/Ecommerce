@@ -1,9 +1,21 @@
-<div id="container">			
+<section id="descripcion-proceso">
+	<div class="titulo-proceso-img">&nbsp;		
+	</div>
+	<div class="titulo-proceso">
+		<?php //if (isset($subtitle)) echo $subtitle; ?>	
+	</div>
+</section>
+<div id="pleca-punteada"></div>
+<section class="contenedor">
+	
 	<?php	
 		if(isset($solicita_factura)){
 			if($solicita_factura){
-	?>					
-			<p><b>¿requieres factura?</b></p>
+	?>		
+		<section id="descripcion-proceso">
+			<div class="titulo-proceso-img">&nbsp;</div>
+			<div class="titulo-proceso">¿Requiere Factura?</div>
+			<div id="pleca-punteada"></div>
 			<p>
 				<form id="form_agregar_direccion" action="<?php echo site_url('direccion_facturacion/requiere_factura');?>" method="POST">
 					<input type="hidden" name="requiere_factura" value="no" />
@@ -11,7 +23,7 @@
 				</form>
 			</p>	
 			<div id="pleca">&nbsp;</div>
-							
+		</section>
 	<?php
 			}
 		}				
@@ -91,4 +103,4 @@
 	<?php		
 	}
 	?>		
-</div>
+</section>

@@ -1,5 +1,5 @@
 <section id="descripcion-proceso">
-	<div class="titulo-proceso-img">&nbsp;		
+	<div class="titulo-proceso-img">&nbsp;
 	</div>			
 	<div class="titulo-proceso">
 		<?php echo $subtitle; ?>

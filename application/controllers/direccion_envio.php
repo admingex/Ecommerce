@@ -180,7 +180,7 @@ class Direccion_Envio extends CI_Controller {
 		$data['script'] = $script_file;
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] =  $this->subtitle;
+		$data['subtitle'] = "Edita los campos que quieras modificar";
 		
 		//recuperar la información de la dirección
 		if (!$consecutivo && $this->session->userdata("dir_envio")) {

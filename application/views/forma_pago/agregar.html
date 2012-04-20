@@ -103,20 +103,20 @@
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
-				<td>
+				<td class="label_izq">
 					<input type="checkbox" id="chk_guardar" name="chk_guardar" checked="true" <?php if(isset($_POST['chk_guardar'])) echo 'checked="true"';?> />Guardar en mi cuenta para compra futuras
 				</td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
-				<td>
+				<td class="label_izq">
 					<input type="checkbox" id="chk_default" name="chk_default" <?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar para pago express
 				</td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<input type="submit" name="guardar_tarjeta" value="Usar nueva tarjeta" class="boton_agregar_tc"/>
+					<input type="submit" name="guardar_tarjeta" id="guardar_tarjeta" value="Usar nueva tarjeta" class="boton_agregar_tc"/>
 					<a href="<?php echo site_url('forma_pago/listar/');?>">Cancelar</a>
 				</td>
 			</tr>

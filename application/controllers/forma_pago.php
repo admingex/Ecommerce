@@ -271,7 +271,7 @@ class Forma_Pago extends CI_Controller {
 		$data['script'] = $script_file;
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('editar Forma de Pago');
+		$data['subtitle'] = 'Editar tarjeta guardada';
 		
 		$data['vista_detalle'] = $tipo;		//selección de la vista para mostrar
 		
@@ -325,6 +325,7 @@ class Forma_Pago extends CI_Controller {
 				//lista paises
 				$lista_paises_amex = $this->forma_pago_model->listar_paises_amex();
 				$data['lista_paises_amex'] = $lista_paises_amex;
+				$data['subtitle'] = "Ingresa o edita tu direcci&oacute;n de tarjeta AMEX";
 				/*if ($data['tarjeta_amex']->consecutivo_cmsSi == 0)
 					$data['tarjeta_amex']->consecutivo_cmsSi = $consecutivo;*/
 				//var_dump($data['tarjeta_amex']);
@@ -350,9 +351,7 @@ class Forma_Pago extends CI_Controller {
 			$this->cargar_vista('', 'forma_pago' , $data);
 		} else {	//If POST
 			//echo "editar - con: ".$consecutivo . " tipo: " . $tipo;
-			//var_dump($data);
 			//exit();
-			
 			$this->cargar_vista('', 'forma_pago' , $data);
 		}
 	}

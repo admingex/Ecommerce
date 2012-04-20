@@ -131,7 +131,7 @@ $(document).ready(function() {
 	});
 	
 	/*Ocultar campos abiertos de estado, ciudad, colonia*/
-	$('#div_otro_pais').hide();
+	$('tr.div_otro_pais').hide();
 	
 	//onChange:
 	$('#sel_pais').change(function() {
@@ -140,11 +140,11 @@ $(document).ready(function() {
 		$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/es_mexico/" + $(this).val(),
 			function(data) {
 				if (!data.result) {	//no es México
-					$('#div_mexico').hide();
-					$('#div_otro_pais').show();
+					$('tr.div_mexico').hide();
+					$('tr.div_otro_pais').show();
 				} else {
-					$('#div_mexico').show();
-					$('#div_otro_pais').hide();
+					$('tr.div_mexico').show();
+					$('tr.div_otro_pais').hide();
 				}
 			}
 		);
