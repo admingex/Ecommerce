@@ -1,13 +1,26 @@
-<form id="form_forma_pago" action="<?php echo site_url("direccion_envio"); ?>" method="POST">
-	<div>
-		<h1>Otras formas de pago:</h1>
-		
-		<h3><input type="radio" id="deposito_bancario" name="deposito_bancario" checked="true"/>Dep&oacute;sito Bancario</h3>
-		<p>Para pagar con dep&oacute;sito bancario deber&aacute;s depositar a la cuenta XXX de Bancomer con el 
-			n&uacute;mero de referencia xxxx y enviar la ficha de dep&oacute;sito a ...</p>
-		<div class="form_button">
-			<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="Pagar con depósito bancario"/>
+<section id="descripcion-proceso">
+	<div class="titulo-proceso-img">&nbsp;		
+	</div>			
+	<div class="titulo-proceso">
+		Otras formas de pago
+	</div>
+</section>
+<div id="pleca-punteada"></div>
+<div class="contenedor-gris tam75">
+<form id="form_forma_pago" action="<?php echo site_url("direccion_envio"); ?>" method="POST">	
+	<div class="img-deposito">&nbsp;</div>
+	<div class="deposito-izquierda">
+		<div class="titulo-promo-rojo">
+			<input type="radio" id="deposito_bancario" name="deposito_bancario" checked="true"/>
+			Dep&oacute;sito Bancario			
 			<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
 		</div>
+		<div class="item-lista">
+			Para pagar con dep&oacute;sito bancario deber&aacute;s depositar a la cuenta XXX de Bancomer con el n&uacute;mero de referencia xxxx y enviar la ficha de dep&oacute;sito a ...	
+		</div>
 	</div>
-</form>
+	<div class="deposito-derecha">
+		<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="&nbsp;" class="pagar-deposito"/>
+	</div>
+</form>		
+</div>
