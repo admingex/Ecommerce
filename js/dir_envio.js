@@ -45,28 +45,28 @@ $(document).ready(function() {
 		colonia	= (colonia_t.is(":visible")) ? colonia_t : colonia_s;
 					
 		if (!reg_direccion.test($.trim(calle.val()))) {
-			calle.focus().after("<span class='error'>Ingresa la calle correctamente</spam>");
+			calle.focus().after("<span class='error'>Ingresa la calle correctamente</span>");
 			return false;
 		} else if (!reg_numeros.test($.trim(num_ext.val()))) {
-			num_ext.focus().after("<span class='error'>Ingresa tu número exterior correctamente</spam>");
+			num_ext.focus().after("<span class='error'>Ingresa tu número exterior correctamente</span>");
 			return false;
 		} else if (!reg_cp.test($.trim(cp.val()))) {
-			cp.focus().after("<span class='error'>Ingresa tu código postal correctamente</spam>");
+			cp.focus().after("<span class='error'>Ingresa tu código postal correctamente</span>");
 			return false;
 		}  else if (pais.val() == '') {
-			pais.focus().after("<span class='error'>Ingresa tu país correctamente</spam>");
+			pais.focus().after("<span class='error'>Ingresa tu país correctamente</span>");
 			return false;
 		} else if ((estado_t.is(":visible") && !reg_direccion.test($.trim(estado_t.val()))) || (estado_s.is(":visible") && estado_s.val() == '')) {
-			estado.focus().after("<span class='error'>Ingresa tu estado correctamente</spam>");
+			estado.focus().after("<span class='error'>Ingresa tu estado correctamente</span>");
 			return false;
 		} else if ((ciudad_t.is(":visible") && !reg_direccion.test($.trim(ciudad_t.val()))) || (ciudad_s.is(":visible") && ciudad_s.val() == '')) {
-			ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</spam>");
+			ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</span>");
 			return false;
 		} else if ((colonia_t.is(":visible") && !reg_direccion.test($.trim(colonia_t.val()))) || (colonia_s.is(":visible") && colonia_s.val() == '')) {
-			colonia.focus().after("<span class='error'>Ingresa tu colonia correctamente</spam>");
+			colonia.focus().after("<span class='error'>Ingresa tu colonia correctamente</span>");
 			return false;
 		} else if (!reg_telefono.test($.trim(telefono.val()))) {
-			telefono.focus().after("<span class='error'>Ingresa tu teléfono correctamente</spam>");
+			telefono.focus().after("<span class='error'>Ingresa tu teléfono correctamente</span>");
 			return false;
 		}
 		//alert('ok');

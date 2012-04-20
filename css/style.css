@@ -255,6 +255,14 @@ input .text{
 	font-size: 12px;
 	color: #4e4e4e;
 }
+
+.instrucciones-proceso {
+	padding-left: 66px;	
+	font-size: 12px;
+	color: #4e4e4e;
+	//float: left;	
+	clear: both;
+}
 a{
 	color: #094C86;
 	font-size: 12px;		
@@ -276,4 +284,14 @@ a: visited{
 	background-position: -13px -190px;
 }
 
+.boton_agregar_tc {
+	
+}
 
+.boton_agregar_amex {
+	
+}
+
+.nuevo-registro {
+/*para las nuevas tarjetas, etc.*/
+}

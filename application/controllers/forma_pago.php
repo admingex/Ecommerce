@@ -4,7 +4,7 @@ include ('DTOS/Tipos_Tarjetas.php');
 
 class Forma_Pago extends CI_Controller {
 	var $title = 'Forma de Pago'; 		// Capitalize the first letter
-	var $subtitle = 'Seleccionar Forma de Pago'; 	// Capitalize the first letter
+	var $subtitle = 'Selecciona una forma de pago'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
 	//var $tc = array();
 	private $id_cliente;
@@ -66,7 +66,7 @@ class Forma_Pago extends CI_Controller {
 		$consecutivo = $this->forma_pago_model->get_consecutivo($id_cliente);
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Nueva Forma de Pago');
+		$data['subtitle'] = $this->subtitle;
 		
 		//catálogo que se obtendrá del CCTC
 		if ($tipo == "tc") {
@@ -95,11 +95,12 @@ class Forma_Pago extends CI_Controller {
 				$this->registrar_amex($id_cliente);
 			}
 
-		} else if (!empty($this->reg_errores)){
+		} else if (!empty($this->reg_errores)){	//Si hubo errores en los datos enviados
 			$data['reg_errores'] = $this->reg_errores;
 			$this->cargar_vista('', 'forma_pago' , $data);
 		} else {
 			//echo "id_tarjeta: " .$this->session->userdata('tarjeta');
+			if ($tipo == "amex") $data['subtitle'] = "Ingresa o edita tu direcci&oacute;n de tarjeta AMEX";
 			$this->cargar_vista('', 'forma_pago' , $data);
 		}
 	}
@@ -109,7 +110,7 @@ class Forma_Pago extends CI_Controller {
 	 * */
 	private function registrar_tc($id_cliente) {
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Nueva Forma de Pago');
+		$data['subtitle'] = 'Selecciona una forma de pago';
 		
 		$consecutivo = $this->forma_pago_model->get_consecutivo($id_cliente);
 		$lista_tipo_tarjeta = $this->forma_pago_model->listar_tipos_tarjeta();	//$this->listar_tipos_tarjeta_WS();
@@ -198,7 +199,7 @@ class Forma_Pago extends CI_Controller {
 	
 	private function registrar_amex($id_cliente) {
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Nueva Forma de Pago');
+		$data['subtitle'] = "Ingresa o edita tu direcci&oacute;n de tarjeta AMEX";
 		
 		if ($this->session->userdata('tarjeta')) {
 			$tarjeta = $this->session->userdata('tarjeta');

@@ -41,13 +41,13 @@ $(document).ready(function() {
 			numero_tarjeta.focus().after("<span class='error'>Ingresa un número de tarjeta válido</span>");
 			return false;
 		} else if (!reg_nombres.test($.trim(nombre.val()))) {
-			nombre.focus().after("<span class='error'>Ingresa tu nombre correctamente</spam>");
+			nombre.focus().after("<span class='error'>Ingresa tu nombre correctamente</span>");
 			return false;
 		} else if (!reg_nombres.test($.trim(appP.val()))) {
-			appP.focus().after("<span class='error'>Ingresa tu appellido correctamente</spam>");
+			appP.focus().after("<span class='error'>Ingresa tu appellido correctamente</span>");
 			return false;
 		} else if ($.trim(appM.val()) != "" && !reg_nombres.test($.trim(appM.val()))) {
-			appM.focus().after("<span class='error'>Ingresa tu appellido correctamente</spam>");
+			appM.focus().after("<span class='error'>Ingresa tu appellido correctamente</span>");
 			return false;
 		}
 		//$("form[id^='form_registro_tc']").submit();
@@ -59,25 +59,25 @@ $(document).ready(function() {
 		$(".error").remove();
 		//Amex
 		if (!reg_direccion.test($.trim(calle.val()))) {
-			calle.focus().after("<span class='error'>Ingresa calle y número correctamente</spam>");
+			calle.focus().after("<span class='error'>Ingresa calle y número correctamente s</span>");
 			return false;
 		} else if (!reg_cp.test($.trim(cp.val()))) {
-			cp.focus().after("<span class='error'>Ingresa tu código postal correctamente</spam>");
+			cp.focus().after("<span class='error'>Ingresa tu código postal correctamente</span>");
 			return false;
 		} else if (!reg_direccion.test($.trim(ciudad.val()))) {
-			ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</spam>");
+			ciudad.focus().after("<span class='error'>Ingresa tu ciudad correctamente</span>");
 			return false;
 		} else if (!reg_direccion.test($.trim(estado.val()))) {
-			estado.focus().after("<span class='error'>Ingresa tu estado correctamente</spam>");
+			estado.focus().after("<span class='error'>Ingresa tu estado correctamente</span>");
 			return false;
 		} else if (!reg_direccion.test($.trim(pais.val()))) {
-			pais.focus().after("<span class='error'>Ingresa tu país correctamente</spam>");
+			pais.focus().after("<span class='error'>Ingresa tu país correctamente</span>");
 			return false;
 		} else if ($.trim(email.val()) != "" && !reg_email.test($.trim(email.val()))) {
-			email.focus().after("<span class='error'>Ingresa tu correo correctamente</spam>");
+			email.focus().after("<span class='error'>Ingresa tu correo correctamente</span>");
 			return false;
 		} else if (!reg_telefono.test($.trim(telefono.val()))) {		//no vacío
-			telefono.focus().after("<span class='error'>Ingresa tu teléfono correctamente</spam>");
+			telefono.focus().after("<span class='error'>Ingresa tu teléfono correctamente</span>");
 			return false;
 		} 
 		//amex
