@@ -233,6 +233,11 @@ body
 	padding: 10px;
 }
 
+.contenedor-blanco{	
+	margin: 5px 56px 0px 65px;	
+	padding: 0px;		
+}
+
 
 .label{
 	color: #000;
@@ -361,6 +366,7 @@ a: visited{
 .item-lista{
 	color: #000;
 	font-size: 11px;
+	padding: 3px;	
 }
 
 .usar_tarjeta{
@@ -369,6 +375,7 @@ a: visited{
 	width: 125px;
 	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
 	background-position: -136px -13px;
+	margin-left: 3px;
 }
 
 .usar_tarjeta:hover{
@@ -377,6 +384,14 @@ a: visited{
 	width: 125px;
 	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
 	background-position: -136px -31px;
+}
+
+.usar_nueva_tarjeta{
+	border: none;
+	height: 18px;
+	width: 125px;
+	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background-position: -11px -13px;	
 }
 
 .img-deposito{	
@@ -411,4 +426,18 @@ a: visited{
 	background-position: -348px -15px;
 	margin-top: 50px;
 }
-
+thead{	
+	background-color: #FFF;									
+}
+th{
+	background: url('../images/css-sprite_Plecas.jpg');		
+	background-position: -20px -14px;
+	padding-top: 5px;
+	font-size: 12px;
+	font-weight: bold;
+	vertical-align: top;
+	height: 26px;
+}
+.borde-derecho{
+	border-right: solid 1px #CCC;	
+}

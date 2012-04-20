@@ -8,26 +8,23 @@
 		id_ant=id;					
 	}
 </script>
-<div class="contenedor-gris">
+<div class="contenedor-blanco">
 	<form id="form_forma_pago" action="<?php echo site_url("direccion_envio"); ?>" method="POST">
-		<table width="100%">
+		<table cellspacing="0" cellpadding="0" width="100%">
 			<thead>
 				<tr>
-					<th>&nbsp;</th>
-					<th>
-						Tarjeta
+					<th colspan="2">
+						Tus tarjetas guardadas
 					</th>									
 					<th>
 						Nombre
 					</th>
-					<th>
+					<th colspan="3">
 						Expira
-					</th>					
-					<th>&nbsp;</th>
-					<th>&nbsp;</th>
+					</th>														
 				</tr>
 			</thead>
-			<tbody>			
+			<tbody class="contenedor-gris">			
 		<?php
 			if (isset($lista_tarjetas) && $lista_tarjetas->num_rows()) {
 				$hay_tarjetas = true;
@@ -43,16 +40,16 @@
 			?>
 				<tr>
 					<td><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check." ".$value_r; ?> onclick="cambia_boton(<?php echo $tarjeta['id_TCSi'] ?>)"/></td>
-					<td class="item-lista">
+					<td class="item-lista borde-derecho">
 						<?php echo $tarjeta['descripcionVc'].' terminaci&oacute;n '.
 							substr($tarjeta['terminacion_tarjetaVc'],strlen($tarjeta['terminacion_tarjetaVc']) - 4); ?>
 						<?php echo $class;?>
 					</td>
-					<td class="item-lista">
+					<td class="item-lista borde-derecho">
 						<?php echo $tarjeta['nombre_titularVc'].' '.$tarjeta['apellidoP_titularVc'].' '.$tarjeta['apellidoM_titularVc']; ?>
 					</td>
-					<td class="item-lista"><?php echo $tarjeta['mes_expiracionVc'].'/'.$tarjeta['anio_expiracionVc']; ?></td>
-					<td>
+					<td class="item-lista borde-derecho"><?php echo $tarjeta['mes_expiracionVc'].'/'.$tarjeta['anio_expiracionVc']; ?></td>
+					<td class="item-lista borde-derecho">
 						<a href="<?php echo site_url('forma_pago/editar/tc/'.$tarjeta['id_TCSi']); ?>" title="editar">editar</a>
 						<a href="<?php echo site_url('forma_pago/eliminar/'.$tarjeta['id_TCSi']); ?>" title="eliminar">eliminar</a>	
 					</td>
