@@ -255,7 +255,7 @@ input .text{
 	font-size: 12px;
 	color: #4e4e4e;
 }
-.intrucciones_mensaje{
+.instrucciones_mensaje{
 	color: #6e6e6e;
 	font-size: 11px;
 	text-justify: distribute;	
@@ -301,4 +301,31 @@ a: visited{
 	background-position: -1138px -39px;		
 }
 
+.boton_continuar_compra{
+	border: none;
+	height: 24px;
+	width: 131px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -1007px -15px;
+}
+.boton_continuar_compra:hover{
+	border: none;
+	height: 24px;
+	width: 131px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -1007px -39px;
+}
+
+.boton_verificar_clave{
+	border: none;
+	height: 24px;
+	width: 115px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -1288px -15px;
+}
+
+.validation_message{
+	font-size: 10px;
+	color: #E70030;
+}
 
