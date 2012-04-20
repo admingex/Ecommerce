@@ -33,7 +33,7 @@
 			<tr>
 				<td>
 					<div>
-						<small><i>(Ingresa tu c&oacute;digo postal y da clkic en llenar para completar los datos de Colonia, Ciudad y Estado)</i></small>
+						<span class="instrucciones_cursivas">(Ingresa tu c&oacute;digo postal y da clkic en llenar para completar los datos de Colonia, Ciudad y Estado)</span>
 					</div>
 				</td>
 			</tr>
@@ -203,12 +203,14 @@
 				<td class="label_izq">
 					<input type="checkbox" name="chk_default" id="chk_default" <?php if(isset($_POST['chk_default'])) { echo 'checked="true"';} else if(isset($direccion->id_estatusSi) && $direccion->id_estatusSi == 3) { echo 'checked="true"'; }?> />Usar para pago express
 				</td>
-				<td class="nuevo-registro"><i>Estos campos son obligatorios</i></td>
 			</tr>
 			<tr>
+				<td colspan="2"><div><span class="instrucciones_cursivas_der"><span class="asterisco">&nbsp;</span>Estos campos son obligatorios</span></div></td>
+			</tr>
+			<!--tr>
 				<td>&nbsp;</td>
 				<td><div><?php if(isset($msg_actualizacion)) { echo $msg_actualizacion; } ?></div></td>
-			</tr>
+			</tr-->
 			<tr>
 				<td>&nbsp;</td>
 				<td>

@@ -1,10 +1,21 @@
-<div id="container">
-	
-	<?php echo $subtitle; ?>
+<section id="descripcion-proceso">
+	<div class="titulo-proceso-img">&nbsp;		
+	</div>			
+	<div class="titulo-proceso">
+		<?php echo $subtitle; ?>	
+	</div>
+</section>
+<div id="pleca-punteada"></div>
+<section class="contenedor">
 	
 	<?php
-		//formulario				
-		include ('orden_compra/resumen.html');		
+		if (empty($resultado)) {
+			//formulario				
+			include ('orden_compra/resumen.html');
+		} else {
+			include ('orden_compra/respuesta_cobro.html');
+		}
+					
 	?>
 	
 	<?php
@@ -37,4 +48,4 @@
 		</script>
 	</div>
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
-</div>
+</section>

@@ -1,4 +1,4 @@
-<div class="nuevo-registro">Nueva direcci&oacute;n</div>
+<div class="instrucciones_mensaje">Nueva direcci&oacute;n</div>
 <div class="contenedor-gris">
 	<form id="form_registro_direccion_envio" action="<?php echo site_url('direccion_envio/registrar/');?>" method="POST">
 		<table>
@@ -28,13 +28,13 @@
 				<td>
 					<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>" />
 					<span><input type="button" id="btn_cp" name="btn_cp" value="Llenar"/></span>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
+					<span class="instrucciones"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<div>
-						<small><i>(Ingresa tu c&oacute;digo postal y da clkic en llenar para completar los datos de Colonia, Ciudad y Estado)</i></small>
+						<span class="instrucciones_cursivas">(Ingresa tu c&oacute;digo postal y da clkic en llenar para completar los datos de Colonia, Ciudad y Estado)</span>
 					</div>
 				</td>
 			</tr>
@@ -209,7 +209,10 @@
 				<td class="label_izq">
 					<input type="checkbox" name="chk_default" id="chk_default" <?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direcci&oacute;n para pago express
 				</td>
-				<td class="nuevo-registro"><i>Estos campos son obligatorios</i></td>
+				
+			</tr>
+			<tr>
+				<td colspan="2"><div><span class="instrucciones_cursivas_der"><span class="asterisco">&nbsp;</span>Estos campos son obligatorios</span></div></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
