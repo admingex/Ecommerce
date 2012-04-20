@@ -19,16 +19,19 @@ class Orden_Compra_model extends CI_Model {
 		
 		$info_compra = array( 'id_compraIn' => $id_compra,
 							'id_clienteIn' => $id_cliente);
-		//var_dump($info_compra);
 		
-		/*					
-		$this->db->trans_start();
-			$res = $this->db->insert('CMS_IntCompra', $info_compra);
-		$this->db->trans_complete();
-		*/
 		$res = $this->db->insert('CMS_IntCompra', $info_compra);
 		
 		return $id_compra;
+	}
+	
+	/**
+	 * Registrar la(s) direcciones de la compra
+	 */
+	
+	function insertar_direcciones_compra($id_cliente, $id_dir_envío, $id_dir_factuarcion)
+	{
+		
 	}
 	
 	/**

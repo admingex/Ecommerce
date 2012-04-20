@@ -9,12 +9,14 @@ class Orden_Compra extends CI_Controller {
 	var $registro_errores = array();				//validación para los errores
 	
 	private $id_cliente;
+	private $id_direccion_envio;
+	private $id_direccion_facturacion;
 	
 	public static $ESTATUS_COMPRA = array(
-		"SOLICITUD_CCTC"			=> 0, 
-		"RESPUESTA_CCTC"			=> 1, 
-		"REGOSTRO_PAGO_ECOMERCE"	=> 2,
-		"ENVIO_CORREO"	=> 3
+		"SOLICITUD_CCTC"			=> 1, 
+		"RESPUESTA_CCTC"			=> 2, 
+		"REGOSTRO_PAGO_ECOMERCE"	=> 3,
+		"ENVIO_CORREO"				=> 4
 	);
 	
 	
@@ -159,7 +161,7 @@ class Orden_Compra extends CI_Controller {
 				//recupera info de la BD
 				$consecutivo = (int)$dir_envio;
 				$detalle_envio = $this->direccion_envio_model->detalle_direccion($consecutivo, $id_cliente);
-				$data['dir_envio'] = $detalle_envio;	
+				$data['dir_envio'] = $detalle_envio;
 			}
 		}
 		
@@ -182,6 +184,7 @@ class Orden_Compra extends CI_Controller {
 			$data['reg_errores'] = $this->registro_errores;
 		}		
 		
+		echo "direcciones: ". $this->id_direccion_envio. ", " . $this->id_direccion_facturacion;
 		//cargar vista	
 		$this->cargar_vista('', 'orden_compra', $data);
 	}
@@ -214,9 +217,13 @@ class Orden_Compra extends CI_Controller {
 				);
 				
 				echo var_dump($informacion_orden);
-				/*Resgistrar TODA la información de la orden*/
-				$this->registrar_compra($id_cliente, $id_promocionIn);
 				
+				exit();
+				/*Resgistrar TODA la información de la orden*/
+				$registro_exitoso = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
+				
+				
+				echo "<br/>exito del registro de la orden:". $registro_exitoso;
 				exit();
 				$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
 				//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
@@ -309,33 +316,80 @@ class Orden_Compra extends CI_Controller {
 	 * Registrar toda la información de la orden
 	 * El tercer parámetro es para indicar el estatus inicial
 	 */
-	
-	private function registrar_compra($id_cliente, $id_promocion, $id_estatusCompra = 1)
+	private function registrar_orden_compra($id_cliente, $id_promocion)
 	{
 		//Registrar eb la tabla de ordenes
-		$id_compra = $this->orden_compra_model->insertar_compra($id_cliente);
+		$id_compra = $this->registrar_compra($id_cliente);
 		
+		$exito = FALSE;
 		if ($id_compra) {
 			//Registrar el articulo y la orden de compra a la que pertenece.
+			
+			//$this->db->trans_start();
+	
 			$registro_articulos = $this->registrar_articulos_compra($id_compra, $id_cliente, $id_promocion);
 			if (!$registro_articulos)
 			{
-				//romper la transaccion 
+				echo "<p>Error en el registro del los articulos</p>";
 			}
 			
 			//Registrar la forma de pago relacionada con una compra
 			$registro_pago = $this->registrar_pago_compra($id_compra, $id_cliente);
 			if (!$registro_articulos)
 			{
-				//romper la transaccion 
+				echo "<p>Error en el registro del pago</p>"; 
 			}
 			
 			//registrar el estatus
 			$estatus_compra = $this->registrar_estatus_compra($id_compra, $id_cliente, self::$ESTATUS_COMPRA['SOLICITUD_CCTC']);
 			if (!$estatus_compra)
 			{
-				//romper la transaccion 
+				echo "<p>Error en el registro del estatus de la transacción</p>";
 			}
+			
+			//registrar las direcciones con la compra
+			$dir_envio = ($this->session->userdata('dir_envio'))? $this->session->userdata('dir_envio') : NULL;
+			$dir_facturacion = ($this->session->userdata('dir_facturacion'))? $this->session->userdata('dir_facturacion') : NULL;
+			
+			if ($dir_envio || $dir_facturacion) {
+				$direcciones_compra = $this->registrar_direcciones_compra($id_compra, $id_cliente, $dir_envio, $dir_facturacion );
+				if (!$direcciones_compra)
+				{
+					echo "<p>Error en el registro delas direcciones de la transacción</p>";
+				}
+			}
+			
+			//	$this->db->trans_complete();
+			
+			$exito = TRUE;
+		
+		}
+		return $exito;
+	}
+	
+	/**
+	 * Redistro de la compra
+	 */
+	private function registrar_compra($id_cliente)
+	{
+		try {
+			return $this->orden_compra_model->insertar_compra($id_cliente);
+		} catch (Exception $ex ) {
+			echo "Error en el registro del la compra: " .$ex->getMessage();
+			return FALSE;
+		}
+	}
+	
+	/**
+	 * Redistro de las direcciones de la compra
+	 */
+	private function registrar_direcciones_compra($id_compra, $id_cliente, $dir_envio, $dir_facturacion)
+	{
+		try {
+			return $this->orden_compra_model->insertar_direcciones_compra($id_cliente, $this->id_direccion_envio, $this->id_direccion_facturacion);
+		} catch (Exception $ex ) {
+			echo "Error en el registro del la compra: " .$ex->getMessage();
+			return FALSE;
 		}
 	}
 	
@@ -344,8 +398,13 @@ class Orden_Compra extends CI_Controller {
 	 */
 	private function registrar_estatus_compra($id_compra, $id_cliente, $id_estatusCompra)
 	{
-		$info_estatus = array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'is_estatusCompraSi' => $estatus_compra);
-		return $this->orden_compra_model->insertar_estatus_compra($info_estatus);
+		try {
+			$info_estatus = array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'id_estatusCompraSi' => $id_estatusCompra);
+			return $this->orden_compra_model->insertar_estatus_compra($info_estatus);
+		} catch (Exception $ex ) {
+			echo "Error en el registro del estatus de la compra: " .$ex->getMessage();
+			return FALSE;
+		}
 	}
 	
 	/**
@@ -356,15 +415,21 @@ class Orden_Compra extends CI_Controller {
 	{
 		$id_tc = NULL;	//Sólo aplica para tarjetas
 		//procesar el tipo de pago
-		if ($this->session->userdata('tarjeta')) {
+		if ($tarjeta = $this->session->userdata('tarjeta')) {
 			$id_tc = (is_array($tarjeta)) ? $tarjeta['tc']['id_TCSi'] : $tarjeta;
 			$tipo_pago = 1;	//MASTERCARD / VISA/AMEX/ 
 		} else if ($this->session->userdata('deposito')){
 			$tipo_pago = 4;	//Depósito Bancario
 		}
 		
-		$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'tipo_pagoSi' => $tipo_pago, 'id_TCSi' => $id_tc);
-		return $this->orden_compra_model->insertar_pago_compra($info_pago);
+		//registrar pago
+		try {
+			$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => $id_tc);
+			return $this->orden_compra_model->insertar_pago_compra($info_pago);
+		} catch (Exception $ex ) {
+			echo "Error en el registro del pago de la compra: " .$ex->getMessage();
+			return FALSE;
+		}
 	}
 		
 	/**

@@ -1,85 +1,96 @@
-<div id="tc_amex">
-	<h1>Direcci&oacute;n American Express</h1>
-	
-	<div id="body">
-		<form id="form_registro_tc_amex" action="<?php echo site_url('forma_pago/registrar/amex'); ?>" method="POST">
-			<div id="div_dir_amex">	
-				<div class="item_requerid">* Calle y n&uacute;mero:</div>
-				<div class="form_requerid">
-					<input type="text" name="txt_calle" id="txt_calle" size="40"
-						value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);?>"/>
+<div class="instrucciones-proceso">Debe ser la direcci&oacute;n que aprece en el estado de cuenta de tu tarjeta.</div>
+<div class="contenedor-gris">
+	<form id="form_registro_tc_amex" action="<?php echo site_url('forma_pago/registrar/amex'); ?>" method="POST">
+		<table>
+			<tr>
+				<td class="label">
+					Calle y n&uacute;mero
+				</td>
+				<td>
+					<input type="text" name="txt_calle" id="txt_calle" size="40" value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);?>"/>
 					<span class="validation_message"><?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>
-				</div>
-				<div class="item_requerid">* C&oacute;digo postal:</div>
-				<div class="form_requerid">
-					<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5"
-						value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
+				</td>
+			</tr>	
+			<tr>
+				<td class="label">
+					C&oacute;digo postal
+				</td>
+				<td>
+					<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
 					<span class="validation_message"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
-				</div>
-				<div class="item_requerid">* Ciudad:</div>
-				<div class="form_requerid">
-					<input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
-						value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
-				</div>
-				<div class="item_requerid">* Estado:</div>
-				<div class="form_requerid">
-					<input type="text" name="txt_estado" id="txt_estado" size="30"
-						value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
-				</div>
-				<div class="item_requerid">* Pa&iacute;s:</div>
-				<div class="form_requerid">
+				</td>
+			</tr>
+			<tr>
+				<td class="label">
+					Pa&iacute;s
+				</td>
+				<td>
 					<select id="sel_pais" name="sel_pais">
-						<?php
-						if (isset($lista_paises_amex)) {
-							$id_pais = "MEX";				//Mexico por default
-							if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
-								$id_pais = $_POST['sel_pais'];
-								
-							foreach($lista_paises_amex->result() as $pais)
-							{
-								if ($id_pais == $pais->id_pais) {
-									echo "<option value='".$pais->id_pais."' selected='true'>".
-										$pais->pais.
-										"</option>";
-								} else {
-									echo "<option value='".$pais->id_pais."'>".
-										$pais->pais.
-										"</option>";
-								}
+					<?php
+					if (isset($lista_paises_amex)) {
+						$id_pais = "MEX";				//Mexico por default
+						if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
+							$id_pais = $_POST['sel_pais'];
+							
+						foreach($lista_paises_amex->result() as $pais)
+						{
+							if ($id_pais == $pais->id_pais) {
+								echo "<option value='".$pais->id_pais."' selected='true'>".
+									$pais->pais.
+									"</option>";
+							} else {
+								echo "<option value='".$pais->id_pais."'>".
+									$pais->pais.
+									"</option>";
 							}
 						}
-						?>
-					</select>
-					
-					<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
-				</div>
+					}
+					?>
+				</select>
 				
-				<!--div class="item_requerid">* Pa&iacute;s:</div>
-				<div class="form_requerid">
-					<input type="text" name="txt_pais" id="txt_pais" size="30"
-						value="<?php if(isset($_POST['txt_pais'])) echo htmlspecialchars($_POST['txt_pais']);?>"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_pais'])) echo ($reg_errores['txt_pais']);?></span>
-				</div-->
-				<div class="item_requerid">Email:</div>
-				<div class="form_requerid">
-					<input type="text" name="txt_email" id="txt_email" size="30"
-						value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);
-									else echo $this->session->userdata('email');?>"/>
+				<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">
+					Estado
+				</td>
+				<td>
+					<input type="text" name="txt_estado" id="txt_estado" size="30" value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
+					<span class="validation_message"><?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">
+					Ciudad o Municipio
+				</td>
+				<td>
+					<input type="text" name="txt_ciudad" id="txt_ciudad" size="30" value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
+					<span class="validation_message"><?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">
+					Email
+				</td>
+				<td>
+					<input type="text" name="txt_email" id="txt_email" size="30" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);  else echo $this->session->userdata('email');?>"/>
 					<span class="validation_message"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
-				</div>
-				<div class="item_requerid">* Tel&eacute;fono:</div>
-				<div class="form_requerid">
-					<input type="text" name="txt_telefono" id="txt_telefono" size="30"
-						value="<?php if(isset($_POST['txt_telefono'])) echo htmlspecialchars($_POST['txt_telefono']);?>"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">
+					Tel&eacute;fono
+				</td>
+				<td>
+					<input type="text" name="txt_telefono" id="txt_telefono" size="30" value="<?php if(isset($_POST['txt_telefono'])) echo htmlspecialchars($_POST['txt_telefono']);?>"/>
 					<span class="validation_message"><?php if(isset($reg_errores['txt_telefono'])) echo ($reg_errores['txt_telefono']);?></span>
-				</div>
-			</div>
-			
-			<div class="form_button">
-				<input type="submit" id="guardar_amex" name="guardar_amex" value="Usar esta tarjeta"/>
-			</div>			
-		</form>
-	</div>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><input type="submit" id="guardar_amex" name="guardar_amex" value="Usar esta tarjeta" class="boton_agregar_amex"/></td>
+			</tr>
+		</table>				
+	</form>
 </div>
