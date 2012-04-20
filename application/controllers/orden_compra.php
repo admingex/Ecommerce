@@ -216,18 +216,16 @@ class Orden_Compra extends CI_Controller {
 					$digito
 				);
 				
-				echo var_dump($informacion_orden);
+				//echo var_dump($informacion_orden);				
+				//exit();
 				
-				exit();
 				/*Resgistrar TODA la información de la orden*/
-				$registro_exitoso = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
 				
 				
-				echo "<br/>exito del registro de la orden:". $registro_exitoso;
-				exit();
+				//echo "<br/>exito del registro de la orden:". $registro_exitoso;
+				//exit();
 				$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
 				//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
-				
 				
 				// Si la información esta en la Session //
 				if (is_array($this->session->userdata('tarjeta'))) {
@@ -274,9 +272,21 @@ class Orden_Compra extends CI_Controller {
 					try {  
 						$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
 						$obj_result = $cliente->PagarTC($parameter);
+						
+						//Registro inicial de la compra
+						$registro_exitoso = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
+						
+						//Intento de cobro en CCTC
 						$simple_result = $obj_result->PagarTCResult;
-		
-						var_dump($simple_result);
+						
+						//Registro de la respuesta de CCTC de la compra
+						//cargar Vista
+						//var_dump($simple_result);
+						$data['subtitle'] = "Resultado de la petición de cobro";
+						$data['resultado'] = $simple_result;
+						$this->cargar_vista('', 'orden_compra', $data);
+						//enviar Correo
+						
 						//return $simple_result;
 					} catch (SoapFault $exception) { 
 						echo $exception;  
@@ -285,16 +295,27 @@ class Orden_Compra extends CI_Controller {
 					}
 					
 				} else { // La informacion esta en la Base de Datos Local //
-					echo "La informacion esta en la Base de Datos Local";
+					//echo "La informacion esta en la Base de Datos Local";
+					
 					$detalle_tarjeta = $this->forma_pago_model->detalle_tarjeta($consecutivo, $id_cliente);
 					$tc = $detalle_tarjeta;	//trae la tc
 					// Intentamos el Pago con los Id's en  CCTC //
 					try {  
 						$parameter = array('informacion_orden' => $informacion_orden);
+						
+						//Registro inicial de la compra
+						$registro_exitoso = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
+						//Intento de cobro en CCTC
 						$obj_result = $cliente->PagarTcUsandoId($parameter);
+						
+						//Registro de la respuesta de CCTC de la compra
+						//cargar Vista
 						$simple_result = $obj_result->PagarTcUsandoIdResult;
 					
-						var_dump($simple_result);
+						//var_dump($simple_result);
+						$data['subtitle'] = "Resultado de la petición de cobro";
+						$data['resultado'] = $simple_result;
+						$this->cargar_vista('', 'orden_compra', $data);
 						//return $simple_result;
 					} catch (SoapFault $exception) {
 						//errores en desarrollo
@@ -351,6 +372,7 @@ class Orden_Compra extends CI_Controller {
 			$dir_envio = ($this->session->userdata('dir_envio'))? $this->session->userdata('dir_envio') : NULL;
 			$dir_facturacion = ($this->session->userdata('dir_facturacion'))? $this->session->userdata('dir_facturacion') : NULL;
 			
+			/*
 			if ($dir_envio || $dir_facturacion) {
 				$direcciones_compra = $this->registrar_direcciones_compra($id_compra, $id_cliente, $dir_envio, $dir_facturacion );
 				if (!$direcciones_compra)
@@ -358,6 +380,7 @@ class Orden_Compra extends CI_Controller {
 					echo "<p>Error en el registro delas direcciones de la transacción</p>";
 				}
 			}
+			*/
 			
 			//	$this->db->trans_complete();
 			
@@ -439,8 +462,8 @@ class Orden_Compra extends CI_Controller {
 	private function registrar_articulos_compra($id_compra, $id_cliente, $id_promocion) 
 	{
 		$articulos_compra = $this->orden_compra_model->obtener_articulos_promocion($id_promocion);
-		echo "articulos: $id_promocion";
-		var_dump($articulos_compra);
+		//echo "articulos: $id_promocion";
+		//var_dump($articulos_compra);
 		foreach ($articulos_compra as $articulo) {
 			if (!$this->orden_compra_model->insertar_articulo_compra(array(
 												'id_articuloIn' => $articulo->id_articulo, 

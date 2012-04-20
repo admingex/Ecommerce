@@ -8,14 +8,14 @@
 		id_ant=id;					
 	}
 </script>	
-<h1>Direcciones guardadas de <?php echo $this->session->userdata('username');?></h1>
-<div id="body">
+
+<div class="contenedor-blanco">
 	<form id="form_direccion_envio" action="<?php echo site_url('direccion_facturacion'); ?>" method="POST">
-		<table>
+		<table cellspacing="0" cellpadding="0" width="100%">
 			<thead>
 				<tr>
-					<th>&nbsp;</th>
-					<th>
+					
+					<th colspan="2">
 						Calle y n&uacute;mero
 					</th>									
 					<th>Colonia</th>
@@ -25,7 +25,7 @@
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
-			<tbody>		
+			<tbody class="contenedor-gris">		
 		
 		<?php
 			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {
@@ -45,20 +45,20 @@
 				<td>
 					<input type="radio" id="direccion_selecionada" name="direccion_selecionada" <?php echo $check." ".$value_r;?> onclick="cambia_boton(<?php echo $direccion['id_consecutivoSi']; ?>)"/>
 				</td>
-				<td>
+				<td class="item-lista borde-derecho">
 					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?>
 					<?php echo $class;?>
 				</td>
-				<td>
+				<td class="item-lista borde-derecho">
 					<?php echo $direccion['colonia']; ?>
 				</td>
-				<td>
+				<td class="item-lista borde-derecho">
 					<?php echo $direccion['cp']; ?>
 				</td>
-				<td>
+				<td class="item-lista borde-derecho">
 					<?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?>
 				</td>
-				<td>
+				<td class="item-lista borde-derecho">
 					<a href="<?php echo site_url("direccion_envio/editar/".$direccion['id_consecutivoSi']); ?>" title="editar">editar</a>&nbsp;
 					<a href="<?php echo site_url("direccion_envio/eliminar/".$direccion['id_consecutivoSi']); ?>" title="eliminar">eliminar</a>
 				</td>

@@ -2,7 +2,7 @@
 
 class Direccion_Envio extends CI_Controller {
 	var $title = 'Direcci&oacute;n de Env&iacute;o'; 		// Capitalize the first letter
-	var $subtitle = 'Direcci&oacute;n de Env&iacute;o'; 	// Capitalize the first letter
+	var $subtitle = 'Selecciona una direcci&oacute;n de env&iacute;o'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
 	private $id_cliente;
 	
@@ -84,7 +84,7 @@ class Direccion_Envio extends CI_Controller {
 		$data['script'] = $script_file;
 		
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Nueva Direcci&oacute;n');
+		$data['subtitle'] = $this->subtitle;
 		
 		//catálogo de paises de think
 		$lista_paises_think = $this->direccion_envio_model->listar_paises_think();
@@ -278,7 +278,7 @@ class Direccion_Envio extends CI_Controller {
 	{
 		$id_cliente = $this->id_cliente;
 		$data['title'] = $this->title;
-		$data['subtitle'] = ucfirst('Eliminar Direcci&oacute;n');
+		$data['subtitle'] = 'Eliminar Direcci&oacute;n';
 		
 		$msg_eliminacion =
 			$this->direccion_envio_model->eliminar_direccion($id_cliente, $consecutivo);
