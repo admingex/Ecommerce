@@ -367,6 +367,7 @@ a: visited{
 	color: #000;
 	font-size: 11px;
 	padding: 3px;	
+	vertical-align: middle;
 }
 
 .usar_tarjeta{
@@ -418,6 +419,11 @@ a: visited{
 	padding: 17px;
 }
 
+.tam15{
+	height: 5px;
+	padding: 10px;
+}
+
 .pagar-deposito{
 	border: none;
 	height: 24px;
@@ -437,7 +443,66 @@ th{
 	font-weight: bold;
 	vertical-align: top;
 	height: 26px;
+	text-align: left;
+}
+
+.doble-linea{
+	vertical-align: top;
+	font-size: 9px;
+	font-weight:bolder;
+	padding: 1px;				
 }
 .borde-derecho{
 	border-right: solid 1px #CCC;	
+}
+
+.sin-factura{
+	border: none;
+	height: 24px;
+	width: 185px;
+	background: url('../images/css-sprite_btnN4.jpg') no-repeat;	
+	background-position: -9px -5px;		
+}
+
+.sin-factura:hover{
+	border: none;
+	height: 24px;
+	width: 185px;
+	background: url('../images/css-sprite_btnN4.jpg') no-repeat;	
+	background-position: -9px -28px;		
+}
+
+.usar-razon-social {
+	border: none;
+	height: 28px;
+	width: 88px;
+	background: url('../images/css-sprite_btnN6.jpg') no-repeat;	
+	background-position: -7px -7px;					
+}
+.usar-razon-social:hover{
+	border: none;
+	height: 28px;
+	width: 88px;
+	background: url('../images/css-sprite_btnN6.jpg') no-repeat;	
+	background-position: -7px -35px;				
+}
+
+.usar_razon_social_large{
+	border: none;
+	height: 24px;
+	width: 175px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -702px -15px;	
+}
+.usar_razon_social_large:hover{
+	border: none;
+	height: 24px;
+	width: 175px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -702px -39px;	
+}
+.borde-top{	
+	margin-top: 3px;
+	border-top: solid 1px #CCC;
+	height: 33px;	
 }

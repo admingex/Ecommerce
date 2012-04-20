@@ -1,32 +1,31 @@
-<section id="descripcion-proceso">
-	<div class="titulo-proceso-img">&nbsp;		
-	</div>
-	<div class="titulo-proceso">
-		<?php //if (isset($subtitle)) echo $subtitle; ?>	
-	</div>
-</section>
-<div id="pleca-punteada"></div>
-<section class="contenedor">
-	
 	<?php	
 		if(isset($solicita_factura)){
 			if($solicita_factura){
 	?>		
 		<section id="descripcion-proceso">
 			<div class="titulo-proceso-img">&nbsp;</div>
-			<div class="titulo-proceso">¿Requiere Factura?</div>
-			<div id="pleca-punteada"></div>
-			<p>
+			<div class="titulo-proceso">¿Requiere Factura?</div>									
+		</section>
+		<div id="pleca-punteada"></div>
+		<div class="contenedor-blanco">
 				<form id="form_agregar_direccion" action="<?php echo site_url('direccion_facturacion/requiere_factura');?>" method="POST">
 					<input type="hidden" name="requiere_factura" value="no" />
-					<input type="submit" value="No requiero factura, continuar" />	
+					<input type="submit" value="&nbsp;" class="sin-factura" />	
 				</form>
-			</p>	
-			<div id="pleca">&nbsp;</div>
-		</section>
+		</div>	
 	<?php
 			}
-		}				
+		}			
+	?>
+<section id="descripcion-proceso">
+	<div class="titulo-proceso-img">&nbsp;</div>
+	<div class="titulo-proceso">
+	Si requieres factura, selecciona los datos de facturaci&oacute;n
+	</div>									
+</section>
+<div id="pleca-punteada"></div>	
+<section class="contenedor">		
+	<?php		
 		if((isset($editar_rs))){
 			if($editar_rs){
 				include ('direccion_facturacion/editar_rs.html');	
@@ -54,17 +53,25 @@
 		
 		if(isset($registrar_rs)){
 			if($registrar_rs){
-				include ('direccion_facturacion/listar_rs.html');	
+		?>			
+		<div class="contenedor-blanco">
+		<?php		
+				include ('direccion_facturacion/listar_rs.html');
+		?>
+		</div>
+		<?php			
 			}				
 			
 			if(isset($nueva_rs)){
 				if($nueva_rs){
+		?>
+		<?php			
 					include ('direccion_facturacion/agregar_rs.html');
 				}															
 			}			
 		}					
 										 													
-	?>
+	?>		
 	<script type="text/javascript">
 	$(function(){
 		$('#dialog').dialog({
