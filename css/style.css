@@ -255,7 +255,12 @@ input .text{
 	font-size: 12px;
 	color: #4e4e4e;
 }
-.intrucciones_mensaje{
+b{
+	font-size: 12px;
+	color: #000;
+	padding: 2px 0px;
+}
+.instrucciones_mensaje{
 	color: #6e6e6e;
 	font-size: 11px;
 	text-justify: distribute;	
@@ -299,5 +304,111 @@ a: visited{
 	width: 150px;
 	background: url('../images/css-sprite_btnN1.jpg') no-repeat;
 	background-position: -1138px -39px;		
+}
+
+.boton_continuar_compra{
+	border: none;
+	height: 24px;
+	width: 131px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -1007px -15px;
+}
+.boton_continuar_compra:hover{
+	border: none;
+	height: 24px;
+	width: 131px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -1007px -39px;
+}
+
+.boton_verificar_clave{
+	border: none;
+	height: 24px;
+	width: 115px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -1288px -15px;
+}
+
+.boton_verificar_clave:hover{
+	border: none;
+	height: 24px;
+	width: 115px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -1288px -39px;
+}
+
+.validation_message{
+	font-size: 10px;
+	color: #E70030;
+}
+
+.crear_cuenta{
+	border: none;
+	height: 24px;
+	width: 183px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -165px -15px;
+}
+
+.crear_cuenta:hover{
+	border: none;
+	height: 24px;
+	width: 183px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -165px -39px;
+}
+
+.item-lista{
+	color: #000;
+	font-size: 11px;
+}
+
+.usar_tarjeta{
+	border: none;
+	height: 18px;
+	width: 125px;
+	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background-position: -136px -13px;
+}
+
+.usar_tarjeta:hover{
+	border: none;
+	height: 18px;
+	width: 125px;
+	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background-position: -136px -31px;
+}
+
+.img-deposito{	
+	width: 68px;
+	height: 75px;	
+	background: url('../images/css-sprite_icons.jpg') no-repeat;	
+	background-position: -75px -8px;
+	float: left;	
+}
+
+
+.deposito-izquierda{
+	width: 45%;
+	float: left;
+	display: block;
+	padding-left: 10px;
+}
+.deposito-derecha{
+	float: right;
+	vertical-align: bottom;
+}
+.tam75{
+	height: 75px;
+	padding: 17px;
+}
+
+.pagar-deposito{
+	border: none;
+	height: 24px;
+	width: 210px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -348px -15px;
+	margin-top: 50px;
 }
 

@@ -8,27 +8,38 @@
 <div id="pleca-punteada"></div>
 
 <section class="contenedor">
-	<?php
-	if((!$enviado)&&(!$cambiar)&&(!$verificar)){
-	?>		
-		<div class="intrucciones_mensaje">
-			Para recuperar tu contrase&ntilde;a, escribe tu correo electronico. Te enviaremos un correo con las instrucciones que debes seguir
-		</div>
-	<?php
-	}		
-	?>
-	<div class="contenedor-gris">				
-	<?php
+	<?php								
 		if($enviado){
+	?>
+			<div class="contenedor-gris">
+	<?php		
 			include ('login/password_enviado.html');
 		}
 		if($verificar){
+	?>		
+			<div class="instrucciones_mensaje">
+				Esta es la clave que recibiste en tu correo electr&oacute;nico junto con la liga a esta pagina
+			</div>			
+			<div class="contenedor-gris">
+	<?php				
 			include ('login/verificar.html');	
 		}
 		if($cambiar){
+	?>
+			<div class="instrucciones_mensaje">
+			Escribe una nueva contrase&ntilde;a y confirmala. La contrase&ntilde;a debe tener al menos 8 caracteres y contener letras mayusculas, minusculas y numeros
+			</div>
+			<div class="contenedor-gris">
+	<?php		
 			include ('login/cambiar.html');
 		}
 		else if((!$enviado)&&(!$cambiar)&&(!$verificar)){
+	?>		
+			<div class="instrucciones_mensaje">
+				Para recuperar tu contrase&ntilde;a, escribe tu correo electronico. Te enviaremos un correo con las instrucciones que debes seguir
+			</div>
+			<div class="contenedor-gris">
+	<?php		
 			include ('login/recordar.html');
 		}
 			

@@ -4,14 +4,13 @@
 		if(document.getElementById(id_ant)){
 			document.getElementById(id_ant).innerHTML='';
 		}				
-		document.getElementById(id).innerHTML='<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="Utilizar tarjeta"/>';
+		document.getElementById(id).innerHTML='<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="&nbsp;" class="usar_tarjeta"/>';
 		id_ant=id;					
 	}
 </script>
-<h1>Tarjetas guardadas de <?php echo $this->session->userdata('username');?></h1>
-<div id="body">
+<div class="contenedor-gris">
 	<form id="form_forma_pago" action="<?php echo site_url("direccion_envio"); ?>" method="POST">
-		<table>
+		<table width="100%">
 			<thead>
 				<tr>
 					<th>&nbsp;</th>
@@ -44,15 +43,15 @@
 			?>
 				<tr>
 					<td><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check." ".$value_r; ?> onclick="cambia_boton(<?php echo $tarjeta['id_TCSi'] ?>)"/></td>
-					<td>
+					<td class="item-lista">
 						<?php echo $tarjeta['descripcionVc'].' terminaci&oacute;n '.
 							substr($tarjeta['terminacion_tarjetaVc'],strlen($tarjeta['terminacion_tarjetaVc']) - 4); ?>
 						<?php echo $class;?>
 					</td>
-					<td>
+					<td class="item-lista">
 						<?php echo $tarjeta['nombre_titularVc'].' '.$tarjeta['apellidoP_titularVc'].' '.$tarjeta['apellidoM_titularVc']; ?>
 					</td>
-					<td><?php echo $tarjeta['mes_expiracionVc'].'/'.$tarjeta['anio_expiracionVc']; ?></td>
+					<td class="item-lista"><?php echo $tarjeta['mes_expiracionVc'].'/'.$tarjeta['anio_expiracionVc']; ?></td>
 					<td>
 						<a href="<?php echo site_url('forma_pago/editar/tc/'.$tarjeta['id_TCSi']); ?>" title="editar">editar</a>
 						<a href="<?php echo site_url('forma_pago/eliminar/'.$tarjeta['id_TCSi']); ?>" title="eliminar">eliminar</a>	
