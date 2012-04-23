@@ -64,7 +64,7 @@ class Direccion_Facturacion extends CI_Controller {
 																								
 			if(empty($this->reg_errores)){								   															
 					if($this->direccion_facturacion_model->insertar_rs($form_values['direccion'])){
-						$id_rs=$this->db->insert_id();
+						$id_rs = $this->db->insert_id();
 						$datars=array(
 							'id_rs'=>$id_rs							
 						);						
