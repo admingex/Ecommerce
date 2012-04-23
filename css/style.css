@@ -214,11 +214,8 @@ body
 	margin-top: 4px;		
 	background: url('../images/css-sprite_icons.jpg') no-repeat;	
 	background-position: -198px -11px;	
-	float: left;	
+	float: left;		
 }
-
-
-
 .titulo-proceso{
 	padding-left: 3px;	
 	font-size: 16px;
@@ -263,28 +260,6 @@ input .text{
 	font-size: 12px;
 	color: #4e4e4e;
 }
-.instrucciones_cursivas {
-	font-size: 12px;
-	color: #4e4e4e;
-	font-style: italic;
-}
-.instrucciones_cursivas_der {
-	font-size: 12px;
-	color: #4e4e4e;
-	font-style: italic;
-	text-align: right;
-	float: right;
-}
-
-.asterisco {
-	height: 10px;
-	width: 7px;
-	margin-top: 4px;		
-	background: url('../images/css-sprite_icons.jpg') no-repeat;	
-	background-position: -181px -11px;	
-	float: left;
-}
-
 b{
 	font-size: 12px;
 	color: #000;
@@ -392,6 +367,7 @@ a: visited{
 	color: #000;
 	font-size: 11px;
 	padding: 3px;	
+	vertical-align: middle;
 }
 
 .usar_tarjeta{
@@ -443,6 +419,11 @@ a: visited{
 	padding: 17px;
 }
 
+.tam15{
+	height: 5px;
+	padding: 10px;
+}
+
 .pagar-deposito{
 	border: none;
 	height: 24px;
@@ -462,20 +443,66 @@ th{
 	font-weight: bold;
 	vertical-align: top;
 	height: 26px;
+	text-align: left;
+}
+
+.doble-linea{
+	vertical-align: top;
+	font-size: 9px;
+	font-weight:bolder;
+	padding: 1px;				
 }
 .borde-derecho{
 	border-right: solid 1px #CCC;	
 }
 
-.footer_main {
-	display: block;
-	padding: 20px 0 20px 0;
-	clear: both;
-	padding-left: 18%;
+.sin-factura{
+	border: none;
+	height: 24px;
+	width: 185px;
+	background: url('../images/css-sprite_btnN4.jpg') no-repeat;	
+	background-position: -9px -5px;		
 }
 
-.footer_main div {
-	float: left;
-	text-align: center;
-	padding: 0 15px 0 15px;
+.sin-factura:hover{
+	border: none;
+	height: 24px;
+	width: 185px;
+	background: url('../images/css-sprite_btnN4.jpg') no-repeat;	
+	background-position: -9px -28px;		
+}
+
+.usar-razon-social {
+	border: none;
+	height: 28px;
+	width: 88px;
+	background: url('../images/css-sprite_btnN6.jpg') no-repeat;	
+	background-position: -7px -7px;					
+}
+.usar-razon-social:hover{
+	border: none;
+	height: 28px;
+	width: 88px;
+	background: url('../images/css-sprite_btnN6.jpg') no-repeat;	
+	background-position: -7px -35px;				
+}
+
+.usar_razon_social_large{
+	border: none;
+	height: 24px;
+	width: 175px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -702px -15px;	
+}
+.usar_razon_social_large:hover{
+	border: none;
+	height: 24px;
+	width: 175px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -702px -39px;	
+}
+.borde-top{	
+	margin-top: 3px;
+	border-top: solid 1px #CCC;
+	height: 33px;	
 }
