@@ -1,14 +1,9 @@
-<div id="detalle_envio">
-	<p>
-		<?php 
-			echo $dir_envio->address1. " " .$dir_envio->address2. " " . (isset($dir_envio->address4) ? ", Int. ".$dir_envio->address4 : "") . "<br/>";
-			echo 
-				$dir_envio->zip."<br/>".
-			 	$dir_envio->city."<br/>".
-			 	$dir_envio->state."<br/>".
-			 	$dir_envio->codigo_paisVc."<br/>".
-			 	$dir_envio->phone;
-		?>
-		<span><a href="<?php echo site_url('direccion_envio/editar/'.$dir_envio->id_consecutivoSi)?>">Cambiar</a></span>
-	</p>
-</div>
+<?php 
+	echo $dir_envio->address1. " " .$dir_envio->address2. " " . (isset($dir_envio->address4) ? ", Int. ".$dir_envio->address4 : "") . "<br/>";
+	echo $dir_envio->zip."<br/>".
+		 $dir_envio->city."<br/>".
+		 $dir_envio->state."<br/>".
+		 $dir_envio->codigo_paisVc."<br/>".
+		 $dir_envio->phone."&nbsp;";
+?>
+	<span><a href="<?php echo site_url('direccion_envio/editar/'.$dir_envio->id_consecutivoSi)?>">Cambiar</a></span>	

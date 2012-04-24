@@ -1,9 +1,10 @@
+/*
 @font-face
 {
     font-family: 'Gotham-Book';  
-    src: local('Gotham-Book'), url('css/Gotham-Book.otf') format('opentype');
+    src: local('Gotham-Book'), url('Gotham-Book.otf') format('opentype');
 }
-/*@font-face {
+@font-face {
   font-family: 'Muli';
   font-style: normal;
   font-weight: 400;
@@ -22,7 +23,7 @@ body
     background: #000;
     margin: 0 auto;
     width: 1024px;
-    font-family: 'Gotham-Book', 'Arial';
+    font-family: 'Arial';
 }
 
 #header-container
@@ -201,6 +202,22 @@ body
 	line-height: 20px;	
 }
 
+.titulo-promo-rojo2{
+	color: #C90002;
+	font-size: 15px;
+	font-weight: bold;	
+	padding-right: 10px;	
+	border-bottom: solid 1px #CCC;		
+}
+
+.titulo-promo-negro2{
+	color: #292929;
+	font-size: 15px;
+	font-weight: bold;	
+	padding: 10px;	
+	border-bottom: solid 1px #CCC;		
+}
+
 #descripcion-proceso{
 	position: relative;		
 	display: block;
@@ -230,12 +247,13 @@ body
 .contenedor-gris{
 	background-color: #e5e5e5;
 	margin: 5px 56px 0px 65px;	
-	padding: 10px;
+	padding: 15px 10px;
 }
 
 .contenedor-blanco{	
 	margin: 5px 56px 0px 65px;	
-	padding: 0px;		
+	padding: 0px;
+	background-color: #FFF;		
 }
 
 
@@ -252,7 +270,7 @@ body
 	font-weight: bold;
 }
 input .text{
-	width: 200px;		
+	width: 200px;	
 	
 }
 
@@ -267,15 +285,14 @@ b{
 }
 .instrucciones_mensaje{
 	color: #6e6e6e;
-	font-size: 11px;
-	text-justify: distribute;	
+	font-size: 11px;		
 	margin: 3px 56px 5px 65px;
 }
 a{
 	color: #094C86;
 	font-size: 12px;		
 }
-a: visited{
+a:visited{
 	color: #094C86;
 }
 
@@ -432,13 +449,22 @@ a: visited{
 	background-position: -348px -15px;
 	margin-top: 50px;
 }
+
+.pagar-deposito:hover{
+	border: none;
+	height: 24px;
+	width: 210px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -348px -39px;
+	margin-top: 50px;
+}
 thead{	
 	background-color: #FFF;									
 }
 th{
 	background: url('../images/css-sprite_Plecas.jpg');		
 	background-position: -20px -14px;
-	padding-top: 5px;
+	padding: 5px 0px 0px 10px;	
 	font-size: 12px;
 	font-weight: bold;
 	vertical-align: top;
@@ -540,4 +566,47 @@ th{
 	background: url('../images/css-sprite_icons.jpg') no-repeat;	
 	background-position: -181px -11px;	
 	float: left;
+}
+
+.orden-compra-izquierda{
+	float: left;
+	width: 50%;		
+}
+.orden-compra-derecha{
+	float: right;
+	width: 50%;		
+}
+.bloque-orden-compra{
+	min-height: 120px;
+	padding: 5px 10px;
+	font-size: 12px;	
+	line-height: 17px;
+}
+
+.bloque-orden-compra-auto{
+	line-height: 17px;	
+	padding: 5px 10px;
+	font-size: 12px;	
+}
+
+#pleca-gris{
+	clear: both;	
+	height: 1px;
+	background-color: #ccc;
+	margin: 5px 0px;
+}
+
+.finalizar_compra{
+	border: none;
+	height: 24px;
+	width: 130px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -877px -15px;	
+}
+.finalizar_compra:hover{
+	border: none;
+	height: 24px;
+	width: 130px;
+	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background-position: -877px -39px;	
 }

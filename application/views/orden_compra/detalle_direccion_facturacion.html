@@ -1,0 +1,10 @@
+<?php 
+	if($direccion_f->calle){
+		echo $direccion_f->calle."&nbsp;".$direccion_f->num_ext."&nbsp;".(!empty($direccion_f->num_int) ? ", Int. ".$direccion_f->num_int : "") . "<br/>";
+		echo $direccion_f->cp."<br/>".
+			 $direccion_f->ciudad."<br/>".
+	 		 $direccion_f->estado."<br/>".
+		 	 $direccion_f->pais."&nbsp;";
+	}	 	
+?>
+<span><a href="<?php echo site_url('direccion_facturacion/registrar_direccion/');?>">Cambiar</a></span>

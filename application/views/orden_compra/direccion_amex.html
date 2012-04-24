@@ -1,0 +1,9 @@
+<?php 
+	echo $amex->calle."<br/>".
+		 $amex->codigo_postal."<br/>".
+		 $amex->ciudad."<br/>".
+		 $amex->estado."<br/>".
+		 $amex->pais."<br/>".
+		 $amex->telefono."&nbsp;";
+?>
+<span><a href="<?php echo site_url('forma_pago/editar/amex/'.$tc->id_TCSi);?>">Cambiar</a></span>			
