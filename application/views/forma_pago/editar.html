@@ -1,13 +1,12 @@
-<div class="instrucciones_mensaje">Editar tarjeta</div>
 <div class="contenedor-gris">
 	<form id="form_editar_tc" action="<?php echo site_url('forma_pago/editar/tc/'.$tarjeta_tc->id_TCSi); ?>" method="POST">
-		<table>
+		<table width="100%">
 			<tr>
 				<td class="label">
 					Banco Emisor
 				</td>
 				<td>
-					<?php echo $tarjeta_tc->descripcionVc; ?>
+					<span class="label_tarjeta"><?php echo $tarjeta_tc->descripcionVc; ?></span>
 				</td>
 			</tr>
 			<tr>
@@ -15,7 +14,7 @@
 					N&uacute;mero de tarjeta
 				</td>
 				<td>
-					**** **** **** <?php echo substr($tarjeta_tc->terminacion_tarjetaVc, strlen($tarjeta_tc->terminacion_tarjetaVc) -4);?>
+					<span class="label_tarjeta">**** **** **** <?php echo substr($tarjeta_tc->terminacion_tarjetaVc, strlen($tarjeta_tc->terminacion_tarjetaVc) -4);?></span>
 				</td>
 			</tr>
 			<tr>
@@ -23,8 +22,11 @@
 					Nombre del Titular
 				</td>
 				<td>
-					<input type="text" name="txt_nombre" id="txt_nombre" value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']); else echo $tarjeta_tc->nombre_titularVc;?>"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_nombre'])) echo ($reg_errores['txt_nombre']);?></span>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_nombre" id="txt_nombre" value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']); else echo $tarjeta_tc->nombre_titularVc;?>"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_nombre'])) echo ($reg_errores['txt_nombre']);?></span>
 				</td>
 			</tr>
 			<tr>
@@ -32,8 +34,11 @@
 					Apellido Paterno
 				</td>
 				<td>
-					<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);	else echo $tarjeta_tc->apellidoP_titularVc;?>"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_apellidoPaterno'])) echo ($reg_errores['txt_apellidoPaterno']);?></span>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);	else echo $tarjeta_tc->apellidoP_titularVc;?>"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_apellidoPaterno'])) echo ($reg_errores['txt_apellidoPaterno']);?></span>
 				</td>
 			</tr>
 			<tr>
@@ -41,8 +46,10 @@
 					Apellido Materno
 				</td>
 				<td>
-					<input type="text" name="txt_apellidoMaterno" id="txt_apellidoMaterno" value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']); else echo $tarjeta_tc->apellidoM_titularVc;?>"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_apellidoMaterno'])) echo ($reg_errores['txt_apellidoMaterno']);?></span>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_apellidoMaterno" id="txt_apellidoMaterno" value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']); else echo $tarjeta_tc->apellidoM_titularVc;?>"/>
+					</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_apellidoMaterno'])) echo ($reg_errores['txt_apellidoMaterno']);?></span>
 				</td>
 			</tr>
 			<?php 
@@ -57,28 +64,31 @@
 					Fecha de Expiraci&oacute;n
 				</td>
 				<td>
-					<select id="sel_mes_expira" name="sel_mes_expira">
-						<?php 
-							for($i = 1; $i <= 12; $i++) {
-								$zero = ($i < 10) ? "0" : "";
-								if ($i == $mes)
-									echo "<option value='$zero$i' selected='true'>$zero$i</option>";
-								else 
-									echo "<option value='$zero$i'>$zero$i</option>";
-							} 
-						?>
-					</select>
-					<select id="sel_anio_expira" name="sel_anio_expira">
-						<?php 
-							for($i = 2012; $i != 2019; $i++) {	/*ajustar el periodo de años con constantes/globales en el config.*/
-								if ($i == $anio) 
-									echo "<option value='".$i."' selected='true'>$i</option>";
-								else 
-									echo "<option value='".$i."'>$i</option>";
-							} 
-						?>
-					</select>
-					<span class="validation_message"><?php if(isset($reg_errores['fecha_error'])) echo ($reg_errores['fecha_error']);?></span>	
+					<span class="alinear_izquierda">
+						<select id="sel_mes_expira" name="sel_mes_expira">
+							<?php 
+								for($i = 1; $i <= 12; $i++) {
+									$zero = ($i < 10) ? "0" : "";
+									if ($i == $mes)
+										echo "<option value='$zero$i' selected='true'>$zero$i</option>";
+									else 
+										echo "<option value='$zero$i'>$zero$i</option>";
+								} 
+							?>
+						</select>
+						<select id="sel_anio_expira" name="sel_anio_expira">
+							<?php 
+								for($i = 2012; $i != 2019; $i++) {	/*ajustar el periodo de años con constantes/globales en el config.*/
+									if ($i == $anio) 
+										echo "<option value='".$i."' selected='true'>$i</option>";
+									else 
+										echo "<option value='".$i."'>$i</option>";
+								} 
+							?>
+						</select>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['fecha_error'])) echo ($reg_errores['fecha_error']);?></span>	
 				</td>
 			</tr>
 			<tr>
@@ -94,10 +104,17 @@
 				</td>
 			</tr>
 			<tr>
+				<td colspan="2">
+					<div class="ast_medio">
+						<span class="instrucciones_cursivas_der"><span class="asterisco">&nbsp;</span>Estos campos son obligatorios</span>
+					</div>
+				</td>
+			</tr>
+			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="Usar nueva tarjeta" class="boton_agregar_tc"/> &oacute; 
-					<input type="submit" id="guardar_otra_tarjeta" name="guardar_otra_tarjeta" value="Guardar y usar otra tarjeta" class="boton_guardar_otra_tc"/>
+					<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value="" class="usar_tarjeta"/> &oacute; 
+					<input type="submit" id="guardar_otra_tarjeta" name="guardar_otra_tarjeta" value="" class="usar_otra_large"/>
 					<a href="<?php echo site_url('forma_pago/listar/');?>">Cancelar</a>
 				</td>
 			</tr>

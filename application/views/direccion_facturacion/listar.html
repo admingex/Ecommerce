@@ -1,19 +1,18 @@
-<div id="body">	
-	<p><b>Selecciona una direccion de facturacion</b></p>
+	
 	<form id="form_direccion_facturacion" action="<?php echo site_url('orden_compra'); ?>/" method="POST">
-		<table>
+		<table cellpadding="0" cellspacing="0" width="100%" >
 			<thead>
 				<tr>
 					<th>&nbsp;</th>
 					<th>
-						Direcciones guardadas
+						Tus direcciones guardadas
 					</th>
 									
 					<th>&nbsp;</th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class="contenedor-gris">
 			<?php
 				if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {				
 					$direcciones = $lista_direcciones;
@@ -23,7 +22,7 @@
 					<td>
 						<input type="radio" name="direccion_selecionada" id="direccion_selecionada" onclick="cambia_boton(<?php echo $direccion['id_consecutivoSi'] ?>)" value="<?php echo $direccion['id_consecutivoSi']; ?>"/>
 					</td>
-					<td>						
+					<td class="item-lista borde-derecho tam15">						
 						<?php echo $direccion['calle']."&nbsp;".$direccion['num_ext']."&nbsp;".$direccion['num_int']; ?>
 						<br />
 						<?php echo $direccion['cp']; ?>
@@ -34,11 +33,11 @@
 						<br />
 						<?php echo $direccion['estado']; ?>												
 					</td>										
-					<td>
+					<td class="item-lista borde-derecho tam15">
 						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_direccion/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a>
 						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar_direccion/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a>
 					</td>
-					<td id="<?php echo $direccion['id_consecutivoSi'] ?>">&nbsp;						
+					<td class="item-lista borde-derecho tam15" id="<?php echo $direccion['id_consecutivoSi'] ?>">&nbsp;						
 					</td>
 				</tr>																								
 							
@@ -48,9 +47,9 @@
 				$hay_direcciones = false;	
 			?>
 				<tr>
-					<td colspan="6">
+					<td colspan="6" class="instrucciones">
 						<p>							
-							Aun no tienes direcciones asociadas.							
+							A&uacute;n no tienes direcciones asociadas.							
 						</p>						
 					</td>
 				</tr>
@@ -63,13 +62,12 @@
 			<tfoot class="borde-top">
 				<tr>
 					<td colspan="7">
-						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/registrar_direccion/nueva'; ?>" title="registrar">+ Agregar nueva direccion</a>
+						<a href="<?php echo site_url('direccion_facturacion/registrar_direccion/nueva'); ?>" title="Registrar">+ Agregar nueva direcci&oacute;n</a>
 					</td>
 				</tr>
 			</tfoot>		
 		</table>									
 	</form>
-</div>
 <script>
 	var id_ant=0;
 	function cambia_boton(id){

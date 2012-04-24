@@ -17,12 +17,14 @@
 			}
 		}			
 	?>
-<section id="descripcion-proceso">
-	<div class="titulo-proceso-img">&nbsp;</div>
-	<div class="titulo-proceso">
-	Si requieres factura, selecciona los datos de facturaci&oacute;n
-	</div>									
-</section>
+	<?php if (isset($subtitle)) {
+		echo "
+		<section id='descripcion-proceso'>
+			<div class='titulo-proceso-img'>&nbsp;</div>
+			<div class='titulo-proceso'>$subtitle</div>									
+		</section>"
+		;
+	}?>
 <div id="pleca-punteada"></div>	
 <section class="contenedor">		
 	<?php		
@@ -41,7 +43,9 @@
 		
 		if(isset($registrar_direccion)){
 			if($registrar_direccion){
-				include ('direccion_facturacion/listar.html');	
+				echo "<div class='contenedor-blanco'>";
+				include ('direccion_facturacion/listar.html');
+				echo "</div>";	
 			}
 									
 		}
