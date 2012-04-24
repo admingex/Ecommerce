@@ -2,11 +2,15 @@
 	$rf = $this->session->userdata('requiere_factura');
 	if ($rf != "no"){									
 		$checksi = "checked='checked'";
+		$classsi = "class='radio_selected'";
+		$classno= "class='radio_no_selected'";
 		$checkno = "";
 		$mdf = TRUE;											
 	}				
 	else {
 		$checksi = "";
+		$classno = "class='radio_selected'";
+		$classsi = "class='radio_no_selected'";
 		$checkno = "checked='checked'";
 		$mdf = FALSE;																				
 	}				
@@ -26,8 +30,18 @@
 		<div class="orden-compra-derecha">
 			<div class="bloque-orden-compra-auto">
 				<b>Requiere factura:</b><br />	
-				<input type="radio" name="requiere_factura" value="si" <?php echo $checksi; ?> onclick="location.href='<?php echo site_url("direccion_facturacion"); ?>'" />si
-				<input type="radio" name="requiere_factura" value="no" <?php echo $checkno; ?> onclick="location.href='<?php echo site_url("direccion_facturacion/requiere_factura"); ?>'"/>no
+				<div class="radio_contenedor">
+					<input type="radio" name="requiere_factura" value="si" <?php echo $checksi; ?> />
+					<div <?php echo $classsi;?> onclick="location.href='<?php echo site_url("direccion_facturacion"); ?>'">&nbsp;					
+					</div>
+					<div class="label_radio">si</div>	
+				</div>												
+				<div class="radio_contenedor">
+					<input type="radio" name="requiere_factura" value="no" <?php echo $checkno; ?>/>
+					<div <?php echo $classno;?> onclick="location.href='<?php echo site_url("direccion_facturacion/requiere_factura"); ?>'">&nbsp;					
+					</div>
+					<div class="label_radio">no</div>
+				</div>																
 			</div>		
 		</div>
 		<div id="pleca-gris"></div>	

@@ -77,8 +77,7 @@
 				</tr>	
 				<?php										    	
 							}
-				?>
-				
+				?>				
 				<tr>
 					<td class="titulo-promo-negro2">
 						&nbsp;

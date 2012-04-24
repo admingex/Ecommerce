@@ -177,7 +177,7 @@ body
 #detalle-promocion .img-producto-compra{	
 	width: 60px;
 	height: 75px;	
-	background: url('../images/css-sprite_icons.jpg') no-repeat;	
+	background: url('../images/css-sprite_icons.png') no-repeat;	
 	background-position: -13px -11px;
 	float: left;	
 }
@@ -229,7 +229,7 @@ body
 	height: 10px;
 	width: 6px;
 	margin-top: 4px;		
-	background: url('../images/css-sprite_icons.jpg') no-repeat;	
+	background: url('../images/css-sprite_icons.png') no-repeat;	
 	background-position: -198px -11px;	
 	float: left;		
 }
@@ -415,7 +415,7 @@ a:visited{
 .img-deposito{	
 	width: 68px;
 	height: 75px;	
-	background: url('../images/css-sprite_icons.jpg') no-repeat;	
+	background: url('../images/css-sprite_icons.png') no-repeat;	
 	background-position: -75px -8px;
 	float: left;	
 }
@@ -563,7 +563,7 @@ th{
 	height: 10px;
 	width: 7px;
 	margin-top: 4px;		
-	background: url('../images/css-sprite_icons.jpg') no-repeat;	
+	background: url('../images/css-sprite_icons.png') no-repeat;	
 	background-position: -181px -11px;	
 	float: left;
 }
@@ -609,4 +609,34 @@ th{
 	width: 130px;
 	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
 	background-position: -877px -39px;	
+}
+
+.radio_contenedor{
+	float: left;
+	margin-right: 12px;
+}
+
+input[type="radio"]{
+	display: none;
+}
+
+.radio_no_selected{
+    border: none;
+	height: 16px;
+	width: 16px;
+	background: transparent url('../images/css-sprite_icons.png') no-repeat;	
+	background-position: -153px -49px;	
+	float: left;	
+}
+.radio_selected{
+	border: none;
+	height: 16px;
+	width: 16px;	
+	background: transparent url('../images/css-sprite_icons.png') no-repeat;	
+	background-position: -153px -65px;	
+	float: left;
+}
+.label_radio{
+	float: left;
+	margin-left: 5px;
 }
