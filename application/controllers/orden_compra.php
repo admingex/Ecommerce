@@ -4,8 +4,8 @@ include ('DTOS/Tipos_Tarjetas.php');
 include('util/Pago_Express.php');
 
 class Orden_Compra extends CI_Controller {
-	var $title = 'Orden de Compra';
-	var $subtitle = 'Orden de Compra';
+	var $title = 'Verifica tu orden';
+	var $subtitle = 'Verifica tu orden';
 	var $registro_errores = array();				//validación para los errores
 	
 	private $id_cliente;
