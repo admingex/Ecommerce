@@ -294,9 +294,10 @@ b{
 	font-size: 11px;		
 	margin: 3px 56px 5px 65px;
 }
-a{
+a {
 	color: #094C86;
-	font-size: 12px;		
+	font-size: 12px;
+	text-decoration: none;
 }
 a:visited{
 	color: #094C86;
@@ -618,12 +619,42 @@ th{
 	background-position: -11px -13px;
 }
 
+#div_enlace  {
+	float: left;
+}
+
+#div_enlace a {
+	color: #c90002;
+	font-size: 13px;
+	font-weight: bold;	
+}
+
+#div_enlace a:hover{
+	color: #4e0001;
+	font-size: 13px;
+	font-weight: bold;
+}
 .agregar {
 	border: none;
-	height: 18px;
-	width: 125px;
+	height: 20px;
+	width: 20px;
 	background: url('../images/css-sprite_agregar.jpg') no-repeat;	
-	background-position: -11px -13px;	
+	background-position: -13px -10px;
+	float: left;	
+}
+.agregar:hover {
+	border: none;
+	height: 20px;
+	width: 20px;
+	background: url('../images/css-sprite_agregar.jpg') no-repeat;	
+	background-position: -13px -28px;
+	float: left;
+	padding-top: 0px;
+}
+
+.texto_agregar {
+	padding-left: 4px;
+	text-align: left;
 }
 
 .orden-compra-izquierda{

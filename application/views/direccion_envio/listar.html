@@ -84,15 +84,20 @@
 			<tr><td colspan="7"></td></tr>No tiene direcciones registradas</h4>						
 		<?php endif ?>		
 		</tbody>	
-			<tfoot>
+			<tfoot class="contenedor-gris">
 				<tr>
-					<td colspan="7">
+					<td colspan="7" >
 						<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
 					</td>
 				</tr>
 				<tr>
-					<td colspan="7">
-						<a class="agregar_direccion" href="<?php echo $this->config->item('base_url'); ?>/index.php/direccion_envio/registrar/">+ Agregar nueva direcci&oacute;n</a>
+					<td colspan="7" class="borde-top">
+						<div id="div_enlace">
+							<a class="agregar_direccion" href="<?php echo site_url('direccion_envio/registrar/'); ?>">
+								<span class="agregar">&nbsp;</span>
+								<span class="texto_agregar">Agregar nueva direcci&oacute;n</span>
+							</a>
+						</div>
 					</td>
 				</tr>
 			</tfoot>		

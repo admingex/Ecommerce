@@ -29,7 +29,7 @@ $(document).ready(function() {
 	
 	if (forms.length > 0) {
 		//alert("cuantos hay: " + forms.length);
-		$("a.agregar_tarjeta").hide();
+		$("a.agregar_tarjeta").parent().parent().remove();
 	}
 	
 	$("input[name='guardar_tarjeta']").click(function(e) {
