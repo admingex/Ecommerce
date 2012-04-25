@@ -1,84 +1,127 @@
-<div>
-	<p><b>Edita los campos que quiersas modificar dir</b></p>		
-		<form id="form_agregar_direccion" action="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_direccion/'.$consecutivo?>" method="POST">
-			<div class="item_requerid">Calle:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_calle" id="txt_calle" size="30"
-					value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']); else echo $datos_direccion->calle;?>"/>
-				<span class="validation_message"><?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>							
-			</div>
-			<div class="item_requerid">N&uacute;mero exterior:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_numero" id="txt_numero" maxlength="5" size="5" 
-					value="<?php if(isset($_POST['txt_numero'])) echo htmlspecialchars($_POST['txt_numero']); else echo $datos_direccion->num_ext;?>" />		
-				<span class="validation_message"><?php if(isset($reg_errores['txt_numero'])) echo ($reg_errores['txt_numero']);?></span>
-			</div>
-			<div class="item_requerid">N&uacute;mero interior:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_num_int" id="txt_num_int" maxlength="5" size="5"
-					value="<?php if(isset($_POST['txt_num_int'])) echo htmlspecialchars($_POST['txt_num_int']); else echo $datos_direccion->num_int;?>"/>
-			</div>
-			<div class="item_requerid">C&oacute;digo postal:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5"
-					value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']); else echo $datos_direccion->cp;?>"/>					
-				<span class="validation_message"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>				
-			</div>
-			<div class="item_requerid">Pa&iacute;s:</div>
-			<div class="form_requerid">
-				<select id="sel_pais" name="sel_pais">
-					<?php
-					if (isset($lista_paises_think)) {
-						$id_pais = "MX";
-						if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
-							$id_pais = $_POST['sel_pais'];
-						//echo '<option value="AM">America</option>';	
-						foreach($lista_paises_think->result() as $pais)
-						{
-							if ($id_pais == $pais->id_pais) {
-								echo "<option value='".$pais->id_pais."' selected='true'>".
-									$pais->pais.
-									"</option>";
-							} else {
-								echo "<option value='".$pais->id_pais."'>".
-									$pais->pais.
-									"</option>";
+<div class="contenedor-gris">		
+	<form id="form_agregar_direccion" action="<?php echo site_url('direccion_facturacion/editar_direccion/'.$consecutivo);?>" method="POST">
+		<table width="100%">
+			<tr>
+				<td class="label">Calle</td>
+				<td>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_calle" id="txt_calle" size="30" value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']); else echo $datos_direccion->calle;?>"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">N&uacute;mero exterior</td>
+				<td>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_numero" id="txt_numero" maxlength="5" size="5" value="<?php if(isset($_POST['txt_numero'])) echo htmlspecialchars($_POST['txt_numero']); else echo $datos_direccion->num_ext;?>" />
+					</span>
+					<span class="asterisco">&nbsp;</span>		
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_numero'])) echo ($reg_errores['txt_numero']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">N&uacute;mero interior</td>
+				<td>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_num_int" id="txt_num_int" maxlength="5" size="5" value="<?php if(isset($_POST['txt_num_int'])) echo htmlspecialchars($_POST['txt_num_int']); else echo $datos_direccion->num_int;?>"/>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">C&oacute;digo postal</td>
+				<td>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']); else echo $datos_direccion->cp;?>"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>					
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label"> Pa&iacute;s</td>
+				<td>
+					<span class="alinear_izquierda">
+						<select id="sel_pais" name="sel_pais">
+							<?php
+							if (isset($lista_paises_think)) {
+								$id_pais = "MX";
+								if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
+									$id_pais = $_POST['sel_pais'];
+								//echo '<option value="AM">America</option>';	
+								foreach($lista_paises_think->result() as $pais)
+								{
+									if ($id_pais == $pais->id_pais) {
+										echo "<option value='".$pais->id_pais."' selected='true'>".
+											$pais->pais.
+											"</option>";
+									} else {
+										echo "<option value='".$pais->id_pais."'>".
+											$pais->pais.
+											"</option>";
+									}
+								}
 							}
-						}
-					}
-					?>
-				</select>				
-				<span class="validation_message"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
-			</div>		
-			<div class="item_requerid">Estado:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_estado" id="txt_estado" size="30"
-					value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']); else echo $datos_direccion->estado;?>"/>
-				<span class="validation_message"><?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
-			</div>			
-			<div class="item_requerid">Ciudad:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_ciudad" id="txt_ciudad" size="30"
-					value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']); else echo $datos_direccion->ciudad;?>"/>
-				<span class="validation_message"><?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
-			</div>
-			<div class="item_requerid">Colonia:</div>
-			<div class="form_requerid">
-				<input type="text" name="txt_colonia" id="txt_colonia" size="30"
-					value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']); else echo $datos_direccion->colonia;?>"/>
-				<span class="validation_message"><?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?></span>
-			</div>																
-			<div class="item_requerid">&nbsp;</div>
-			<div class="form_requerid">
-				<input type="checkbox" id="chk_default" name="chk_default" 
-				<?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direccion de facturacion para pago exprés
-			</div>			
-			<div class="form_button">
-				<input type="submit" id="guardar_direccion" value="Usar nueva direccion"/>				
-				<!--<a href="">Guardar y usar otra</a>-->
-				o 
-				<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/registrar_direccion'; ?>" title="actualizar">cancelar</a>				
-			</div>	
-		</form>
+							?>
+						</select>
+					</span>
+					<span class="asterisco">&nbsp;</span>	
+					<span class="error_mensaje"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">Estado</td>
+				<td>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_estado" id="txt_estado" size="30" value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']); else echo $datos_direccion->estado;?>"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">Ciudad</td>
+				<td>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_ciudad" id="txt_ciudad" size="30" value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']); else echo $datos_direccion->ciudad;?>"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">Colonia</td>
+				<td>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_colonia" id="txt_colonia" size="30" value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']); else echo $datos_direccion->colonia;?>"/>
+					</span>
+					<div><span class="asterisco">&nbsp;</span></div>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?></span>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td class="label_izq">
+					<input type="checkbox" id="chk_default" name="chk_default" <?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direcci&oacute;n de facturaci&oacute;n para pago express
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<div class="ast_medio">
+						<span class="instrucciones_cursivas_der"><span class="asterisco">&nbsp;</span>Estos campos son obligatorios</span>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>
+					<input type="submit" id="guardar_direccion" value="Usar nueva direccion"/>				
+					<!--<a href="">Guardar y usar otra</a>-->
+					o 
+					<a href="<?php echo site_url('direccion_facturacion/registrar_direccion'); ?>" title="actualizar">Cancelar</a>
+				</td>
+			</tr>
+		</table>
+	</form>
 </div>
-

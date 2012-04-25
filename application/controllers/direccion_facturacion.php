@@ -47,7 +47,8 @@ class Direccion_Facturacion extends CI_Controller {
 		}				
 		
 		$id_cliente = $this->id_cliente;						
-		$data['title']=$this->title;	
+		$data['title']=$this->title;
+		$data['subtitle'] = "Si requieres factura, selecciona los datos de facturaci&oacute;n";
 		$data['mensaje']='';											 
 		
 		//recuperar el listado de las direcciones del cliente
@@ -92,7 +93,8 @@ class Direccion_Facturacion extends CI_Controller {
 										
 		$id_rs=$this->session->userdata('id_rs');
 		$id_cliente = $this->id_cliente;	
-		$data['title']=$this->title;	
+		$data['title']=$this->title;
+		$data['subtitle'] = "Selecciona una direcci&oacute;n de facturaci&oacute;n";	
 		$data['mensaje']='';	
 		
 		$data['dir_envio']=$this->direccion_envio_model->listar_direcciones($id_cliente);		
@@ -192,7 +194,7 @@ class Direccion_Facturacion extends CI_Controller {
 			if ($consecutivo) {
 						
 				$data['title'] = $this->title;
-				$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
+				$data['subtitle'] = "Edita los campos que quieras modificar";
 				$data['consecutivo']=$consecutivo;
 	
 				$data['datos_direccion'] = $datos_direccion;				
@@ -270,7 +272,7 @@ class Direccion_Facturacion extends CI_Controller {
 			if ($consecutivo) {
 						
 				$data['title'] = $this->title;
-				$data['subtitle'] = ucfirst('Editar Direcci&oacute;n');
+				$data['subtitle'] = "Edita los campos que quieras modificar";
 				$data['consecutivo']=$consecutivo;
 	
 				$data['datos_direccion'] = $datos_direccion;				

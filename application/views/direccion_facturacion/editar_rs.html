@@ -1,27 +1,35 @@
-<div class="nuevo-registro">Edita los campos que quieras modificar</div>
 <div class="contenedor-gris">		
 	<form id="form_agregar_rs" action="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_rs/'.$consecutivo?>" method="POST">
 		<table>
 			<tr>
 				<td class="label">Nombre o Raz&oacute;n Social</td>
 				<td>
-					<input type="text" name="txt_razon_social" id="txt_razon_social" size="30" value="<?php if(isset($_POST['txt_razon_social'])) echo htmlspecialchars($_POST['txt_razon_social']); else echo $datos_direccion->company;?>"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_razon_social'])) echo ($reg_errores['txt_razon_social']);?></span>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_razon_social" id="txt_razon_social" size="30" value="<?php if(isset($_POST['txt_razon_social'])) echo htmlspecialchars($_POST['txt_razon_social']); else echo $datos_direccion->company;?>"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_razon_social'])) echo ($reg_errores['txt_razon_social']);?></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="label">RFC</td>
 				<td>
-					<input type="text" name="txt_rfc" id="txt_rfc" size="30" value="<?php if(isset($_POST['txt_rfc'])) echo htmlspecialchars($_POST['txt_rfc']); else echo  $datos_direccion->tax_id_number;?>"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_rfc'])) echo ($reg_errores['txt_rfc']);?></span>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_rfc" id="txt_rfc" size="30" value="<?php if(isset($_POST['txt_rfc'])) echo htmlspecialchars($_POST['txt_rfc']); else echo  $datos_direccion->tax_id_number;?>"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_rfc'])) echo ($reg_errores['txt_rfc']);?></span>
 				</td>
 			</tr>
 			<tr>
 				<td class="label">Correo Electr&oacute;nico de Env&iacute;o</td>
 				<td>
-					<input type="text" name="txt_email" id="txt_email" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']); else echo  $datos_direccion->email;?>" size="30"/>
-					<span class="validation_message"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
-					<div>¿A qu&eacute; correo electr&oacute;nico debemos enviar tu factura?</div>
+					<span class="alinear_izquierda">
+						<input type="text" name="txt_email" id="txt_email" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']); else echo  $datos_direccion->email;?>" size="30"/>
+					</span>
+					<span class="asterisco">&nbsp;</span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
+					<div class="instrucciones_cursivas">¿A qu&eacute; correo debemos enviar tu factura?</div>
 				</td>
 			</tr>
 			<tr>
@@ -33,9 +41,9 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<input type="submit" id="guardar_rs" value="Usar esta razón social"/> &oacute;
-					<input type="submit" id="guardar_rs" value="Guardar y usar otra"/>
-					<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/'; ?>" title="actualizar">Cancelar</a>
+					<input type="submit" id="guardar_rs" value="" class="usar_razon_social_large"/> &oacute;
+					<input type="submit" id="guardar_rs" value="" class="usar_otra_large"/>
+					<a href="<?php echo site_url('direccion_facturacion'); ?>" title="actualizar">Cancelar</a>
 				</td>
 			</tr>
 		</table>
