@@ -27,7 +27,7 @@ $(document).ready(function() {
 	
 	if (forms.length > 0) {
 		//alert("cuantos hay: " + forms.length);
-		$("a.agregar_direccion").hide();
+		$("a.agregar_direccion").parent().parent().remove();
 	}
 	
 	//alert('hola mundo ecommerce GEx!');
