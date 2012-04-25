@@ -1,13 +1,18 @@
 <script>
 	var id_ant=0;
-	function cambia_boton(id){
+	function cambia_boton(id){				
 		if(document.getElementById(id_ant)){
 			document.getElementById(id_ant).innerHTML='';
+			document.getElementById('div'+id_ant).className='radio_no_selected';
+			document.getElementById('radio'+id_ant).checked='';  									 			
 		}				
 		document.getElementById(id).innerHTML='<input type="submit" id="usar_tarjeta" name="usar_tarjeta" value="&nbsp;" class="usar_tarjeta"/>';
+		document.getElementById('div'+id).className='radio_selected';
+		document.getElementById('radio'+id).checked='checked';	
+				
 		id_ant=id;					
 	}
-</script>
+</script>	
 <div class="contenedor-blanco">
 	<form id="form_forma_pago" action="<?php echo site_url("direccion_envio"); ?>" method="POST">
 		<table cellspacing="0" cellpadding="0" width="100%">
@@ -32,14 +37,20 @@
 				foreach($tarjetas->result_array() as $tarjeta) {
 					$check = "";
 					$class = "";
+					$classsi = "class='radio_no_selected'";
 					$value_r = "value='".$tarjeta['id_TCSi']."'";
 					if ($tarjeta['id_estatusSi'] == 3){	//$default
 						$check = "checked='true'";
+						$classsi = "class='radio_selected'";
 						$class="<br /><span style='color: #D81830; height: 20px; font-size: 11px; font-family: italic'>pago express</span>";
 					}
 			?>
 				<tr>
-					<td><input type="radio" id="tajeta_selecionada" name="tajeta_selecionada" <?php echo $check." ".$value_r; ?> onclick="cambia_boton(<?php echo $tarjeta['id_TCSi'] ?>)"/></td>
+					<td>
+						<input type="radio" id="radio<?php echo $tarjeta['id_TCSi']; ?>" name="tajeta_selecionada" <?php echo $check." ".$value_r;?>/>
+						<div id="div<?php echo $tarjeta['id_TCSi']; ?>" <?php echo $classsi;?> onclick="cambia_boton(<?php echo $tarjeta['id_TCSi'] ?>)">&nbsp;					
+						</div>							
+					</td>
 					<td class="item-lista borde-derecho tam15">
 						<?php echo $tarjeta['descripcionVc'].' terminaci&oacute;n '.
 							substr($tarjeta['terminacion_tarjetaVc'],strlen($tarjeta['terminacion_tarjetaVc']) - 4); ?>

@@ -1,10 +1,15 @@
 <script>
 	var id_ant=0;
-	function cambia_boton(id){		
+	function cambia_boton(id){				
 		if(document.getElementById(id_ant)){
 			document.getElementById(id_ant).innerHTML='';
+			document.getElementById('div'+id_ant).className='radio_no_selected';
+			document.getElementById('radio'+id_ant).checked='';  									 			
 		}				
 		document.getElementById(id).innerHTML='<input type="submit" id="usar_direccion" name="usar_direccion" value="Usar direccion"/>';
+		document.getElementById('div'+id).className='radio_selected';
+		document.getElementById('radio'+id).checked='checked';	
+				
 		id_ant=id;					
 	}
 </script>	
@@ -35,15 +40,19 @@
 				foreach($direcciones->result_array() as $direccion) {
 					$check = "";
 					$class = "";
+					$classsi = "class='radio_no_selected'";
 					$value_r = "value='".$direccion['id_consecutivoSi']."'";
 					if ($direccion['id_estatusSi']==3){	//$default
-						$check = "checked='true'";												
+						$check = "checked='true'";
+						$classsi = "class='radio_selected'";												
 						$class="<br /><span style='color: #D81830; height: 20px; font-size: 11px; font-family: italic'>pago express</span>";
 					}
 			?>
 			<tr>
-				<td>
-					<input type="radio" id="direccion_selecionada" name="direccion_selecionada" <?php echo $check." ".$value_r;?> onclick="cambia_boton(<?php echo $direccion['id_consecutivoSi']; ?>)"/>
+				<td>				
+					<input type="radio" id="radio<?php echo $direccion['id_consecutivoSi']; ?>" name="direccion_selecionada" <?php echo $check." ".$value_r;?>/>
+					<div id="div<?php echo $direccion['id_consecutivoSi']; ?>" <?php echo $classsi;?> onclick="cambia_boton(<?php echo $direccion['id_consecutivoSi']; ?>)">&nbsp;					
+					</div>															
 				</td>
 				<td class="item-lista borde-derecho">
 					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?>
