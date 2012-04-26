@@ -1,4 +1,5 @@
-<div id="contenido">
+<section class="contenedor">
+<div class="contenedor-blanco">
 <script type="text/javascript">
     $(function(){
     $("#fecha_inicio").datepicker({changeMonth: true, changeYear: true, autoSize: true });
@@ -25,7 +26,7 @@ Fecha Fin: <input type="text" name="fecha_fin" id="fecha_fin" value="<?php echo 
 if($usuarios->num_rows()!=0){
 
 ?>
-<table>
+<table width="100%" cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
 			<th>			
@@ -39,13 +40,13 @@ if($usuarios->num_rows()!=0){
 			</th>	
 		</tr>
 	</thead>	
-	<tbody>	
+	<tbody class="contenedor-gris">	
 <?php
 	foreach($usuarios->result_array() as $usuario){
 		echo "<tr>
-			    <td>".$usuario['salutation']."&nbsp;".$usuario['fname']."&nbsp;".$usuario['lname']."</td>
-			    <td>".$usuario['email']."</td>
-			    <td>".$usuario['fecha_registroDt']."</td>
+			    <td class='item-lista borde-derecho'>".$usuario['salutation']."&nbsp;".$usuario['fname']."&nbsp;".$usuario['lname']."</td>
+			    <td class='item-lista borde-derecho'>".$usuario['email']."</td>
+			    <td class='item-lista borde-derecho'>".$usuario['fecha_registroDt']."</td>
 			  </tr>";
 	}
 ?>	
@@ -60,3 +61,4 @@ else{
 }
 ?>	
 </div>
+</section>

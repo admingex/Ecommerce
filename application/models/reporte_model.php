@@ -18,7 +18,7 @@ class Reporte_model extends CI_Model {
 		$ffin=mdate('%Y/%m/%d',$str);			
 			
 		$qry = "SELECT * FROM CMS_IntCliente 
-		        WHERE fecha_registroDt>='$fini' and fecha_registroDt<='$ffin' ";
+		        WHERE fecha_registroDt>='$fini' and fecha_registroDt<='$ffin' ORDER BY fecha_registroDt ASC ";
 		$res = $this->db->query($qry);			
 		return $res;				 
 	}	
