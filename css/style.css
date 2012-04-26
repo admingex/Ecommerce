@@ -706,7 +706,7 @@ th{
 }
 
 input[type="radio"]{
-	display: none;
+	display: hidden;
 }
 
 .radio_no_selected{

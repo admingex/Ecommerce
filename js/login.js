@@ -8,15 +8,22 @@ $(document).ready(function() {
 	var registro = false;
 	
 	/*tipo inicio*/
-	$("input[id='tipo_inicio']").bind('click', function() {
-		var tipo_inicio = $("#tipo_inicio:checked");	//val()
-		if (tipo_inicio.val() == "nuevo") {
-			passwd.attr("disabled", true);
-			registro = true;
-		} else {
-			passwd.removeAttr("disabled");
-			registro = false;
-		}
+	$("#divtipo_inicio2").click(function() {				
+		$("#divtipo_inicio2").removeClass('radio_no_selected').addClass('radio_selected');
+		$("#divtipo_inicio").removeClass('radio_selected').addClass('radio_no_selected');
+		document.getElementById('tipo_inicio2').checked='checked';
+		document.getElementById('tipo_inicio').checked='';
+		passwd.removeAttr("disabled");
+		registro = false;		
+	});
+	
+	$("#divtipo_inicio").click(function() {				
+		$("#divtipo_inicio").removeClass('radio_no_selected').addClass('radio_selected');
+		$("#divtipo_inicio2").removeClass('radio_selected').addClass('radio_no_selected');
+		document.getElementById('tipo_inicio2').checked='';
+		document.getElementById('tipo_inicio').checked='checked';				
+		passwd.attr("disabled", true);
+		registro = true;						
 	});
 	
 	/*Inicio de Sesión*/

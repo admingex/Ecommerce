@@ -21,8 +21,10 @@
 		<td rowspan="5" valign="top" class="label">
 			Iniciar sesi&oacute;n como
 		</td>
-		<td>
-			<input type="radio" id="tipo_inicio" name="tipo_inicio" value="nuevo" />
+		<td>			
+			<input type="radio" id="tipo_inicio" name="tipo_inicio" value="nuevo"/>
+			<div id="divtipo_inicio" class="radio_no_selected">&nbsp;					
+			</div>		
 		</td>
 		<td class="label_izq">	
 			Cliente nuevo	
@@ -30,8 +32,10 @@
 	<tr>		
 	<tr>
 		<td>
-			<input type="radio" id="tipo_inicio" name="tipo_inicio" value="registrado" 
+			<input type="radio" id="tipo_inicio2" name="tipo_inicio" value="registrado" 
 						checked="<?php if(isset($_POST['tipo_inicio']) && $_POST['tipo_inicio'] == 'registrado') echo 'true'; ?>" />
+			<div id="divtipo_inicio2" class="radio_selected">&nbsp;					
+			</div>		
 		</td>
 		<td class="label_izq">				
 			Cliente registrado									
