@@ -37,13 +37,14 @@ $(document).ready(function() {
 			if (!reg_email.test(email.val())) {
 				email.focus().after("<span class='error'>Ingresa una dirección de correco válida</span>");
 				return false;
-			} else if ($.trim(passwd.val()) == "" ) {
+			} 
+			else if (passwd.val() == "" ) {
 				passwd.focus().after("<span class='error'>Ingresa tu contraseña</spam>");
 				return false;
 			}
-		
-			//Ok
-			$("form").submit();	
+			else{
+				$("form").submit();
+			}									
 		} else {
 			$("form").attr("action", "/ecommerce/index.php/registro/")
 			$("form").submit();
