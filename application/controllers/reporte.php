@@ -13,7 +13,8 @@ class Reporte extends CI_Controller {
 		$this->load->helper('date');			
     }
 	
-	public function index(){				
+	public function index(){
+								
 	}		
 	
 	public function usuarios(){
@@ -31,8 +32,27 @@ class Reporte extends CI_Controller {
 		$usuarios=$this->reporte_model->obtener_usuarios_fecha($fecha_inicio, $fecha_fin);		
 		$data['usuarios']=$usuarios;		
 		$this->load->view('templates/header',$data);
-		$this->load->view('reporte',$data);
+		$this->load->view('reportes/reporte_usuarios',$data);		
 	}	
+	
+	public function compras(){
+		$data['title']=$this->title;		
+		if($_POST){
+			$fecha_inicio=$this->input->post('fecha_inicio');
+			$fecha_fin=$this->input->post('fecha_fin');
+		}
+		else{			
+			$fecha_inicio= mdate('%Y/%m/%d',time());
+			$fecha_fin=mdate('%Y/%m/%d',time());
+		}
+		$data['fecha_inicio']=$fecha_inicio;
+		$data['fecha_fin']=$fecha_fin;
+				
+		$this->load->view('templates/header',$data);
+		echo $data['fecha_inicio'].$data['fecha_fin'];
+				
+	}
+	
 }
 
 /* End of file reporte.php */
