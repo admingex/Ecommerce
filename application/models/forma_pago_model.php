@@ -173,8 +173,13 @@ class Forma_Pago_model extends CI_Model {
 	 */
 	function get_consecutivo($id_cliente) 
 	{
+		$this->db->trans_start();	//begin Trans
+		
 		$this->db->select_max('id_TCSi', 'consecutivo');
 		$resultado = $this->db->get_where('CMS_IntTC', array('id_clienteIn' => $id_cliente));
+		
+		$this->db->trans_complete();	//commit Trans
+		
 		$row = $resultado->row();	//regresa un objeto
 		
 		if(!$row->consecutivo)	{//si regresa null

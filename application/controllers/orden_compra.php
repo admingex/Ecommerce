@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include ('DTOS/Tipos_Tarjetas.php');
+include ('dtos/Tipos_Tarjetas.php');
 include('util/Pago_Express.php');
 
 class Orden_Compra extends CI_Controller {
@@ -59,13 +59,16 @@ class Orden_Compra extends CI_Controller {
 		
 		if ($_POST) {
 			if (array_key_exists('direccion_selecionada', $_POST))  {
-				echo $cte=$this->id_cliente;
-				echo "este".$rs=$this->session->userdata('id_rs');				
+				$cte = $this->id_cliente;
+				$rs = $this->session->userdata('id_rs');
+								
 				$this->session->set_userdata('razon_social', $rs);				
 				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);
-				echo $ds = $this->session->userdata('direccion_f');
+				
+				$ds = $this->session->userdata('direccion_f');
 				$rbr = $this->direccion_facturacion_model->busca_relacion($cte, $rs, $ds);
-				if ($rbr->num_rows() == 0){					
+				
+				if ($rbr->num_rows() == 0) {					
 					$this->load->helper('date');
 					$fecha = mdate('%Y/%m/%d',time());
 					$data_dir = array(
@@ -87,7 +90,7 @@ class Orden_Compra extends CI_Controller {
 				}			
 			}								
 		} else if($this->session->userdata('id_dir')){
-			$id_dir=$this->session->userdata('id_dir');
+			$id_dir = $this->session->userdata('id_dir');
 			$this->session->set_userdata('direccion_f',$id_dir);								
 		}
 		
@@ -184,7 +187,7 @@ class Orden_Compra extends CI_Controller {
 			$data['reg_errores'] = $this->registro_errores;
 		}		
 		
-		echo "direcciones: ". $this->id_direccion_envio. ", " . $this->id_direccion_facturacion;
+		//echo "direcciones: ". $this->id_direccion_envio. ", " . $this->id_direccion_facturacion;
 		//cargar vista	
 		$this->cargar_vista('', 'orden_compra', $data);
 	}
@@ -193,6 +196,9 @@ class Orden_Compra extends CI_Controller {
 	 * Realiza el pago a través de CCTC
 	 */
 	public function checkout() {
+		$data['title'] = "Resultado de la petición de cobro";
+		$data['subtitle'] = "Resultado de la petición de cobro";
+		
 		/*Realizar el pago en CCTC*/
 		if ($_POST) {
 			$orden_info = array();		
@@ -271,10 +277,13 @@ class Orden_Compra extends CI_Controller {
 					// Intentamos el Pago con pasando los objetos a CCTC //
 					try {  
 						$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
-						$obj_result = $cliente->PagarTC($parameter);
 						
 						//Registro inicial de la compra
 						$registro_exitoso = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
+						
+						$obj_result = $cliente->PagarTC($parameter);
+						
+						
 						
 						//Intento de cobro en CCTC
 						$simple_result = $obj_result->PagarTCResult;
@@ -282,7 +291,7 @@ class Orden_Compra extends CI_Controller {
 						//Registro de la respuesta de CCTC de la compra
 						//cargar Vista
 						//var_dump($simple_result);
-						$data['subtitle'] = "Resultado de la petición de cobro";
+						
 						$data['resultado'] = $simple_result;
 						$this->cargar_vista('', 'orden_compra', $data);
 						//enviar Correo
@@ -313,7 +322,7 @@ class Orden_Compra extends CI_Controller {
 						$simple_result = $obj_result->PagarTcUsandoIdResult;
 					
 						//var_dump($simple_result);
-						$data['subtitle'] = "Resultado de la petición de cobro";
+						
 						$data['resultado'] = $simple_result;
 						$this->cargar_vista('', 'orden_compra', $data);
 						//return $simple_result;
@@ -441,7 +450,7 @@ class Orden_Compra extends CI_Controller {
 		if ($tarjeta = $this->session->userdata('tarjeta')) {
 			$id_tc = (is_array($tarjeta)) ? $tarjeta['tc']['id_TCSi'] : $tarjeta;
 			$tipo_pago = 1;	//MASTERCARD / VISA/AMEX/ 
-		} else if ($this->session->userdata('deposito')){
+		} else if ($this->session->userdata('deposito')) {
 			$tipo_pago = 4;	//Depósito Bancario
 		}
 		

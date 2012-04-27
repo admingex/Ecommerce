@@ -1,5 +1,4 @@
-  <?php
-//include ('DTO/Tc_DTO.php');
+ <?php
 
 class Orden_Compra_model extends CI_Model {
 
@@ -59,7 +58,7 @@ class Orden_Compra_model extends CI_Model {
 	 */
 	function insertar_articulo_compra($info_articulo_compra) 
 	{
-		$res = $this->db->insert('CMS_RelArticuloCompra', $info_articulo_compra);
+		$res = $this->db->insert('CMS_RelCompraArticulo', $info_articulo_compra);
 		return $res;
 	}
 	

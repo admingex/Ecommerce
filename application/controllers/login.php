@@ -146,7 +146,7 @@ class Login extends CI_Controller {
 				$articulos = $this->session->userdata('articulos');
 				
 				foreach($articulos as $articulo) {				
-					if ($articulo['requiere_envioBi']!=FALSE) {
+					if ($articulo['requiere_envioBi'] != FALSE) {
 						$requiere_envio = TRUE;
 						//echo "requiere envio";
 						break;
@@ -173,7 +173,6 @@ class Login extends CI_Controller {
 			echo "</pre>";
 			exit();
 			*/
-			
 			
 			return $pago_express->get_destino();	
 		} else {

@@ -226,9 +226,7 @@
 			<tr>
 				<td class="label">Referencia</td>
 				<td>
-					<textarea type="text" name="txt_referencia" id="txt_referencia" cols="30" >
-						<?php if(isset($_POST['txt_referencia'])) echo htmlspecialchars($_POST['txt_referencia']);?>
-					</textarea>
+					<textarea type="text" name="txt_referencia" id="txt_referencia" cols="30" ><?php if(isset($_POST['txt_referencia'])) echo htmlspecialchars($_POST['txt_referencia']);?></textarea>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_referencia'])) echo ($reg_errores['txt_referencia']);?></span>
 				</td>
 			</tr>

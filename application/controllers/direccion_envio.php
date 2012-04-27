@@ -66,7 +66,7 @@ class Direccion_Envio extends CI_Controller {
 		$data['redirect'] = $redirect;
 		
 		if ($this->input->is_ajax_request()) {
-			$direcciones = $this->direccion_envio_model->listar_direcciones(4);
+			$direcciones = $this->direccion_envio_model->listar_direcciones($this->id_cliente);
 			echo json_encode($direcciones->result());
 		} else {
 			//listar por default las direcciones del cliente

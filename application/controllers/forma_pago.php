@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include ('DTOS/Tipos_Tarjetas.php');
+include ('dtos/Tipos_Tarjetas.php');
 
 class Forma_Pago extends CI_Controller {
 	var $title = 'Forma de Pago'; 		// Capitalize the first letter

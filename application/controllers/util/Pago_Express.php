@@ -33,9 +33,13 @@ class Pago_Express {
 		return $this->destino;
 	}
 	
+	public function set_destino($destino) {
+		$this->destino = $destino;
+	}
+	
 	/**
 	 * Procesa la información del pago exprés y regresa un arreglo
-	 * que xcontiene lo que se deb colocar en sesión e indica el destino
+	 * que contiene lo que se deb colocar en sesión e indica el destino
 	 * para que continúe el flujo.
 	 */
 	public function definir_destino($requiere_envio) {
