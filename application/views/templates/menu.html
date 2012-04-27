@@ -6,30 +6,35 @@
 		<nav>	
 		<div class="izquierda">
 			<div class="proceso-pago">
-				<div class="img-proceso-pago img-inicio-select">							
+				<?php if($this->uri->segment(1) =='login') $img='-select'; else $img='';?>
+				<div class="img-proceso-pago img-inicio<?php echo $img; ?>" >							
 				</div>
-				<a href="<?php echo site_url('login');?>" class="txt-proceso-pago-select">Inicio</a>
+				<a href="<?php echo site_url('login');?>" class="txt-proceso-pago<?php echo $img; ?>">Inicio</a>
 			</div>	
-			<div class="proceso-pago">		
-				<div class="img-proceso-pago img-pago-envio">				
+			<div class="proceso-pago">	
+				<?php if(($this->uri->segment(1) == "direccion_envio") || ($this->uri->segment(1) =="forma_pago")) $img='-select'; else $img='';?>	
+				<div class="img-proceso-pago img-pago-envio<?php echo $img; ?>">				
 				</div>
-				<a href="<?php echo site_url('forma_pago');?>" class="txt-proceso-pago">Pago&nbsp;y&nbsp;Envío</a>
+				<a href="<?php echo site_url('forma_pago');?>" class="txt-proceso-pago<?php echo $img; ?>">Pago&nbsp;y&nbsp;Envío</a>
 			</div>
-			<div class="proceso-pago">	
-				<div class="img-proceso-pago img-facturacion">				
+			<div class="proceso-pago">
+				<?php if($this->uri->segment(1) == "direccion_facturacion") $img='-select'; else $img='';?>	
+				<div class="img-proceso-pago img-facturacion<?php echo $img ?>" >				
 				</div>
-				<a href="<?php echo site_url('direccion_facturacion');?>" class="txt-proceso-pago">Facturación</a>
+				<a href="<?php echo site_url('direccion_facturacion');?>" class="txt-proceso-pago<?php echo $img ?>">Facturación</a>
 			</div>	
 			<div class="proceso-pago">	
-				<div class="img-proceso-pago img-compra">				
+				<?php if($this->uri->segment(1) == "orden_compra") $img='-select'; else $img='';?>
+				<div class="img-proceso-pago img-compra<?php echo $img; ?>">				
 				</div>
-				<a href="<?php echo site_url('orden_compra');?>" class="txt-proceso-pago">Finalizar&nbsp;Compra</a>
+				<a href="<?php echo site_url('orden_compra');?>" class="txt-proceso-pago<?php echo $img; ?>">Finalizar&nbsp;Compra</a>
 			</div>	
 		</div>		
 		<div class="derecha">
 			<div class="necesita-ayuda img-ayuda">				
 			</div>	
-		</div>													
+		</div>	
+													
 		</nav>			
 	</section>		
 </section>
