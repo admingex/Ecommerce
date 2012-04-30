@@ -7,6 +7,7 @@ class Orden_Compra extends CI_Controller {
 	var $title = 'Verifica tu orden';
 	var $subtitle = 'Verifica tu orden';
 	var $registro_errores = array();				//validación para los errores
+	var $pago_express;
 	
 	private $id_cliente;
 	private $id_direccion_envio;
@@ -38,6 +39,10 @@ class Orden_Compra extends CI_Controller {
 		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
 		$this->load->model('direccion_facturacion_model', 'direccion_facturacion_model', true);
 		
+		//El flujo se recupera acá
+		$this->pago_express = $this->session->userdata("pago_express");
+		echo "destino: " . $this->session->userdata("pago_express")->get_destino();
+		var_dump($this->pago_express);
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
@@ -110,6 +115,9 @@ class Orden_Compra extends CI_Controller {
 		//Validación del lado del cliente
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/orden_compra.js'> </script>";
 		$data['script'] = $script_file;
+		
+		//gestión de la dirección de envío con el obj. de pago exprés
+		$data['requiere_envio'] = $this->pago_express->get_requiere_envio();
 		
 		/*
 		echo "<pre>";
