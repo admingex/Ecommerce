@@ -136,8 +136,8 @@ class Login extends CI_Controller {
 			//dirección de facturación queda excluida de esta validación, se preguntará en el resumen de la orden
 			$dir_facturacion_express = $this->direccion_facturacion_model->get_pago_express($id_cliente);	//devolverá un obj
 			
-			//se crea el objeto con la informción del pago exprés
-			$pago_express = new Pago_Express($forma_pago_express, $dir_envio_express, $dir_facturacion_express);
+			//se crea el objeto con la informción del pago exprés, a través de los consecutivos
+			$pago_express = new Pago_Express($forma_pago_express->consecutivo, $dir_envio_express->consecutivo, $dir_facturacion_express->consecutivo);
 			
 			//revisar si requiere forma de envío
 			$requiere_envio = FALSE;		
@@ -155,14 +155,17 @@ class Login extends CI_Controller {
 			}
 
 			//obtener el array de lo que se subirá a sesion
-			$flujo_pago_express = $pago_express->definir_destino($requiere_envio);
+			$flujo_pago_express = $pago_express->definir_destino_inicial($requiere_envio);
 			
 			//Colocar en sesión lo necesario
-			if (array_key_exists('tarjeta', $flujo_pago_express))
-				$this->session->set_userdata('tarjeta', $pago_express->get_forma_pago());
-			if (array_key_exists('dir_envio', $flujo_pago_express))
-				$this->session->set_userdata('dir_envio', $pago_express->get_dir_envio());
-			
+			if (array_key_exists('tarjeta', $flujo_pago_express)) {
+				//$this->session->set_userdata('tarjeta', $pago_express->get_forma_pago());
+				$this->session->set_userdata('tarjeta', $forma_pago_express->consecutivo);
+			}
+			if (array_key_exists('dir_envio', $flujo_pago_express)) {
+				//$this->session->set_userdata('dir_envio', $pago_express->get_dir_envio());
+				$this->session->set_userdata('dir_envio', $dir_envio_express->consecutivo);
+			}
 			//se coloca el objeto en sesión para ocuparlo en los demás controladores
 			$this->session->set_userdata('pago_express', $pago_express);
 			

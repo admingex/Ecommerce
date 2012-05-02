@@ -37,9 +37,9 @@
 	<?php
 		if (!empty($mensaje)) {
 	?>
-	<div id="dialog" title="Resultado" >
-		<p><?php echo $mensaje;?></p>
-	</div>
+			<div id="dialog" title="Resultado" >
+				<p><?php echo $mensaje;?></p>
+			</div>
 	<?php
 		}
 		if (!empty($lista_tarjetas) && $lista_tarjetas->num_rows()) {
@@ -71,8 +71,9 @@
 							$url_redirect = site_url("forma_pago");
 							if (isset($redirect) && $redirect) {
 								//revisar si la redirección es hacia el resumen de la orden
-								if ($this->session->userdata("redirect_to_order")) {
-									$url_redirect = site_url($this->session->userdata("redirect_to_order"));
+								if ($this->session->userdata("pago_express")) {
+									//$url_redirect = site_url($this->session->userdata("redirect_to_order"));
+									$url_redirect = site_url($this->session->userdata("pago_express")->get_destino());
 								} else {
 									$url_redirect = site_url('direccion_envio');
 								}

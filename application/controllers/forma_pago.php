@@ -1,11 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 include ('dtos/Tipos_Tarjetas.php');
+include('util/Pago_Express.php');
 
 class Forma_Pago extends CI_Controller {
 	var $title = 'Forma de Pago'; 		// Capitalize the first letter
 	var $subtitle = 'Selecciona una forma de pago'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
+	var $pago_express;
+	
 	//var $tc = array();
 	private $id_cliente;
 	private $consecutivo_tc = 0;
@@ -25,11 +28,15 @@ class Forma_Pago extends CI_Controller {
 
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
-		////
-		if ($this->session->userdata('hay_forma_pago')) {
-			//echo "hay_forma_pago: " . var_dump($this->session->userdata('hay_forma_pago'));
-		}
 		
+		//Se obtiene el objato para calcular los flujos
+		
+		$this->pago_express = $this->session->userdata("pago_express");
+		echo "destino: " . $this->session->userdata("pago_express")->get_destino();
+		/*
+		echo "requiere_envio: " . $this->pago_express->get_requiere_envio();
+		var_dump($this->pago_express);
+		 * */
     }
 
 	public function index()	//Para pruebas se usa 1
@@ -50,6 +57,9 @@ class Forma_Pago extends CI_Controller {
 		
 		//listar por default las tarjetas del cliente
 		$data['lista_tarjetas'] = $this->forma_pago_model->listar_tarjetas($this->id_cliente);
+		
+		//pago exprés
+		$data['pago_express'] = $this->pago_express;
 		
 		//cargar vista	
 		$this->cargar_vista('', 'forma_pago', $data);
@@ -159,6 +169,13 @@ class Forma_Pago extends CI_Controller {
 							//Verificar el flujo() => cargar o no en session y redireccionar
 							$this->cargar_en_session($form_values['tc']['id_TCSi']);
 							
+							//Para el destino siguiente
+							$this->pago_express->actualizar_forma_pago($form_values['tc']['id_TCSi']);
+							$destino = $this->pago_express->siguiente_destino();
+							
+							echo "destino: " .$destino;
+							exit();
+							
 							//Redirección
 							if ($tipo == 1)	{
 								redirect("forma_pago/registrar/amex");	//se puede invocar pasando el consecutivo como parámetro
@@ -181,8 +198,18 @@ class Forma_Pago extends CI_Controller {
 				//para la session
 				$tarjeta = array('tc' => $form_values['tc'], $form_values['amex']);				
 				
+				//Para el destino siguiente
+				//echo " -- no se guarda: ";
+				$this->pago_express->actualizar_forma_pago($tarjeta);
+				$destino = $this->pago_express->siguiente_destino();
+				//echo "<br/>sig destino: " .$destino;
+				//echo "<br/>destino: " .$this->pago_express->get_destino();
+				//exit();
+				
 				//Verificar el flujo() => cargar o no en session y redireccionar
 				$this->cargar_en_session($tarjeta);
+				
+				
 				if ($tipo == 1)	{
 					redirect("forma_pago/registrar/amex");	//se puede invocar pasando el consecutivo como parámetro 
 				} else {
@@ -444,6 +471,10 @@ class Forma_Pago extends CI_Controller {
 				$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
 				$this->cargar_en_session($tarjeta);
 				
+				//Para el destino siguiente
+				$this->pago_express->actualizar_forma_pago($nueva_info['tc']['id_TCSi']);
+				$destino = $this->pago_express->siguiente_destino();
+				
 				$msg_actualizacion = "Información actualizada";
 				$data['msg_actualizacion'] = $msg_actualizacion;
 				
@@ -473,6 +504,10 @@ class Forma_Pago extends CI_Controller {
 					
 					//cargarla en la sesión
 					$this->cargar_en_session($consecutivo);
+					
+					//Para el destino siguiente
+					$this->pago_express->actualizar_forma_pago($consecutivo);
+					$destino = $this->pago_express->siguiente_destino();
 					
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					

@@ -1,9 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+include('util/Pago_Express.php');
+
 class Direccion_Envio extends CI_Controller {
 	var $title = 'Direcci&oacute;n de Env&iacute;o'; 		// Capitalize the first letter
 	var $subtitle = 'Selecciona una direcci&oacute;n de env&iacute;o'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
+	var $pago_express;
+	
 	private $id_cliente;
 	
 	const CODIGO_MEXICO = "MX";		//constante para verificar el código del país en el efecto del JS.
@@ -31,6 +35,10 @@ class Direccion_Envio extends CI_Controller {
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
+		
+		//Flujo para pago exprés
+		$this->pago_express = $this->session->userdata("pago_express");
+		echo "destino: " . $this->session->userdata("pago_express")->get_destino();
 
     }
 
@@ -129,6 +137,11 @@ class Direccion_Envio extends CI_Controller {
 						if ($this->direccion_envio_model->insertar_direccion($form_values['direccion'])) {
 							//cargar en sesion
 							$this->cargar_en_session($form_values['direccion']['id_consecutivoSi']);
+							
+							//Para el destino siguiente
+							$this->pago_express->actualizar_dir_envio($form_values['direccion']['id_consecutivoSi']);
+							$destino = $this->pago_express->siguiente_destino();
+							
 							//cargar la vista de las tarjetas
 							$this->listar("Direcci&oacute;n registrada correctamente.");
 						} else {
@@ -242,6 +255,10 @@ class Direccion_Envio extends CI_Controller {
 					$direccion = $nueva_info['direccion'];
 					$this->cargar_en_session($direccion);
 					
+					//Para el Pago express
+					$this->pago_express->actualizar_dir_envio($form_values['direccion']['id_consecutivoSi']);
+					$destino = $this->pago_express->siguiente_destino();
+					
 					$msg_actualizacion = "Información actualizada";
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					//var_dump($direccion);
@@ -256,6 +273,10 @@ class Direccion_Envio extends CI_Controller {
 					
 					//Cargar en sesión la dirección mmodificada
 					$this->cargar_en_session($consecutivo);
+					
+					//Para el Pago express
+					$this->pago_express->actualizar_dir_envio($consecutivo);
+					$destino = $this->pago_express->siguiente_destino();
 					
 					$this->listar($msg_actualizacion);
 				}

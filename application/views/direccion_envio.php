@@ -57,8 +57,10 @@
 							$url_redirect = site_url("direccion_envio");							
 							if (isset($redirect) && $redirect) {
 								//revisar si la redirección es hacia el resumen de la orden
-								if ($this->session->userdata("redirect_to_order")) {
-									$url_redirect = site_url($this->session->userdata("redirect_to_order"));
+								//if ($this->session->userdata("redirect_to_order")) {
+								if ($this->session->userdata("pago_express")) {
+									//$url_redirect = site_url($this->session->userdata("redirect_to_order"));
+									$url_redirect = site_url($this->session->userdata("pago_express")->get_destino());
 								} else {
 									$url_redirect = site_url('direccion_facturacion');
 								}
