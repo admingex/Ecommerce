@@ -30,7 +30,8 @@
 					include ('orden_compra/resumen.html');
 				} else {
 					include ('orden_compra/respuesta_cobro.html');
-				}					
+				}	
+										
 				?>	
 				</td>				
 			</tr>						

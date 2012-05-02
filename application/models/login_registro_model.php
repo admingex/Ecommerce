@@ -12,7 +12,7 @@ class Login_Registro_model extends CI_Model {
 	function verifica_cliente($email = '', $password = '')
 	{
 		$m5_pass = md5($email.'|'.$password);		//encriptaciónn definida en el registro de usuarios
-		$qry = "SELECT id_clienteIn as id_cliente, salutation as nombre 
+		$qry = "SELECT id_clienteIn as id_cliente, salutation as nombre, email, password
 				FROM CMS_IntCliente
 				WHERE email = '".$email."' AND password = '".$m5_pass."'
 				LIMIT 1";

@@ -4,13 +4,14 @@ class Api extends CI_Controller {
 
 	var $title = 'Iniciar Sesi&oacute;n'; 		// Capitalize the first letter
 	var $subtitle = 'Iniciar Sesi&oacute;n Segura'; 	// Capitalize the first letter
-	var $login_errores = array();
-	
+	var $login_errores = array();	
+	var $key="";		
 			
 	function __construct(){
         // Call the Model constructor
         parent::__construct();		
-		$this->load->model('api_model', 'api_model', true);			
+		$this->load->model('api_model', 'api_model', true);
+		$this->key='AC35-4564-AE4D-0B881031F295';		
     }
 	
 	public function index(){												
@@ -146,8 +147,41 @@ class Api extends CI_Controller {
 			}
     	}							  
 		if($pago){
-			$this->session->set_userdata(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));
-			redirect('login');
+			if($_POST){
+				if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
+					$this->session->set_userdata(array('id_sitio'=>$sitio, 
+												   'id_canal'=>$canal, 
+												   'id_promocion'=>$promocion,
+												   'guidx'=>$_POST['guidx'],
+												   'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
+												   'guidz'=>$_POST['guidz']
+												   )
+											 );
+					/*echo "<form name='realizar_pago' action='".site_url()."/pago' method='POST'>
+			      	  	      <input type='text' name='guidx' value='".$this->session->userdata('guidx')."' size='70'/>
+			      	  	      <br />
+			      	  	      <input type='text' name='guidy' value='{CE5480FD-AC35-4564-AE4D-0B881031F295}' size='70'/>
+			      	  	      <br />
+			          	      <input type='text' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
+			          	      <br />
+			          	      <input type='text' name='status' value='' size='10'/>
+			          	      <br />
+			          	      <input type='text' name='id_compra' value='' size='10'/>			          	      
+			          	      <br />			          	      
+			                  <input type='submit' name='enviar' value='Enviar' />
+		          	      </form>";					 
+					 */					
+					 redirect('login');	
+				}																			
+			}	
+			else{
+				$data['error']['sitio']="Datos incompletos para completar la transaccion";
+				unset($data['sitio']);
+				unset($data['canal']);
+				unset($data['promocion']);
+				unset($data['articulos']);								
+				$this->formato($formato,$data);	
+			}		
 		}	       		
 		else{
 			$this->session->set_userdata('promociones',$data);
@@ -454,6 +488,20 @@ class Api extends CI_Controller {
 			}															
 		}		
 	}		
+	
+	public function encrypt($str, $key){
+    	$block = mcrypt_get_block_size('des', 'ecb');
+    	$pad = $block - (strlen($str) % $block);
+    	$str .= str_repeat(chr($pad), $pad);
+    	return mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
+	}
+
+	public function decrypt($str, $key){
+    	$str = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
+    	$block = mcrypt_get_block_size('des', 'ecb');
+    	$pad = ord($str[($len = strlen($str)) - 1]);
+    	return substr($str, 0, strlen($str) - $pad);
+	}
 			
 	public function cargar_vista($folder, $page, $data){	
 		//Para automatizar un poco el desplieguee

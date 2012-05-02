@@ -2,6 +2,7 @@
 
 include ('dtos/Tipos_Tarjetas.php');
 include('util/Pago_Express.php');
+include('api.php');
 
 class Orden_Compra extends CI_Controller {
 	var $title = 'Verifica tu orden';
@@ -46,6 +47,9 @@ class Orden_Compra extends CI_Controller {
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
+		
+		//traer del controlador api las funciones encrypt y decrypt
+		$this->api = new Api();		
 
     }
 
@@ -205,8 +209,8 @@ class Orden_Compra extends CI_Controller {
 	 */
 	public function checkout() {
 		$data['title'] = "Resultado de la petición de cobro";
-		$data['subtitle'] = "Resultado de la petición de cobro";
-		
+		$data['subtitle'] = "Resultado de la petición de cobro";	
+		$data['datos_login']='';		
 		/*Realizar el pago en CCTC*/
 		if ($_POST) {
 			$orden_info = array();		
@@ -300,7 +304,17 @@ class Orden_Compra extends CI_Controller {
 						//cargar Vista
 						//var_dump($simple_result);
 						
-						$data['resultado'] = $simple_result;
+						if($simple_result->respuesta_banco=='approved'){
+							$estatus_pago=1;
+						}
+						else{
+							//este caso puede ser denied o Incorrect information
+							$estatus_pago=0;
+						}
+						
+						echo $data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
+						echo $data['datos_login'] = $this->api->decrypt($this->session->userdata('datos_login'),$this->api->key);
+						$data['resultado'] = $simple_result;						
 						$this->cargar_vista('', 'orden_compra', $data);
 						//enviar Correo
 						
@@ -329,7 +343,16 @@ class Orden_Compra extends CI_Controller {
 						//cargar Vista
 						$simple_result = $obj_result->PagarTcUsandoIdResult;
 					
-						//var_dump($simple_result);
+						//var_dump($simple_result);	
+						if($simple_result->respuesta_banco=='approved'){
+							$estatus_pago=1;
+						}
+						else{
+							//este caso puede ser denied o Incorrect information
+							$estatus_pago=0;
+						}
+						echo $data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
+						echo $data['datos_login'] = $this->api->decrypt($this->session->userdata('datos_login'),$this->api->key);						
 						
 						$data['resultado'] = $simple_result;
 						$this->cargar_vista('', 'orden_compra', $data);
@@ -340,7 +363,7 @@ class Orden_Compra extends CI_Controller {
 						echo '<br/>error: <br/>'.$exception->getMessage();
 						return NULL;
 					}
-				}
+				}				
 			} else {	//If Errores
 				//redirect('orden_compra', 'refresh');
 				$this->resumen("El formato del código es incorrecto", TRUE);

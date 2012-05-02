@@ -49,7 +49,7 @@ class Reporte extends CI_Controller {
 		$data['fecha_fin']=$fecha_fin;
 				
 		$this->load->view('templates/header',$data);
-		echo $data['fecha_inicio'].$data['fecha_fin'];
+		$this->load->view('reportes/reporte_compras',$data);	
 				
 	}
 	
