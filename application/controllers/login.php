@@ -64,7 +64,7 @@ class Login extends CI_Controller {
 					if ($resultado->num_rows() > 0) {
 						//encryptar login y pass y guardarlo en session											
 						$cliente = $resultado->row();
-						$dl=$this->api->encrypt($cliente->email."|".$cliente->password, $this->api->key);
+						$dl=$this->api->encrypt($cliente->email."|".$this->password, $this->api->key);
 						$this->session->set_userdata('datos_login',$dl);
 						
 						$this->crear_sesion($cliente->id_cliente, $cliente->nombre, $this->email);	//crear sesion

@@ -14,8 +14,15 @@
 			echo "<p>Respuesta del Banco: " . $resultado->respuesta_banco . "</p>";
 			//echo "<p>Código de Autorización: " . $resultado->codigo_autorizacion . "</p>";
 			echo "<p>Mensaje: " . $resultado->mensaje . "</p>";
-			
-			
+		?>	
+			<form name="envio_result" action="http://dev.idconline.com.mx/rvp.php" method="POST">
+				<input type="hidden" name="cadena_comprobacion" value='<?php echo $cadena_comprobacion; ?>' />
+				<textarea name="datos_login" style="display: none"><?php echo $datos_login; ?></textarea>							
+				<input type="submit" name="Continuar" value="Continuar"/>	
+			</form>
+			<?php echo $datos_login; ?>
+		<?php	
+		
 		}
 		?>
 		<h5>

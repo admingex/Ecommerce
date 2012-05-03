@@ -42,8 +42,8 @@ class Orden_Compra extends CI_Controller {
 		
 		//El flujo se recupera acá
 		$this->pago_express = $this->session->userdata("pago_express");
-		echo "destino: " . $this->session->userdata("pago_express")->get_destino();
-		var_dump($this->pago_express);
+		//echo "destino: " . $this->session->userdata("pago_express")->get_destino();
+		//var_dump($this->pago_express);
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
@@ -240,7 +240,7 @@ class Orden_Compra extends CI_Controller {
 				/*Resgistrar TODA la información de la orden*/
 				
 				
-				//echo "<br/>exito del registro de la orden:". $registro_exitoso;
+				//echo "<br/>exito del registro de la orden:". $id_compra;
 				//exit();
 				$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
 				//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
@@ -251,7 +251,7 @@ class Orden_Compra extends CI_Controller {
 					$tc = $detalle_tarjeta['tc'];
 					$tc = (array)$tc;
 					
-					echo var_dump($tc);
+					//echo var_dump($tc);
 					
 					$tc_soap = new Tc(
 						$tc['id_clienteIn'],
@@ -291,7 +291,7 @@ class Orden_Compra extends CI_Controller {
 						$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
 						
 						//Registro inicial de la compra
-						$registro_exitoso = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
+						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
 						
 						$obj_result = $cliente->PagarTC($parameter);
 						
@@ -312,8 +312,8 @@ class Orden_Compra extends CI_Controller {
 							$estatus_pago=0;
 						}
 						
-						echo $data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
-						echo $data['datos_login'] = $this->api->decrypt($this->session->userdata('datos_login'),$this->api->key);
+						$data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
+						$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
 						$data['resultado'] = $simple_result;						
 						$this->cargar_vista('', 'orden_compra', $data);
 						//enviar Correo
@@ -334,8 +334,8 @@ class Orden_Compra extends CI_Controller {
 					try {  
 						$parameter = array('informacion_orden' => $informacion_orden);
 						
-						//Registro inicial de la compra
-						$registro_exitoso = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
+						//Registro inicial de la compra						
+						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
 						//Intento de cobro en CCTC
 						$obj_result = $cliente->PagarTcUsandoId($parameter);
 						
@@ -351,8 +351,8 @@ class Orden_Compra extends CI_Controller {
 							//este caso puede ser denied o Incorrect information
 							$estatus_pago=0;
 						}
-						echo $data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
-						echo $data['datos_login'] = $this->api->decrypt($this->session->userdata('datos_login'),$this->api->key);						
+						$data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
+						$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);						
 						
 						$data['resultado'] = $simple_result;
 						$this->cargar_vista('', 'orden_compra', $data);
@@ -382,7 +382,7 @@ class Orden_Compra extends CI_Controller {
 		//Registrar eb la tabla de ordenes
 		$id_compra = $this->registrar_compra($id_cliente);
 		
-		$exito = FALSE;
+		
 		if ($id_compra) {
 			//Registrar el articulo y la orden de compra a la que pertenece.
 			
@@ -422,12 +422,10 @@ class Orden_Compra extends CI_Controller {
 			}
 			*/
 			
-			//	$this->db->trans_complete();
-			
-			$exito = TRUE;
+			//	$this->db->trans_complete();						
 		
 		}
-		return $exito;
+		return $id_compra;
 	}
 	
 	/**

@@ -17,7 +17,6 @@ html
     min-height: 100%;
     padding-bottom: 1px;
 }
-
 body
 {
     background: #000;
@@ -486,7 +485,9 @@ th{
 	height: 26px;
 	text-align: left;
 }
-
+td{
+	padding: 0px 2px;
+}
 .doble-linea{
 	vertical-align: top;
 	font-size: 9px;

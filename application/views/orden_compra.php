@@ -10,6 +10,9 @@
 	<div class="instrucciones">Por favor verifica la informaci&oacute;n que aparece abajo. Si tu pago es con tarjeta. Escribe el c&oacute;digo de seguridad que aparece al reverso de la misma. Cuando est&eacute;s listo, da click en finalizar compra para continuar.</div>	
 </div>
 <section class="contenedor">
+	<?php
+		if(empty($resultado)){
+	?>
 	<form id="form_orden_compra" action="<?php echo site_url("orden_compra/checkout"); ?>" method="POST">
 	<div class="contenedor-blanco">				
 	<table width="100%" cellpadding="0" cellspacing="0">		
@@ -25,12 +28,9 @@
 		<tbody class="contenedor-gris">
 			<tr>
 				<td colspan="2">
-					<?php
-				if (empty($resultado)) {								
+				<?php								
 					include ('orden_compra/resumen.html');
-				} else {
-					include ('orden_compra/respuesta_cobro.html');
-				}	
+					
 										
 				?>	
 				</td>				
@@ -38,9 +38,7 @@
 		</tbody>
 	</table>		
 	</div>
-	<?php
-		if(empty($resultado)){
-	?>
+	
 	<div class="contenedor-blanco">
 		<table width="100%" cellpadding="0" cellspacing="0" class="">
 			<thead>
@@ -116,14 +114,18 @@
 					<td colspan="4" class="titulo-promo-negro2" align="right">						
 						<input type="submit" id="enviar" name="enviar" value="&nbsp;" class="finalizar_compra"/>						
 					</td>
+					
 				</tr>
 			</tbody>
 		</table>
 	</div>
-	<?php
-	}
-	?>	
 	</form>	
+	<?php
+	}	
+	else{
+		include ('orden_compra/respuesta_cobro.html');
+	}
+	?>
 	<?php
 		if (!empty($mensaje)) {
 	?>

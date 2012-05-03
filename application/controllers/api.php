@@ -147,7 +147,7 @@ class Api extends CI_Controller {
 			}
     	}							  
 		if($pago){
-			if($_POST){
+			if($_POST){				
 				if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
 					$this->session->set_userdata(array('id_sitio'=>$sitio, 
 												   'id_canal'=>$canal, 
