@@ -183,7 +183,7 @@ class Login extends CI_Controller {
 			return $pago_express->get_destino();	
 		} else {
 			//enviar a página de mensaje "La promoción que solicitó ya no existe...etc."
-			return "orden_compra";
+			return "mensaje/".md5(1);
 		}
 	}
 	

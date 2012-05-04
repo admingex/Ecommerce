@@ -46,6 +46,9 @@ $route['api/(:any)/(:any)'] = "api/listar/$1/$2";
 $route['api/(:any)'] = "api/listar/$1";
 $route['api'] = "api/listar";
 
+$route['mensaje/(:any)'] = "mensaje/idm/$1";
+$route['mensaje'] = "mensaje/idm";
+
 $route['404_override'] = '';
 
 

@@ -38,13 +38,13 @@ class Pago extends CI_Controller {
 			echo "<form name='realizar_pago' action='".site_url()."/api/1/1/1189/pago' method='POST'>
 			      	  <input type='text' name='guidx' value='".$this->session->userdata('guidx')."' size='70'/>
 			          <input type='text' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
-			          <input type='submit' name='enviar' value='Enviar' />
+			          <input type='submit' name='enviar' value='Enviar' />			          
 		          </form>";
 		    echo "<br />";      
 		    echo "<form name='realizar_pago' action='".site_url()."/api/1/1/1190/pago' method='POST'>
 			      	  <input type='text' name='guidx' value='".$this->session->userdata('guidx')."' size='70'/>
 			          <input type='text' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
-			          <input type='submit' name='enviar' value='Enviar' />
+			          <input type='submit' name='enviar2' value='Enviar2' />
 		          </form>";      
 		}		
 		

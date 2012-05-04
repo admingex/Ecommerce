@@ -11,7 +11,7 @@ class Api extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		$this->load->model('api_model', 'api_model', true);
-		$this->key='AC35-4564-AE4D-0B881031F295';		
+		$this->key='AC35-4564-AE4D-0B881031F295';				
     }
 	
 	public function index(){												
@@ -172,15 +172,15 @@ class Api extends CI_Controller {
 		          	      </form>";					 
 					 */					
 					 redirect('login');	
-				}																			
+				}		
+				else{
+					echo "Es necesario guidx y guidz, se recibe";
+					echo "<br />";
+					print_r($_POST);
+				}																	
 			}	
 			else{
-				$data['error']['sitio']="Datos incompletos para completar la transaccion";
-				unset($data['sitio']);
-				unset($data['canal']);
-				unset($data['promocion']);
-				unset($data['articulos']);								
-				$this->formato($formato,$data);	
+				redirect('mensaje/'.md5(1));	
 			}		
 		}	       		
 		else{
@@ -191,6 +191,7 @@ class Api extends CI_Controller {
   }  
 		
 	public function obtener_detalle_promo($sitio, $canal, $promocion){
+		$data=array();
 		if(!empty($sitio)){	  
 	  		$rsitio= $this->api_model->obtener_sitio($sitio);	
 			if($rsitio->num_rows()!=0){
