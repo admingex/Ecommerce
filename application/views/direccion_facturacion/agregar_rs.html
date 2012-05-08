@@ -29,7 +29,12 @@
 						<input type="text" name="txt_email" id="txt_email" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);?>" size="30"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>					
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>
 					<div class="instrucciones_cursivas">¿A qu&eacute; correo debemos enviar tu factura?</div>
 				</td>
 			</tr>
