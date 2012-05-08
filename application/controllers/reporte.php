@@ -29,6 +29,7 @@ class Reporte extends CI_Controller {
 		}
 		$data['fecha_inicio']=$fecha_inicio;
 		$data['fecha_fin']=$fecha_fin;
+		
 		$usuarios=$this->reporte_model->obtener_usuarios_fecha($fecha_inicio, $fecha_fin);		
 		$data['usuarios']=$usuarios;		
 		$this->load->view('templates/header',$data);
@@ -47,7 +48,9 @@ class Reporte extends CI_Controller {
 		}
 		$data['fecha_inicio']=$fecha_inicio;
 		$data['fecha_fin']=$fecha_fin;
-				
+		
+		$compras= $this->reporte_model->obtener_compras_fecha($fecha_inicio, $fecha_fin);
+		$data['compras']=$compras;		
 		$this->load->view('templates/header',$data);
 		$this->load->view('reportes/reporte_compras',$data);	
 				

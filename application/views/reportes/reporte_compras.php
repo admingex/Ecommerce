@@ -22,55 +22,70 @@ Fecha Fin: <input type="text" name="fecha_fin" id="fecha_fin" value="<?php echo 
 <input type="submit" name="Consultar" value="Consultar" />
 </form>
 <?php 
-//if($usuarios->num_rows()!=0){
-
+if($compras->num_rows()!=0){
+	
+	foreach ($compras->result_array() as $compra) {
+		echo "<br />".$compra['id_compraIn'];
+	}	
+}
 ?>
 <table width="100%" cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
 			<th>			
-				Usuario				
+				Nombre Cliente				
 			</th>		
 			<th>
-				Correo Electronico
+				Dir Envio
 			</th>		
 			<th>
-				Fecha de Registro
-			</th>	
+				Medio de Pago
+			</th>
+			<th>
+				Monto
+			</th>
+			<th>
+				Razon Social
+			</th>
+			<th>
+				Dir Facturacion			
+			</th>
+			<th>
+				Codigo Aut
+			</th>
+			<th>
+				Fecha Compra
+			</th>
 		</tr>
 	</thead>	
 	<tbody class="contenedor-gris">	
-
+		<tr>
+			<td>
+				1
+			</td>
+			<td>
+				2
+			</td>
+			<td>
+				3
+			</td>
+			<td>
+				4
+			</td>
+			<td>
+				5
+			</td>
+			<td>
+				6
+			</td>
+			<td>
+				7
+			</td>	
+			<td>
+				8
+			</td>		
+		</tr>
 	</tbody>
 </table>
-<?php 	
-//}
-//else{
-?>
-<p>No existen datos en esta fecha</p>
-<?php	
-//}
-$this->guid = com_create_guid();
-echo $this->guid;
-/*function guid(){
-    if (function_exists('com_create_guid')){
-        return com_create_guid();
-    }else{
-        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
-        $charid = strtoupper(md5(uniqid(rand(), true)));
-        $hyphen = chr(45);// "-"
-        $uuid = chr(123)// "{"
-                .substr($charid, 0, 8).$hyphen
-                .substr($charid, 8, 4).$hyphen
-                .substr($charid,12, 4).$hyphen
-                .substr($charid,16, 4).$hyphen
-                .substr($charid,20,12)
-                .chr(125);// "}"
-        return $uuid;
-    }
-}
-echo guid();
-*/
-?>	
 </div>
 </section>

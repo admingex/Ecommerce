@@ -33,8 +33,8 @@ class Pago extends CI_Controller {
 			echo "comparar a true:".md5($this->session->userdata('guidx').$guidy.$this->session->userdata('guidz').'1');
 		}	  
 		else{
-			$this->session->set_userdata('guidx', com_create_guid());
-			$this->session->set_userdata('guidz', com_create_guid());
+			$this->session->set_userdata('guidx', $this->guid());
+			$this->session->set_userdata('guidz', $this->guid());
 			echo "<form name='realizar_pago' action='".site_url()."/api/1/1/1189/pago' method='POST'>
 			      	  <input type='text' name='guidx' value='".$this->session->userdata('guidx')."' size='70'/>
 			          <input type='text' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
@@ -51,10 +51,28 @@ class Pago extends CI_Controller {
 		echo "<br />";
 		echo $textoenc=$this->encrypt("857|giovanni@correo.com|d73d7a9195fef42befee33466b81d7b2", "GGee00**");
 		echo "<br />";
-		echo $this->decrypt($textoenc,"GGee00**");
-			
-							
+		echo $this->decrypt($textoenc,"GGee00**");										
 	}	
+	
+	public function guid(){
+    	if (function_exists('com_create_guid')){
+        	return com_create_guid();
+    	}
+    	else{
+        	mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+        	$charid = strtoupper(md5(uniqid(rand(), true)));
+        	$hyphen = chr(45);// "-"
+        	$uuid = chr(123)// "{"
+                .substr($charid, 0, 8).$hyphen
+                .substr($charid, 8, 4).$hyphen
+                .substr($charid,12, 4).$hyphen
+                .substr($charid,16, 4).$hyphen
+                .substr($charid,20,12)
+                .chr(125);// "}"
+        	return $uuid;
+    	}
+	}
+
 
 	public function encrypt($str, $key){
     	$block = mcrypt_get_block_size('des', 'ecb');

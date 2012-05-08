@@ -320,6 +320,7 @@ class Orden_Compra extends CI_Controller {
 						
 						$data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
 						$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
+						$data['urlback']=$this->session->userdata('sitio')->url_PostbackVc;	
 						$data['resultado'] = $simple_result;						
 						$this->cargar_vista('', 'orden_compra', $data);
 						//enviar Correo
@@ -359,7 +360,7 @@ class Orden_Compra extends CI_Controller {
 						}
 						$data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
 						$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);						
-						
+						$data['urlback']=$this->session->userdata('sitio')->url_PostbackVc;	
 						$data['resultado'] = $simple_result;
 						$this->cargar_vista('', 'orden_compra', $data);
 						//return $simple_result;
@@ -512,7 +513,9 @@ class Orden_Compra extends CI_Controller {
 			if (!$this->orden_compra_model->insertar_articulo_compra(array(
 												'id_articuloIn' => $articulo->id_articulo, 
 												'id_compraIn' => $id_compra, 
-												'id_clienteIn' => $id_cliente))) {
+												'id_clienteIn' => $id_cliente,
+												'id_promocionIn' => $id_promocion
+												))) {
 				return FALSE;
 			}
 		}
