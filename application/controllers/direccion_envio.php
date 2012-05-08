@@ -1,12 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include('util/Pago_Express.php');
-
 class Direccion_Envio extends CI_Controller {
 	var $title = 'Direcci&oacute;n de Env&iacute;o'; 		// Capitalize the first letter
 	var $subtitle = 'Selecciona una direcci&oacute;n de env&iacute;o'; 	// Capitalize the first letter
 	var $reg_errores = array();		//validación para los errores
-	var $pago_express;
 	
 	private $id_cliente;
 	
@@ -51,20 +48,16 @@ class Direccion_Envio extends CI_Controller {
 	 * Coloca la dirección seleccionada del listado en session
 	 */
 	public function seleccionar() {
-		if (!empty($forma_pago)) {
-			//Registrar en session y calcular el siguiente destino
-			if ($_POST) {
-				if (array_key_exists('direccion_selecionada', $_POST))
-					$this->session->set_userdata('dir_envio', $_POST['direccion_selecionada']);
-				
-				//Control de Flujo
-				if ($this->session->userdata('destino'))
-					redirect($this->session->userdata('destino'), "refresh");
-				else 
-					redirect("orden_compra", "refresh");
-			}
+		if ($_POST) {
+			if (array_key_exists('direccion_selecionada', $_POST))
+				$this->session->set_userdata('dir_envio', $_POST['direccion_selecionada']);
 			
-		} else {
+			//Para calcular destino siguiente y actualizxarlo en sesión
+			$destino = $this->obtener_destino();
+			
+			redirect($destino, "refresh");
+		}
+		else {
 			//ir al listado
 			redirect("forma_pago/listar", "refresh");
 		}		
@@ -156,9 +149,8 @@ class Direccion_Envio extends CI_Controller {
 							//cargar en sesion
 							$this->cargar_en_session($form_values['direccion']['id_consecutivoSi']);
 							
-							//Para el destino siguiente
-							$this->pago_express->actualizar_dir_envio($form_values['direccion']['id_consecutivoSi']);
-							$destino = $this->pago_express->siguiente_destino();
+							//Para calcular destino siguiente y actualizxarlo en sesión
+							$destino = $this->obtener_destino();
 							
 							//cargar la vista de las tarjetas
 							$this->listar("Direcci&oacute;n registrada correctamente.");
@@ -171,6 +163,10 @@ class Direccion_Envio extends CI_Controller {
 					//si no se guardará la dirección, almacenar la info para el cobro en sesión temporalmente y pasar a direccón de facturación
 					$direccion = $form_values['direccion'];
 					$this->cargar_en_session($direccion);
+					
+					//Para calcular destino siguiente y actualizxarlo en sesión
+					$destino = $this->obtener_destino();
+					
 					$this->listar("Dirección capturada correctamente");
 					//redirect('direccion_facturacion');
 				}
@@ -273,9 +269,8 @@ class Direccion_Envio extends CI_Controller {
 					$direccion = $nueva_info['direccion'];
 					$this->cargar_en_session($direccion);
 					
-					//Para el Pago express
-					$this->pago_express->actualizar_dir_envio($form_values['direccion']['id_consecutivoSi']);
-					$destino = $this->pago_express->siguiente_destino();
+					//Para calcular destino siguiente y actualizxarlo en sesión
+					$destino = $this->obtener_destino();
 					
 					$msg_actualizacion = "Información actualizada";
 					$data['msg_actualizacion'] = $msg_actualizacion;
@@ -292,9 +287,8 @@ class Direccion_Envio extends CI_Controller {
 					//Cargar en sesión la dirección mmodificada
 					$this->cargar_en_session($consecutivo);
 					
-					//Para el Pago express
-					$this->pago_express->actualizar_dir_envio($consecutivo);
-					$destino = $this->pago_express->siguiente_destino();
+					//Para calcular destino siguiente y actualizxarlo en sesión
+					$destino = $this->obtener_destino();
 					
 					$this->listar($msg_actualizacion);
 				}
@@ -322,11 +316,49 @@ class Direccion_Envio extends CI_Controller {
 		$msg_eliminacion =
 			$this->direccion_envio_model->eliminar_direccion($id_cliente, $consecutivo);
 		
+		//Por si se les ocurre eliminar la dirección que se está ocupando para realizar el pago.
+		if ($dir = $this->session->userdata("dir_envio")) {
+			if ((int)$dir == (int)$consecutivo) {
+				$this->session->unset_userdata("dir_envio");
+			}
+		}
+		
 		/*Pendiente el Redirect hacia la dirección de Facturación*/
 		//echo $data['msg_eliminacion´];
 		
 		//cargar la lista de direeciones
 		$this->listar($msg_eliminacion, FALSE);
+	}
+	
+	/**
+	 * Se enecarga de definir la navegación de la plataforma de acuerdo a la actualización de las formas de pago
+	 */
+	private function obtener_destino() 
+	{
+		//Inicializar el destino con un valor por defecto.
+		$destino = $this->session->userdata('destino') ? $this->session->userdata('destino') : "forma_pago";
+		
+		if ($this->session->userdata('tarjeta') || $this->session->userdata('deposito')) {	//tiene forma de pago
+			//actualizar valores en sesión
+			if ($this->session->userdata('requiere_envio')) {
+				//Si hay dirección de envío seleccionada...
+				if ($this->session->userdata('dir_envio')) {	
+					$destino = "orden_compra";
+				} else {
+					$destino = "direccion_envio";
+				}
+			} else {
+				//no requiere dirección de envío	
+				$destino = "orden_compra";
+			}
+		} else {	//no tiene forma de pago
+			$destino =  "forma_pago";
+		}
+		
+		//Actualizar en sesión
+		$this->session->set_userdata('destino', $destino);
+		
+		return $destino;
 	}
 	
 	/**
@@ -390,7 +422,7 @@ class Direccion_Envio extends CI_Controller {
 		
 		if (!$cp)
 			$cp = $this->input->post('codigo_postal');
-		$cp = $this->input->post('codigo_postal');
+		//$cp = $this->input->post('codigo_postal');
 		
 		//$resultado = array();
 		//$resultado->sepomex = $this->direccion_envio_model->obtener_direccion_sepomex($cp)->result();
@@ -398,12 +430,6 @@ class Direccion_Envio extends CI_Controller {
 		//$this->output->set_content_type("content-type: application/json")->set_output(json_encode($resultado));
 		header('Content-Type: application/json',true);
 		echo json_encode($resultado);
-		/*
-		echo "Hola<pre>";
-		print_r($resultado);
-		echo "</pre>";
-		exit();
-		*/
 	}
 	
 	/*
