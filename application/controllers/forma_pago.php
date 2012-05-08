@@ -29,14 +29,7 @@ class Forma_Pago extends CI_Controller {
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
 		
-		//Se obtiene el objato para calcular los flujos
-		
-		$this->pago_express = $this->session->userdata("pago_express");
-		echo "destino: " . $this->session->userdata("pago_express")->get_destino();
-		/*
-		echo "requiere_envio: " . $this->pago_express->get_requiere_envio();
-		var_dump($this->pago_express);
-		 * */
+		//echo "requiere_envio: " . $this->session->userdata('requiere_envio');
     }
 
 	public function index()	//Para pruebas se usa 1
@@ -57,13 +50,43 @@ class Forma_Pago extends CI_Controller {
 		
 		//listar por default las tarjetas del cliente
 		$data['lista_tarjetas'] = $this->forma_pago_model->listar_tarjetas($this->id_cliente);
-		
-		//pago exprés
-		$data['pago_express'] = $this->pago_express;
-		
+				
 		//cargar vista	
 		$this->cargar_vista('', 'forma_pago', $data);
 		
+	}
+	
+	/**
+	 * Coloca la forma de pago (tarjeta/deposito) en session
+	 */
+	public function seleccionar($forma_pago='') {
+		if (!empty($forma_pago)) {
+			//Registrar en session y calcular el siguiente destino
+			if ($_POST) {
+				if (array_key_exists('tajeta_selecionada', $_POST)) {
+					$this->session->set_userdata('tarjeta', $_POST['tajeta_selecionada']);
+					$this->session->unset_userdata('deposito');
+				} else if (array_key_exists('deposito_bancario', $_POST)) {
+					$this->session->set_userdata('deposito', TRUE);
+					$this->session->unset_userdata('tarjeta');
+				}
+				/*
+				echo "<pre>";
+				var_dump($this->session->all_userdata());
+				echo "</pre>";
+				exit();
+				*/
+				
+				//Control de Flujo
+				if ($this->session->userdata('destino'))
+					redirect($this->session->userdata('destino'), "refresh");
+				else 
+					redirect("direccion_envio", "refresh");
+			}
+		} else {
+			//ir al listado
+			redirect("forma_pago/listar", "refresh");
+		}		
 	}
 	
 	/**
@@ -169,16 +192,15 @@ class Forma_Pago extends CI_Controller {
 							//Verificar el flujo() => cargar o no en session y redireccionar
 							$this->cargar_en_session($form_values['tc']['id_TCSi']);
 							
-							//Para el destino siguiente
-							$this->pago_express->actualizar_forma_pago($form_values['tc']['id_TCSi']);
-							$destino = $this->pago_express->siguiente_destino();
-							
+							//Para calcular destino siguiente y actualizxarlo en sesión
+							$destino = $this->obtener_destino();
+							/*
 							echo "destino: " .$destino;
 							exit();
-							
+							*/
 							//Redirección
 							if ($tipo == 1)	{
-								redirect("forma_pago/registrar/amex");	//se puede invocar pasando el consecutivo como parámetro
+								redirect("forma_pago/registrar/amex", "refresh");	//se puede invocar pasando el consecutivo como parámetro
 							} else {
 								$this->listar("Tarjeta registrada correctamente.");
 							}
@@ -198,20 +220,17 @@ class Forma_Pago extends CI_Controller {
 				//para la session
 				$tarjeta = array('tc' => $form_values['tc'], $form_values['amex']);				
 				
-				//Para el destino siguiente
-				//echo " -- no se guarda: ";
-				$this->pago_express->actualizar_forma_pago($tarjeta);
-				$destino = $this->pago_express->siguiente_destino();
-				//echo "<br/>sig destino: " .$destino;
-				//echo "<br/>destino: " .$this->pago_express->get_destino();
-				//exit();
-				
 				//Verificar el flujo() => cargar o no en session y redireccionar
 				$this->cargar_en_session($tarjeta);
 				
+				//Para calcular destino siguiente y actualizxarlo en sesión
+				$destino = $this->obtener_destino();
+				
+				//echo "<br/>sig destino: " .$destino;
+				//exit();
 				
 				if ($tipo == 1)	{
-					redirect("forma_pago/registrar/amex");	//se puede invocar pasando el consecutivo como parámetro 
+					redirect("forma_pago/registrar/amex", "refresh");	//se puede invocar pasando el consecutivo como parámetro 
 				} else {
 					$this->listar("Tarjeta registrada correctamente");
 				}
@@ -252,7 +271,7 @@ class Forma_Pago extends CI_Controller {
 				$form_values['amex']['apellidoP_titularVc'] = $tc->apellidoP_titularVc;
 				$form_values['amex']['apellidoM_titularVc'] = $tc->apellidoM_titularVc;
 				
-				$tarjeta = array('tc' => $form_values['tc'], 'amex' => $form_values['amex']);				
+				//$tarjeta = array('tc' => $form_values['tc'], 'amex' => $form_values['amex']);				
 				
 				//var_dump($tarjeta);
 				//var_dump($form_values);
@@ -260,16 +279,23 @@ class Forma_Pago extends CI_Controller {
 				
 				if (isset($form_values['tc']['id_estatusSi'])) {	//Se guardará en la BD, actualizando la tarjeta que se registró
 					if ($this->editar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
-						$this->listar("Tarjeta registrada correctamente.", FALSE);
-						//Validación y carga en sessión si es requerido, pendiente
+						$this->listar("Tarjeta registrada correctamente.");
+						//Ya debe estar en sesión la tarjeta...
+						//Para calcular destino siguiente y actualizxarlo en sesión
+						$destino = $this->obtener_destino();
+						
 					} else {
 						$this->listar("Hubo un error en el registro de la dirección en el servidor.", FALSE);
 						//echo "Hubo un error en el registro en CCTC";
 					}						
 				} else {
-					/*Poner en session la TC*/
+					//Poner en session la TC
+					$tarjeta = array('tc' => $form_values['tc'], 'amex' => $form_values['amex']);
 					//si no se guardará la tc, almacenar la info para la venta 
 					$this->cargar_en_session($tarjeta);
+					
+					//Para calcular destino siguiente y actualizxarlo en sesión
+					$destino = $this->obtener_destino();
 					
 					$this->listar("Tarjeta registrada correctamente");
 					//redirect('direccion_envio');
@@ -464,23 +490,20 @@ class Forma_Pago extends CI_Controller {
 			}
 			
 			if (!$consecutivo) {
-				//verificar Flujo y cargar en session si es necesario en la misma validación
-				//////////*********************
-				
 				//tarjeta en session en caso de ser necesario
 				$tarjeta = array('tc' => $nueva_info['tc'], 'amex' => $nueva_info['amex']);
 				$this->cargar_en_session($tarjeta);
 				
 				//Para el destino siguiente
-				$this->pago_express->actualizar_forma_pago($nueva_info['tc']['id_TCSi']);
-				$destino = $this->pago_express->siguiente_destino();
+				//$this->pago_express->actualizar_forma_pago($nueva_info['tc']['id_TCSi']);
+				$destino = $this->obtener_destino();
 				
 				$msg_actualizacion = "Información actualizada";
 				$data['msg_actualizacion'] = $msg_actualizacion;
 				
 				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
 					//si es AMEX
-					redirect('forma_pago/editar/amex/'.$consecutivo);
+					redirect('forma_pago/editar/amex/'.$consecutivo, "refresh");
 				} else {
 					$this->listar($msg_actualizacion);
 				}
@@ -498,21 +521,17 @@ class Forma_Pago extends CI_Controller {
 					
 					//ahora para registrar cambios localmente, siempre se manda la info de $nueva_info['tc']
 					$msg_actualizacion = $this->forma_pago_model->actualiza_tarjeta($consecutivo, $id_cliente, $nueva_info['tc']);
-					
-					//verificar Flujo y cargar en session si es necesario en la misma validación
-					//////////*********************
-					
-					//cargarla en la sesión
+										
+					//Cargar la tarjeta en la sesión y calcular el flujo
 					$this->cargar_en_session($consecutivo);
 					
-					//Para el destino siguiente
-					$this->pago_express->actualizar_forma_pago($consecutivo);
-					$destino = $this->pago_express->siguiente_destino();
+					//Para calcular destino siguiente y actualizxarlo en sesión
+					$destino = $this->obtener_destino();
 					
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					
 					if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
-						redirect('forma_pago/editar/amex/'.$consecutivo);
+						redirect('forma_pago/editar/amex/'.$consecutivo, "refresh");
 					} else {
 						$this->listar($msg_actualizacion);
 					}
@@ -848,8 +867,39 @@ class Forma_Pago extends CI_Controller {
 		}
 	}
 	
+	/**
+	 * Se enecarga de definir la navegación de la plataforma de acuerdo a la actualización de las formas de pago
+	 */
+	private function obtener_destino() 
+	{
+		//Inicializar el destino con un valor por defecto.
+		$destino = $this->session->userdata('destino') ? $this->session->userdata('destino') : "forma_pago";
+		
+		if ($this->session->userdata('tarjeta') || $this->session->userdata('deposito')) {	//tiene forma de pago
+			//actualizar valores en sesión
+			if ($this->session->userdata('requiere_envio')) {
+				//Si hay dirección de envío seleccionada...
+				if ($this->session->userdata('dir_envio')) {	
+					$destino = "orden_compra";
+				} else {
+					$destino = "direccion_envio";
+				}
+			} else {
+				//no requiere dirección de envío	
+				$destino = "orden_compra";
+			}
+		} else {	//no tiene forma de pago
+			$destino =  "forma_pago";
+		}
+		
+		//Actualizar en sesión
+		$this->session->set_userdata('destino', $destino);
+		
+		return $destino;
+	}
+	
 	/*
-	 * Obtiene la descripcion de la tarjeta para el registro
+	 * Obtiene la descripción de la tarjeta para el registro
 	 * */
 	private function get_descripcion_tarjeta($id_tipo_tarjetaSi, $lista_tipo_tarjeta)
 	{
@@ -1067,6 +1117,8 @@ class Forma_Pago extends CI_Controller {
 		} else {	//si no es ninguno de los dos, elimina el elemento de la sesión
 			$this->session->unset_userdata('tarjeta');
 		}
+		//Por default se elimina el pago con depósito bancario
+		$this->session->unset_userdata('deposito');
 	}
 	
 	/*

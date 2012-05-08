@@ -8,7 +8,7 @@ class Orden_Compra extends CI_Controller {
 	var $title = 'Verifica tu orden';
 	var $subtitle = 'Verifica tu orden';
 	var $registro_errores = array();				//validación para los errores
-	var $pago_express;
+	//var $pago_express;
 	
 	private $id_cliente;
 	private $id_direccion_envio;
@@ -31,8 +31,9 @@ class Orden_Compra extends CI_Controller {
 		//manda al usuario a la... pagina de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
-		//bandera de redirección
+		//bandera de redirección a la orden en cuanto se llega acá
 		$this->session->set_userdata("redirect_to_order", "orden_compra");
+		$this->session->set_userdata("destino", "orden_compra");
 		
 		//cargar el modelo en el constructor
 		$this->load->model('orden_compra_model', 'orden_compra_model', true);
@@ -41,7 +42,7 @@ class Orden_Compra extends CI_Controller {
 		$this->load->model('direccion_facturacion_model', 'direccion_facturacion_model', true);
 		
 		//El flujo se recupera acá
-		$this->pago_express = $this->session->userdata("pago_express");
+		//$this->pago_express = $this->session->userdata("pago_express");
 		//echo "destino: " . $this->session->userdata("pago_express")->get_destino();
 		//var_dump($this->pago_express);
 		
@@ -50,7 +51,12 @@ class Orden_Compra extends CI_Controller {
 		
 		//traer del controlador api las funciones encrypt y decrypt
 		$this->api = new Api();		
-
+		/*
+		echo "<pre>";
+		var_dump($this->session->all_userdata());
+		echo "</pre>";
+		exit();
+		*/
     }
 
 	public function index() {			
@@ -121,13 +127,13 @@ class Orden_Compra extends CI_Controller {
 		$data['script'] = $script_file;
 		
 		//gestión de la dirección de envío con el obj. de pago exprés
-		$data['requiere_envio'] = $this->pago_express->get_requiere_envio();
+		$data['requiere_envio'] = $this->session->userdata('requiere_envio');
 		
-		/*
+		
 		echo "<pre>";
-		print_r($pe=$this->session->userdata('pago_express'));
-		echo "</pre>".$pe->get_destino();
-		*/
+		//print_r($pe=$this->session->userdata('requiere_envio'));
+		echo "</pre>";//.$pe->get_destino();
+		//exit();
 		
 		/*Recuperar la info gral. de la orden*/
 		$id_cliente = $this->id_cliente;

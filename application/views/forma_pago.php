@@ -71,11 +71,11 @@
 							$url_redirect = site_url("forma_pago");
 							if (isset($redirect) && $redirect) {
 								//revisar si la redirección es hacia el resumen de la orden
-								if ($this->session->userdata("pago_express")) {
+								if ($this->session->userdata("destino")) {
 									//$url_redirect = site_url($this->session->userdata("redirect_to_order"));
-									$url_redirect = site_url($this->session->userdata("pago_express")->get_destino());
+									$url_redirect = site_url($this->session->userdata("destino"));
 								} else {
-									$url_redirect = site_url('direccion_envio');
+									$url_redirect = site_url("direccion_envio");
 								}
 							}
 							?>

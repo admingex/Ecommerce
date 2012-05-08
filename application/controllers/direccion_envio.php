@@ -36,22 +36,38 @@ class Direccion_Envio extends CI_Controller {
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
 		
-		//Flujo para pago exprés
-		$this->pago_express = $this->session->userdata("pago_express");
-		echo "destino: " . $this->session->userdata("pago_express")->get_destino();
-
+		//echo "requiere_envio: " . $this->session->userdata('requiere_envio');
     }
 
+	/**
+	 * Se encarga de listar las direcciones de envío
+	 */
 	public function index()
 	{
-		if ($_POST) {
-			if (array_key_exists('tajeta_selecionada', $_POST))
-				$this->session->set_userdata('tarjeta', $_POST['tajeta_selecionada']);
-			if ($this->session->userdata('redirect_to_order'))
-				redirect("orden_compra");
-		}
-		
 		$this->listar();
+	}
+	
+	/**
+	 * Coloca la dirección seleccionada del listado en session
+	 */
+	public function seleccionar() {
+		if (!empty($forma_pago)) {
+			//Registrar en session y calcular el siguiente destino
+			if ($_POST) {
+				if (array_key_exists('direccion_selecionada', $_POST))
+					$this->session->set_userdata('dir_envio', $_POST['direccion_selecionada']);
+				
+				//Control de Flujo
+				if ($this->session->userdata('destino'))
+					redirect($this->session->userdata('destino'), "refresh");
+				else 
+					redirect("orden_compra", "refresh");
+			}
+			
+		} else {
+			//ir al listado
+			redirect("forma_pago/listar", "refresh");
+		}		
 	}
 	
 	/**
@@ -75,6 +91,8 @@ class Direccion_Envio extends CI_Controller {
 		
 		if ($this->input->is_ajax_request()) {
 			$direcciones = $this->direccion_envio_model->listar_direcciones($this->id_cliente);
+			
+			header('Content-Type: application/json',true);
 			echo json_encode($direcciones->result());
 		} else {
 			//listar por default las direcciones del cliente
@@ -319,6 +337,7 @@ class Direccion_Envio extends CI_Controller {
 		$r = ($codigo_pais == self::CODIGO_MEXICO) ? TRUE : FALSE;
 		$es_mexico = array('result' => $r, 'param' => $codigo_pais);
 		
+		header('Content-Type: application/json',true);
 		echo json_encode($es_mexico);
 	}
 	
@@ -329,6 +348,7 @@ class Direccion_Envio extends CI_Controller {
 	public function get_estados()
 	{
 		//echo json_encode($this->consulta_estados());
+		header('Content-Type: application/json',true);
 		echo json_encode($this->direccion_envio_model->listar_estados_sepomex()->result_array());
 	}
 	
@@ -369,12 +389,21 @@ class Direccion_Envio extends CI_Controller {
 		//echo json_encode($this->consulta_sepomex($cp));
 		
 		if (!$cp)
+			$cp = $this->input->post('codigo_postal');
 		$cp = $this->input->post('codigo_postal');
 		
 		//$resultado = array();
 		//$resultado->sepomex = $this->direccion_envio_model->obtener_direccion_sepomex($cp)->result();
 		$resultado = $this->consulta_sepomex($cp);
+		//$this->output->set_content_type("content-type: application/json")->set_output(json_encode($resultado));
+		header('Content-Type: application/json',true);
 		echo json_encode($resultado);
+		/*
+		echo "Hola<pre>";
+		print_r($resultado);
+		echo "</pre>";
+		exit();
+		*/
 	}
 	
 	/*
@@ -389,6 +418,7 @@ class Direccion_Envio extends CI_Controller {
 			$resultado['sepomex'] = $this->direccion_envio_model->obtener_direccion_sepomex($codigo_postal)->result();
 			$resultado['success'] = true;
 			$resultado['msg'] = "Ok";
+			
 			return $resultado;
 		}
 		catch (Exception $e)
@@ -441,6 +471,7 @@ class Direccion_Envio extends CI_Controller {
 		$estado = $this->input->post('estado');
 		$resultado = array();
 		$resultado['ciudades'] = $this->direccion_envio_model->listar_ciudades_sepomex($estado)->result_array();
+		header('Content-Type: application/json',true);
 		echo json_encode($resultado);
 		//$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
 		//echo json_encode($this->consulta_ciudades($estado));
@@ -512,6 +543,8 @@ class Direccion_Envio extends CI_Controller {
 
 		$resultado = array();
 		$resultado['colonias'] = $this->direccion_envio_model->listar_colonias_sepomex($estado, $ciudad)->result_array();
+		
+		header('Content-Type: application/json',true);
 		echo json_encode($resultado);
 		//$estado = $this->input->post('estado');	// ? $this->input->post('estado') : "" ;
 		//$ciudad = $this->input->post('ciudad');

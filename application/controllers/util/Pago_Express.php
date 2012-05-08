@@ -11,7 +11,7 @@ class Pago_Express {
 	private $destino;
 	private $requiere_envio;
     
-	public function __construct($forma_pago, $dir_envio, $dir_facturacion) 
+	public function __construct($forma_pago, $dir_envio, $dir_facturacion=NULL) 
 	{
 		/*son objetos con un consecutivo*/
 		

@@ -62,20 +62,27 @@ class Login extends CI_Controller {
 					
 					$resultado = $this->login_registro_model->verifica_cliente($this->email, $this->password);
 					if ($resultado->num_rows() > 0) {
+						
 						//encryptar login y pass y guardarlo en session											
 						$cliente = $resultado->row();
-						$dl=$this->api->encrypt($cliente->email."|".$this->password, $this->api->key);
+						$dl = $this->api->encrypt($cliente->email."|".$this->password, $this->api->key);
 						$this->session->set_userdata('datos_login',$dl);
 						
+						//se crea la sessión con la información del cliente
 						$this->crear_sesion($cliente->id_cliente, $cliente->nombre, $this->email);	//crear sesion
 						
+						//por defaulr no se considera la dirección d facturación
 						$datars = array('requiere_factura' => 'no');
-												
 						$this->session->set_userdata($datars);
 						
 						//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
 						$destino = $this->obtener_destino($cliente->id_cliente);						
 						
+						//colocar en sessión el destino
+						$data_destino = array('destino' => $destino);
+						$this->session->set_userdata($data_destino);
+						
+						//Flujo
 						redirect($destino);
 					} else {
 						$this->login_errores['user_login'] = "Correo o contrase&ntilde;a incorrectos";
@@ -123,15 +130,23 @@ class Login extends CI_Controller {
 	{
 		//Procesar la promoción	
 		$respromo = $this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));
+		//echo "res_promo: ". var_dump($respromo);
 		if ($respromo) {
 			foreach ($respromo['articulos'] as $res) {
-			$temp[] = array('tarifaDc'=>$res['tarifaDc'], 'tipo_productoVc'=>$res['tipo_productoVc'], 'medio_entregaVc'=>$res['medio_entregaVc'], 'requiere_envioBi'=>(bool)$res['requiere_envioBi']);
+			$temp[] = array('tarifaDc' 			=> 	$res['tarifaDc'], 
+							'tipo_productoVc' 	=> 	$res['tipo_productoVc'], 
+							'medio_entregaVc'	=>	$res['medio_entregaVc'], 
+							'requiere_envioBi'	=>	(bool)$res['requiere_envioBi']);
 			}
 			
 			$this->session->set_userdata('sitio', $respromo['sitio']);
 			$this->session->set_userdata('promocion', $respromo['promocion']);
 			$this->session->set_userdata('articulos', $temp);				
 			$this->session->set_userdata('promociones', TRUE);
+			
+			//echo "<pre>";
+			//var_dump($this->session->all_userdata());
+			//echo "</pre>";
 			
 			$forma_pago_express = $this->forma_pago_model->get_pago_express($id_cliente);		//devolverá un obj
 			$dir_envio_express = $this->direccion_envio_model->get_pago_express($id_cliente);		//devolverá un obj
@@ -156,7 +171,10 @@ class Login extends CI_Controller {
 					}
 				}
 			}
-
+			
+			//Requiere envío en sesión
+			$this->session->set_userdata('requiere_envio', $requiere_envio);
+				
 			//obtener el array de lo que se subirá a sesion
 			$flujo_pago_express = $pago_express->definir_destino_inicial($requiere_envio);
 			
@@ -169,17 +187,13 @@ class Login extends CI_Controller {
 				//$this->session->set_userdata('dir_envio', $pago_express->get_dir_envio());
 				$this->session->set_userdata('dir_envio', $dir_envio_express->consecutivo);
 			}
+			
+			//**Obsoleto**//
 			//se coloca el objeto en sesión para ocuparlo en los demás controladores
-			$this->session->set_userdata('pago_express', $pago_express);
+			//$this->session->set_userdata('pago_express', $pago_express);
+			//***//
 			
-			/*
-			echo "<br/>requiere: ". $requiere_envio	;
-			echo "<pre>";
-			print_r($flujo_pago_express);
-			echo "</pre>";
-			exit();
-			*/
-			
+			//Sólo se usará el objeto de Pago Exprés en este controlador por el momento.
 			return $pago_express->get_destino();	
 		} else {
 			//enviar a página de mensaje "La promoción que solicitó ya no existe...etc."
