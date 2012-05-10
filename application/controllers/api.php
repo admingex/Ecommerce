@@ -494,10 +494,11 @@ class Api extends CI_Controller {
     	$block = mcrypt_get_block_size('des', 'ecb');
     	$pad = $block - (strlen($str) % $block);
     	$str .= str_repeat(chr($pad), $pad);
-    	return mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
+    	return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB));
 	}
-
+	
 	public function decrypt($str, $key){
+		$str=base64_decode($str);
     	$str = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
     	$block = mcrypt_get_block_size('des', 'ecb');
     	$pad = ord($str[($len = strlen($str)) - 1]);
