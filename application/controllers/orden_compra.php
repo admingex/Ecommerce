@@ -31,6 +31,11 @@ class Orden_Compra extends CI_Controller {
 		"Otro"				=> 4
 	);
 	
+	public static $TIPO_DIR = array(
+		"RESIDENCE"	=> 0, 
+		"BUSINESS"	=> 1, 
+		"OTHER"		=> 2
+	);
 	
 	function __construct()
     {
@@ -277,7 +282,7 @@ class Orden_Compra extends CI_Controller {
 					//$informacion_orden->id_cliente = $id_cliente;
 					
 					echo " tipo pago: " . $tipo_pago;
-					exit();
+					//exit();
 					
 					//Registrar la orden de compra y el detalle del pago conforme a lo que se establezca
 					
@@ -330,7 +335,7 @@ class Orden_Compra extends CI_Controller {
 					}
 
 					/*Pruebas orden compra*/
-					echo " tipo pago: " . $tipo_pago;
+					echo " tipo pago en sesión: " . $tipo_pago;
 					echo "<pre>";
 					var_dump($informacion_orden);
 					echo "</pre>";
@@ -391,10 +396,11 @@ class Orden_Compra extends CI_Controller {
 					//echo " tipo pago: " . $tipo_pago;
 					//exit();
 					
-					echo " tipo pago: " . $tipo_pago;
+					echo " tipo pago de la DB: " . $tipo_pago;
 					echo "<pre>";
 					var_dump($informacion_orden);
 					echo "</pre>";
+					$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
 					exit();
 					
 					// Intentamos el Pago con los Id's en  CCTC //
@@ -453,23 +459,26 @@ class Orden_Compra extends CI_Controller {
 	private function registrar_orden_compra($id_cliente, $id_promocion, $tipo_pago)
 	{
 		//Registrar eb la tabla de ordenes
+		$id_compra = 0;
 		//$id_compra = $this->registrar_compra($id_cliente);
 		
-		
+		echo "<br/>cliente: ". $id_cliente ;
 		
 		///artiulos de la promoción
+		$articulos_compra = array();
 		$articulos_compra = $this->orden_compra_model->obtener_articulos_promocion($id_promocion);
 		
-		echo "articulos: " ;
+		echo "<br/>articulos: " ;
 		echo "<pre>";
 		var_dump($articulos_compra);
 		echo "</pre>";
-		exit();
+		
 		//foreach ($articulos_compra as $articulo) { //insertar articulos
 		
 		/////////*forma pago*/
 		//para el registro de la compra en ecommerce
 		$id_TCSi = 0;
+		$info_pago = array();
 		//procesar el tipo de pago
 		if ($tarjeta = $this->session->userdata('tarjeta')) {
 			$id_TCSi = (is_array($tarjeta)) ? $tarjeta['tc']['id_TCSi'] : $tarjeta;
@@ -483,18 +492,51 @@ class Orden_Compra extends CI_Controller {
 		//return $this->orden_compra_model->insertar_pago_compra($info_pago);
 		/*end forma pago*/
 		
+		echo "pagox: " ;
+		echo "<pre>";
+		var_dump($info_pago);
+		echo "</pre>";
+		
 		/////////*direccion(es)*/
-		if ($this->session->userdatda('requiere_envio')) {
-			echo "requiere_envío: <br/>";
+		$info_direcciones = array();
+		
+		if ($this->session->userdata('requiere_envio')) {
+			echo " requiere_envio: <br/>";
 			if ($dir_envio = $this->session->userdata('dir_envio')) {
-				echo "dirección_envío: " . $dir_envio;
+				echo "direccion_envio: " . $dir_envio;
+				$info_direcciones['envio'] = array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'id_consecutivoSi' => $dir_envio, 'address_type' => self::$TIPO_DIR['RESIDENCE']);
 			} else {
+				//No se efectúa la petición por que falta el dato de envío
 				echo "requiere dirección de envío";
 				return FALSE;
 			}
 			
+		} else {
+			//si n orequiere se vacía
+			$info_direcciones['envio'] = array();
 		}
+		
+		if ($this->session->userdata('requiere_factura') !== "no") {
+			echo "requiere factura: <br/>".$this->session->userdata('requiere_factura');
+			$dir_facturacion = $this->session->userdata('razon_social');
+			$razon_social = $this->session->userdata('direccion_f');
+			$info_direcciones['facturacion'] = 
+				array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'id_consecutivoSi' => $dir_facturacion, 'id_razonSocialIn' => $razon_social , 'address_type' => self::$TIPO_DIR['BUSINESS']);
+		} else {
+			//si n orequiere se vacía
+			$info_direcciones['facturacion'] = array();
+		}
+		
+		
+		echo "direcciones: " ;
+		echo "<pre>";
+		var_dump($info_direcciones);
+		echo "</pre>";
+		//echo "direccion envio count ".count($info_direcciones['envio']);
+		//echo "direccion envio count ".count($info_direcciones['facturacion']);
 		/////////*end direcciones*/
+		
+		exit();
 		
 		//registrar estatus
 		$info_estatus = array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'id_estatusCompraSi' => $id_estatusCompra);
