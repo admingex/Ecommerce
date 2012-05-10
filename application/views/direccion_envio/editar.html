@@ -36,7 +36,7 @@
 					<span class="alinear_izquierda">
 						<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']); else echo $direccion->zip; ?>"/>
 					</span>
-					<span><input type="button" id="btn_cp" name="btn_cp" value="Llenar"/></span>
+					<span><input type="button" id="btn_cp" name="btn_cp" value="&nbsp;" class="llenar_cp"/></span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
 				</td>
@@ -249,8 +249,8 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<input type="submit" id="guardar_direccion" name="guardar_direccion" value="Actualizar direcci&oacute;n"/>
-					<a href="<?php echo site_url('direccion_envio'); ?>">Cancelar</a>
+					<input type="submit" id="guardar_direccion" name="guardar_direccion" value="&nbsp;" class="usar_nueva_direccion"/>
+					<a href="<?php echo site_url('direccion_envio'); ?>" >Cancelar</a>
 				</td>
 			</tr>
 		</table>

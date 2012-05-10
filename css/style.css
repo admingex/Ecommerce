@@ -544,6 +544,20 @@ td{
 	background-position: -702px -39px;	
 }
 
+.usar_razon_social_large2{
+	border: none;
+	height: 18px;
+	width: 150px;
+	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background-position: -531px -13px;	
+}
+.usar_razon_social_large2:hover{
+	border: none;
+	height: 18px;
+	width: 150px;
+	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background-position: -531px -31px;	
+}
 .usar_otra_large {
 	border: none;
 	height: 19px;
@@ -615,9 +629,16 @@ td{
 .usar_nueva_direccion {
 	border: none;
 	height: 18px;
-	width: 125px;
+	width: 138px;
 	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
-	background-position: -11px -13px;
+	background-position: -261px -13px;
+}
+.usar_nueva_direccion:hover{
+	border: none;
+	height: 18px;
+	width: 138px;
+	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background-position: -261px -31px;
 }
 
 #div_enlace  {
@@ -652,6 +673,8 @@ td{
 	background-position: -13px -30px;
 	float: left;	
 }
+
+
 
 .texto_agregar {
 	padding-left: 4px;
@@ -729,4 +752,22 @@ input[type="radio"]{
 .label_radio{
 	float: left;
 	margin-left: 5px;
+}
+
+.llenar_cp{
+	border: none;
+	height: 17px;
+	width: 57px;
+	background: url('../images/css-sprite_btnN5.jpg') no-repeat;	
+	background-position: -8px -9px;
+	float: left;
+	margin-top: 5px;	
+}
+.llenar_cp:hover {
+	border: none;
+	height: 17px;
+	width: 57px;
+	background: url('../images/css-sprite_btnN5.jpg') no-repeat;	
+	background-position: -8px -26px;
+	float: left;	
 }

@@ -31,6 +31,10 @@ class Pago extends CI_Controller {
 			echo "comparar a fals:".md5($this->session->userdata('guidx').$guidy.$this->session->userdata('guidz').'0');
 			echo "<br />";
 			echo "comparar a true:".md5($this->session->userdata('guidx').$guidy.$this->session->userdata('guidz').'1');
+			echo "<br />";
+			echo "encriptado".$_POST['datos_login'];
+			echo "<br />";
+			echo "aqui".$this->decrypt($_POST['datos_login'],'AC35-4564-AE4D-0B881031F295');	
 		}	  
 		else{
 			$this->session->set_userdata('guidx', $this->guid());
@@ -78,10 +82,11 @@ class Pago extends CI_Controller {
     	$block = mcrypt_get_block_size('des', 'ecb');
     	$pad = $block - (strlen($str) % $block);
     	$str .= str_repeat(chr($pad), $pad);
-    	return mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
+    	return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB));
 	}
-
+	
 	public function decrypt($str, $key){
+		$str=base64_decode($str);
     	$str = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
     	$block = mcrypt_get_block_size('des', 'ecb');
     	$pad = ord($str[($len = strlen($str)) - 1]);
