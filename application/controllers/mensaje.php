@@ -11,6 +11,7 @@ class Mensaje extends CI_Controller {
 	
 	public function idm($id=''){
 		$this->session->sess_destroy();
+		$data['title']="Mensaje";
 		// mensaje numero 1 para informacion incompleta				
 		if($id==md5(1)){			
 			$data['mensaje']="Informacion insuficiente para completar la orden";

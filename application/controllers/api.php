@@ -149,34 +149,29 @@ class Api extends CI_Controller {
 		if($pago){
 			if($_POST){				
 				if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
-					$this->session->set_userdata(array('id_sitio'=>$sitio, 
+					//obtengo la llave privada en la DB
+					$guidxdb=$this->api_model->obtener_sitio($sitio)->row();
+					//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
+					if($guidxdb->private_KeyVc==$_POST['guidx']){
+						$this->session->set_userdata(array('id_sitio'=>$sitio, 
 												   'id_canal'=>$canal, 
 												   'id_promocion'=>$promocion,
 												   'guidx'=>$_POST['guidx'],
 												   'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
 												   'guidz'=>$_POST['guidz']
 												   )
-											 );
-					/*echo "<form name='realizar_pago' action='".site_url()."/pago' method='POST'>
-			      	  	      <input type='text' name='guidx' value='".$this->session->userdata('guidx')."' size='70'/>
-			      	  	      <br />
-			      	  	      <input type='text' name='guidy' value='{CE5480FD-AC35-4564-AE4D-0B881031F295}' size='70'/>
-			      	  	      <br />
-			          	      <input type='text' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
-			          	      <br />
-			          	      <input type='text' name='status' value='' size='10'/>
-			          	      <br />
-			          	      <input type='text' name='id_compra' value='' size='10'/>			          	      
-			          	      <br />			          	      
-			                  <input type='submit' name='enviar' value='Enviar' />
-		          	      </form>";					 
-					 */					
-					 redirect('login');	
+											 );				 
+						redirect('login');					 
+					}
+					else{
+						$this->session->unset_userdata();
+						redirect('login');	
+					}											
+					 	
 				}		
 				else{
-					echo "Es necesario guidx y guidz, se recibe";
-					echo "<br />";
-					print_r($_POST);
+					$this->session->unset_userdata();
+					redirect('login');					
 				}																	
 			}	
 			else{
@@ -491,6 +486,7 @@ class Api extends CI_Controller {
 	}		
 	
 	public function encrypt($str, $key){
+		$str=trim($str);
     	$block = mcrypt_get_block_size('des', 'ecb');
     	$pad = $block - (strlen($str) % $block);
     	$str .= str_repeat(chr($pad), $pad);
