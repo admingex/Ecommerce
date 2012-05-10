@@ -14,14 +14,35 @@ class Orden_Compra_model extends CI_Model {
 	 */
 	function insertar_compra($id_cliente)
 	{
-		$id_compra = $this->get_consecutivo() + 1;
+		$id_compra = 0;
 		
-		$info_compra = array( 'id_compraIn' => $id_compra,
-							'id_clienteIn' => $id_cliente);
+		$this->db->trans_start();
 		
-		$res = $this->db->insert('CMS_IntCompra', $info_compra);
+		//obtener el consecutivo:
+		$q = $this->db->query("SELECT MAX(id_compraIn) as consecutivo FROM CMS_IntCompra WHERE id_clienteIn = ".$id_cliente);
+		$id_compra = (!$r->consecutivo) ? 1 : $r->consecutivo + 1;
 		
-		return $id_compra;
+		//Registrar la compra
+		$info_compra = array($id_compra, $id_cliente);
+		$qry = "INSERT INTO CMS_IntCompra (id_compraIn, id_cliente) VALUES (?, ?)";
+		$this->db->query($qry, $info_compra);
+		//$this->db->query('ANOTHER QUERY...');
+		//$this->db->query('AND YET ANOTHER QUERY...');
+		
+		$this->db->trans_complete();
+		
+		//$id_compra = $this->get_consecutivo() + 1;
+		//$info_compra = array( 'id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente);
+		//$res = $this->db->insert('CMS_IntCompra', $info_compra);
+		
+		//Revisar el estatus de la transacción
+		if ($this->db->trans_status() === FALSE)
+		{
+		    // generate an error... or use the log_message() function to log your error
+		    return FALSE;
+		} else { 
+			return $id_compra;
+		}
 	}
 	
 	/**

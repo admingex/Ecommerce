@@ -8,17 +8,27 @@ class Orden_Compra extends CI_Controller {
 	var $title = 'Verifica tu orden';
 	var $subtitle = 'Verifica tu orden';
 	var $registro_errores = array();				//validación para los errores
+	
+	const Tipo_AMEX = 1;
 	//var $pago_express;
 	
 	private $id_cliente;
 	private $id_direccion_envio;
 	private $id_direccion_facturacion;
 	
+	
 	public static $ESTATUS_COMPRA = array(
 		"SOLICITUD_CCTC"			=> 1, 
 		"RESPUESTA_CCTC"			=> 2, 
-		"REGOSTRO_PAGO_ECOMERCE"	=> 3,
+		"REGISTRO_PAGO_ECOMERCE"	=> 3,
 		"ENVIO_CORREO"				=> 4
+	);
+	
+	public static $TIPO_PAGO = array(
+		"Prosa"				=> 1, 
+		"American_Express"	=> 2, 
+		"Deposito_Bancario"	=> 3,
+		"Otro"				=> 4
 	);
 	
 	
@@ -40,11 +50,6 @@ class Orden_Compra extends CI_Controller {
 		$this->load->model('forma_pago_model', 'forma_pago_model', true);
 		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
 		$this->load->model('direccion_facturacion_model', 'direccion_facturacion_model', true);
-		
-		//El flujo se recupera acá
-		//$this->pago_express = $this->session->userdata("pago_express");
-		//echo "destino: " . $this->session->userdata("pago_express")->get_destino();
-		//var_dump($this->pago_express);
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
@@ -140,8 +145,13 @@ class Orden_Compra extends CI_Controller {
 
 		//Tarjeta
 		$tarjeta = $this->session->userdata('tarjeta');
+		
 		//si está en session la información
-		if (!empty($tarjeta)) {
+		if ($this->session->userdata('deposito')) {	//revisar si hay depósito bancario
+			
+			$data['deposito'] = TRUE;
+		
+		} else if (!empty($tarjeta)) {
 			//no se guarda en la BD
 			if (is_array($this->session->userdata('tarjeta'))) {
 				$tarjeta = (object)$tarjeta;
@@ -228,9 +238,10 @@ class Orden_Compra extends CI_Controller {
 				
 				/*Recuperar la info gral. de la orden*/
 				$id_cliente 	= $this->id_cliente;
-				$consecutivo 	= $this->session->userdata('tarjeta');
+				//forma pago
+				$consecutivo 	= $this->session->userdata('tarjeta') ? $this->session->userdata('tarjeta') : $this->session->userdata('deposito');				
 				$id_promocionIn = $this->session->userdata('promocion')->id_promocionIn;
-				$digito 		= $_POST['txt_codigo'];
+				$digito 		= (isset($_POST['txt_codigo'])) ? $_POST['txt_codigo'] : 0;
 				
 				// Informaciòn de la Orden //
 				$informacion_orden = new InformacionOrden(
@@ -252,7 +263,27 @@ class Orden_Compra extends CI_Controller {
 				//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
 				
 				// Si la información esta en la Session //
-				if (is_array($this->session->userdata('tarjeta'))) {
+				$tipo_pago = self::$TIPO_PAGO['Otro'];	//ninguno válido al inicio
+				
+				//Configuración de la forma de pago y solicitud de cobro a CCTC
+				if ($this->session->userdata('deposito')) {	//Depósito Bancario
+					$id_cliente = 0;	//el usuario de ecommerce será el que se registre para el cobro
+					
+					//para el registro de la compra en ecommerce
+					$tipo_pago = self::$TIPO_PAGO['Deposito_Bancario'];
+					//$id_forma_pago = 0;
+										
+					//no es necesario que se registre en CCTC
+					//$informacion_orden->id_cliente = $id_cliente;
+					
+					echo " tipo pago: " . $tipo_pago;
+					exit();
+					
+					//Registrar la orden de compra y el detalle del pago conforme a lo que se establezca
+					
+					$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+					
+				} else if (is_array($this->session->userdata('tarjeta'))) {
 					$detalle_tarjeta = $this->session->userdata('tarjeta');
 					$tc = $detalle_tarjeta['tc'];
 					$tc = (array)$tc;
@@ -270,6 +301,9 @@ class Orden_Compra extends CI_Controller {
 						$tc['mes_expiracionVc'],
 						$tc['anio_expiracionVc']
 					);
+					
+					//si es Visa o Master card
+					$tipo_pago = self::$TIPO_PAGO['Prosa'];	
 					
 					$amex_soap = NULL;
 					if ($detalle_tarjeta['tc']['id_tipo_tarjetaSi'] == 1) { //es AMERICAN EXPRESS
@@ -290,14 +324,27 @@ class Orden_Compra extends CI_Controller {
 								$amex['telefono']
 							);
 						}
+						
+						//si es AMEX
+						$tipo_pago = self::$TIPO_PAGO['American_Express'];
 					}
+
+					/*Pruebas orden compra*/
+					echo " tipo pago: " . $tipo_pago;
+					echo "<pre>";
+					var_dump($informacion_orden);
+					echo "</pre>";
+					exit();
+					
+					$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+					
 		
-					// Intentamos el Pago con pasando los objetos a CCTC //
+					//Intentamos el Pago con pasando los objetos a CCTC //
 					try {  
 						$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
 						
 						//Registro inicial de la compra
-						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
+						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
 						
 						$obj_result = $cliente->PagarTC($parameter);
 						
@@ -337,12 +384,27 @@ class Orden_Compra extends CI_Controller {
 					
 					$detalle_tarjeta = $this->forma_pago_model->detalle_tarjeta($consecutivo, $id_cliente);
 					$tc = $detalle_tarjeta;	//trae la tc
+					
+					
+					$tipo_pago = ($tc->id_tipo_tarjetaSi == self::Tipo_AMEX) ? self::$TIPO_PAGO['American_Express'] : self::$TIPO_PAGO['Prosa'];
+					
+					//echo " tipo pago: " . $tipo_pago;
+					//exit();
+					
+					echo " tipo pago: " . $tipo_pago;
+					echo "<pre>";
+					var_dump($informacion_orden);
+					echo "</pre>";
+					exit();
+					
 					// Intentamos el Pago con los Id's en  CCTC //
 					try {  
 						$parameter = array('informacion_orden' => $informacion_orden);
 						
 						//Registro inicial de la compra						
-						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn);
+						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+						
+						
 						//Intento de cobro en CCTC
 						$obj_result = $cliente->PagarTcUsandoId($parameter);
 						
@@ -360,8 +422,12 @@ class Orden_Compra extends CI_Controller {
 						}
 						$data['cadena_comprobacion']=md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
 						$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);						
-						$data['urlback']=$this->session->userdata('sitio')->url_PostbackVc;	
+						$data['urlback']=$this->session->userdata('sitio')->url_PostbackVc;
+						
+						//Para lo que se devolverá a Teo
 						$data['resultado'] = $simple_result;
+						
+						
 						$this->cargar_vista('', 'orden_compra', $data);
 						//return $simple_result;
 					} catch (SoapFault $exception) {
@@ -384,12 +450,57 @@ class Orden_Compra extends CI_Controller {
 	 * Registrar toda la información de la orden
 	 * El tercer parámetro es para indicar el estatus inicial
 	 */
-	private function registrar_orden_compra($id_cliente, $id_promocion)
+	private function registrar_orden_compra($id_cliente, $id_promocion, $tipo_pago)
 	{
 		//Registrar eb la tabla de ordenes
-		$id_compra = $this->registrar_compra($id_cliente);
+		//$id_compra = $this->registrar_compra($id_cliente);
 		
 		
+		
+		///artiulos de la promoción
+		$articulos_compra = $this->orden_compra_model->obtener_articulos_promocion($id_promocion);
+		
+		echo "articulos: " ;
+		echo "<pre>";
+		var_dump($articulos_compra);
+		echo "</pre>";
+		exit();
+		//foreach ($articulos_compra as $articulo) { //insertar articulos
+		
+		/////////*forma pago*/
+		//para el registro de la compra en ecommerce
+		$id_TCSi = 0;
+		//procesar el tipo de pago
+		if ($tarjeta = $this->session->userdata('tarjeta')) {
+			$id_TCSi = (is_array($tarjeta)) ? $tarjeta['tc']['id_TCSi'] : $tarjeta;
+			//$tipo_pago = 1;	//MASTERCARD / VISA/AMEX/ 
+		} else if ($this->session->userdata('deposito')) {
+			$id_TCSi = 0;		//consecutivo usado para depósito y tarjetas no guardadas
+			//$tipo_pago = 1;	//Depósito Bancario
+		}
+		//registrar pago
+		$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => $id_TCSi);
+		//return $this->orden_compra_model->insertar_pago_compra($info_pago);
+		/*end forma pago*/
+		
+		/////////*direccion(es)*/
+		if ($this->session->userdatda('requiere_envio')) {
+			echo "requiere_envío: <br/>";
+			if ($dir_envio = $this->session->userdata('dir_envio')) {
+				echo "dirección_envío: " . $dir_envio;
+			} else {
+				echo "requiere dirección de envío";
+				return FALSE;
+			}
+			
+		}
+		/////////*end direcciones*/
+		
+		//registrar estatus
+		$info_estatus = array('id_compraIn' => $id_compra, 'id_clienteIn' => $id_cliente, 'id_estatusCompraSi' => $id_estatusCompra);
+		//return $this->orden_compra_model->insertar_estatus_compra($info_estatus);
+		
+		exit();
 		if ($id_compra) {
 			//Registrar el articulo y la orden de compra a la que pertenece.
 			

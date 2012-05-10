@@ -3,7 +3,8 @@
  */
 $(document).ready(function() {
 	var cvv = $("#txt_codigo");
-	var forma_pago = $("#forma_pago");
+	var pago_tarjeta = $("#tarjeta");
+	var pago_deposito = $("#deposito");
 	var reg_cvv = /^[0-9]{3,4}$/;	//más de 2 y menos de 5
 	
 	/*Enviar orden*/
@@ -14,8 +15,8 @@ $(document).ready(function() {
 		
 		//alert("forma de pago seleccioada: " + forma_pago);
 				
-		if (forma_pago) {
-			if (cvv) {
+		if (pago_tarjeta.length > 0) {
+			if (cvv.length > 0) {
 				if (!reg_cvv.test($.trim(cvv.val()))) {
 					cvv.focus().after("<span class='error'>Ingresa un código de seguridad válido</span>");
 					return false;
@@ -24,6 +25,8 @@ $(document).ready(function() {
 			//Ok
 			//alert("Se envía la orden.");
 			$("form").submit();	
+		} else if (pago_deposito.length > 0) {
+			$("form").submit();
 		} else {
 			alert("No hay forma de pago seleccioada.");
 		}

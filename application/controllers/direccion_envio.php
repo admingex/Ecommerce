@@ -30,7 +30,7 @@ class Direccion_Envio extends CI_Controller {
 		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
 		//la sesion se carga automáticamente
 		
-		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
+		//toma el valor del id cliente de la sesión creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
 		
 		//echo "requiere_envio: " . $this->session->userdata('requiere_envio');

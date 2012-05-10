@@ -19,7 +19,7 @@
 		<thead>
 			<tr>
 				<th>
-					Pago envio y facturacion					
+					Pago env&iacute;o y facturaci&oacute;n					
 				</th>
 				<th>&nbsp;
 				</th>				
@@ -28,10 +28,8 @@
 		<tbody class="contenedor-gris">
 			<tr>
 				<td colspan="2">
-				<?php								
+				<?php
 					include ('orden_compra/resumen.html');
-					
-										
 				?>	
 				</td>				
 			</tr>						

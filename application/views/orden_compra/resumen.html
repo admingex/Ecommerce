@@ -19,11 +19,14 @@
 		<div class="orden-compra-izquierda">
 			<div class="bloque-orden-compra-auto">
 				<b>Forma de Pago:</b><br />
-					<?php 
-					if (isset($tc) && is_object($tc))
+					<?php
+					if (!empty($deposito)) {
+						include("deposito_bancario.html");
+					} else if (isset($tc) && is_object($tc)) {
 						include("detalle_tarjeta.html");
-					else 						
+					} else { 						
 						echo anchor('forma_pago/registrar', '+ Agregar');
+					}
 					?>
 			</div>	
 		</div>		

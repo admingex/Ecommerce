@@ -871,7 +871,7 @@ class Forma_Pago extends CI_Controller {
 	/**
 	 * Se enecarga de definir la navegación de la plataforma de acuerdo a la actualización de las formas de pago
 	 */
-	private function obtener_destino() 
+	private function obtener_destino()
 	{
 		//Inicializar el destino con un valor por defecto.
 		$destino = $this->session->userdata('destino') ? $this->session->userdata('destino') : "forma_pago";
@@ -886,7 +886,7 @@ class Forma_Pago extends CI_Controller {
 					$destino = "direccion_envio";
 				}
 			} else {
-				//no requiere dirección de envío	
+				//no requiere dirección de envío
 				$destino = "orden_compra";
 			}
 		} else {	//no tiene forma de pago

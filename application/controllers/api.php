@@ -485,7 +485,7 @@ class Api extends CI_Controller {
 				}																																																        		        								                																																				
 			}
 			else if($formato=="html"){				
-				$this->cargar_vista('', 'api', $data);	
+				$this->cargar_vista('', 'api', $data);
 			}															
 		}		
 	}		
