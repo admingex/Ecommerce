@@ -20,11 +20,12 @@ class Orden_Compra_model extends CI_Model {
 		
 		//obtener el consecutivo:
 		$q = $this->db->query("SELECT MAX(id_compraIn) as consecutivo FROM CMS_IntCompra WHERE id_clienteIn = ".$id_cliente);
+		$r = $q->row();
 		$id_compra = (!$r->consecutivo) ? 1 : $r->consecutivo + 1;
 		
 		//Registrar la compra
 		$info_compra = array($id_compra, $id_cliente);
-		$qry = "INSERT INTO CMS_IntCompra (id_compraIn, id_cliente) VALUES (?, ?)";
+		$qry = "INSERT INTO CMS_IntCompra (id_compraIn, id_clienteIn) VALUES (?, ?)";
 		$this->db->query($qry, $info_compra);
 		//$this->db->query('ANOTHER QUERY...');
 		//$this->db->query('AND YET ANOTHER QUERY...');
@@ -42,6 +43,49 @@ class Orden_Compra_model extends CI_Model {
 		    return FALSE;
 		} else { 
 			return $id_compra;
+		}
+	}
+	
+	/**
+	 * Registro inicial de la compra en todas las tablas relacionadas. 
+	 */
+	function registrar_compra_inicial($articulos, $forma_pago, $direcciones, $estatus)
+	{		
+		$this->db->trans_start();
+		//echo "<br/><br/>articulos: " ;
+		foreach ($articulos as $articulo) { //insertar articulos
+			$qry = "INSERT INTO CMS_RelCompraArticulo (id_articuloIn, id_compraIn, id_clienteIn, id_promocionIn) VALUES(?, ?, ?, ?)";
+			$this->db->query($qry, $articulo);	//se realiza la inserción
+			//echo var_dump($articulo)."<br/>";
+		}
+		
+		//echo "<br/>pago: ";
+		//echo var_dump($forma_pago)."<br/>";
+		$res_pago = $this->db->insert('CMS_RelCompraPago', $forma_pago);
+		
+		//echo "<br/>direcciones: " ;
+		foreach ($direcciones as $direccion) {
+			if (!empty($direccion)) {
+				//echo var_dump($direccion).", <br/>";
+				$res_dir = $this->db->insert('CMS_RelCompraDireccion', $direccion);
+			}
+		}
+		
+		
+		//echo "<br/>estatus: " ;
+		//echo var_dump($estatus)."<br/>";
+		$res_estatus = $this->db->insert('CMS_RelCompraEstatus', $estatus);
+		
+		$this->db->trans_complete();
+		
+		//Revisar el estatus de la transacción
+		if ($this->db->trans_status() === FALSE)
+		{
+		    // generate an error... or use the log_message() function to log your error
+		    return FALSE;
+		} else { 
+			return "Registro inicial de la compra ". $estatus['id_compraIn']. " exitoso.";
+			//return TRUE;
 		}
 	}
 	

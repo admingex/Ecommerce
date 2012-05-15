@@ -48,7 +48,7 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'localhost';
+$db['default']['hostname'] = '10.177.73.120';
 $db['default']['username'] = 'ecommerce_user';
 $db['default']['password'] = 'ecommerce';
 $db['default']['database'] = 'cms0mxdb';

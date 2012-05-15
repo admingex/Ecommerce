@@ -32,6 +32,10 @@ $(document).ready(function() {
 		$("a.agregar_tarjeta").parent().parent().remove();
 	}
 	
+	$("#chk_guardar").click(function(){
+		
+	});
+	
 	$("input[name='guardar_tarjeta']").click(function(e) {
 		e.preventDefault();	
 		$(".error").remove();	//limpiar mensajes de error
