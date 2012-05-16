@@ -408,6 +408,7 @@ class Orden_Compra extends CI_Controller {
 						$data['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
 						$data['resultado'] = $simple_result;						
 						$this->cargar_vista('', 'orden_compra', $data);
+						$this->session->sess_destroy();
 						//enviar Correo
 						
 						//return $simple_result;
@@ -486,10 +487,10 @@ class Orden_Compra extends CI_Controller {
 						$data['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;
 						
 						//Para lo que se devolverá a Teo
-						$data['resultado'] = $simple_result;
-						
-						
+						$data['resultado'] = $simple_result;												
 						$this->cargar_vista('', 'orden_compra', $data);
+						$this->session->sess_destroy();
+						
 						//return $simple_result;
 					} catch (SoapFault $exception) {
 						//errores en desarrollo
