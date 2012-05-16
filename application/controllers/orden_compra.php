@@ -392,21 +392,12 @@ class Orden_Compra extends CI_Controller {
 						if (!($envio_correo && $estatus_correo)) {	//Error
 							redirect('mensaje/'.md5(4), 'refresh');
 						}
-						
-						
-						
-						if($simple_result->respuesta_banco=='approved'){
-							$estatus_pago = 1;
-						}
-						else{
-							//este caso puede ser denied o Incorrect information
-							$estatus_pago = 0;
-						}
-						
-						$data['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
-						$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
-						$data['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
-						$data['resultado'] = $simple_result;						
+																	
+						//obtiene os datos que se van a regresar al sitio																							
+						$this->datos_urlback($simple_result->respuesta_banco, $id_compra);
+																		
+						$data['resultado'] = $simple_result;	
+																	
 						$this->cargar_vista('', 'orden_compra', $data);
 						$this->session->sess_destroy();
 						//enviar Correo
@@ -474,20 +465,12 @@ class Orden_Compra extends CI_Controller {
 							redirect('mensaje/'.md5(4), 'refresh');
 						}
 					
-						//var_dump($simple_result);	
-						if($simple_result->respuesta_banco=='approved'){
-							$estatus_pago=1;
-						}
-						else{
-							//este caso puede ser denied o Incorrect information
-							$estatus_pago=0;
-						}
-						$data['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
-						$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);						
-						$data['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;
 						
-						//Para lo que se devolverá a Teo
-						$data['resultado'] = $simple_result;												
+						//Para lo que se devolverá a Teo							
+						$this->datos_urlback($simple_result->respuesta_banco, $id_compra);											
+						
+						$data['resultado'] = $simple_result;								
+										
 						$this->cargar_vista('', 'orden_compra', $data);
 						$this->session->sess_destroy();
 						
@@ -512,6 +495,20 @@ class Orden_Compra extends CI_Controller {
 	 * Registrar toda la información de la orden
 	 * El tercer parámetro es para indicar el estatus inicial
 	 */
+	
+	private function datos_urlback($respuesta_banco, $id_compra){
+		if($respuesta_banco=='approved'){
+			$estatus_pago = 1;
+		}
+		else{
+			//este caso puede ser denied o Incorrect information
+			$estatus_pago = 0;
+		}
+		$data['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
+		$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
+		$data['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;				
+	} 
+	 
 	private function registrar_orden_compra($id_cliente, $id_promocion, $tipo_pago)
 	{
 		//Registrar eb la tabla de ordenes

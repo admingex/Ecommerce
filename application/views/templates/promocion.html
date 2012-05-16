@@ -16,7 +16,15 @@
 				<div class="titulo-promo-rojo">Est&aacute;s comprando:</div>
 				<div class="titulo-promo-negro">
 					<?php 
-						if ($this->session->userdata('promocion')) echo $this->session->userdata('promocion')->descripcionVc;												 
+						if ($this->session->userdata('promocion'))							
+								$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+								$nmp=count($mp);
+								if($nmp==2){
+									echo $mp[0];		
+								}	
+								else if($nmp==3){
+									echo $mp[1];
+								}														  																			
 								if (!empty($articulos))
 									foreach($articulos as $articulo)                                     
 								    	echo "<br />" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'];
