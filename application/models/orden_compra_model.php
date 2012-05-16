@@ -71,7 +71,6 @@ class Orden_Compra_model extends CI_Model {
 			}
 		}
 		
-		
 		//echo "<br/>estatus: " ;
 		//echo var_dump($estatus)."<br/>";
 		$res_estatus = $this->db->insert('CMS_RelCompraEstatus', $estatus);
@@ -88,22 +87,23 @@ class Orden_Compra_model extends CI_Model {
 			//return TRUE;
 		}
 	}
-	
-	/**
-	 * Registrar la(s) direcciones de la compra
-	 */
-	
-	function insertar_direcciones_compra($id_cliente, $id_dir_envío, $id_dir_factuarcion)
-	{
 		
-	}
-	
 	/**
 	 * Registra el estatus de la compra en la bitácora
+	 * id_compraIn, id_clienteIn, id_estatusCompreSi, timestamp
 	 */
 	function insertar_estatus_compra($info_estatus)
 	{
 		$res = $this->db->insert('CMS_RelCompraEstatus', $info_estatus);
+		return $res;
+	}
+	
+	/**
+	 * Registrar el detalle de la respuesta del pago de CCTC en ecomerce 
+	 */
+	function insertar_detalle_pago_tc($info_detalle_pago_tc)
+	{
+		$res = $this->db->insert('CMS_RelCompraPagoDetalleTC', $info_detalle_pago_tc);
 		return $res;
 	}
 	
