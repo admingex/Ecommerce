@@ -48,7 +48,7 @@
 			<input type="password" name="password" id="password" size="20" 
 				value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
 			<span class="validation_message">
-				<a href="<?php echo $this->config->item('base_url').'/index.php/password/'; ?>">&iquest;Olvidaste tu contrase&ntilde;a?</a>
+				<a href="<?php echo $this->config->item('base_url').'/index.php/password/'; ?>" id="olvido_contrasena">&iquest;Olvidaste tu contrase&ntilde;a?</a>
 				<?php if(isset($login_errores['password'])) echo ($login_errores['password']);?>
 			</span>
 			<div id="message" class="validation_message">
