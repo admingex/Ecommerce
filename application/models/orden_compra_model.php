@@ -108,6 +108,20 @@ class Orden_Compra_model extends CI_Model {
 	}
 	
 	/**
+	 * Devuelve el consecutivo del pago para tarjetas no guardadas ó para el depósito bancario
+	 * con el usuario de ecommerce cliente _id : 0
+	 * "ecommerce_tc"	=> tarjetas
+	 * "ecommerce_deposito" => depósito
+	 */
+	function obtener_consecutivo_forma_pago($nombre_cliente)
+	{
+		$this->db->select('id_TCSi as consecutivo');
+		$res = $this->db->get_where('CMS_IntTC', array("nombre_titularVc", $nombre_cliente));
+		
+		return $res->row();
+	}
+	
+	/**
 	 * Insertar la forma de pago asociada a la compra, si es tarjeta, 
 	 * también el consecutivo de la misma
 	 */
