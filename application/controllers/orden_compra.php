@@ -271,7 +271,6 @@ class Orden_Compra extends CI_Controller {
 					
 					//para el registro de la compra en ecommerce
 					$tipo_pago = self::$TIPO_PAGO['Deposito_Bancario'];
-					//$id_forma_pago = 0;
 										
 					//echo " tipo pago depósito: " . $tipo_pago;
 					
@@ -282,7 +281,7 @@ class Orden_Compra extends CI_Controller {
 						$mensaje = "Mensaje de Arlette";
 						
 						//Mandar correo al cliente con el formato de arlette para notificarle lo que debe hacer
-						$envio_correo = $this->enviar_correo("Notificación de compra", $mensaje);
+						$envio_correo = $this->enviar_correo("Notificaci&oacute;n de compra", $mensaje);
 						
 						//Redirección a la URL callback con el código nuevo
 						 
@@ -295,7 +294,7 @@ class Orden_Compra extends CI_Controller {
 						}
 						
 						//Manejo del flujo para el depósito bancario
-						$this->datos_urlback("approved", $id_compra);
+						$data['url_back'] = $this->datos_urlback("approved", $id_compra);
 						
 						//Muestra la pantalla de resultado de cobro
 						$this->cargar_vista('', 'orden_compra', $data);
@@ -402,7 +401,7 @@ class Orden_Compra extends CI_Controller {
 						}
 																	
 						//obtiene os datos que se van a regresar al sitio	(Teo)																						
-						$this->datos_urlback($simple_result->respuesta_banco, $id_compra);
+						$data['url_back']=$this->datos_urlback($simple_result->respuesta_banco, $id_compra);
 																		
 						$data['resultado'] = $simple_result;	
 																	
@@ -479,7 +478,7 @@ class Orden_Compra extends CI_Controller {
 					
 						
 						//Para lo que se devolverá a Teo							
-						$this->datos_urlback($simple_result->respuesta_banco, $id_compra);											
+						$data['url_back']=$this->datos_urlback($simple_result->respuesta_banco, $id_compra);											
 						
 						$data['resultado'] = $simple_result;								
 										
@@ -518,7 +517,8 @@ class Orden_Compra extends CI_Controller {
 		}
 		$data['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
 		$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
-		$data['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;				
+		$data['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
+		return $data;			
 	} 
 	 
 	private function registrar_orden_compra($id_cliente, $id_promocion, $tipo_pago)

@@ -11,7 +11,7 @@
 </div>
 <section class="contenedor">
 	<?php
-		if(empty($resultado)){
+		if(empty($resultado)) {
 	?>
 	<form id="form_orden_compra" action="<?php echo site_url("orden_compra/checkout"); ?>" method="POST">
 	<div class="contenedor-blanco">				
@@ -60,7 +60,7 @@
 				<?php 
 					if ($this->session->userdata('promocion')) 																	 
 						if (!empty($articulos))
-							foreach($articulos as $articulo){
+							foreach($articulos as $articulo) {
 				?>
 				<tr>
 					<td colspan="2" class="titulo-promo-negro2">											
@@ -83,7 +83,7 @@
 					</td>
 				</tr>	
 				<?php										    	
-							}
+					}
 				?>				
 				<tr>
 					<td class="titulo-promo-negro2">
@@ -115,9 +115,9 @@
 					</td>
 				</tr>												
 																																																		
-					<?php 
-					} 
-					?>										
+				<?php 
+				} 
+				?>										
 				<tr>
 					<td colspan="4" class="titulo-promo-negro2" align="right">						
 						<input type="submit" id="enviar" name="enviar" value="&nbsp;" class="finalizar_compra"/>						
@@ -129,8 +129,7 @@
 	</div>
 	</form>	
 	<?php
-	}	
-	else{
+	} else {
 		include ('orden_compra/respuesta_cobro.html');
 	}
 	?>

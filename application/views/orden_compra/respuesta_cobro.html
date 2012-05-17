@@ -22,16 +22,16 @@
 		}
 		?>
 		<h5>
-			Se le ha enviado un correo con las instrucciones para que realices tel pago con un depósito bancario.
+			Se le ha enviado un correo con las instrucciones para que realices el pago con un depósito bancario.
 		</h5>
 		
-		<form name="envio_result" action="<?php echo site_url('pago);?>" method="POST" accept-charset="UTF8">
+		<form name="envio_result" action="<?php echo $urlback;?>" method="POST" accept-charset="UTF8">
 			<input type="hidden" name="cadena_comprobacion" value='<?php echo $cadena_comprobacion; ?>' />
 			<textarea name="datos_login" style="display: none"><?php echo $datos_login; ?></textarea>							
 			<input type="submit" name="Continuar" value="Continuar"/>	
 		</form>
 		<script>
-			setTimeout('document.envio_result.submit();', 3000);
+			//setTimeout('document.envio_result.submit();', 3000);
 		</script>
 	</div>
 </div>
