@@ -45,10 +45,21 @@ $(document).ready(function() {
 			else{
 				$("form").submit();
 			}									
-		} else {
+		} 		
+		else {
 			$("form").attr("action", "/ecommerce/index.php/registro/")
 			$("form").submit();
 		}
+	});
+	
+	//Recuperar contrasena			 	
+	
+	$("#olvido_contrasena").click(function(e){
+		e.preventDefault();
+		//alert("tipo " + tipo_inicio.val());
+		$(".error").remove();	//limpiar mensajes de error	
+		$("form").attr("action", "/ecommerce/index.php/password/")
+		$("form").submit();
 	});
 	
 	//fade out error messsage

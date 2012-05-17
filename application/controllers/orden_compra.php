@@ -393,7 +393,7 @@ class Orden_Compra extends CI_Controller {
 							redirect('mensaje/'.md5(4), 'refresh');
 						}
 																	
-						//obtiene os datos que se van a regresar al sitio																							
+						//obtiene os datos que se van a regresar al sitio	(Teo)																						
 						$this->datos_urlback($simple_result->respuesta_banco, $id_compra);
 																		
 						$data['resultado'] = $simple_result;	

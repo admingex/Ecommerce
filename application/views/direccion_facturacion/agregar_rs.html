@@ -26,7 +26,7 @@
 				<td class="label">Correo Electr&oacute;nico de Env&iacute;o</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_email" id="txt_email" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);?>" size="30"/>
+						<input type="text" name="txt_email" id="txt_email" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']); else echo $this->session->userdata('email');?>" size="30"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>					
@@ -48,7 +48,7 @@
 				<td>&nbsp;</td>
 				<td>
 					<input type="submit" id="guardar_rs" value="&nbsp;" class="usar_razon_social_large"/>
-					<a href="<?php echo site_url('direccion_facturacion'); ?>" title="Cancelar">Cancelar</a>
+					<!--<a href="<?php echo site_url('direccion_facturacion'); ?>" title="Cancelar">Cancelar</a>-->
 				</td>
 			</tr>
 		</table>

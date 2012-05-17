@@ -63,8 +63,18 @@
 							foreach($articulos as $articulo){
 				?>
 				<tr>
-					<td colspan="2" class="titulo-promo-negro2">						
-						<?php echo $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']; ?>
+					<td colspan="2" class="titulo-promo-negro2">											
+					<?php
+						$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+								$nmp=count($mp);
+								if($nmp==2){
+									echo $mp[0];		
+								}	
+								else if($nmp==3){
+									echo $mp[1];
+						} 
+						echo "<br />".$articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']; 
+					?>
 					</td>	
 					<td class="titulo-promo-rojo2">$
 					</td>				

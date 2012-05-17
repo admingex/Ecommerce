@@ -48,9 +48,7 @@ class Registro extends CI_Controller {
 				} else {
 					$this->registro_errores['user_reg'] = "Parece que tu correo ha sido registrado";
 				}
-			} else {
-				$this->registro_errores['user_reg'] = "Revisar los campos";
-			}
+			} 
 		}
 		
 		$data['registro_errores'] = $this->registro_errores;
