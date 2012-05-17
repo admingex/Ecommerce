@@ -23,7 +23,7 @@ class Mensaje extends CI_Controller {
 			$data['mensaje'] = "No se pudo resgistrar la compra en la plataforma de pagos para la tarjeta solicitada.";
 			$this->cargar_vista('', 'mensaje', $data);
 		} else if ($id==md5(4)){	//Error en el registro de la compra en Ecommerce			
-			$data['mensaje'] = "No se pudo resgistrar enviar el correo de notificación al usuario.";
+			$data['mensaje'] = "No se pudo enviar el correo de notificación al cliente al registrar la compra.";
 			$this->cargar_vista('', 'mensaje', $data);
 		}
 	}

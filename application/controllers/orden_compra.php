@@ -211,6 +211,9 @@ class Orden_Compra extends CI_Controller {
 			$data['direccion_f']=$detalle_direccion;			
 		}
 		
+		//Requiere factura
+		$data['requiere_factura']=$this->session->userdata('requiere_factura');
+		
 		//Si acaso hay errores
 		if($_POST && $this->registro_errores) {
 			$data['reg_errores'] = $this->registro_errores;
@@ -264,7 +267,7 @@ class Orden_Compra extends CI_Controller {
 				//Configuración de la forma de pago y solicitud de cobro a CCTC
 				if ($this->session->userdata('deposito')) {	//Depósito Bancario
 					//el usuario de ecommerce será el que se registre para el cobro con esta forma de pago
-					$id_cliente = self::User_Ecommerce;	
+					$id_cliente = $this->id_cliente;	//self::User_Ecommerce;	
 					
 					//para el registro de la compra en ecommerce
 					$tipo_pago = self::$TIPO_PAGO['Deposito_Bancario'];
@@ -291,11 +294,16 @@ class Orden_Compra extends CI_Controller {
 							redirect('mensaje/'.md5(4), 'refresh');
 						}
 						
-						echo "Correo enviado correctamente.";
+						//Manejo del flujo para el depósito bancario
+						$this->datos_urlback("approved", $id_compra);
+						
+						//Muestra la pantalla de resultado de cobro
+						$this->cargar_vista('', 'orden_compra', $data);
+						$this->session->sess_destroy();
+						//echo "Correo enviado correctamente.";
 					} else {
 						redirect('mensaje/'.md5(2), 'refresh');
 					}
-					
 				} else if (is_array($this->session->userdata('tarjeta'))) {	//Pago con tarjetas
 					$detalle_tarjeta = $this->session->userdata('tarjeta');
 					$tc = $detalle_tarjeta['tc'];
@@ -385,7 +393,7 @@ class Orden_Compra extends CI_Controller {
 						//Envío del correo
 						$mensaje = "Se ha realizado el cobro con exito? " . $simple_result->respuesta_banco;
 						
-						$envio_correo = $this->enviar_correo("Notificación de cobro", $mensaje);
+						$envio_correo = $this->enviar_correo("Notificación de cobro con tarjeta no guardada", $mensaje);
 						$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
 						
 						//manejo envío correo
@@ -444,12 +452,16 @@ class Orden_Compra extends CI_Controller {
 						
 						//Resultado de la petición de cobro a CCTC
 						$simple_result = $obj_result->PagarTcUsandoIdResult;
+						
+						//Registro del estatus de la respuesta de CCTC
+						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
 					
 						//Registro de la respuesta de CCTC de la compra en ecommerce
 						$info_detalle_pago_tc = array('id_compraIn'=> $id_compra, 'id_clienteIn' => $id_cliente, 'id_TCSi' => $consecutivo, 
 														'id_transaccionBi' => $simple_result->id_transaccionNu, 'respuesta_bancoVc' => $simple_result->respuesta_banco,
 														'codigo_autorizacion' => $simple_result->codigo_autorizacion, 'mensaje' => $simple_result->mensaje);
-														
+
+																				
 						//Registro de la respuesta del pago en ecommerce
 						$this->registrar_detalle_pago_tc($info_detalle_pago_tc);
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
@@ -457,7 +469,7 @@ class Orden_Compra extends CI_Controller {
 						//Envío del correo
 						$mensaje = "Se ha realizado el cobro con exito? " . $simple_result->respuesta_banco;
 						
-						$envio_correo = $this->enviar_correo("Notificación de cobro", $mensaje);
+						$envio_correo = $this->enviar_correo("Notificación de cobro con tarjeta registrada", $mensaje);
 						$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
 						
 						//manejo envío correo
@@ -533,22 +545,22 @@ class Orden_Compra extends CI_Controller {
 			$info_pago = array();
 			//procesar el tipo de pago
 			if ($tarjeta = $this->session->userdata('tarjeta')) {
-				$id_TCSi = (is_array($tarjeta)) ? $tarjeta['tc']['id_TCSi'] : $tarjeta;
+				$id_TCSi = (is_array($tarjeta)) ? NULL: (int)$this->session->userdata('tarjeta');
 				//$tipo_pago = 1;	//MASTERCARD / VISA/=1,  AMEX=2 
 			} else if ($this->session->userdata('deposito')) {
-				$id_TCSi = 0;		//consecutivo usado para depósito y tarjetas no guardadas
+				$id_TCSi = NULL;		//consecutivo usado para depósito y tarjetas no guardadas
 				//$tipo_pago = 3;	//Depósito Bancario
 			}
 			
-			$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => (int)$id_TCSi);
+			$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => $id_TCSi);
 			
 			///////direccion(es)///////
 			$info_direcciones = array();
 			
 			if ($this->session->userdata('requiere_envio')) {
-				echo "Sí requiere_envio: Si<br/>";
+				//echo "Sí requiere_envio: Si<br/>";
 				if ($dir_envio = $this->session->userdata('dir_envio')) {
-					echo "direccion_envio: " . $dir_envio;
+					//echo "direccion_envio: " . $dir_envio;
 					
 					$info_direcciones['envio'] = 
 						array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => (int)$dir_envio, 'address_type' => self::$TIPO_DIR['RESIDENCE']);
@@ -564,13 +576,13 @@ class Orden_Compra extends CI_Controller {
 			}
 			
 			if ($this->session->userdata('requiere_factura') !== "no") {
-				echo "Sí requiere factura: <br/>".$this->session->userdata('requiere_factura');
-				$dir_facturacion = $this->session->userdata('razon_social');
-				$razon_social = $this->session->userdata('direccion_f');
+				//echo "Sí requiere factura: <br/>".$this->session->userdata('requiere_factura');
+				$dir_facturacion = $this->session->userdata('direccion_f');
+				$razon_social = $this->session->userdata('razon_social');
 				
 				if ($dir_facturacion && $razon_social) {
 					$info_direcciones['facturacion'] = 
-						array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => $dir_facturacion, 'id_razonSocialIn' => $razon_social , 'address_type' => self::$TIPO_DIR['BUSINESS']);
+						array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => (int)$dir_facturacion, 'id_razonSocialIn' => (int)$razon_social , 'address_type' => self::$TIPO_DIR['BUSINESS']);
 				} else {
 					echo "Error: falta la dirección de facturación";
 					return FALSE;
@@ -695,7 +707,8 @@ class Orden_Compra extends CI_Controller {
 		
 		$email = $this->session->userdata('email');
 					
-		return ($email && mail($email, 'Recuperar password', $mensaje));
+		//return ($email && mail($email, $asunto, $mensaje));
+		return mail($email, $asunto, $mensaje);
 	}
 	 
 	

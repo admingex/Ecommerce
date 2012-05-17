@@ -16,21 +16,22 @@
 			echo "<p>Mensaje: " . $resultado->mensaje . "</p>";
 		?>	
 		
-			<form name="envio_result" action="<?php echo site_url('pago);?>" method="POST" accept-charset="UTF8">
-				<input type="hidden" name="cadena_comprobacion" value='<?php echo $cadena_comprobacion; ?>' />
-				<textarea name="datos_login" style="display: none"><?php echo $datos_login; ?></textarea>							
-				<input type="submit" name="Continuar" value="Continuar"/>	
-			</form>
-			<script>
-				setTimeout('document.envio_result.submit();', 3000);
-			</script>			
+						
 		<?php	
 		
 		}
 		?>
 		<h5>
-			Envío de un mail al cliente notificándole del resultado de la solicitud de cobro, en el caso de pago con depósito bancario, 
-			también se le enviará un correo con la información para completar el proceso de pago/cobro.
+			Se le ha enviado un correo con las instrucciones para que realices tel pago con un depósito bancario.
 		</h5>
+		
+		<form name="envio_result" action="<?php echo site_url('pago);?>" method="POST" accept-charset="UTF8">
+			<input type="hidden" name="cadena_comprobacion" value='<?php echo $cadena_comprobacion; ?>' />
+			<textarea name="datos_login" style="display: none"><?php echo $datos_login; ?></textarea>							
+			<input type="submit" name="Continuar" value="Continuar"/>	
+		</form>
+		<script>
+			setTimeout('document.envio_result.submit();', 3000);
+		</script>
 	</div>
 </div>
