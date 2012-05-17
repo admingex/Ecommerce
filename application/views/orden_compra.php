@@ -11,7 +11,7 @@
 </div>
 <section class="contenedor">
 	<?php
-		if(empty($resultado)) {
+		if(empty($resultado) && empty($deposito)) {
 	?>
 	<form id="form_orden_compra" action="<?php echo site_url("orden_compra/checkout"); ?>" method="POST">
 	<div class="contenedor-blanco">				

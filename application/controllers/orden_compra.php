@@ -296,7 +296,7 @@ class Orden_Compra extends CI_Controller {
 						
 						//Manejo del flujo para el depósito bancario
 						$data['url_back'] = $this->datos_urlback("approved", $id_compra);
-						
+						$data['deposito']['id_compra'] = $id_compra; 
 						//Muestra la pantalla de resultado de cobro
 						$this->cargar_vista('', 'orden_compra', $data);
 						$this->session->sess_destroy();
