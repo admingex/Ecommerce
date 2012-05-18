@@ -277,11 +277,12 @@ class Forma_Pago extends CI_Controller {
 				
 				if (isset($form_values['tc']['id_estatusSi'])) {	//Se guardará en la BD, actualizando la tarjeta que se registró
 					if ($this->editar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
-						$this->listar("Tarjeta registrada correctamente.");
-						//Ya debe estar en sesión la tarjeta...
 						//Para calcular destino siguiente y actualizxarlo en sesión
 						$destino = $this->obtener_destino();
 						
+						$this->listar("Tarjeta registrada correctamente.");
+						//Ya debe estar en sesión la tarjeta...
+												
 					} else {
 						$this->listar("Hubo un error en el registro de la dirección en el servidor.", FALSE);
 						//echo "Hubo un error en el registro en CCTC";

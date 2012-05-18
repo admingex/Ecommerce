@@ -49,8 +49,8 @@ class Orden_Compra extends CI_Controller {
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
 		
 		//bandera de redirección a la orden en cuanto se llega acá
-		$this->session->set_userdata("redirect_to_order", "orden_compra");
-		$this->session->set_userdata("destino", "orden_compra");
+		//$this->session->set_userdata("redirect_to_order", "orden_compra");
+		//$this->session->set_userdata("destino", "orden_compra");
 		
 		//cargar el modelo en el constructor
 		$this->load->model('orden_compra_model', 'orden_compra_model', true);
@@ -73,12 +73,11 @@ class Orden_Compra extends CI_Controller {
 
 	public function index() {			
 		if ($_POST) {
-			if (array_key_exists('razon_social_seleccionada', $_POST)){
+			if (array_key_exists('razon_social_seleccionada', $_POST)) {
 				$this->session->set_userdata('razon_social', $_POST['razon_social_seleccionada']);
 				$this->session->set_userdata('requiere_factura', 'si');						
 			}						
-		}	
-		else if($this->session->userdata('id_rs')) {
+		} else if ($this->session->userdata('id_rs')) {
 			$id_rs=$this->session->userdata('id_rs');
 			$this->session->set_userdata('razon_social', $id_rs);		
 			$this->session->set_userdata('requiere_factura', 'si');					 		
@@ -107,8 +106,7 @@ class Orden_Compra extends CI_Controller {
 					$this->direccion_facturacion_model->insertar_rs_direccion($data_dir);		
 					$this->session->set_userdata('requiere_factura', 'si');	
 				}																			
-			}	
-			else {
+			} else {
 			$id_cliente = $this->id_cliente;
 			$rs = $this->session->userdata('razon_social');
 			$rdf = $this->direccion_facturacion_model->obtiene_rs_dir($id_cliente, $rs);		
@@ -116,7 +114,7 @@ class Orden_Compra extends CI_Controller {
 					$this->session->set_userdata('direccion_f',$dire['id_consecutivoSi']);
 				}			
 			}								
-		} else if($this->session->userdata('id_dir')){
+		} else if ($this->session->userdata('id_dir')) {
 			$id_dir = $this->session->userdata('id_dir');
 			$this->session->set_userdata('direccion_f',$id_dir);								
 		}
@@ -149,9 +147,7 @@ class Orden_Compra extends CI_Controller {
 		
 		//si está en session la información
 		if ($this->session->userdata('deposito')) {	//revisar si hay depósito bancario
-			
 			$data['deposito'] = TRUE;
-		
 		} else if (!empty($tarjeta)) {
 			//no se guarda en la BD
 			if (is_array($this->session->userdata('tarjeta'))) {
@@ -230,7 +226,7 @@ class Orden_Compra extends CI_Controller {
 	public function checkout() {
 		$data['title'] = "Resultado de la petición de cobro";
 		$data['subtitle'] = "Resultado de la petición de cobro";	
-		$data['datos_login']='';		
+		$data['datos_login'] = '';		
 		/*Realizar el pago en CCTC*/
 		if ($_POST) {
 			$orden_info = array();		
@@ -279,10 +275,10 @@ class Orden_Compra extends CI_Controller {
 					$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
 					
 					if ($id_compra) {
-						$mensaje = "Mensaje de Arlette";
+						$mensaje = "Usted elgió... correo con las instrucciones de pago con dep. bancario.";
 						
 						//Mandar correo al cliente con el formato de arlette para notificarle lo que debe hacer
-						$envio_correo = $this->enviar_correo("Notificación de compra", $mensaje);
+						$envio_correo = $this->enviar_correo("Notificaci&oacute;n de compra con dep&oacute;sito bancario", $mensaje);
 						
 						//Redirección a la URL callback con el código nuevo
 						 
@@ -296,11 +292,16 @@ class Orden_Compra extends CI_Controller {
 						
 						//Manejo del flujo para el depósito bancario
 						$data['url_back'] = $this->datos_urlback("approved", $id_compra);
-						$data['deposito']['id_compra'] = $id_compra; 
+						
+						$data['pago_deposito']['id_compra'] = $id_compra;
+						//$data['deposito']['importe'] = $id_compra;
+						//$data['deposito']['clave_promocion'] = $id_compra;
+						 
 						//Muestra la pantalla de resultado de cobro
 						$this->cargar_vista('', 'orden_compra', $data);
+						
 						$this->session->sess_destroy();
-						//echo "Correo enviado correctamente.";
+						
 					} else {
 						redirect('mensaje/'.md5(2), 'refresh');
 					}
@@ -391,9 +392,9 @@ class Orden_Compra extends CI_Controller {
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
 						
 						//Envío del correo
-						$mensaje = "Se ha realizado el cobro con exito? " . $simple_result->respuesta_banco;
+						$mensaje = "Se ha solicitado el cobro al banco con la tarjeta solcitada y la respuesta es la siguiente: " . $simple_result->respuesta_banco;
 						
-						$envio_correo = $this->enviar_correo("Notificación de cobro con tarjeta no guardada", $mensaje);
+						$envio_correo = $this->enviar_correo("Notificaci&oacute;n de cobro con tarjeta no guardada", $mensaje);
 						$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
 						
 						//manejo envío correo
@@ -402,15 +403,14 @@ class Orden_Compra extends CI_Controller {
 						}
 																	
 						//obtiene os datos que se van a regresar al sitio	(Teo)																						
-						$data['url_back']=$this->datos_urlback($simple_result->respuesta_banco, $id_compra);
+						$data['url_back'] = $this->datos_urlback($simple_result->respuesta_banco, $id_compra);
 																		
 						$data['resultado'] = $simple_result;	
 																	
 						$this->cargar_vista('', 'orden_compra', $data);
-						$this->session->sess_destroy();
-						//enviar Correo
 						
-						//return $simple_result;
+						$this->session->sess_destroy();
+						
 					} catch (SoapFault $exception) { 
 						echo $exception;  
 						echo '<br/>error: <br/>'.$exception->getMessage();
@@ -467,9 +467,9 @@ class Orden_Compra extends CI_Controller {
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
 						
 						//Envío del correo
-						$mensaje = "Se ha realizado el cobro con exito? " . $simple_result->respuesta_banco;
+						$mensaje = "Se ha solicitado el cobro al banco con la tarjeta solcitada y la respuesta es la siguiente:  " . $simple_result->respuesta_banco;
 						
-						$envio_correo = $this->enviar_correo("Notificación de cobro con tarjeta registrada", $mensaje);
+						$envio_correo = $this->enviar_correo("Notificaci&oacute;n de cobro con tarjeta registrada", $mensaje);
 						$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
 						
 						//manejo envío correo
@@ -479,11 +479,12 @@ class Orden_Compra extends CI_Controller {
 					
 						
 						//Para lo que se devolverá a Teo							
-						$data['url_back']=$this->datos_urlback($simple_result->respuesta_banco, $id_compra);											
+						$data['url_back'] = $this->datos_urlback($simple_result->respuesta_banco, $id_compra);											
 						
 						$data['resultado'] = $simple_result;								
 										
 						$this->cargar_vista('', 'orden_compra', $data);
+												
 						$this->session->sess_destroy();
 						
 						//return $simple_result;
@@ -509,17 +510,25 @@ class Orden_Compra extends CI_Controller {
 	 */
 	
 	private function datos_urlback($respuesta_banco, $id_compra){
-		if($respuesta_banco=='approved'){
+		if($respuesta_banco === "approved"){
 			$estatus_pago = 1;
-		}
-		else{
-			//este caso puede ser denied o Incorrect information
+		} else {
+			//este caso puede ser denied o Incorrect information, o Duplicated Informaion
 			$estatus_pago = 0;
 		}
-		$data['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
-		$data['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
-		$data['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
-		return $data;			
+		
+		$datos = array();
+		
+		$datos['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
+		$datos['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
+		$datos['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
+		
+		/*echo "<pre>";
+		print_r($datos);
+		echo "</pre>";
+		exit();*/
+		
+		return $datos;			
 	} 
 	 
 	private function registrar_orden_compra($id_cliente, $id_promocion, $tipo_pago)

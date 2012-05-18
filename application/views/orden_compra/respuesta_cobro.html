@@ -2,8 +2,9 @@
 <div class="contenedor-gris">
 	<div id="list_results">
 
-		<h4>Respuesta de CCTC</h4>
+		<h4>Respuesta de Solicitud de cobro</h4>
 		<?php 
+		//Si se solicitó pago con TC
 		if (isset($resultado)) {
 			/*
 			echo "<pre>";
@@ -17,20 +18,23 @@
 		?>	
 		
 						
-		<?php	
+		<?php
+		} else if (isset($deposito)) {
+			//En caso contrario si se hizo el pago con depósito
+		?>
+			<h5>
+				Se te ha enviado un correo con las instrucciones para que realices el pago a trav&eacute;s del depósito bancario.
+			</h5>
 		
+		<?php
 		}
 		?>
-		<h5>
-			Se le ha enviado un correo con las instrucciones para que realices el pago con un depósito bancario.
-		</h5>
-
 		<form name="envio_result" action="<?php echo $url_back['urlback'];?>" method="POST" accept-charset="UTF8">
-			<input type="hidden" name="cadena_comprobacion" value='<?php echo $url_back['cadena_comprobacion']; ?>' />
+			<input type="hidden" name="cadena_comprobacion" value="<?php echo $url_back['cadena_comprobacion']; ?>" />
 			<textarea name="datos_login" style="display: none"><?php echo $url_back['datos_login']; ?></textarea>							
-			<input type="submit" name="Continuar" value="Continuar"/>	
+			<input type="submit" name="Continuar" value="Continuar"/>
 		</form>
-		<script>
+		<script type="text/javascript">
 			setTimeout('document.envio_result.submit();', 3000);
 		</script>
 	</div>
