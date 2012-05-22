@@ -200,14 +200,14 @@ class Forma_Pago extends CI_Controller {
 							if ($tipo == 1)	{
 								redirect("forma_pago/registrar/amex", "refresh");	//se puede invocar pasando el consecutivo como parámetro
 							} else {
-								$this->listar("Tarjeta registrada correctamente.");
+								$this->listar("Tarjeta registrada correctamente");
 							}
 						} else {
-							$this->listar("Hubo un error en el registro en el sistema.", FALSE);
+							$this->listar("Hubo un error en el registro en el sistema", FALSE);
 							//echo "<br/>Hubo un error en el registro en CMS";
 						}
 					} else {
-						$this->listar("Hubo un error en el registro en el servidor.", FALSE);
+						$this->listar("Hubo un error en el registro en el servidor", FALSE);
 						//echo "Hubo un error en el registro en CCTC";
 					}
 				}	//ya registrada	
@@ -280,11 +280,11 @@ class Forma_Pago extends CI_Controller {
 						//Para calcular destino siguiente y actualizxarlo en sesión
 						$destino = $this->obtener_destino();
 						
-						$this->listar("Tarjeta registrada correctamente.");
+						$this->listar("Tarjeta registrada correctamente");
 						//Ya debe estar en sesión la tarjeta...
 												
 					} else {
-						$this->listar("Hubo un error en el registro de la dirección en el servidor.", FALSE);
+						$this->listar("Hubo un error en el registro de la dirección", FALSE);
 						//echo "Hubo un error en el registro en CCTC";
 					}						
 				} else {
