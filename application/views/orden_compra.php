@@ -19,7 +19,7 @@
 		<thead>
 			<tr>
 				<th>
-					Pago env&iacute;o y facturaci&oacute;n					
+					Pago, Env&iacute;o y Facturaci&oacute;n					
 				</th>
 				<th>&nbsp;
 				</th>				
@@ -38,7 +38,7 @@
 	</div>
 	
 	<div class="contenedor-blanco">
-		<table width="100%" cellpadding="0" cellspacing="0" class="">
+		<table width="100%" cellpadding="0" cellspacing="0" >
 			<thead>
 				<th>
 					Productos en la orden 
@@ -76,7 +76,7 @@
 							echo "<br />".$articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']; 
 						?>
 					</td>	
-					<td class="titulo-promo-rojo2">$</td>				
+					<td class="titulo-promo-rojo2" align="right">$</td>				
 					<td class="titulo-promo-rojo2" align="right">	
 						<?php echo number_format($articulo['tarifaDc'],2,'.',',');?>										
 					</td>
@@ -91,10 +91,10 @@
 					<td class="titulo-promo-negro2" align="right">
 						IVA
 					</td>
-					<td class="titulo-promo-rojo2" width="5px">
+					<td class="titulo-promo-rojo2" align="right">
 						$						
 					</td>
-					<td class="titulo-promo-rojo2" align="right" width="50">
+					<td class="titulo-promo-rojo2" align="right">
 						0.00
 					</td>
 				</tr>
@@ -106,10 +106,10 @@
 					<td class="titulo-promo-negro2" align="right">
 						Total
 					</td>
-					<td class="titulo-promo-rojo2" width="5px">
+					<td class="titulo-promo-rojo2" style="width: 15px;" align="right">
 						$						
 					</td>
-					<td class="titulo-promo-rojo2" align="right" width="50">
+					<td class="titulo-promo-rojo2" align="right" style="width: 40px">
 						<?php echo number_format($total,2,'.',','); ?>
 					</td>
 				</tr>												

@@ -84,7 +84,7 @@ body
 
 #encabezado .txt-proceso-pago{	
 	color: #e4e4e4;
-	font-size: 12px;
+	font-size: 13px;
 	height: 25px;
 	display: block;
 	text-decoration: none;
@@ -93,7 +93,7 @@ body
 
 #encabezado .txt-proceso-pago-select{		
 	color: #C90002;
-	font-size: 12px;
+	font-size: 13px;
 	height: 25px;
 	display: block;	
 	text-decoration: none;	
@@ -192,12 +192,12 @@ body
 
 .titulo-promo-rojo{
 	color: #C90002;
-	font-size: 14px;		
+	font-size: 15px;		
 }
 
 .titulo-promo-negro{
 	color: #292929;
-	font-size: 15px;	
+	font-size: 17px;	
 	line-height: 20px;	
 }
 
@@ -210,13 +210,18 @@ body
 }
 
 .titulo-promo-negro2{
-	color: #292929;
+	color: #000000;
 	font-size: 15px;
 	font-weight: bold;	
 	padding: 10px;	
 	border-bottom: solid 1px #CCC;		
 }
 
+.titulo-promo-rojo-deposito{
+	color: #CA0002;
+	font-size: 13px;
+	font-weight: bold;		
+}
 #descripcion-proceso{
 	position: relative;		
 	display: block;
@@ -233,6 +238,7 @@ body
 	float: left;		
 }
 .titulo-proceso{
+	color: #000000;
 	padding-left: 3px;	
 	font-size: 16px;
 	font-weight: bold;
@@ -282,6 +288,7 @@ input .text{
 .instrucciones{
 	font-size: 12px;
 	color: #4e4e4e;
+	font-weight: bold;
 }
 b{
 	font-size: 12px;
@@ -289,13 +296,15 @@ b{
 	padding: 2px 0px;
 }
 .instrucciones_mensaje{
-	color: #6e6e6e;
-	font-size: 11px;		
+	color: #000000;
+	font-size: 12px;		
 	margin: 3px 56px 5px 65px;
+	font-weight: bold;
 }
 a {
 	color: #094C86;
 	font-size: 12px;	
+	font-weight: bold;
 }
 a:visited{
 	color: #094C86;
@@ -387,9 +396,10 @@ a:visited{
 
 .item-lista{
 	color: #000;
-	font-size: 11px;
+	font-size: 12px;
 	padding: 3px;	
-	vertical-align: middle;
+	font-weight: bold;
+	vertical-align: middle;	
 }
 
 .usar_tarjeta{
@@ -445,7 +455,7 @@ a:visited{
 	vertical-align: bottom;
 }
 .tam75{
-	height: 75px;
+	height: 90px;
 	padding: 17px;
 }
 
@@ -478,7 +488,7 @@ th{
 	background: url('../images/css-sprite_Plecas.jpg');		
 	background-position: -20px -14px;
 	padding: 5px 0px 0px 10px;	
-	font-size: 12px;
+	font-size: 13px;
 	font-weight: bold;
 	vertical-align: top;
 	height: 26px;
@@ -488,10 +498,14 @@ td{
 	padding: 0px 2px;
 }
 .doble-linea{
+	background: url('../images/css-sprite_Plecas_2.jpg');		
+	background-position: -20px -5px;
+	padding: 2px 0px 0px 10px;	
+	font-size: 13px;
+	font-weight: bold;
 	vertical-align: top;
-	font-size: 9px;
-	font-weight:bolder;
-	padding: 1px;				
+	height: 40px;
+	text-align: left;						
 }
 .borde-derecho{
 	border-right: solid 1px #CCC;	
@@ -593,8 +607,9 @@ td{
 
 .instrucciones_cursivas {
 	font-size: 12px;
-	color: #4e4e4e;
+	color: #999999;
 	font-style: italic;
+	font-weight: bold;
 }
 .instrucciones_cursivas_der {
 	font-size: 12px;
@@ -769,4 +784,11 @@ input[type="radio"]{
 	background: url('../images/css-sprite_btnN5.jpg') no-repeat;	
 	background-position: -8px -26px;
 	float: left;	
+}
+
+input[type="text"]{	
+	border: solid;
+	
+	border-width: 3px;
+	border-color: #800;
 }
