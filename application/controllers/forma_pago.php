@@ -167,16 +167,19 @@ class Forma_Pago extends CI_Controller {
 				$num_temp = substr($num_completo, strlen($num_completo) - 4);
 				$form_values['tc']['terminacion_tarjetaVc'] = $num_temp;
 				
-				if($this->forma_pago_model->existe_tc($form_values['tc'])) {	
+				if ($this->forma_pago_model->existe_tc($form_values['tc'])) {	
 					//Redirect al listado por que ya existe
 					$this->listar("La tarjeta ya está registrada.", FALSE);
 				} else {
+					//verifica si hay o no dirección activa predeterminada
+					$existe_predeterminada = $this->existe_predetereminada($id_cliente);
+						
 					//sólo la primera que se registra se predetermina
-					if (isset($form_values['predeterminar']) || $consecutivo ==  0) {
+					if (isset($form_values['predeterminar']) || $consecutivo ==  0 || !$existe_predeterminada) {
 						$this->forma_pago_model->quitar_predeterminado($id_cliente);
 						$form_values['tc']['id_estatusSi'] = 3;
 					}
-					//para registrar en CCTC	
+					//para registrar en CCTC
 					$form_values['tc']['terminacion_tarjetaVc'] = $num_completo;
 					
 					//se manda insertar en CCTC
@@ -207,7 +210,7 @@ class Forma_Pago extends CI_Controller {
 							//echo "<br/>Hubo un error en el registro en CMS";
 						}
 					} else {
-						$this->listar("Hubo un error en el registro en el servidor", FALSE);
+						$this->listar("Hubo un error en el registro en el sistema para el cobro", FALSE);
 						//echo "Hubo un error en el registro en CCTC";
 					}
 				}	//ya registrada	
@@ -230,7 +233,7 @@ class Forma_Pago extends CI_Controller {
 				if ($tipo == 1)	{
 					redirect("forma_pago/registrar/amex", "refresh");	//se puede invocar pasando el consecutivo como parámetro 
 				} else {
-					$this->listar("Tarjeta registrada correctamente");
+					$this->listar("Información de la tarjeta capturada correctamente");
 				}
 				//redirect('direccion_envio');
 			}
@@ -284,7 +287,7 @@ class Forma_Pago extends CI_Controller {
 						//Ya debe estar en sesión la tarjeta...
 												
 					} else {
-						$this->listar("Hubo un error en el registro de la dirección", FALSE);
+						$this->listar("Hubo un error en el registro en el sistema", FALSE);
 						//echo "Hubo un error en el registro en CCTC";
 					}						
 				} else {
@@ -306,7 +309,7 @@ class Forma_Pago extends CI_Controller {
 				$this->registrar("amex");	
 			}
 		} else {
-			$this->listar("Tarjeta registrada incorrectamente", FALSE);
+			$this->listar("Información de la tarjeta capturada correctamente", FALSE);
 		}
 	}
 	
@@ -410,10 +413,6 @@ class Forma_Pago extends CI_Controller {
 	
 	private function editar_tc($consecutivo = 0) {
 		$id_cliente = $this->id_cliente;
-		/*echo "con: ".isset($_POST['guardar_otra']);
-		echo "con: ".isset($_POST['guardar_tarjeta']);
-		exit();*/
-		$tarjeta = array();
 		
 		//Revisar en donde está la info
 		if ($consecutivo > 0) {
@@ -435,7 +434,7 @@ class Forma_Pago extends CI_Controller {
 			$tarjeta = $this->session->userdata('tarjeta');
 			
 			if (is_array($tarjeta)) {
-				echo "debe ser cero: ".$consecutivo;
+				//echo "debe ser cero: ".$consecutivo;
 				//exit();
 				
 				//para cuando no se guarda en BD, se toma de session
@@ -455,6 +454,18 @@ class Forma_Pago extends CI_Controller {
 		//array para la nueva información
 		$nueva_info = array();
 		$nueva_info = $this->get_datos_tarjeta();	//datos generales
+		
+		$redirect = $nueva_info['redirect'];
+		/*
+		var_dump($_POST);
+		echo "<br/>";
+		var_dump($nueva_info);
+		
+		echo "<br/>redirect: <br/>";
+		echo $redirect;
+		exit();
+		*/
+		$tarjeta = array();
 		
 		//errores
 		$data['reg_errores'] = $this->reg_errores;	
@@ -497,14 +508,14 @@ class Forma_Pago extends CI_Controller {
 				//$this->pago_express->actualizar_forma_pago($nueva_info['tc']['id_TCSi']);
 				$destino = $this->obtener_destino();
 				
-				$msg_actualizacion = "Información actualizada";
+				$msg_actualizacion = "Información actualizada correctamente";
 				$data['msg_actualizacion'] = $msg_actualizacion;
 				
 				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
 					//si es AMEX
 					redirect('forma_pago/editar/amex/'.$consecutivo, "refresh");
 				} else {
-					$this->listar($msg_actualizacion);
+					$this->listar($msg_actualizacion, $redirect);
 				}
 			} else {
 				//var_dump($nueva_info);
@@ -532,10 +543,10 @@ class Forma_Pago extends CI_Controller {
 					if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
 						redirect('forma_pago/editar/amex/'.$consecutivo, "refresh");
 					} else {
-						$this->listar($msg_actualizacion);
+						$this->listar($msg_actualizacion, $redirect);
 					}
 				} else {
-					$data['msg_actualizacion'] = "Error de actualización en el servidor";
+					$data['msg_actualizacion'] = "Error de actualización en el sistema para el cobro";
 					//echo "Error de actualización hacia CCTC.<br/>";	//redirect
 					//$this->cargar_vista('', 'forma_pago' , $data);
 					$this->listar($data['msg_actualizacion'], FALSE);					
@@ -870,6 +881,15 @@ class Forma_Pago extends CI_Controller {
 	}
 	
 	/**
+	 * Verifica si existe o no alguna tarjeta predeterminada para pago express del cliente.
+	 * Retuen True/False
+	 */
+	private function existe_predetereminada($id_cliente)
+	{
+		return $this->forma_pago_model->existe_predetereminada($id_cliente);
+	}
+	
+	/**
 	 * Se enecarga de definir la navegación de la plataforma de acuerdo a la actualización de las formas de pago
 	 */
 	private function obtener_destino()
@@ -1059,6 +1079,12 @@ class Forma_Pago extends CI_Controller {
 				} else {
 					$this->reg_errores['txt_telefono'] = 'Ingresa tu tel&eacute;fono correctamente';
 				}
+			}
+
+			if (array_key_exists('guardar_y_usar_otra', $_POST)) {
+				$datos['redirect'] = FALSE;
+			} else {
+				$datos['redirect'] = TRUE;
 			}
 		} 
 		

@@ -52,6 +52,22 @@ class Direccion_Envio_model extends CI_Model {
     }
 	
 	/**
+	 * Verifica si el cliente tiene alguna dirección como predeterminada 
+	 */
+	function existe_predetereminada($id_cliente)
+	{
+		$args = array($id_cliente, self::$TIPO_DIR['RESIDENCE'], self::$CAT_ESTATUS['DEFAULT']);
+		$qry = "SELECT 	id_consecutivoSi as consecutivo
+				FROM 	CMS_IntDireccion 
+				WHERE   id_clienteIn = ?
+				AND     address_type = ?
+				AND     id_estatusSi = ?";
+		$res = $this->db->query($qry, $args);
+		
+		return $res->result();
+	}
+	
+	/**
 	 * Verifica que la dirección que se quiere registrar no esté duplicada
 	 */
 	function existe_direccion($datos_dir)
@@ -88,7 +104,6 @@ class Direccion_Envio_model extends CI_Model {
 		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => self::$CAT_ESTATUS['HABILITADA']));
 	}
 	 
-	
 	/**
 	 * Devuelve la lista de países del catálogo de Think
 	 * */
@@ -159,26 +174,25 @@ class Direccion_Envio_model extends CI_Model {
 		$this->db->where(array('id_consecutivoSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => self::$CAT_ESTATUS['DESHABILITADA']));
 		if($resultado) {
-			return "Direcci&oacute;n eliminada.";
+			return "Direcci&oacute;n eliminada exitosamente";
 		} else {
-			return "Error al tratar de eliminar la direcci&oacute;n de env&iacute;o.";
+			return "Error al tratar de eliminar la direcci&oacute;n de env&iacute;o";
 		}
 	}
-	
-	
+		
 	/**
 	 * Actualiza la información de la dirección especificada del cliente
 	 */
-	function actualiza_direccion($consecutivo, $id_cliente, $nueva_info)
+	function actualizar_direccion($consecutivo, $id_cliente, $nueva_info)
 	{
 		$this->db->where(array(	'id_consecutivoSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', $nueva_info);
 		//echo "resultado".$resultado;
 		if($resultado) {
 			//echo "Direcci&oacute;n actualizada.";
-			return "Direcci&oacute;n actualizada.";
+			return "Direcci&oacute;n actualizada exitosamente";
 		} else {
-			return "Error al tratar de actualizar la direcci&oacute;n de env&iacute;o.";
+			return "Error al tratar de actualizar la direcci&oacute;n de env&iacute;o";
 		}
 	}
 	

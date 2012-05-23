@@ -130,19 +130,25 @@ class Direccion_Envio extends CI_Controller {
 			$form_values['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
 						
 			if (empty($this->reg_errores)) {
-				//si no hay errores en el formulario y se solicita registrar la direccion
-				if (isset($form_values['guardar']) || isset($form_values['direccion']['id_estatusSi'])) {
+				//si no hay errores en el formulario y se solicita registrar la dirección
+				
+				if (isset($form_values['direccion']['id_estatusSi'])) {	//Ya no se revisa isset($form_values['guardar']) , siempre se guarda
 					//verificar que no exista la direccion activa en la BD
 					if($this->direccion_envio_model->existe_direccion($form_values['direccion'])) {	
 						//Redirect al listado por que ya existe
-						$this->listar("La direcci&oacute;n ya est&aacute; registrada.", FALSE);
+						$this->listar("La direcci&oacute;n ya est&aacute; registrada", FALSE);
 						//echo "La direcci&oacute;n ya está registrada.";
 					} else {
-						//sólo la primera que se registra se predetermina
-						if (isset($form_values['predeterminar']) || $consecutivo == 0) {
+						//verifica si hay o no dirección activa predeterminada
+						$existe_predeterminada = $this->existe_predetereminada($id_cliente);
+						
+						//sólo la primera tarjeta activa que se registra se predetermina
+						if (isset($form_values['predeterminar']) || $consecutivo == 0 || !$existe_predeterminada) {
 							$this->direccion_envio_model->quitar_predeterminado($id_cliente);
 							$form_values['direccion']['id_estatusSi'] = 3;
 						}
+						//si no hay predeterminada activa, la actual lo será.
+						//echo "estatus: " .$form_values['direccion']['id_estatusSi'];
 						
 						//Registrar en BD
 						if ($this->direccion_envio_model->insertar_direccion($form_values['direccion'])) {
@@ -153,13 +159,13 @@ class Direccion_Envio extends CI_Controller {
 							$destino = $this->obtener_destino();
 							
 							//cargar la vista de las tarjetas
-							$this->listar("Direcci&oacute;n registrada correctamente.");
+							$this->listar("Direcci&oacute;n registrada correctamente");
 						} else {
-							$this->listar("Hubo un error en el registro en CMS.", FALSE);
+							$this->listar("Hubo un error en el sistema", FALSE);
 							//echo "<br/>Hubo un error en el registro en CMS";
 						}
 					}						
-				} else {
+				} else {	//esta parte ya no debería aplicar de acuerdo al flujo establecido
 					//si no se guardará la dirección, almacenar la info para el cobro en sesión temporalmente y pasar a direccón de facturación
 					$direccion = $form_values['direccion'];
 					$this->cargar_en_session($direccion);
@@ -255,6 +261,16 @@ class Direccion_Envio extends CI_Controller {
 			$nueva_info = array();
 			//trae datos del formulario para actualizar
 			$nueva_info = $this->get_datos_direccion();
+			//guardar y usar otra?
+			$redirect = $nueva_info['redirect'];
+			
+			/*var_dump($_POST);
+			echo "<br/>";
+			var_dump($nueva_info);
+			
+			echo "guardar_y_usar_otra: <br/>";
+			echo $redirect;
+			exit();*/
 			
 			if (empty($this->reg_errores)) {	//si no hubo errores
 				$nueva_info['direccion']['id_consecutivoSi'] = $consecutivo;
@@ -272,15 +288,15 @@ class Direccion_Envio extends CI_Controller {
 					//Para calcular destino siguiente y actualizxarlo en sesión
 					$destino = $this->obtener_destino();
 					
-					$msg_actualizacion = "Información actualizada";
+					$msg_actualizacion = "Información actualizada exitosamente";
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					//var_dump($direccion);
 					//exit();
-					$this->listar($msg_actualizacion);
+					$this->listar($msg_actualizacion, $redirect);
 				} else {
 				
 					$msg_actualizacion = 
-						$this->direccion_envio_model->actualiza_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
+						$this->direccion_envio_model->actualizar_direccion($consecutivo, $id_cliente, $nueva_info['direccion']);
 					
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					
@@ -290,12 +306,12 @@ class Direccion_Envio extends CI_Controller {
 					//Para calcular destino siguiente y actualizxarlo en sesión
 					$destino = $this->obtener_destino();
 					
-					$this->listar($msg_actualizacion);
+					$this->listar($msg_actualizacion, $redirect);
 				}
 				//redirect("direccion_facturacion");
 				//exit();
 			} else {	//ERRORES FORMULARIO
-				$data['msg_actualizacion'] = "Campos incorrectos!!";
+				$data['msg_actualizacion'] = "Algunos campos son incorrectos";
 				$data['reg_errores'] = $this->reg_errores;
 				$this->cargar_vista('', 'direccion_envio' , $data);
 			}	//ERRORES FORMULARIO
@@ -316,7 +332,7 @@ class Direccion_Envio extends CI_Controller {
 		$msg_eliminacion =
 			$this->direccion_envio_model->eliminar_direccion($id_cliente, $consecutivo);
 		
-		//Por si se les ocurre eliminar la dirección que se está ocupando para realizar el pago.
+		//Por si se les ocurre eliminar la dirección que se estaba ocupando para realizar el pago.
 		if ($dir = $this->session->userdata("dir_envio")) {
 			if ((int)$dir == (int)$consecutivo) {
 				$this->session->unset_userdata("dir_envio");
@@ -328,6 +344,15 @@ class Direccion_Envio extends CI_Controller {
 		
 		//cargar la lista de direeciones
 		$this->listar($msg_eliminacion, FALSE);
+	}
+	
+	/**
+	 * Verifica si existe o no alguna dirección predeterminada para pago express del cliente.
+	 * Retuen True/False
+	 */
+	private function existe_predetereminada($id_cliente)
+	{
+		return $this->direccion_envio_model->existe_predetereminada($id_cliente);
 	}
 	
 	/**
@@ -696,7 +721,7 @@ class Direccion_Envio extends CI_Controller {
 					$this->reg_errores['sel_colonias'] = 'Selecciona tu colonia';
 				}
 			} else {
-			/*otros paises*/
+			/*otros países*/
 				if (array_key_exists('txt_colonia', $_POST) && trim($_POST['txt_colonia']) != ""){
 					$datos['direccion']['address3'] = $_POST['txt_colonia'];
 				}
@@ -718,7 +743,7 @@ class Direccion_Envio extends CI_Controller {
 			}
 			
 			if (array_key_exists('txt_telefono', $_POST)) {
-				if(preg_match('/^[0-9 -]{2,15}$/i', $_POST['txt_telefono'])) {
+				if(preg_match('/^[0-9 ()+-]{10,20}$/i', $_POST['txt_telefono'])) {
 					$datos['direccion']['phone'] = $_POST['txt_telefono'];
 				} else {
 					$this->reg_errores['txt_telefono'] = 'Ingresa tu tel&eacute;fono correctamente';
@@ -728,26 +753,33 @@ class Direccion_Envio extends CI_Controller {
 			if(array_key_exists('txt_referencia', $_POST)) {
 				$datos['direccion']['referenciaVc'] = trim($_POST['txt_referencia']);
 			}
-			/*
-			if (filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
-				$datos['direccion']['email'] = htmlspecialchars(trim($_POST['txt_email']));
-			} else {
-				$this->reg_errores['txt_email'] = 'Ingresa una direcci&oacute;n v&aacute;lida.';
-			}
-			*/
+			
+			//Innecesario, siempre se guardará la dirección
 			if (array_key_exists('chk_guardar', $_POST)) {
-				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
+				$datos['guardar'] = $_POST['chk_guardar'];
 				$datos['direccion']['id_estatusSi'] = 1;
 			}
 
 			if (array_key_exists('chk_default', $_POST)) {
-				$datos['direccion']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada
+				$datos['direccion']['id_estatusSi'] = 3;	//dirección predeterminada?
 				$datos['predeterminar'] = true;
 				//$_POST['chk_default'];
 				//en la edicion, si no se cambia, que se quede como está, activa!! VERIFICARLO on CCTC
+			} else {
+				//siempre se guarda la dirección
+				$datos['direccion']['id_estatusSi'] = 1;
 			}
+			
+			if (array_key_exists('guardar_y_usar_otra', $_POST)) {
+				$datos['redirect'] = FALSE;
+			} else {
+				$datos['redirect'] = TRUE;
+			}
+			
 		} 
 		//var_dump($datos);
+		//var_dump($this->reg_errores);
+		//exit();
 		return $datos;
 	}
 

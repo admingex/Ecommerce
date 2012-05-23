@@ -6,13 +6,6 @@ class Forma_Pago_model extends CI_Model {
 		"DESHABILITADA"	=> 2, 
 		"DEFAULT"		=> 3
 	);
-	
-	public static $TIPO_DIR = array(
-		"RESIDENCE"	=> 0, 
-		"BUSINESS"	=> 1, 
-		"OTHER"		=> 2
-	);
-	
 
     function __construct()
     {
@@ -73,6 +66,21 @@ class Forma_Pago_model extends CI_Model {
 	}
 	
 	/**
+	 * Verifica si el cliente tiene alguna tarjeta como predeterminada
+	 */
+	function existe_predetereminada($id_cliente)
+	{
+		$args = array($id_cliente, self::$CAT_ESTATUS['DEFAULT']);
+		$qry = "SELECT 	id_TCSi as consecutivo
+				FROM 	CMS_IntTC 
+				WHERE   id_clienteIn = ?
+				AND     id_estatusSi = ?";
+		$res = $this->db->query($qry, $args);
+		
+		return $res->result();
+	}
+
+	/**
 	 * Quitar la tarjeta predeterminada actual
 	 */
 	function quitar_predeterminado($id_cliente) {
@@ -105,9 +113,9 @@ class Forma_Pago_model extends CI_Model {
 		//echo "resultado".$res;
 		if($res) {
 			//echo "Tarjeta actualizada.";
-			return "Tarjeta actualizada.";
+			return "Tarjeta actualizada correctamente";
 		} else {
-			return "Error al tratar de actualizar la tarjeta.";
+			return "Error al tratar de actualizar la tarjeta";
 		}
 	}
 	
