@@ -97,9 +97,9 @@ class Forma_Pago_model extends CI_Model {
 		$this->db->where(array(	'id_TCSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
 		$res = $this->db->update('CMS_IntTC', array('id_estatusSi' => self::$CAT_ESTATUS['DESHABILITADA']));	//Deshabilitar lógicamente
 		if($res) {
-			return "Tarjeta eliminada.";
+			return "Tarjeta eliminada exitosamente";
 		} else {
-			return "Error al tratar de eliminar la tarjeta.";
+			return "Error al tratar de eliminar la tarjeta";
 		}
 	}
 	

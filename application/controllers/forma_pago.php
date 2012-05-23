@@ -676,7 +676,7 @@ class Forma_Pago extends CI_Controller {
 				$this->forma_pago_model->eliminar_tarjeta($id_cliente, $consecutivo);
 		} else {
 			//echo "no se pudo eliminar correctamente de CCTC";
-			$msg_eliminacion = "no se pudo eliminar correctamente de CCTC";
+			$msg_eliminacion = "No se pudo eliminar correctamente la tarjeta del sistema de cobro";
 		}
 		/*Pendiente el Redirect*/
 		//echo "<br/>se eliminó la tarjeta $consecutivo del cliente $id_cliente<br/>";

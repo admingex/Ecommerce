@@ -36,8 +36,9 @@ $(document).ready(function() {
 	});
 
 	/*validacion_registro*/
-	$("#guardar_direccion").click(function(e) {
-		e.preventDefault();
+	//$("input[name^='guardar_']").click(function(e) {
+	$("form[id*='direccion_envio']").submit(function(e) {
+		//e.preventDefault();
 		$(".error").remove();
 		
 		estado 	= (estado_t.is(":visible")) ? estado_t : estado_s;	
@@ -70,7 +71,9 @@ $(document).ready(function() {
 			return false;
 		}
 		//alert('ok');
-		$(this).parents("form").submit();
+		//$(this).parents("form").submit();
+		//$(this).submit();
+		return true;
 	});		
 	
 	calle.change(function() {

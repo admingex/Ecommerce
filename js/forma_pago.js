@@ -36,8 +36,10 @@ $(document).ready(function() {
 		
 	});
 	
-	$("input[name='guardar_tarjeta']").click(function(e) {
-		e.preventDefault();	
+	//tc
+	//$("input[name^='guardar_']").click(function(e) {
+	$("form[id*='tc']").submit(function(e) {
+		//e.preventDefault();	
 		$(".error").remove();	//limpiar mensajes de error
 		
 		//tc-todas
@@ -55,11 +57,13 @@ $(document).ready(function() {
 			return false;
 		}
 		//$("form[id^='form_registro_tc']").submit();
-		$(this).parents("form").submit();
+		//$(this).parents("form").submit();
+		return true;
 	});
 	
-	$("#guardar_amex").click(function(e) {
-		e.preventDefault();	
+	//$("#guardar_amex").click(function(e) {
+	$("form[id*='amex']").submit(function(e) {
+		//e.preventDefault();	
 		$(".error").remove();
 		//Amex
 		if (!reg_direccion.test($.trim(calle.val()))) {
@@ -85,7 +89,8 @@ $(document).ready(function() {
 			return false;
 		} 
 		//amex
-		$(this).parents("form").submit();
+		//$(this).parents("form").submit();
+		return true;
 	});
 	
 	//fade out error messsage
