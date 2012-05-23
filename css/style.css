@@ -786,9 +786,55 @@ input[type="radio"]{
 	float: left;	
 }
 
-input[type="text"]{	
+input[type="text"]{		
+	border: none;
+	border-bottom: solid;
+	border-width: 1px;		
+	border-color: #8D8D8D;
+	color: #8D8D8D;
+	padding: 4px 10px;
+	font-size: 12p;
+	font-weight: bold;
+}
+input[type="password"]{
+	border: none;
+	border-bottom: solid;
+	border-width: 1px;		
+	border-color: #8D8D8D;
+	color: #8D8D8D;
+	padding: 4px 10px;
+	font-size: 12p;
+	font-weight: bold;
+}
+
+input[type="checkbox"]{
+	display: none;
+}
+
+.checkbox_no_selected{
+    border: none;
+	height: 15px;
+	width: 21px;	
+	background: transparent url('../images/css-sprite_checkboxes02.png') no-repeat;	
+	background-position: -5px -4px;	
+	float: left;
+}
+.checkbox_selected{
+	border: none;
+	height: 15px;
+	width: 21px;	
+	background: transparent url('../images/css-sprite_checkboxes02.png') no-repeat;	
+	background-position: -5px -18px;	
+	float: left;
+}
+
+select {   	            	
 	border: solid;
-	
-	border-width: 3px;
-	border-color: #800;
+	border-width: 1px;		
+	border-color: #FFF;
+	border-bottom-color:  #8D8D8D;
+	color: #8D8D8D;
+	padding: 2px 0px 2px 10px;
+	font-size: 12p;
+	font-weight: bold;		
 }

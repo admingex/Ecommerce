@@ -1,3 +1,18 @@
+<script>		
+	function cambia_check(id){					
+		if(document.getElementById('div'+id)){
+			if(document.getElementById('div'+id).className!='checkbox_selected'){
+				document.getElementById('div'+id).className='checkbox_selected';
+				document.getElementById(id).checked='checked';	
+			}
+			else{
+				document.getElementById('div'+id).className='checkbox_no_selected';
+				document.getElementById(id).checked='';
+			}
+			
+		}																				
+	}
+</script>	
 <div class="instrucciones_mensaje"><b>Nueva direcci&oacute;n</b></div>
 <div class="contenedor-gris">
 	<form id="form_agregar_direccion" action="<?php echo site_url('direccion_facturacion/registrar_direccion');?>" method="POST">
@@ -115,7 +130,10 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td class="label_izq">
-					<input type="checkbox" id="chk_default" name="chk_default" <?php if(isset($_POST['chk_default'])) echo 'checked="true"';?> />Usar como direcci&oacute;n de facturaci&oacute;n para pago express
+					<input type="checkbox" id="chk_default" name="chk_default"/>					
+					<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
+					</div>		
+					Usar como direcci&oacute;n de facturaci&oacute;n para pago express
 				</td>
 			</tr>
 			<tr>
