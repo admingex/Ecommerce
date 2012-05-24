@@ -29,6 +29,9 @@
 		<?php
 		}
 		?>
+		<?php
+			if($url_back['estatus']!=0){
+		?>
 		<form name="envio_result" action="<?php echo $url_back['urlback'];?>" method="POST" accept-charset="UTF8">
 			<input type="hidden" name="cadena_comprobacion" value="<?php echo $url_back['cadena_comprobacion']; ?>" />
 			<textarea name="datos_login" style="display: none"><?php echo $url_back['datos_login']; ?></textarea>							
@@ -37,5 +40,11 @@
 		<script type="text/javascript">
 			//setTimeout('document.envio_result.submit();', 3000);
 		</script>
+		<?php
+			} 
+			else{
+				anchor('orden_compra', 'intentar Nuevamente');
+			}
+		?>
 	</div>
 </div>

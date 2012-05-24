@@ -522,7 +522,7 @@ class Orden_Compra extends CI_Controller {
 		$datos['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
 		$datos['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
 		$datos['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
-		
+		$datos['estatus']=$estatus_pago;
 		/*echo "<pre>";
 		print_r($datos);
 		echo "</pre>";
