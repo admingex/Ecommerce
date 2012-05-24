@@ -4,7 +4,7 @@
 	?>		
 		<section id="descripcion-proceso">
 			<div class="titulo-proceso-img">&nbsp;</div>
-			<div class="titulo-proceso">¿Requiere Factura?</div>									
+			<div class="titulo-proceso">¿Requieres Factura?</div>									
 		</section>
 		<div id="pleca-punteada"></div>
 		<div class="contenedor-blanco">

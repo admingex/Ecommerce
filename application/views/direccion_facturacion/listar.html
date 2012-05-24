@@ -28,9 +28,11 @@
 			</thead>
 			<tbody class="contenedor-gris">
 			<?php
-				if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {				
+				$hay_direcciones = false;	
+				if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {										
 					$direcciones = $lista_direcciones;
 					foreach($direcciones->result_array() as $direccion) {	
+						$hay_direcciones = true;	
 						$check = "";
 						$class = "";
 						$classsi = "class='radio_no_selected'";
@@ -76,12 +78,14 @@
 				}				
 			} else {
 				$hay_direcciones = false;	
+			}
+			if(!$hay_direcciones){
 			?>
 				<tr>
-					<td colspan="6" class="instrucciones">
-						<p>							
+					<td colspan="6">
+						<h4>							
 							A&uacute;n no tienes direcciones asociadas.							
-						</p>						
+						</h4>						
 					</td>
 				</tr>
 			<?php				
