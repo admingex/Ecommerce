@@ -29,6 +29,11 @@ class Api extends CI_Controller {
 				$sitio="";
 				$formato=$cad;
 			}
+			//buscar los articulos con la clave enviada
+			else if((!is_numeric($cad))|| (strlen($cad)>2)){				
+				echo $this->obtener_url_promo($cad);
+				exit();				
+			}
 		}
 		if($segm==3){
 			$cad=$this->uri->segment(3);
@@ -484,6 +489,10 @@ class Api extends CI_Controller {
 			}															
 		}		
 	}		
+	
+	public function obtener_url_promo($cad){
+		return $cad;		
+	}
 	
 	public function encrypt($str, $key){
 		$str=trim($str);
