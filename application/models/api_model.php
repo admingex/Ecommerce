@@ -10,7 +10,7 @@ class Api_model extends CI_Model {
 	function obtener_sitio($id_sitio){		
 		$res = $this->db->get_where('CMS_CatSitio', array('id_sitioSi'=>$id_sitio));
 		return $res;
-	}
+	}		
 	
 	function obtener_canal($id_canal){		
 		$res = $this->db->get_where('CMS_CatCanal', array('id_canalSi'=>$id_canal));
@@ -20,6 +20,27 @@ class Api_model extends CI_Model {
 	function obtener_promocion($id_promocion){		
 		$res = $this->db->get_where('CMS_IntPromocion', array('id_promocionIn'=>$id_promocion));
 		return $res;
+	}
+	
+	function obtener_promocion_like($cad){
+		$this->db->like('descripcionVc', $cad, 'before');
+		$res = $this->db->get('CMS_IntPromocion');		
+		if($res->num_rows()!=0){
+			return $res;	
+		} 
+		else{
+			return FALSE;
+		}				
+	}
+	
+	function obtener_sitio_guidx($guidx){
+		$res = $this->db->get_where('CMS_CatSitio', array('private_KeyVc'=>$guidx));
+		if($res->num_rows()!=0){
+			return $res;
+		}
+		else{
+			return FALSE;
+		}
 	}
 		
 	function obtener_sitios(){
@@ -43,6 +64,17 @@ class Api_model extends CI_Model {
 	function obtener_articulos($id_promocion){		
 		$res = $this->db->get_where('CMS_IntArticulo', array('id_promocionIn'=>$id_promocion));
 		return $res;
+	}		
+	
+	function obtener_canal_promocion($id_promocion, $id_sitio){
+		$res = $this->db->get_where('CMS_RelPromocionSitioCanal', array('id_promocionIn'=>$id_promocion, 'id_sitioSi'=>$id_sitio));
+		if($res->num_rows()!=0){
+			return $res;
+		}
+		else{
+			return FALSE;
+		}
 	}	
+	
 			
 }

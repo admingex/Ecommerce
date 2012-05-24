@@ -30,8 +30,8 @@ class Api extends CI_Controller {
 				$formato=$cad;
 			}
 			//buscar los articulos con la clave enviada
-			else if((!is_numeric($cad))|| (strlen($cad)>2)){				
-				echo $this->obtener_url_promo($cad);
+			else if(((!is_numeric($cad))|| (strlen($cad)>2)) && ($_POST) ){				
+				echo $this->obtener_url_promo($cad, $_POST);
 				exit();				
 			}
 		}
@@ -490,8 +490,26 @@ class Api extends CI_Controller {
 		}		
 	}		
 	
-	public function obtener_url_promo($cad){
-		return $cad;		
+	public function obtener_url_promo($cad, $post){
+		$url=FALSE;
+		$sitio=$this->api_model->obtener_sitio_guidx($post['guidx']);
+		if($sitio){
+			$id_sitio=$sitio->row()->id_sitioSi;	
+		}				
+		$promociones=$this->api_model->obtener_promocion_like($cad);
+		if($promociones){			
+			foreach($promociones->result_array() as $promocion){
+				$canal=$this->api_model->obtener_canal_promocion($promocion['id_promocionIn'], $id_sitio);
+				if($canal){
+					$url=$canal->row()->id_sitioSi."/".$canal->row()->id_canalSi."/".$canal->row()->id_promocionIn."/pago";
+																				
+				}
+				else{
+					redirect('mensaje/'.md5(1));	
+				}				
+			}
+		}				
+		return $url;
 	}
 	
 	public function encrypt($str, $key){
