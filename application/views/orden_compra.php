@@ -7,7 +7,7 @@
 </section>
 <div id="pleca-punteada"></div>
 <div class="contenedor-blanco">
-	<div class="instrucciones">Por favor verifica la informaci&oacute;n que aparece abajo. Si tu pago es con tarjeta. Escribe el c&oacute;digo de seguridad que aparece al reverso de la misma. Cuando est&eacute;s listo, da click en finalizar compra para continuar.</div>	
+	<div class="instrucciones">Por favor verifica la informaci&oacute;n que aparece abajo. Si tu pago es con tarjeta, escribe el c&oacute;digo de seguridad que aparece al reverso de la misma. Cuando est&eacute;s listo, da click en finalizar compra para continuar.</div>	
 </div>
 <section class="contenedor">
 	<?php

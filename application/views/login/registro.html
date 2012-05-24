@@ -44,7 +44,7 @@
 		<td>
 			<input type="text" name="email" id="email" maxlength="60" 
 				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
-			<span class="validation_message"><?php if(isset($registro_errores['email'])) echo ($registro_errores['email']);?></span>
+			<span class="validation_message"><?php if((isset($_POST['email']) &&($_POST['email']!=""))&&(isset($registro_errores['email']))) echo ($registro_errores['email']);?></span>
 		</td>
 	</tr>
 	<tr>
@@ -62,7 +62,7 @@
 	<tr>
 		<td>&nbsp;</td>
 		<td>
-			<div class="instrucciones">Debe incluir may&uacute;sculas, min&uacute;sculas y n&uacute;meros</div>
+			<div class="instrucciones">La contraseña debe tener al menos 8 caracteres, incluir mayúsculas y minúsculas, y al menos un número</div>
 		</td>
 	</tr>
 	<tr>
