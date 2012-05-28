@@ -85,7 +85,7 @@ class Login extends CI_Controller {
 						//Flujo
 						redirect($destino);
 					} else {
-						$this->login_errores['user_login'] = "Correo o contrase&ntilde;a incorrectos";
+						$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";
 						//$data['mensaje'] = "Correo o contrase&ntilde;a incorrectos" ;
 					}
 				} else {

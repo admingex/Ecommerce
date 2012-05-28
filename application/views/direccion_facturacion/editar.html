@@ -143,10 +143,12 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<input type="submit" id="guardar_direccion" value="&nbsp;" class="usar_nueva_direccion"/>				
-					<!--<a href="">Guardar y usar otra</a>-->
-					o 
-					<a href="<?php echo site_url('direccion_facturacion/registrar_direccion'); ?>" title="actualizar">Cancelar</a>
+					<input type="submit" id="guardar_direccion" value=" " class="usar_nueva_direccion"/>									
+					ó
+					<input type="submit" id="guardar_otra_rs" value=" " class="usar_otra_large"/> 										
+					<div class="instrucciones_cursivas_der">
+						<a href="<?php echo site_url('direccion_facturacion/registrar_direccion'); ?>" title="actualizar"><input type="submit" value=" " class="cancelar" /></a>
+					</div>	
 				</td>
 			</tr>
 		</table>

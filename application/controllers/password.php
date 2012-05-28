@@ -69,17 +69,15 @@ class Password extends CI_Controller {
 						  	   </div>
 						  	   <br /><br />
 						  	   <div>
-						  	   	   <pre>
+						  	   	  
 						  	   	   	   1. Sigue el link de abajo para cambiar tu contraseña usando nuestro servidor seguro.<br />
-						  	   	   	   <a href='http://10.177.78.54/ecommerce/index.php/password/verificar/".$p."'>
-						  	   	   	   	   http://10.177.78.54/ecommerce/index.php/password/verificar/".$p."
-						  	   	   	   </a><br />
+						  	   	   	   <a href='http://10.177.78.54/ecommerce/index.php/password/verificar/".$p."'>    	   	   	  http://10.177.78.54/ecommerce/index.php/password/verificar/".$p."</a><br />
 						  	   	   	   Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu<br />
 						  	   	   	   navegador, o reescribirla ahí.<br />
 						  	   	   	   2. Ingresa la clave: ".$p."<br />
 						  	   	   	   Esta no es una contraseña, pero la necesitarás para crear una nueva contraseña.<br />
 						  	   	   	   3. Sigue las instrucciones que aparecen en la pantalla para crear tu nueva contraseña.
-						  	   	   </pre>
+						  	   	   
 						  	   </div>
 						  	   <br /><br />
 						  	   <div>
@@ -93,7 +91,7 @@ class Password extends CI_Controller {
 						  </body>
 						  </html>";     									
 								
-				if(mail($data['cliente']->email, 'Recuperar Contraseña', $mensaje, $headers)){
+				if(mail($data['cliente']->email, "=?UTF-8?B?".base64_encode('Recuperar contraseña')."?=", $mensaje, $headers)){
 					$this->cargar_vista('', 'password', $data);	
 				}																														
 				else{

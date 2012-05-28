@@ -1,10 +1,10 @@
-<table>	
+<table width="100%">	
 	<form id="form_registro_usuario" action="<?php echo $this->config->item('base_url').'/index.php/registro'; ?>" method="POST">
 	<tr>
-		<td colspan="2">
-			<span id="message" class="validation_message">
+		<td colspan="2" class="label_izq">
+			<div id="message" class="validation_message">
 			<?php if(isset($registro_errores['user_reg'])) echo ($registro_errores['user_reg']);?>
-			</span>
+			</div>
 		</td>
 	</tr>	
 	<tr>
@@ -67,7 +67,7 @@
 	</tr>
 	<tr>
 		<td class="label">
-			Confirmar Contrase&ntilde;a
+			Confirmar&nbsp;Contrase&ntilde;a
 		</td>
 		<td>
 			<input type="password" name="password_2" id="password_2"  

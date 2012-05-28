@@ -46,7 +46,7 @@ class Registro extends CI_Controller {
 						$_POST = array();
 					}
 				} else {
-					$this->registro_errores['user_reg'] = "Parece que tu correo ha sido registrado";
+					$this->registro_errores['user_reg'] = "Solicitaste iniciar sesión como cliente nuevo, pero ya existe una cuenta con el correo ".$cliente_info['email'];
 				}
 			} 
 		}
