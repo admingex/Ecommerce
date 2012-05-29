@@ -87,29 +87,34 @@ class Registro extends CI_Controller {
 			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_nombre'])) { 
 				$datos['salutation'] = $_POST['txt_nombre'];
 			} else {
-				$this->registro_errores['txt_nombre'] = 'Ingresa tu nombre por favor';
+				$this->registro_errores['txt_nombre'] = 'Por favor ingresa tu nombre';
 			}
 		}
 		if(array_key_exists('txt_apellidoPaterno', $_POST)) {
 			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_apellidoPaterno'])) { 
 				$datos['fname'] = $_POST['txt_apellidoPaterno'];
 			} else {
-				$this->registro_errores['txt_apellidoPaterno'] = 'Ingresa tu apellido correctamente';
+				$this->registro_errores['txt_apellidoPaterno'] = 'Por favor ingresa tu apellido paterno';
 			}
 		}		
 		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+			echo "qui";
 			$datos['email'] = htmlspecialchars(trim($_POST['email']));
 		} else {
-			$this->registro_errores['email'] = 'Ingrese una direcci&oacute;n v&aacute;lida.';
+			echo "jj";
+			$this->registro_errores['email'] = 'Por favor ingresa un correo electrónico <br />válido. Ejemplo: nombre@dominio.mx';
 		}
 		if(isset($_POST['email'])&& isset($_POST['password'])){
-			$this->valida_password($_POST['email'], $_POST['password']);
+			if($_POST['email']!=""){
+				$pass_info=$this->valida_password($_POST['email'], $_POST['password']);	
+			}
+						
 			if (preg_match ('/^(\w*(?=\w*\d)(?=\w*[a-z])(?=\w*[A-Z])\w*){6,20}$/', $_POST['password']) ) {
 				if ($_POST['password'] == $_POST['password_2']) {
 					$datos['password'] = htmlspecialchars(trim($_POST['password']));
 				} 
 				else {
-					$this->registro_errores['password_2'] = 'Tus contrase&ntilde;as no coincden';
+					$this->registro_errores['password_2'] = 'Las contraseñas ingresadas no son idénticas. Por favor intenta de nuevo.';
 				}
 			} 
 			else {
@@ -117,7 +122,7 @@ class Registro extends CI_Controller {
 			}
 		}					 			 
 		else{
-			$this->registro_errores['password'] = '&nbsp;';
+			$this->registro_errores['password'] = 'Información incompleta';
 		}		
 		
 		return $datos;
@@ -165,8 +170,8 @@ private function contiene_consecutivos($cad){
 }
 
 
-private function valida_password($correo, $pass){	
-	$cadlogin = explode('@',$correo);
+private function valida_password($correo, $pass){		
+	$cadlogin = explode('@',$correo);	
 	if(strlen($pass)<8){		
 		$this->registro_errores['password'] = 'debe contener por lo menos 8 caracteres';
 	}
@@ -175,8 +180,8 @@ private function valida_password($correo, $pass){
 			$this->registro_errores['password'] = 'deben ser numero y letras solamente';			
 		}
 		else{
-			if(stristr($pass,$cadlogin[0])){
-				$this->registro_errores['password'] = 'no debe contener login';				
+			if(stristr($pass,$cadlogin[0])==""){
+				$this->registro_errores['password'] = 'La contraseña no debe contener una parte del correo electrónico ingresado.';							
 			}					
 			else{
 				if(!$this->contiene_mayuscula($pass)){

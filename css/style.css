@@ -820,7 +820,7 @@ input[type="password"]{
 }
 
 input[type="checkbox"]{
-	display: none;
+    display: none;
 }
 
 .checkbox_no_selected{

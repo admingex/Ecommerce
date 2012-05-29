@@ -3,27 +3,28 @@ $(document).ready(function() {
 	var error='';
 	$("#enviar").click(function() {		
 		$(".error").remove();
+		$(".error2").remove();
         if( $("#txt_nombre").val() == "" ){        	
-            $("#txt_nombre").focus().after("<span class='error'>Ingrese un nombre</span>");            
+            $("#txt_nombre").focus().after("<span class='error'>Por favor ingresa tu nombre</span>");            
             return false;            
         }   
         else{
         	if($("#txt_apellidoPaterno").val()==""){
-        		$("#txt_apellidoPaterno").focus().after("<span class='error'>Ingrese un apellido paterno</span>");
+        		$("#txt_apellidoPaterno").focus().after("<span class='error'>Por favor ingresa tu apellido paterno</span>");
         		return false;
         	}  
         	else{
         		if($("#email").val()=="" || !email.test($("#email").val())){
-        			$("#email").focus().after("<span class='error'>Ingrese un email correcto</span>");            
+        			$("#email").focus().after("<span class='error2'>Por favor ingresa un correo electrónico <br />válido. Ejemplo: nombre@dominio.mx</span>");            
             		return false;
         		}
         		else{        			
-        			if(!valida_password($("#email").val(),$("#password").val())){        				
+        			if(!valida_password($("#email").val(),$("#password").val())){        				        				
         				return false;
         			}
         			else{
         				if($("#password").val()!=$("#password_2").val()){
-        					$("#password_2").focus().after("<span class='error'>No coincide la contrase&ntilde;a</span>");
+        					$("#password_2").focus().after("<span class='error2'>Las contraseñas ingresadas no son idénticas. Por favor intenta de nuevo.</span>");
         					return false;
         				}
         				else{        					
@@ -37,7 +38,7 @@ $(document).ready(function() {
 	$("#recordar_password").click(function() {		
 		$(".error").remove();
         if($("#email").val()=="" || !email.test($("#email").val())){        	
-            $("#email").focus().after("<span class='error'>Ingrese un correo electronico valido</span>");            
+            $("#email").focus().after("<span class='error2'>Por favor ingresa un correo electrónico <br />válido. Ejemplo: nombre@dominio.mx</span>");            
             return false;            
         }   
         else{  
@@ -57,7 +58,7 @@ $(document).ready(function() {
         	}
         	else{
         		if($("#password").val()!=$("#password_2").val()){
-        			$("#password_2").focus().after("<span class='error'>No coincide la contrase&ntilde;a</span>");
+        			$("#password_2").focus().after("<span class='error2'>Las contraseñas ingresadas no son idénticas. Por favor intenta de nuevo.</span>");
         			return false;
         		}
         		else{        			
@@ -70,8 +71,8 @@ $(document).ready(function() {
 
 function valida_password(acc,pass){
 	var cadlogin=(acc.split("@",1));
-	var nc= /^([0-9a-zA-Z])+$/;
-
+	var nc= /^([0-9a-zA-Z])+$/;		
+	
 	if(pass.length<8){
 		$("#password").focus().after("<span class='error'>Debe contener por lo menos 8 caracteres</span>");
 		return false;
@@ -83,27 +84,27 @@ function valida_password(acc,pass){
 		}		
 		else{			
 			if((pass.indexOf(cadlogin)!=-1)){
-				$("#password").focus().after("<span class='error'>contiene login</span>");
+				$("#password").focus().after("<span class='error'>La contraseña no debe contener una parte del correo electrónico ingresado</span>");
 				return false;				
 			}
 			else{				
    				if(!contiene_mayuscula(pass)){
-   					$("#password").focus().after("<span class='error'>debe contener por lo menos una mayuscula</span>");
+   					$("#password").focus().after("<span class='error2'>Debe contener por lo menos una mayuscula</span>");
    					return false;   					
    				}   			
    				else{
    					if(!contiene_numero(pass)){
-   						$("#password").focus().after("<span class='error'>debe contener por lo menos un numero</span>");
+   						$("#password").focus().after("<span class='error'>Debe contener por lo menos un numero</span>");
    						return false;   						
    					}
    					else{
    						if(!contiene_minuscula(pass)){
-   							$("#password").focus().after("<span class='error'>debe contener por lo menos una minuscula</span>");
+   							$("#password").focus().after("<span class='error'>Debe contener por lo menos una minuscula</span>");
    							return false;   							
    						}
    						else{
    							if(!contiene_consecutivos(pass)){
-   								$("#password").focus().after("<span class='error'>no se debe incluir el mismo caracter mas de 2 veces</span>");
+   								$("#password").focus().after("<span class='error2'>No se debe incluir el mismo caracter mas de 2 veces</span>");
    								return false;   								
    							}
    							else{

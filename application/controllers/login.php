@@ -88,8 +88,6 @@ class Login extends CI_Controller {
 						$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";
 						//$data['mensaje'] = "Correo o contrase&ntilde;a incorrectos" ;
 					}
-				} else {
-					$this->login_errores['user_login'] = "Revisar los campos";
 				}
 			}
 		}
@@ -105,14 +103,14 @@ class Login extends CI_Controller {
 		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 			$datos['email'] = htmlspecialchars(trim($_POST['email']));
 		} else {
-			$this->login_errores['email'] = 'Ingrese una direcci&oacute;n v&aacute;lida.';
+			$this->login_errores['email'] = 'Por favor ingresa una dirección de correo<br /> válida. Ejemplo: nombre@dominio.mx';
 		}
 		
 		if (array_key_exists('tipo_inicio', $_POST) && $_POST['tipo_inicio'] == 'registrado') {
 			if (!empty($_POST['password'])) {
 				$datos['password'] = htmlspecialchars(trim($_POST['password']));
 			} else {
-				$this->login_errores['password'] = 'Ingrese una contrase&ntilde;a.';
+				$this->login_errores['password'] = 'Por favor escribe tu contraseña. Si no has creado una cuenta, selecciona iniciar sesión como cliente nuevo.';
 			}					
 		} else {
 			$this->login_errores['user_login'] = 'Selecciona alguna modalidad';
