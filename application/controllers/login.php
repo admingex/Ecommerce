@@ -18,6 +18,12 @@ class Login extends CI_Controller {
         // Call the Model constructor
         parent::__construct();
 		
+		$this->load->driver('cache');
+		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+		$this->cache->clean();
+		//echo "exito clean cache: " . $this->cache->clean();
+		
 		//cargar el modelo en el constructor
 		$this->load->model('login_registro_model', 'login_registro_model', true);
 		//cargar los modelos para revisar el pago exprés
@@ -62,6 +68,9 @@ class Login extends CI_Controller {
 					
 					$resultado = $this->login_registro_model->verifica_cliente($this->email, $this->password);
 					if ($resultado->num_rows() > 0) {
+						//Reguardar la información de la promoción
+						
+						//destruir la sesión y mandar la información completa en la creación de la sesión
 						
 						//encryptar login y pass y guardarlo en session											
 						$cliente = $resultado->row();

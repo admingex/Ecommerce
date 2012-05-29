@@ -7,7 +7,7 @@
 </section>
 <div id="pleca-punteada"></div>
 <div class="contenedor-gris tam75">
-<form id="form_forma_pago" action="<?php echo site_url("forma_pago/seleccionar/deposito"); ?>" method="POST">
+<form id="form_forma_pago" action="<?php echo site_url('forma_pago/seleccionar/deposito'); ?>" method="POST">
 	<div class="img-deposito">&nbsp;</div>
 	<div class="deposito-izquierda">
 		<div class="titulo-promo-rojo-deposito">
@@ -20,7 +20,6 @@
 	</div>
 	<div class="deposito-derecha">
 		<input type="submit" id="deposito_bancario" name="deposito_bancario" value="&nbsp;" class="pagar-deposito"/>
-		<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
 	</div>
 </form>		
 </div>

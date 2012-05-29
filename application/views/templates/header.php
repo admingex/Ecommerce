@@ -1,8 +1,9 @@
-<html>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+<html> 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta charset="utf-8">
+    
+    <meta http-equiv="Cache-Control" content="no-cache"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title><?php echo $title ?> - CMS GEX</title>
     <meta name="description" content="">
@@ -13,10 +14,17 @@
 	<link type="text/css" href="<?php echo base_url();?>css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 	<link type="text/css" href="<?php echo base_url();?>css/validacion.css" rel="stylesheet" />	
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-1.7.1.min.js"> </script>
-	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-ui-1.8.18.custom.min.js"> </script>	
+	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-ui-1.8.18.custom.min.js"> </script>
+	<script type="text/javascript">
+		function noBack()
+		{ 
+			window.history.forward(1);
+		}
+		//onLoad="noBack();"
+	</script>	
 	<?php if (isset($script)) echo $script; ?>	
 </head>
-<body>
+<body >
     <div id="header-container">
         <header>
             <img src="<?php echo base_url();?>images/logo_expansion.gif" alt="logo gex" width="52" height="52"/>            

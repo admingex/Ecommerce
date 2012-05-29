@@ -44,6 +44,12 @@ class Orden_Compra extends CI_Controller {
         // Call the Model constructor
         parent::__construct();
 		
+		$this->load->driver('cache');
+		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+		//echo "exito clean cache: " . $this->cache->clean();
+		$this->cache->clean();
+		
 		//si no hay sesión
 		//manda al usuario a la... pagina de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');

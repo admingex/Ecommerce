@@ -17,6 +17,11 @@ class Forma_Pago extends CI_Controller {
         //Call the Model constructor
         parent::__construct();
 		
+		$this->load->driver('cache');
+		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+		//echo "exito clean cache: " . $this->cache->clean();
+		$this->cache->clean();
 		//si no hay sesión
 		//manda al usuario a la... pagina de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
@@ -79,11 +84,11 @@ class Forma_Pago extends CI_Controller {
 				//Para calcular destino siguiente y actualizxarlo en sesión
 				$destino = $this->obtener_destino();
 				
-				redirect($destino, "refresh");
+				redirect($destino, 'location', 303);
 			}
 		} else {
 			//ir al listado
-			redirect("forma_pago/listar", "refresh");
+			redirect("forma_pago/listar", "location", 303);
 		}		
 	}
 	
@@ -201,9 +206,10 @@ class Forma_Pago extends CI_Controller {
 							*/
 							//Redirección
 							if ($tipo == 1)	{
-								redirect("forma_pago/registrar/amex", "refresh");	//se puede invocar pasando el consecutivo como parámetro
+								redirect("forma_pago/registrar/amex", "location", 303);	//se puede invocar pasando el consecutivo como parámetro
 							} else {
-								$this->listar("Tarjeta registrada correctamente");
+								//$this->listar("Tarjeta registrada correctamente");
+								redirect("forma_pago/listar/", "location", 303);
 							}
 						} else {
 							$this->listar("Hubo un error en el registro en el sistema", FALSE);
@@ -231,9 +237,10 @@ class Forma_Pago extends CI_Controller {
 				//exit();
 				
 				if ($tipo == 1)	{
-					redirect("forma_pago/registrar/amex", "refresh");	//se puede invocar pasando el consecutivo como parámetro 
+					redirect("forma_pago/registrar/amex", 'location', 303);	//se puede invocar pasando el consecutivo como parámetro 
 				} else {
-					$this->listar("Información de la tarjeta capturada correctamente");
+					//$this->listar("Información de la tarjeta capturada correctamente");
+					redirect("forma_pago/listar/", "location", 303);
 				}
 				//redirect('direccion_envio');
 			}
@@ -353,11 +360,16 @@ class Forma_Pago extends CI_Controller {
 				//recupera la info de amex
 				$tarjeta_amex = null;
 				
+				/*echo "</pre>";
+				var_dump($tarjeta_en_sesion);
+				echo "</pre>";
+				exit();*/
 				//creación del objeto para el despliegue del formulario de edición
-				foreach ($tarjeta_en_sesion['amex'] as $key => $value) {
-					$tarjeta_amex->$key = $value;
+				if (!empty($tarjeta_en_sesion['amex'])) {
+					foreach ($tarjeta_en_sesion['amex'] as $key => $value) {
+						$tarjeta_amex->$key = $value;
+					}
 				}
-				
 				$tarjeta_amex->id_TCSi = 0;	//el id_TCSi (consecutivo debe ser 0 si está en session)
 				
 				$data['tarjeta_amex'] = $tarjeta_amex;
@@ -381,15 +393,17 @@ class Forma_Pago extends CI_Controller {
 				$lista_paises_amex = $this->forma_pago_model->listar_paises_amex();
 				$data['lista_paises_amex'] = $lista_paises_amex;
 				$data['subtitle'] = "Ingresa o edita tu direcci&oacute;n de tarjeta AMEX";
-				/*if ($data['tarjeta_amex']->consecutivo_cmsSi == 0)
-					$data['tarjeta_amex']->consecutivo_cmsSi = $consecutivo;*/
+				
+				//Si no hay info de amex en cctc
+				if ($data['tarjeta_amex']->consecutivo_cmsSi == 0)
+					$data['tarjeta_amex']->consecutivo_cmsSi = $consecutivo;
 				//var_dump($data['tarjeta_amex']);
+				
+				//var_dump($data['tarjeta_amex']);
+				//exit();
 			}
-			
-			
-			
 		}
-		//var_dump($data['tarjeta_tc']);
+		
 		//echo "tarjeta".$this->session->userdata("tarjeta");
 		
 		if ($_POST && empty($this->reg_errores)) {
@@ -401,7 +415,7 @@ class Forma_Pago extends CI_Controller {
 				$this->editar_amex($consecutivo);
 			}
 			//else, redireccionar/pantalla de error
-		} else if (!empty($this->reg_errores)){
+		} else if (!empty($this->reg_errores)) {
 			$data['reg_errores'] = $this->reg_errores;
 			$this->cargar_vista('', 'forma_pago' , $data);
 		} else {	//If POST
@@ -428,6 +442,10 @@ class Forma_Pago extends CI_Controller {
 			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1 ) 
 				$detalle_amex = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
 			
+			//echo print_r($detalle_tarjeta);
+			//echo print_r($detalle_amex);
+			//exit();
+			
 		} else	if ($this->session->userdata('tarjeta') && $consecutivo == 0) {	
 			//tarjeta en session y no registrada en BD, viene de la Orden => $consecutivo debería ser 0
 			
@@ -444,11 +462,6 @@ class Forma_Pago extends CI_Controller {
 					$detalle_amex = (object)$tarjeta['amex'];
 				//$consecutivo = 0;
 			}
-			 /*else {
-			 	echo "deben coincidir: ".$consecutivo . "(consec.) == (tarjeta)". $tarjeta;
-				 //exit();
-				 $detalle_tarjeta = $this->forma_pago_model->detalle_tarjeta($consecutivo, $id_cliente);
-			 }*/
 		}
 
 		//array para la nueva información
@@ -468,7 +481,7 @@ class Forma_Pago extends CI_Controller {
 		$tarjeta = array();
 		
 		//errores
-		$data['reg_errores'] = $this->reg_errores;	
+		$data['reg_errores'] = $this->reg_errores;
 		
 		if (empty($data['reg_errores'])) {	//si no hubo errores
 			//preparar la petición al WS, campos comunes
@@ -480,23 +493,23 @@ class Forma_Pago extends CI_Controller {
 			
 			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1 ) {	//es AMEX y hay información
 				//var_dump($detalle_amex);
-				//$nueva_info['amex'] = $detalle_amex;
+				
 				$nueva_info['amex']['id_clienteIn'] = $id_cliente;
 				$nueva_info['amex']['id_TCSi'] = $detalle_tarjeta->id_TCSi;
 				$nueva_info['amex']['nombre_titularVc'] = $nueva_info['tc']['nombre_titularVc'];
 				$nueva_info['amex']['apellidoP_titularVc'] = $nueva_info['tc']['apellidoP_titularVc'];
 				$nueva_info['amex']['apellidoM_titularVc'] = $nueva_info['tc']['apellidoM_titularVc'];
-				$nueva_info['amex']['pais'] = $detalle_amex->pais;
-				$nueva_info['amex']['codigo_postal'] = $detalle_amex->codigo_postal;
-				$nueva_info['amex']['calle'] = $detalle_amex->calle;
-				$nueva_info['amex']['ciudad'] = $detalle_amex->ciudad;
-				$nueva_info['amex']['estado'] = $detalle_amex->estado;
-				$nueva_info['amex']['mail'] = $detalle_amex->mail;
-				$nueva_info['amex']['telefono'] = $detalle_amex->telefono;
+				//var_dump($detalle_amex);	//$detalle_amex trae al menos: consecutivo_cmsSi y id_clienteIn
+				
+				$nueva_info['amex']['pais'] = isset($detalle_amex->pais) ? $detalle_amex->pais : NULL;
+				$nueva_info['amex']['codigo_postal'] = isset($detalle_amex->codigo_postal) ? $detalle_amex->codigo_postal : NULL;
+				$nueva_info['amex']['calle'] = isset($detalle_amex->calle) ? $detalle_amex->calle : NULL;
+				$nueva_info['amex']['ciudad'] = isset($detalle_amex->ciudad) ? $detalle_amex->ciudad : NULL;
+				$nueva_info['amex']['estado'] = isset($detalle_amex->estado) ? $detalle_amex->estado : NULL;
+				$nueva_info['amex']['mail'] = isset($detalle_amex->mail) ? $detalle_amex->mail : $this->session->userdata('email');
+				$nueva_info['amex']['telefono'] = isset($detalle_amex->telefono) ? $detalle_amex->telefono : NULL;
 			} else {
 				$nueva_info['amex'] = NULL;
-				//echo "no es amex";
-				//exit();
 			}
 			
 			if (!$consecutivo) {
@@ -513,13 +526,17 @@ class Forma_Pago extends CI_Controller {
 				
 				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
 					//si es AMEX
-					redirect('forma_pago/editar/amex/'.$consecutivo, "refresh");
+					redirect('forma_pago/editar/amex/'.$consecutivo, 'location', 303);
 				} else {
-					$this->listar($msg_actualizacion, $redirect);
+					//$this->listar($msg_actualizacion, $redirect);
+					if ($redirect) {
+						redirect($destino, "location", 303);
+					} else {
+						redirect("forma_pago", "location", 303);
+					}
 				}
 			} else {
-				//var_dump($nueva_info);
-				//exit();
+				
 				//actualizar en CCTC, si el consecutivo es distinto de 0				
 				if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
 					//actualizar predeterminado
@@ -540,10 +557,17 @@ class Forma_Pago extends CI_Controller {
 					
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					
+					$_POST = array();
+					
 					if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
-						redirect('forma_pago/editar/amex/'.$consecutivo, "refresh");
+						redirect('forma_pago/editar/amex/'.$consecutivo, "location", 303);
 					} else {
-						$this->listar($msg_actualizacion, $redirect);
+						//$this->listar($msg_actualizacion, $redirect);
+						if ($redirect) {
+							redirect($destino, "location", 303);
+						} else {
+							redirect("forma_pago", "location", 303);
+						}
 					}
 				} else {
 					$data['msg_actualizacion'] = "Error de actualización en el sistema para el cobro";

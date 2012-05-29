@@ -38,7 +38,7 @@ $(document).ready(function() {
 	
 	//tc
 	//$("input[name^='guardar_']").click(function(e) {
-	$("form[id*='tc']").submit(function(e) {
+	$("form[id$='tc']").submit(function(e) {
 		//e.preventDefault();	
 		$(".error").remove();	//limpiar mensajes de error
 		
@@ -62,12 +62,12 @@ $(document).ready(function() {
 	});
 	
 	//$("#guardar_amex").click(function(e) {
-	$("form[id*='amex']").submit(function(e) {
+	$("form[id$='tc_amex']").submit(function(e) {
 		//e.preventDefault();	
 		$(".error").remove();
 		//Amex
 		if (!reg_direccion.test($.trim(calle.val()))) {
-			calle.focus().after("<span class='error'>Ingresa calle y número correctamente s</span>");
+			calle.focus().after("<span class='error'>Ingresa calle y número correctamente</span>");
 			return false;
 		} else if (!reg_cp.test($.trim(cp.val()))) {
 			cp.focus().after("<span class='error'>Ingresa tu código postal correctamente</span>");
