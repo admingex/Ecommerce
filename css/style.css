@@ -373,10 +373,6 @@ a:visited{
 	background-position: -1288px -39px;
 }
 
-.validation_message{
-	font-size: 10px;
-	color: #E70030;
-}
 
 .crear_cuenta{
 	border: none;
@@ -585,6 +581,22 @@ td{
 	background: url('../images/css-sprite_btnN3.png') no-repeat;	
 	background-position: -13px -28px;
 }
+
+.cancelar {
+	border: none;
+	height: 19px;
+	width: 80px;
+	background: url('../images/css-sprite_btnN3.png') no-repeat;	
+	background-position: -150px -10px;	
+}
+.cancelar:hover {
+	border: none;
+	height: 19px;
+	width: 80px;
+	background: url('../images/css-sprite_btnN3.png') no-repeat;	
+	background-position: -150px -28px;
+}
+
 
 .borde-top{	
 	margin-top: 3px;
@@ -808,7 +820,7 @@ input[type="password"]{
 }
 
 input[type="checkbox"]{
-	display: none;
+    display: none;
 }
 
 .checkbox_no_selected{
@@ -837,4 +849,8 @@ select {
 	padding: 2px 0px 2px 10px;
 	font-size: 12p;
 	font-weight: bold;		
+}
+h4{
+	margin-left: 10px;
+	margin-top: 20px;
 }

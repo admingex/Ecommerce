@@ -56,9 +56,42 @@ class Password extends CI_Controller {
 												  
 				$headers="Content-type: text/html; charset=UTF-8\r\n";
                 $headers.="MIME-Version: 1.0\r\n";
-			    $headers .= "From: GexWeb<soporte@expansion.com.mx>\r\n";            					
+			    $headers .= "From: GexWeb<servicioaclientes@expansion.com.mx>\r\n";       
+				$mensaje="<html>
+						  <body>
+						  	   <div>Hola,
+						  	   </div>
+						  	   <div>
+						  	       En pagos.grupoexpansion.mx, la plataforma de pagos de Grupo Expansión, recibimos una solicitud<br />
+						  	       para recuperar la contraseña asociada a este correo. Si tú hiciste esta solicitud, por favor sigue las<br />
+						  	       instrucciones que aparecen abajo. Si no solicitaste cambiar tu contraseña, puedes ignorar este correo<br />
+						  	       con tranquilidad, pues tu cuenta de cliente está segura.
+						  	   </div>
+						  	   <br /><br />
+						  	   <div>
+						  	   	  
+						  	   	   	   1. Sigue el link de abajo para cambiar tu contraseña usando nuestro servidor seguro.<br />
+						  	   	   	   <a href='http://10.177.78.54/ecommerce/index.php/password/verificar/".$p."'>    	   	   	  http://10.177.78.54/ecommerce/index.php/password/verificar/".$p."</a><br />
+						  	   	   	   Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu<br />
+						  	   	   	   navegador, o reescribirla ahí.<br />
+						  	   	   	   2. Ingresa la clave: ".$p."<br />
+						  	   	   	   Esta no es una contraseña, pero la necesitarás para crear una nueva contraseña.<br />
+						  	   	   	   3. Sigue las instrucciones que aparecen en la pantalla para crear tu nueva contraseña.
+						  	   	   
+						  	   </div>
+						  	   <br /><br />
+						  	   <div>
+						  	       Si tienes alguna pregunta, por favor envía un correo a nuestra área de Atención a Clientes.<br />
+						  	       (<u>servicioaclientes@expansion.com.mx</u>).
+						  	   </div>
+						  	   <br /><br />
+						  	   <div>
+						  	   	   Gracias por comprar con Grupo Expansión.
+						  	   </div>
+						  </body>
+						  </html>";     									
 								
-				if(mail($data['cliente']->email, 'Recuperar password', "http://10.177.78.54/ecommerce/index.php/password/verificar/".$p, $headers)){
+				if(mail($data['cliente']->email, "=?UTF-8?B?".base64_encode('Recuperar contraseña')."?=", $mensaje, $headers)){
 					$this->cargar_vista('', 'password', $data);	
 				}																														
 				else{
@@ -77,8 +110,8 @@ class Password extends CI_Controller {
 	}
 	
 	public function cambiar(){
-		$data['title'] = "Recupera tu contrase&ntilde;a";
-		$data['subtitle'] = "Recupera tu contrase&ntilde;a";
+		$data['title'] = "Escribe una nueva contraseña";
+		$data['subtitle'] = "Escribe una nueva contraseña";
 		$data['mensaje']='';	
 		$data['cambiar']=TRUE;
 		$data['verificar']=FALSE;	
@@ -121,7 +154,7 @@ class Password extends CI_Controller {
 				redirect('forma_pago');	
 			}																						
 			else{					
-				$this->registro_errores['password']='no puedes utilizar esta hasta q se tengan 8 historicos';
+				$this->registro_errores['password']='Por favor ingresa una contraseña que no coincida con ninguna de las últimas ocho contraseñas usadas';
 				$data['registro_errores'] = $this->registro_errores;
 				$this->cargar_vista('', 'password',$data);										
 			}	
@@ -135,8 +168,8 @@ class Password extends CI_Controller {
 	}
 	
 	public function verificar($passtemp= ''){
-		$data['title'] = "Recupera tu contrase&ntilde;a";
-		$data['subtitle'] = "Recupera tu contrase&ntilde;a";
+		$data['title'] = "Escribe la clave para crear una nueva contraseña";
+		$data['subtitle'] = "Escribe la clave para crear una nueva contraseña";
 		$data['mensaje']='';	
 		$data['verificar']=TRUE;
 		$data['cambiar']=FALSE;	

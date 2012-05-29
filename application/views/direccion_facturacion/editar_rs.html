@@ -15,7 +15,7 @@
 </script>
 <div class="contenedor-gris">		
 	<form id="form_agregar_rs" action="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_rs/'.$consecutivo?>" method="POST">
-		<table>
+		<table width="100%">
 			<tr>
 				<td class="label">Nombre o Raz&oacute;n Social</td>
 				<td>
@@ -43,7 +43,12 @@
 						<input type="text" name="txt_email" id="txt_email" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']); else echo  $datos_direccion->email;?>" size="30"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
+					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>					
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>
 					<div class="instrucciones_cursivas">¿A qu&eacute; correo debemos enviar tu factura?</div>
 				</td>
 			</tr>
@@ -69,8 +74,10 @@
 				<td>&nbsp;</td>
 				<td>
 					<input type="submit" id="guardar_rs" value="" class="usar_razon_social_large2"/> &oacute;
-					<input type="submit" id="guardar_rs" value="" class="usar_otra_large"/>
-					<a href="<?php echo site_url('direccion_facturacion'); ?>" title="actualizar">Cancelar</a>
+					<input type="submit" id="guardar_otra_rs" value="" class="usar_otra_large"/>
+					<div class="instrucciones_cursivas_der">
+						<a href="<?php echo site_url('direccion_facturacion'); ?>" title="actualizar"><input type="submit" value=" " class="cancelar" /></a>
+					</div>					
 				</td>
 			</tr>
 		</table>

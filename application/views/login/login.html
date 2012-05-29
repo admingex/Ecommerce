@@ -1,14 +1,13 @@
 <form id="form_registro_tc" action="<?php echo site_url('login'); ?>" method="POST">
-<table>
-
+<table width="100%">
 	<tr>
 		<td class="label">
 			Mi correo electr&oacute;nico es	
 		</td>
 		<td colspan="2">
-			<input type="text" name="email" id="email"
+			<input type="text" name="email" id="email" size="39"
 				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
-				<span class="validation_message"> <?php if(isset($login_errores['email'])) echo ($login_errores['email']);?></span>
+				<?php if(isset($login_errores['email'])) echo "<span class='error2'>".$login_errores['email']."</span>";?>
 		</td>
 	</tr>
 	<tr>
@@ -47,12 +46,12 @@
 			Contrase&ntilde;a		
 			<input type="password" name="password" id="password" size="20" 
 				value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
-			<span class="validation_message">
+			<span>
 				<a href="<?php echo $this->config->item('base_url').'/index.php/password/'; ?>" id="olvido_contrasena">&iquest;Olvidaste tu contrase&ntilde;a?</a>
-				<?php if(isset($login_errores['password'])) echo ($login_errores['password']);?>
+				<?php if(isset($login_errores['password'])) echo "<span class='error2'>".$login_errores['password']."</span>";?>
 			</span>
-			<div id="message" class="validation_message">
-				<?php if(isset($login_errores['user_login'])) echo "<span class='result_fail'>". $login_errores['user_login']. "</span>";?>
+			<div id="message">
+				<?php if(isset($login_errores['user_login'])) echo "<div class='validation_message'>". $login_errores['user_login']. "</div>";?>
 			</div>				
 		</td>
 	</tr>

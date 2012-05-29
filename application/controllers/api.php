@@ -11,7 +11,7 @@ class Api extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		$this->load->model('api_model', 'api_model', true);
-		$this->key='AC35-4564-AE4D-0B881031F295';				
+		$this->key='AC35-4564-AE4D-0B881031F295';					
     }
 	
 	public function index(){												
@@ -501,12 +501,8 @@ class Api extends CI_Controller {
 			foreach($promociones->result_array() as $promocion){
 				$canal=$this->api_model->obtener_canal_promocion($promocion['id_promocionIn'], $id_sitio);
 				if($canal){
-					$url=$canal->row()->id_sitioSi."/".$canal->row()->id_canalSi."/".$canal->row()->id_promocionIn."/pago";
-																				
-				}
-				else{
-					redirect('mensaje/'.md5(1));	
-				}				
+					$url= json_encode($canal->row());																									
+				}								
 			}
 		}				
 		return $url;

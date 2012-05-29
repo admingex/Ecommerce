@@ -6,7 +6,7 @@ $(document).ready(function() {
 	var forms = $("form[id*='registro']");
 	
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;	
-	var reg_nombres = /^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i;
+	var reg_nombres = /^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{1,30}$/i;
 	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,50}$/i;
 	var reg_cp = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
 	var reg_telefono = /^[0-9 ()+-]{10,20}$/
@@ -41,16 +41,16 @@ $(document).ready(function() {
 	$("form[id$='tc']").submit(function(e) {
 		//e.preventDefault();	
 		$(".error").remove();	//limpiar mensajes de error
-		
+		$(".error2").remove();	//limpiar mensajes de error
 		//tc-todas
 		if (!validarTarjeta(tipo_tarjeta.val(), $.trim(numero_tarjeta.val()))) {
-			numero_tarjeta.focus().after("<span class='error'>Ingresa un número de tarjeta válido</span>");
+			numero_tarjeta.focus().after("<span class='error2'>Por favor escribe un número de tarjeta de 16 dígitos, sin espacios.</span>");
 			return false;
 		} else if (!reg_nombres.test($.trim(nombre.val()))) {
-			nombre.focus().after("<span class='error'>Ingresa tu nombre correctamente</span>");
+			nombre.focus().after("<span class='error'>Por favor ingresa tu nombre</span>");
 			return false;
 		} else if (!reg_nombres.test($.trim(appP.val()))) {
-			appP.focus().after("<span class='error'>Ingresa tu appellido correctamente</span>");
+			appP.focus().after("<span class='error'>Por favor ingresa tu apellido paterno</span>");
 			return false;
 		} else if ($.trim(appM.val()) != "" && !reg_nombres.test($.trim(appM.val()))) {
 			appM.focus().after("<span class='error'>Ingresa tu appellido correctamente</span>");

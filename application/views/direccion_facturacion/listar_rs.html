@@ -19,22 +19,24 @@
 				<tr>
 					<!--<th class="doble-linea">&nbsp;</th>-->
 					<th class="doble-linea" colspan="2">
-						Tus Raz&oacute;nes<br /> sociales guardadas
+						Tus Razones<br /> sociales guardadas
 					</th>
 					<th class="doble-linea">
 						RFC
 					</th>
 					<th class="doble-linea">
-						Correo Electr&oacute;nico <br />de envio						
+						Correo Electr&oacute;nico <br />de envío						
 					</th>					
 					<th class="doble-linea">&nbsp;</th>
 					<th class="doble-linea">&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody class="contenedor-gris">
-			<?php							
-				if (isset($lista_direcciones)) {								
+			<?php		
+				$hay_direcciones = false;							
+				if (isset($lista_direcciones)) {													
 					foreach($lista_direcciones as $direccion) {	
+						$hay_direcciones = true;
 						$check = "";
 						$class = "";
 						$classsi = "class='radio_no_selected'";
@@ -75,17 +77,18 @@
 			<?php 					
 				}				
 			} else {
-				$hay_direcciones = false;	
+				$hay_direcciones = false;
+			}
+			if(!$hay_direcciones){		
 			?>
 				<tr>
-					<td colspan="6" class="instrucciones">
-						<p>							
+					<td colspan="6">
+						<h4>							
 							A&uacute;n no tienes raz&oacute;n social asociada.							
-						</p>						
+						</h4>						
 					</td>
 				</tr>
-			<?php				
-			?>			
+					
 			<?php 
 			}
 			?>				

@@ -18,7 +18,7 @@
 		if($verificar){
 	?>		
 			<div class="instrucciones_mensaje">
-				Esta es la clave que recibiste en tu correo electr&oacute;nico junto con la liga a esta pagina
+				Esta es la clave que recibiste en tu correo electr&oacute;nico junto con la liga a esta página
 			</div>			
 			<div class="contenedor-gris">
 	<?php				
@@ -27,7 +27,7 @@
 		if($cambiar){
 	?>
 			<div class="instrucciones_mensaje">
-			Escribe una nueva contrase&ntilde;a y confirmala. La contrase&ntilde;a debe tener al menos 8 caracteres y contener letras mayusculas, minusculas y numeros
+			Escribe una nueva contrase&ntilde;a y confírmala. La contrase&ntilde;a debe tener al menos 8 caracteres y contener letras mayúsculas, minúsculas y al menos un número
 			</div>
 			<div class="contenedor-gris">
 	<?php		

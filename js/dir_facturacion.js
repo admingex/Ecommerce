@@ -7,26 +7,26 @@ $(document).ready(function() {
 	$("#guardar_rs").click(function(){
 		$(".error").remove();
         if( $("#txt_razon_social").val() == "" ){
-            $("#txt_razon_social").focus().after("<span class='error'>Ingrese su razon social</span>");            
+            $("#txt_razon_social").focus().after("<span class='error'>Por favor ingresa tu nombre o razón social</span>");            
             return false;            
         }
         else{
         	if(($("#txt_rfc").val() == "") || ($("#txt_rfc").val().length >13) || ($("#txt_rfc").val().length <12)){
-        		$("#txt_rfc").focus().after("<span class='error'>Ingrese un R.F.C. correcto</span>");
+        		$("#txt_rfc").focus().after("<span class='error'>Por favor ingresa tu RFC</span>");
         		return false;
         	}
         	else{
         		if(($("#txt_rfc").val().length==12) && (!rfc1.test($("#txt_rfc").val()))){        			
-        			$("#txt_rfc").focus().after("<span class='error'>Ingrese un R.F.C. correcto</span>");
+        			$("#txt_rfc").focus().after("<span class='error'>Por favor ingresa tu RFC</span>");
         			return false;
         		}        		
         		else if(($("#txt_rfc").val().length==13) && (!rfc2.test($("#txt_rfc").val()))){
-        			$("#txt_rfc").focus().after("<span class='error'>Ingrese un R.F.C. correcto</span>");
+        			$("#txt_rfc").focus().after("<span class='error'>Por favor ingresa tu RFC</span>");
         			return false;
         		}   
         		else{
         			if($("#txt_email").val()=="" || !email.test($("#txt_email").val())){
-						$("#txt_email").focus().after("<span class='error'>Ingrese un correo electronico valido</span>");
+						$("#txt_email").focus().after("<span class='error2'>Por favor ingresa un correo electrónico válido. Ejemplo: nombre@dominio.mx</span>");
         				return false;
         			}
         			else{        										        				        				        				
@@ -40,36 +40,36 @@ $(document).ready(function() {
 	$("#guardar_direccion").click(function() {		
 		$(".error").remove();        
         			if($("#txt_calle").val()==""){
-        				$("#txt_calle").focus().after("<span class='error'>Ingrese una calle</span>");
+        				$("#txt_calle").focus().after("<span class='error'>Por favor ingresa una calle</span>");
         				return false;
         			}
         			else{
         				if($("#txt_numero").val()==""){
-        					$("#txt_numero").focus().after("<span class='error'>Ingrese un Numero</span>");
+        					$("#txt_numero").focus().after("<span class='error'>Por favor ingresa el número exterior</span>");
         					return false;
         				}
         				else{
         					if($("#txt_cp").val()=="" || !cp.test($("#txt_cp").val())){
-        						$("#txt_cp").focus().after("<span class='error'>Ingrese un codigo postal valido</span>");
+        						$("#txt_cp").focus().after("<span class='error2'>Por favor ingresa un código postal de 5 dígitos</span>");
         						return false;
         					}
         					else{
         						if($("#txt_estado").val()==""){
-        							$("#txt_estado").focus().after("<span class='error'>Ingrese un estado valido</span>");
+        							$("#txt_estado").focus().after("<span class='error'>Por favor ingresa el estado</span>");
         							return false;
         						}
         						else{
         							if($("#txt_ciudad").val()==""){
-										$("#txt_ciudad").focus().after("<span class='error'>Ingrese una ciudad</span>");
+										$("#txt_ciudad").focus().after("<span class='error'>Por favor ingresa la ciudad</span>");
 										return false;
         							}
         							else{
         								if($("#txt_colonia").val()==""){
-        									$("#txt_colonia").focus().after("<span class='error'>Ingrese una colonia</span>");
+        									$("#txt_colonia").focus().after("<span class='error'>Por favor ingresa la colonia</span>");
         									return false;
         								}	
         								else{        									        									
-        										$(form_direccion_envio).submit();	
+        										$('#form_agregar_direccion').submit();	
         									        									
         								}
         							}        						    

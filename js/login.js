@@ -7,6 +7,12 @@ $(document).ready(function() {
 	var passwd = $("#password");
 	var registro = false;
 	
+	$('input').bind("click keypress", function() {
+		$(".error").remove();
+		$(".error2").remove();
+		$(".validation_message").remove();
+	});
+	
 	/*tipo inicio*/
 	$("#divtipo_inicio2").click(function() {				
 		$("#divtipo_inicio2").removeClass('radio_no_selected').addClass('radio_selected');
@@ -35,11 +41,11 @@ $(document).ready(function() {
 		if (!registro) {
 			//email
 			if (!reg_email.test(email.val())) {
-				email.focus().after("<span class='error'>Ingresa una dirección de correco válida</span>");
+				email.focus().after("<div class='error2'>Por favor ingresa una dirección de correo<br /> válida. Ejemplo: nombre@dominio.mx</div>");
 				return false;
 			} 
 			else if (passwd.val() == "" ) {
-				passwd.focus().after("<span class='error'>Ingresa tu contraseña</spam>");
+				passwd.focus().after("<div class='error2'>Por favor escribe tu contraseña. Si no has creado una cuenta, selecciona iniciar sesión como cliente nuevo.</div>");
 				return false;
 			}
 			else{
