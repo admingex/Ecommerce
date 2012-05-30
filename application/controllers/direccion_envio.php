@@ -22,6 +22,8 @@ class Direccion_Envio extends CI_Controller {
         // Call the Model constructor
         parent::__construct();
 		
+		$this->output->nocache();
+				
 		//si no hay sesión
 		//manda al usuario a la... página de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
@@ -215,6 +217,7 @@ class Direccion_Envio extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = "Edita los campos que quieras modificar";
 		
+		//$this->output->nocache();
 		//recuperar la información de la dirección
 		if (!$consecutivo && $this->session->userdata("dir_envio")) {
 			$envio_en_sesion = $this->session->userdata("dir_envio");

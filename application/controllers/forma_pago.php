@@ -17,11 +17,16 @@ class Forma_Pago extends CI_Controller {
         //Call the Model constructor
         parent::__construct();
 		
-		$this->load->driver('cache');
-		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-		//echo "exito clean cache: " . $this->cache->clean();
-		$this->cache->clean();
+		$this->output->nocache();
+		
+		/*
+		$this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+		$this->output->set_header('Pragma: no-cache');
+		$this->output->set_header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+		*/
+		//exit();
+		 
 		//si no hay sesión
 		//manda al usuario a la... pagina de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
@@ -57,6 +62,9 @@ class Forma_Pago extends CI_Controller {
 		//cargar vista	
 		$this->cargar_vista('', 'forma_pago', $data);
 		
+		//Se elimina de session por seguridad
+		if ($this->session->userdata('tarjeta'))
+			$this->session->unset_userdata('tarjeta');
 	}
 	
 	/**
@@ -85,10 +93,12 @@ class Forma_Pago extends CI_Controller {
 				$destino = $this->obtener_destino();
 				
 				redirect($destino, 'location', 303);
+				exit();
 			}
 		} else {
 			//ir al listado
 			redirect("forma_pago/listar", "location", 303);
+			exit();
 		}		
 	}
 	
@@ -207,9 +217,11 @@ class Forma_Pago extends CI_Controller {
 							//Redirección
 							if ($tipo == 1)	{
 								redirect("forma_pago/registrar/amex", "location", 303);	//se puede invocar pasando el consecutivo como parámetro
+								exit();
 							} else {
 								//$this->listar("Tarjeta registrada correctamente");
-								redirect("forma_pago/listar/", "location", 303);
+								redirect($destino, "location", 303);
+								exit();
 							}
 						} else {
 							$this->listar("Hubo un error en el registro en el sistema", FALSE);
@@ -237,10 +249,12 @@ class Forma_Pago extends CI_Controller {
 				//exit();
 				
 				if ($tipo == 1)	{
-					redirect("forma_pago/registrar/amex", 'location', 303);	//se puede invocar pasando el consecutivo como parámetro 
+					redirect("forma_pago/registrar/amex", 'location', 303);	//se puede invocar pasando el consecutivo como parámetro
+					exit(); 
 				} else {
 					//$this->listar("Información de la tarjeta capturada correctamente");
-					redirect("forma_pago/listar/", "location", 303);
+					redirect($destino, "location", 303);
+					exit();
 				}
 				//redirect('direccion_envio');
 			}
@@ -306,8 +320,8 @@ class Forma_Pago extends CI_Controller {
 					//Para calcular destino siguiente y actualizxarlo en sesión
 					$destino = $this->obtener_destino();
 					
-					$this->listar("Tarjeta registrada correctamente");
-					//redirect('direccion_envio');
+					//$this->listar("Tarjeta registrada correctamente");
+					redirect($destino, "location", 303);
 				}
 			} else {	//Si hubo errores
 				//vuelve a mostrar la info.
@@ -323,8 +337,9 @@ class Forma_Pago extends CI_Controller {
 	/**
 	 * Méodo para administrar la edición de la tarjeta
 	 */
-	public function editar($tipo = "tc", $consecutivo = 0)	//el consecutivo de la tarjeta
+	public function editar($tipo = "tc", $consecutivo = 0, $back='')	//el consecutivo de la tarjeta
 	{
+		//exit();
 		//echo "tipo: ".$tipo . " con: ".$consecutivo;
 		//La edición de la info. en session no trae un consecutivo => 0
 		$id_cliente = $this->id_cliente;
@@ -376,11 +391,7 @@ class Forma_Pago extends CI_Controller {
 				//lista paises
 				$lista_paises_amex = $this->forma_pago_model->listar_paises_amex();
 				$data['lista_paises_amex'] = $lista_paises_amex;
-				
 			}
-			//var_dump($data['tarjeta_tc']);
-
-			//else redirecciona / sacar
 		} else {
 			//recuperar la información local de la tc, utilizando el consecutivo
 			if ($tipo == 'tc') { 
@@ -397,18 +408,11 @@ class Forma_Pago extends CI_Controller {
 				//Si no hay info de amex en cctc
 				if ($data['tarjeta_amex']->consecutivo_cmsSi == 0)
 					$data['tarjeta_amex']->consecutivo_cmsSi = $consecutivo;
-				//var_dump($data['tarjeta_amex']);
-				
-				//var_dump($data['tarjeta_amex']);
-				//exit();
 			}
 		}
 		
-		//echo "tarjeta".$this->session->userdata("tarjeta");
-		
 		if ($_POST && empty($this->reg_errores)) {
-			//echo "tipo: ".$tipo . " con: ".$consecutivo;
-			//exit();
+			//Se actualizará la tarjeta en BD
 			if ($tipo == 'tc') {
 				$this->editar_tc($consecutivo);
 			} else if ($tipo == 'amex') {
@@ -526,13 +530,26 @@ class Forma_Pago extends CI_Controller {
 				
 				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
 					//si es AMEX
-					redirect('forma_pago/editar/amex/'.$consecutivo, 'location', 303);
+					if (!$redirect) {	//si no requiere redirección
+						$this->session->set_userdata('destino', 'forma_pago/');
+					}
+					
+					//redirect('forma_pago/editar/amex/'.$consecutivo, 'location', 303);
+					$url = site_url().'/forma_pago/editar/amex/'.$consecutivo;
+					header("HTTP/1.1 303 See Other");
+					header("Location: $url");
 				} else {
 					//$this->listar($msg_actualizacion, $redirect);
 					if ($redirect) {
-						redirect($destino, "location", 303);
+						//redirect($destino, "location", 303);
+						$url = site_url().'/'.$destino;
+						header("HTTP/1.1 303 See Other");
+						header("Location: $url");
 					} else {
-						redirect("forma_pago", "location", 303);
+						//redirect("forma_pago", 'location', 303);
+						$url = site_url().'/forma_pago';
+						header("HTTP/1.1 303 See Other");
+						header("Location: $url");
 					}
 				}
 			} else {
@@ -560,13 +577,25 @@ class Forma_Pago extends CI_Controller {
 					$_POST = array();
 					
 					if ($detalle_tarjeta->id_tipo_tarjetaSi == 1)	{
-						redirect('forma_pago/editar/amex/'.$consecutivo, "location", 303);
+						if (!$redirect) {	//si no requiere redirección
+							$this->session->set_userdata('destino', 'forma_pago/');
+						}
+						//redirect('forma_pago/editar/amex/'.$consecutivo, "location", 303);
+						$url = site_url().'/forma_pago/editar/amex/'.$consecutivo;
+						header("HTTP/1.1 303 See Other");
+						header("Location: $url");
 					} else {
 						//$this->listar($msg_actualizacion, $redirect);
 						if ($redirect) {
-							redirect($destino, "location", 303);
+							//redirect($destino, "location", 303);
+							$url = site_url().'/'.$destino;
+							header("HTTP/1.1 303 See Other");
+							header("Location: $url");
 						} else {
-							redirect("forma_pago", "location", 303);
+							//redirect("forma_pago", 'location', 303);
+							$url = site_url().'/forma_pago';
+							header("HTTP/1.1 303 See Other");
+							header("Location: $url");
 						}
 					}
 				} else {
@@ -584,6 +613,7 @@ class Forma_Pago extends CI_Controller {
 	}
 	
 	private function editar_amex($consecutivo = 0) {
+		//exit();
 		$data['title'] = $this->title;
 		$data['subtitle'] = ucfirst('Edicion direccion');
 		
@@ -654,7 +684,11 @@ class Forma_Pago extends CI_Controller {
 				
 				$msg_actualizacion = "Información actualizada";
 				$data['msg_actualizacion'] = $msg_actualizacion;
-				$this->listar($msg_actualizacion);
+				
+				//se tiene que tomar de la session, por si ya se calculó en la edición de la TC
+				$destino = $this->session->userdata('destino');
+				//$this->listar($msg_actualizacion);
+				redirect($destino, 'location', 303);
 				
 			} else {					
 				//actualizar SÓLO en CCTC, si el consecutivo es distinto de 0
@@ -667,9 +701,10 @@ class Forma_Pago extends CI_Controller {
 					$msg_actualizacion = "Información actualizada en el sistema";
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					
-					//por el momento se regresa al listado
-					
-					$this->listar($msg_actualizacion);
+					//se tiene que tomar de la session, por si ya se calculó en la edición de la TC
+					$destino = $this->session->userdata('destino');	
+					//$this->listar($msg_actualizacion);
+					redirect($destino, 'location', 302);
 				} else {
 					$data['msg_actualizacion'] = "Error de actualización de la dirección en en el servidor";
 					//echo "Error de actualización hacia CCTC.<br/>";	//redirect

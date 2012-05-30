@@ -18,10 +18,27 @@ class Login extends CI_Controller {
         // Call the Model constructor
         parent::__construct();
 		
+		/*		
+		$this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+		$this->output->set_header('Pragma: no-cache');
+		$this->output->set_header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+		*/
+		$this->output->nocache();
+		
+		if ($this->session->userdata('destino')) {
+			//$this->session->userdata('destino');
+			redirect($this->session->userdata('destino'), 'location', 303);
+			exit();
+		}		
+			//header("Location: $destino");
+		
+		
+		/*
 		$this->load->driver('cache');
 		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-		$this->cache->clean();
+		$this->cache->clean();*/
 		//echo "exito clean cache: " . $this->cache->clean();
 		
 		//cargar el modelo en el constructor
@@ -226,6 +243,19 @@ class Login extends CI_Controller {
 		$this->load->view('templates/header', $data);		
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
+	}
+	
+	/*
+	 * Verifica la sesión del usuario
+	 * 
+	 * */
+	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') {
+		if (!$this->session->userdata($revisar)) {
+			//$url = $protocolo . BASE_URL . $destination; // Define the URL.
+			$url = $this->config->item('base_url') . $destino; // Define the URL.
+			header("Location: $url");
+			exit(); // Quit the script.
+		}
 	}
 }
 

@@ -3,7 +3,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta charset="utf-8">
     
-    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv='Cache-Control' content='no-cache'/>
+    <meta http-equiv='Pragma' content='no-cache'/>
+    <meta http-equiv='Expires' content='Sat, 26 Jul 1997 05:00:00 GMT' />
+    
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title><?php echo $title ?> - CMS GEX</title>
     <meta name="description" content="">
@@ -20,11 +23,14 @@
 		{ 
 			window.history.forward(1);
 		}
+		function noHistory() {
+			window.location.replace(document.URL);
+		}
 		//onLoad="noBack();"
 	</script>	
 	<?php if (isset($script)) echo $script; ?>	
 </head>
-<body >
+<body>
     <div id="header-container">
         <header>
             <img src="<?php echo base_url();?>images/logo_expansion.gif" alt="logo gex" width="52" height="52"/>            

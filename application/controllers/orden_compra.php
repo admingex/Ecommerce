@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include ('dtos/Tipos_Tarjetas.php');
+include('dtos/Tipos_Tarjetas.php');
 include('util/Pago_Express.php');
 include('api.php');
 
@@ -44,12 +44,13 @@ class Orden_Compra extends CI_Controller {
         // Call the Model constructor
         parent::__construct();
 		
-		$this->load->driver('cache');
-		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-		//echo "exito clean cache: " . $this->cache->clean();
-		$this->cache->clean();
-		
+		$this->output->nocache();
+		/*
+		$this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+		$this->output->set_header('Pragma: no-cache');
+		$this->output->set_header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+		*/
 		//si no hay sesión
 		//manda al usuario a la... pagina de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
@@ -183,6 +184,9 @@ class Orden_Compra extends CI_Controller {
 				}
 			} 
 			//Considerar el Depósito Bancario como forma de pago
+		} else if (empty($tarjeta)) {
+			$destino = $this->obtener_destino();
+			redirect($destino, 'location', 302);
 		}
 		
 		//dir_envío
@@ -726,7 +730,37 @@ class Orden_Compra extends CI_Controller {
 		//return ($email && mail($email, $asunto, $mensaje));
 		return mail($email, $asunto, $mensaje);
 	}
-	 
+	
+	/**
+	 * Se enecarga de definir la navegación de la plataforma de acuerdo a la actualización de las formas de pago
+	 */
+	private function obtener_destino()
+	{
+		//Inicializar el destino con un valor por defecto.
+		$destino = $this->session->userdata('destino') ? $this->session->userdata('destino') : "forma_pago";
+		
+		if ($this->session->userdata('tarjeta') || $this->session->userdata('deposito')) {	//tiene forma de pago
+			//actualizar valores en sesión
+			if ($this->session->userdata('requiere_envio')) {
+				//Si hay dirección de envío seleccionada...
+				if ($this->session->userdata('dir_envio')) {	
+					$destino = "orden_compra";
+				} else {
+					$destino = "direccion_envio";
+				}
+			} else {
+				//no requiere dirección de envío
+				$destino = "orden_compra";
+			}
+		} else {	//no tiene forma de pago
+			$destino =  "forma_pago";
+		}
+		
+		//Actualizar en sesión
+		$this->session->set_userdata('destino', $destino);
+		
+		return $destino;
+	}
 	
 	/**
 	 * Carga la vista indicada ubicada en la carpeta/folder y se le pasa la información
