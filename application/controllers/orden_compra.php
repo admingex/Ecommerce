@@ -78,24 +78,12 @@ class Orden_Compra extends CI_Controller {
 		*/
     }
 
-	public function index() {			
-		if ($_POST) {
-			if (array_key_exists('razon_social_seleccionada', $_POST)) {
-				$this->session->set_userdata('razon_social', $_POST['razon_social_seleccionada']);
-				$this->session->set_userdata('requiere_factura', 'si');						
-			}						
-		} else if ($this->session->userdata('id_rs')) {
-			$id_rs=$this->session->userdata('id_rs');
-			$this->session->set_userdata('razon_social', $id_rs);		
-			$this->session->set_userdata('requiere_factura', 'si');					 		
-		}
+	public function index() {					
 		
 		if ($_POST) {
 			if (array_key_exists('direccion_selecionada', $_POST))  {
 				$cte = $this->id_cliente;
-				$rs = $this->session->userdata('id_rs');
-								
-				$this->session->set_userdata('razon_social', $rs);				
+				$rs = $this->session->userdata('razon_social');																
 				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);
 				
 				$ds = $this->session->userdata('direccion_f');
