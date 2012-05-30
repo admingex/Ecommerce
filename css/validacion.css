@@ -5,7 +5,7 @@
 	font-weight: bold;   
 	height: 19px;		
 	width: 242px;
-	background: #CA0002 url('../images/css-sprite_Alertaalerta.png') no-repeat;
+	background: transparent url('../images/css-sprite_Alertaalerta_01.png') no-repeat;
 	background-position: -7px -5px;			             
     position: absolute;
     z-index: 2; 
@@ -20,7 +20,7 @@
 	font-weight: bold;   
 	height: 30px;			
 	width: 248px;
-	background: #CA0002 url('../images/css-sprite_Alertaalerta2.png') no-repeat;
+	background: transparent url('../images/css-sprite_Alertaalerta2_02.png') no-repeat;
 	background-position: -7px -2px;			             
     position: absolute;
     z-index: 2; 

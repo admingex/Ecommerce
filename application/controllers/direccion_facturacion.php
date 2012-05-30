@@ -62,17 +62,20 @@ class Direccion_Facturacion extends CI_Controller {
 		if ($_POST)	{	//si hay parámetros del formulario								
 			$form_values = array();	//alojará los datos previos a la inserción	
 			$form_values = $this->get_datos_rs();			
-																								
-			if(empty($this->reg_errores)){								   															
-					if($this->direccion_facturacion_model->insertar_rs($form_values['direccion'])){
-						$id_rs = $this->db->insert_id();
-						$datars=array(
-							'id_rs'=>$id_rs							
-						);						
-						$this->session->set_userdata($datars);
-						$this->session->userdata('id_rs');
-						redirect('direccion_facturacion/registrar_direccion');																	
-					}					 																							
+			$consecutivo_rs= $this->direccion_facturacion_model->get_consecutivo_rs($id_cliente);																					
+			if(empty($this->reg_errores)){																												   															
+			    $id_rs=$this->direccion_facturacion_model->insertar_rs($form_values['direccion']);															
+				$datars=array(
+					'id_rs'=>$id_rs							
+				);						
+				$this->session->set_userdata($datars);
+				$this->session->userdata('id_rs');
+				if(array_key_exists('chk_default', $_POST) || $consecutivo_rs == 0) {
+							$this->direccion_facturacion_model->establecer_predeterminado_rs($id_cliente, $id_rs);	
+							$form_values['direccion']['id_estatusSi'] = 3;
+				}	
+				redirect('direccion_facturacion/registrar_direccion', 'location', 303);																										
+										 																							
 			}	
 			else{
 				$data['reg_errores'] = $this->reg_errores;				
@@ -85,13 +88,26 @@ class Direccion_Facturacion extends CI_Controller {
 	}
 
 	public function registrar_direccion($nueva=""){
+						
 		if($nueva=="nueva"){
 			$data['nueva_direccion'] = TRUE;
 		}				
 		$data['registrar_direccion'] = TRUE;		//para indicar que se debe mostrar formulario de registro		
-					
+		
+		if ($_POST) {
+			if (array_key_exists('razon_social_seleccionada', $_POST)) {
+				echo "aqui";
+				$this->session->set_userdata('razon_social', $_POST['razon_social_seleccionada']);
+				$this->session->set_userdata('requiere_factura', 'si');						
+			}						
+		} 
+		else if ($this->session->userdata('id_rs')!=""){			
+			$this->session->set_userdata('razon_social', $this->session->userdata('id_rs'));		
+			$this->session->set_userdata('requiere_factura', 'si');					 		
+		}
 										
-		$id_rs=$this->session->userdata('id_rs');
+		$id_rs=$this->session->userdata('razon_social');
+		
 		$id_cliente = $this->id_cliente;	
 		$data['title']=$this->title;
 		$data['subtitle'] = "Selecciona una direcci&oacute;n de facturaci&oacute;n";	
@@ -110,8 +126,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_facturacion.js'> </script>";
 		$data['script'] = $script_file;
 		
-		if ($_POST)	{	//si hay parámetros del formulario					
-				
+		if ($_POST)	{	//si hay parámetros del formulario									
 			$form_values = array();	//alojará los datos previos a la inserción	
 			$form_values = $this->get_datos_direccion();			
 			$consecutivo=$this->direccion_facturacion_model->get_consecutivo($id_cliente);			
@@ -119,8 +134,7 @@ class Direccion_Facturacion extends CI_Controller {
 			$form_values['direccion']['id_consecutivoSi'] = $consecutivo + 1;		//cambió
 			$form_values['direccion']['address_type'] = self::$TIPO_DIR['BUSINESS'];		//address_type			
 			
-			if(empty($this->reg_errores)){
-				
+			if(empty($this->reg_errores)){				
 			    if (isset($form_values['direccion']['id_estatusSi'])) {
 					if($this->direccion_facturacion_model->existe_direccion($form_values['direccion'])) {
 						//$this->listar("Direcci&oacute;n previamente registrada.", FALSE);
@@ -134,8 +148,7 @@ class Direccion_Facturacion extends CI_Controller {
 							$datadire=array(
 								'id_dir'=>$form_values['direccion']['id_consecutivoSi']							
 							);						
-							$this->session->set_userdata($datadire);						
-													
+							$this->session->set_userdata($datadire);																			
 							//cargar en sesion		
 							$this->load->helper('date');
 							$fecha=mdate('%Y/%m/%d',time());
@@ -395,7 +408,8 @@ class Direccion_Facturacion extends CI_Controller {
 		}
 		else{
 			$datos['direccion']['id_estatusSi'] = 1;	//indica que será la razon social predeterminada
-		}		
+		}			
+		$datos['direccion']['id_clienteIn'] = $this->id_cliente;			
 		return $datos;
 	}
 	

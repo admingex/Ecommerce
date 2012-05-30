@@ -13,7 +13,7 @@
 		id_ant=id;					
 	}
 </script>	
-	<form id="form_direccion_facturacion" action="<?php echo site_url('orden_compra'); ?>/" method="POST">
+	<form id="form_direccion_facturacion" action="<?php echo site_url('direccion_facturacion/registrar_direccion'); ?>/" method="POST">
 		<table cellpadding="0" cellspacing="0" width="100%">
 			<thead>
 				<tr>
@@ -40,8 +40,8 @@
 						$check = "";
 						$class = "";
 						$classsi = "class='radio_no_selected'";
-						$value_r = "value='".$direccion->id_razonSocialIn."'";
-						if ($direccion->id_estatusSi==3){	//$default
+						$value_r = "value='".$direccion['id_razonSocialIn']."'";
+						if ($direccion['id_estatusSi']==3){	//$default
 							$check = "checked='true'";
 							$classsi = "class='radio_selected'";																			
 							$class="<br /><span style='color: #D81830; height: 20px; font-size: 11px; font-family: italic'>pago express</span>";
@@ -49,26 +49,26 @@
 			?>
 				<tr>
 					<td>
-						<input type="radio" id="radio<?php echo $direccion->id_razonSocialIn; ?>" name="razon_social_seleccionada" <?php echo $check." ".$value_r;?>/>
-						<div id="div<?php echo $direccion->id_razonSocialIn; ?>" <?php echo $classsi;?> onclick="cambia_boton(<?php echo $direccion->id_razonSocialIn; ?>)">&nbsp;					
+						<input type="radio" id="radio<?php echo $direccion['id_razonSocialIn']; ?>" name="razon_social_seleccionada" <?php echo $check." ".$value_r;?>/>
+						<div id="div<?php echo $direccion['id_razonSocialIn']; ?>" <?php echo $classsi;?> onclick="cambia_boton(<?php echo $direccion['id_razonSocialIn']; ?>)">&nbsp;					
 						</div>						
 					</td>
 					<td class="item-lista borde-derecho tam15">						
-						<?php echo $direccion->company; ?>	
+						<?php echo $direccion['company']; ?>	
 						<?php echo $class;?>										
 					</td>
 					<td class="item-lista borde-derecho">
-						<?php echo "&nbsp;".$direccion->tax_id_number; ?>	
+						<?php echo "&nbsp;".$direccion['tax_id_number']; ?>	
 					</td>
-					<td class="item-lista borde-derecho"><?php echo $direccion->email;?></td>					
+					<td class="item-lista borde-derecho"><?php echo $direccion['email'];?></td>					
 					<td class="item-lista borde-derecho">
-						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_rs/'.$direccion->id_razonSocialIn; ?>" title="editar">editar</a>
-						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar_rs/'.$direccion->id_razonSocialIn; ?>" title="eliminar">eliminar</a>
+						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_rs/'.$direccion['id_razonSocialIn']; ?>" title="editar">editar</a>
+						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar_rs/'.$direccion['id_razonSocialIn']; ?>" title="eliminar">eliminar</a>
 					</td>
-					<td align="center" id="<?php echo $direccion->id_razonSocialIn ?>">												
+					<td align="center" id="<?php echo $direccion['id_razonSocialIn'] ?>" width="100px">												
 						<?php 
-						if ($direccion->id_estatusSi==3){
-							echo '<script>cambia_boton('.$direccion->id_razonSocialIn.')</script>';
+						if ($direccion['id_estatusSi']==3){
+							echo "<script>cambia_boton(".$direccion['id_razonSocialIn'].")</script>";
 						}
 						?>						
 					</td>

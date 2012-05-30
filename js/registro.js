@@ -47,6 +47,7 @@ $(document).ready(function() {
 	});
 	$("#cambiar_password").click(function() {		
 		$(".error").remove();
+		$(".error2").remove();
         if($("#password_temporal").val()==""){        	
             $("#password_temporal").focus().after("<span class='error'>Ingresa una clave temporal</span>");            
             return false;            
