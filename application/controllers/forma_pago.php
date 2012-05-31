@@ -93,12 +93,12 @@ class Forma_Pago extends CI_Controller {
 				$destino = $this->obtener_destino();
 				
 				redirect($destino, 'location', 303);
-				exit();
+				//exit();
 			}
 		} else {
 			//ir al listado
 			redirect("forma_pago/listar", "location", 303);
-			exit();
+			//exit();
 		}		
 	}
 	
@@ -537,19 +537,19 @@ class Forma_Pago extends CI_Controller {
 					//redirect('forma_pago/editar/amex/'.$consecutivo, 'location', 303);
 					$url = site_url().'/forma_pago/editar/amex/'.$consecutivo;
 					header("HTTP/1.1 303 See Other");
-					header("Location: $url");
+					header("Location: $url", TRUE, 303);
 				} else {
 					//$this->listar($msg_actualizacion, $redirect);
 					if ($redirect) {
 						//redirect($destino, "location", 303);
 						$url = site_url().'/'.$destino;
 						header("HTTP/1.1 303 See Other");
-						header("Location: $url");
+						header("Location: $url", TRUE, 303);
 					} else {
 						//redirect("forma_pago", 'location', 303);
 						$url = site_url().'/forma_pago';
 						header("HTTP/1.1 303 See Other");
-						header("Location: $url");
+						header("Location: $url", TRUE, 303);
 					}
 				}
 			} else {
@@ -583,19 +583,19 @@ class Forma_Pago extends CI_Controller {
 						//redirect('forma_pago/editar/amex/'.$consecutivo, "location", 303);
 						$url = site_url().'/forma_pago/editar/amex/'.$consecutivo;
 						header("HTTP/1.1 303 See Other");
-						header("Location: $url");
+						header("Location: $url", TRUE, 303);
 					} else {
 						//$this->listar($msg_actualizacion, $redirect);
 						if ($redirect) {
 							//redirect($destino, "location", 303);
 							$url = site_url().'/'.$destino;
 							header("HTTP/1.1 303 See Other");
-							header("Location: $url");
+							header("Location: $url", TRUE, 303);
 						} else {
 							//redirect("forma_pago", 'location', 303);
 							$url = site_url().'/forma_pago';
 							header("HTTP/1.1 303 See Other");
-							header("Location: $url");
+							header("Location: $url", TRUE, 303);
 						}
 					}
 				} else {

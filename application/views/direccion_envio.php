@@ -68,6 +68,7 @@
 							?>
 							$( this ).dialog( "close" );
 							window.location.href = "<?php echo $url_redirect; ?>";
+							//window.location.replace("<?php echo $url_redirect; ?>");
 						}
 					}
 				});
