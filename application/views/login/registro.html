@@ -6,7 +6,7 @@
 		</td>
 		<td>
 			<input type="text" name="txt_nombre" id="txt_nombre" 
-				value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);?>"/>
+				value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);?>" />
 			<?php if(isset($registro_errores['txt_nombre'])) echo "<span class='error'>".$registro_errores['txt_nombre']."";?></span>
 		</td>
 	</tr>	
@@ -16,7 +16,7 @@
 		</td>
 		<td>
 			<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" 
-				value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);?>"/>
+				value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);?>" />
 			<?php if(isset($registro_errores['txt_apellidoPaterno'])) echo "<span class='error'>".$registro_errores['txt_apellidoPaterno']."";?></span>
 		</td>
 	</tr>	
@@ -26,7 +26,7 @@
 		</td>
 		<td>
 			<input type="text" name="txt_apellidoMaterno" id="txt_apellidoMaterno" 
-				value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']);?>"/>
+				value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']);?>" />
 			<?php if(isset($registro_errores['txt_apellidoMaterno'])) echo "<span class='error'>".$registro_errores['txt_apellidoMaterno']."</span>";?>
 		</td>
 	</tr>							
@@ -36,7 +36,7 @@
 		</td>
 		<td>
 			<input type="text" name="email" id="email" maxlength="60" 
-				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
+				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>" size="35"/>
 			<?php if((isset($_POST['email'])&& isset($_POST['txt_nombre']))&&(isset($registro_errores['email']))) echo "<span class='error2'>".$registro_errores['email']."</span>";?>
 		</td>
 	</tr>

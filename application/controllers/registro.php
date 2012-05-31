@@ -97,11 +97,9 @@ class Registro extends CI_Controller {
 				$this->registro_errores['txt_apellidoPaterno'] = 'Por favor ingresa tu apellido paterno';
 			}
 		}		
-		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-			echo "qui";
+		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {			
 			$datos['email'] = htmlspecialchars(trim($_POST['email']));
-		} else {
-			echo "jj";
+		} else {			
 			$this->registro_errores['email'] = 'Por favor ingresa un correo electrónico <br />válido. Ejemplo: nombre@dominio.mx';
 		}
 		if(isset($_POST['email'])&& isset($_POST['password'])){
@@ -180,7 +178,7 @@ private function valida_password($correo, $pass){
 			$this->registro_errores['password'] = 'deben ser numero y letras solamente';			
 		}
 		else{
-			if(stristr($pass,$cadlogin[0])==""){
+			if($cadlogin[0]==$pass){
 				$this->registro_errores['password'] = 'La contraseña no debe contener una parte del correo electrónico ingresado.';							
 			}					
 			else{

@@ -21,7 +21,7 @@
 				<td class="label">Direcciones de env&iacute;o guardadas</td>
 				<td>
 					<select onchange="llena_formulario(this.value)">
-						<option value="0">Elige una opcion</option>
+						<option value=" , , , , , , ">Elige una opcion</option>
 						<?php
 						foreach($dir_envio->result_array() as $denvio) {
 							echo "<option value='".$denvio['calle'].",".$denvio['num_ext'].",".$denvio['num_int'].",".$denvio['cp'].",".$denvio['estado'].",".$denvio['ciudad'].",".$denvio['colonia']."'>".$denvio['calle']."&nbsp;".$denvio['num_ext']."&nbsp;".$denvio['num_int'].",&nbsp;".$denvio['cp'].",&nbsp;".$denvio['estado']."&nbsp;".$denvio['ciudad']."&nbsp;".$denvio['colonia']."</option>";

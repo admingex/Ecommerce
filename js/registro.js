@@ -84,8 +84,8 @@ function valida_password(acc,pass){
 			return false;			
 		}		
 		else{			
-			if((pass.indexOf(cadlogin)!=-1)){
-				$("#password").focus().after("<span class='error'>La contraseña no debe contener una parte del correo electrónico ingresado</span>");
+			if((pass==cadlogin)){
+				$("#password").focus().after("<span class='error2'>La contraseña no debe contener una parte del correo electrónico ingresado</span>");
 				return false;				
 			}
 			else{				

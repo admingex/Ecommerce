@@ -83,24 +83,26 @@ class Orden_Compra extends CI_Controller {
 		if ($_POST) {
 			if (array_key_exists('direccion_selecionada', $_POST))  {
 				$cte = $this->id_cliente;
-				$rs = $this->session->userdata('razon_social');																
-				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);
-				
+				$rs = $this->session->userdata('razon_social');								
+												
+				$this->session->set_userdata('direccion_f', $_POST['direccion_selecionada']);				
 				$ds = $this->session->userdata('direccion_f');
-				$rbr = $this->direccion_facturacion_model->busca_relacion($cte, $rs, $ds);
 				
-				if ($rbr->num_rows() == 0) {					
-					$this->load->helper('date');
-					$fecha = mdate('%Y/%m/%d',time());
-					$data_dir = array(
-                   		'id_clienteIn'  => $cte,
-                   		'id_consecutivoSi' => $ds,
-                   		'id_razonSocialIn' => $rs,
-                   		'fecha_registroDt' => $fecha                    				                    		
-               		);																										
-					$this->direccion_facturacion_model->insertar_rs_direccion($data_dir);		
-					$this->session->set_userdata('requiere_factura', 'si');	
-				}																			
+				if($rs!="" && $ds != ""){
+					$rbr = $this->direccion_facturacion_model->busca_relacion($cte, $rs, $ds);				
+					if ($rbr->num_rows() == 0) {					
+						$this->load->helper('date');
+						$fecha = mdate('%Y/%m/%d',time());
+						$data_dir = array(
+                   			'id_clienteIn'  => $cte,
+                   			'id_consecutivoSi' => $ds,
+                   			'id_razonSocialIn' => $rs,
+                   			'fecha_registroDt' => $fecha                    				                    		
+               			);																										
+						$this->direccion_facturacion_model->insertar_rs_direccion($data_dir);		
+						$this->session->set_userdata('requiere_factura', 'si');	
+					}	
+				}																							
 			} else {
 			$id_cliente = $this->id_cliente;
 			$rs = $this->session->userdata('razon_social');
