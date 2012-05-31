@@ -94,6 +94,9 @@ class Direccion_Envio extends CI_Controller {
 			$data['lista_direcciones'] = $this->direccion_envio_model->listar_direcciones($this->id_cliente);
 			//cargar vista	
 			$this->cargar_vista('', 'direccion_envio', $data);
+			//se puede editar
+			$this->session->set_userdata('ed', hash("sha256", "editar_direccion".$this->session->userdata('email')));
+			echo "edit: ". $this->session->userdata('ed');
 		}
 	}
 	
@@ -209,6 +212,12 @@ class Direccion_Envio extends CI_Controller {
 	 */
 	public function editar($consecutivo = 0)	//el consecutivo de la direccion
 	{
+		/*if (!$_GET) {
+			//exit();
+		} else {
+			echo var_dump($_GET);
+			exit();
+		}*/
 		$id_cliente = $this->id_cliente;
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'></script>";
