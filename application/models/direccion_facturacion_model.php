@@ -242,4 +242,25 @@ class Direccion_Facturacion_model extends CI_Model {
 		$row_res = $res->row();
 		return $row_res;
 	}
+	
+	function get_pago_express_rs($id_cliente)
+	{
+		$this->db->select('id_razonSocialIn as consecutivo');
+		$res = $this->db->get_where('CMS_IntRazonSocial',
+								array('id_clienteIn' => $id_cliente,
+										'id_estatusSi' => 3));//self::$CAT_ESTATUS['DEFAULT']));
+
+		if ($res->num_rows() == 0) {
+			//echo "no hay direccion para pago express: ";
+			
+			//entonces recupera la primer tarjeta activa
+			$this->db->select_min('id_razonSocialIn', 'consecutivo');
+			$res = $this->db->get_where('CMS_IntRazonSocial',
+								array('id_clienteIn' => $id_cliente,
+										'id_estatusSi' => 1));//self::$CAT_ESTATUS['HABILITADA']));
+		}
+
+		$row_res = $res->row();
+		return $row_res;
+	}
 }

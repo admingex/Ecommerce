@@ -733,14 +733,24 @@ class Orden_Compra extends CI_Controller {
 			//actualizar valores en sesión
 			if ($this->session->userdata('requiere_envio')) {
 				//Si hay dirección de envío seleccionada...
-				if ($this->session->userdata('dir_envio')) {	
-					$destino = "orden_compra";
+				if ($this->session->userdata('dir_envio')) {
+					//Si hay dirección de facturación Y razón Social
+					if ($this->session->userdata('direccion_f') && $this->session->userdata('razon_social')) {
+						$destino = "orden_compra";
+					} else {
+						$destino = "direccion_facturacion";
+					}
 				} else {
 					$destino = "direccion_envio";
 				}
 			} else {
 				//no requiere dirección de envío
-				$destino = "orden_compra";
+				//Si hay dirección de facturación Y razón Social
+				if ($this->session->userdata('direccion_f') && $this->session->userdata('razon_social')) {
+					$destino = "orden_compra";
+				} else {
+					$destino = "direccion_facturacion";
+				}
 			}
 		} else {	//no tiene forma de pago
 			$destino =  "forma_pago";

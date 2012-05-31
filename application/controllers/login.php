@@ -47,6 +47,7 @@ class Login extends CI_Controller {
 		$this->load->model('forma_pago_model');
 		$this->load->model('direccion_envio_model');
 		$this->load->model('direccion_facturacion_model');
+		
 		$this->api = new Api();
     }
 	
@@ -177,9 +178,10 @@ class Login extends CI_Controller {
 			
 			//dirección de facturación queda excluida de esta validación, se preguntará en el resumen de la orden
 			$dir_facturacion_express = $this->direccion_facturacion_model->get_pago_express($id_cliente);	//devolverá un obj
+			$razon_social_express = $this->direccion_facturacion_model->get_pago_express_rs($id_cliente);	//devolverá un obj
 			
 			//se crea el objeto con la informción del pago exprés, a través de los consecutivos
-			$pago_express = new Pago_Express($forma_pago_express->consecutivo, $dir_envio_express->consecutivo, $dir_facturacion_express->consecutivo);
+			$pago_express = new Pago_Express($forma_pago_express->consecutivo, $dir_envio_express->consecutivo, $dir_facturacion_express->consecutivo, $razon_social_express->consecutivo);
 			
 			//revisar si requiere forma de envío
 			$requiere_envio = FALSE;		
@@ -211,6 +213,13 @@ class Login extends CI_Controller {
 				//$this->session->set_userdata('dir_envio', $pago_express->get_dir_envio());
 				$this->session->set_userdata('dir_envio', $dir_envio_express->consecutivo);
 			}
+			if (array_key_exists('dir_facturacion', $flujo_pago_express) && array_key_exists('razon_social', $flujo_pago_express)) {
+				$this->session->set_userdata('direccion_f', $dir_facturacion_express->consecutivo);
+				$this->session->set_userdata('razon_social', $razon_social_express->consecutivo);
+				$this->session->set_userdata('requiere_factura', 'si');
+				
+			}
+			
 			
 			//**Obsoleto**//
 			//se coloca el objeto en sesión para ocuparlo en los demás controladores
