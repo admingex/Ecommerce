@@ -1020,12 +1020,12 @@ class Forma_Pago extends CI_Controller {
 		//echo "tipo : ". $tipo;
 		//no se usa la funcion de escape '$this->db->escape()', por que en la inserción ya se incluye 
 		if($_POST) {
-			if(array_key_exists('sel_tipo_tarjeta', $_POST)) {
+			if (array_key_exists('sel_tipo_tarjeta', $_POST)) {
 				$datos['tc']['id_tipo_tarjetaSi'] = $_POST['sel_tipo_tarjeta'];
 				$tipo = $_POST['sel_tipo_tarjeta'];
 			}
 			
-			if(array_key_exists('txt_numeroTarjeta', $_POST)) {
+			if (array_key_exists('txt_numeroTarjeta', $_POST)) {
 				if ($this->validar_tarjeta($datos['tc']['id_tipo_tarjetaSi'], trim($_POST['txt_numeroTarjeta']))) { 
 					$datos['tc']['terminacion_tarjetaVc'] = trim($_POST['txt_numeroTarjeta']);	//substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
 				} else {
@@ -1033,7 +1033,7 @@ class Forma_Pago extends CI_Controller {
 				}
 			}
 			if (array_key_exists('txt_nombre', $_POST)) {
-				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i', $_POST['txt_nombre'])) { 
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{1,30}$/i', $_POST['txt_nombre'])) { 
 					$datos['tc']['nombre_titularVc'] = $_POST['txt_nombre'];
 					if ($tipo == 1) {
 						$datos['amex']['nombre_titularVc'] = $_POST['txt_nombre'];
@@ -1043,7 +1043,7 @@ class Forma_Pago extends CI_Controller {
 				}
 			}
 			if (array_key_exists('txt_apellidoPaterno', $_POST)) {
-				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i', $_POST['txt_apellidoPaterno'])) { 
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{1,30}$/i', $_POST['txt_apellidoPaterno'])) { 
 					$datos['tc']['apellidoP_titularVc'] = $_POST['txt_apellidoPaterno'];
 					if ($tipo == 1) {
 						$datos['amex']['apellidoP_titularVc'] = $_POST['txt_apellidoPaterno'];
@@ -1053,7 +1053,7 @@ class Forma_Pago extends CI_Controller {
 				}
 			}
 			if (array_key_exists('txt_apellidoMaterno', $_POST) && !empty($_POST['txt_apellidoMaterno'])) {
-				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i', $_POST['txt_apellidoMaterno'])) {
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{1,30}$/i', $_POST['txt_apellidoMaterno'])) {
 					$datos['tc']['apellidoM_titularVc'] = $_POST['txt_apellidoMaterno'];
 					if ($tipo == 1) {	//Amex
 						$datos['amex']['apellidoM_titularVc'] = $_POST['txt_apellidoMaterno'];
@@ -1089,14 +1089,14 @@ class Forma_Pago extends CI_Controller {
 			}
 			
 			//AMEX
-			if(array_key_exists('txt_calle', $_POST)) {
+			if (array_key_exists('txt_calle', $_POST)) {
 				if(preg_match('/^[A-Z0-9 \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_calle'])) {
 					$datos['amex']['calle'] = $_POST['txt_calle'];
 				} else {
 					$this->reg_errores['txt_calle'] = 'Ingresa tu calle y n&uacute;mero correctamente';
 				}
 			}
-			if(array_key_exists('txt_cp', $_POST)) {
+			if (array_key_exists('txt_cp', $_POST)) {
 				//regex usada en js
 				if(preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['txt_cp'])) {
 					$datos['amex']['codigo_postal'] = $_POST['txt_cp'];
@@ -1104,14 +1104,14 @@ class Forma_Pago extends CI_Controller {
 					$this->reg_errores['txt_cp'] = 'Ingresa tu c&oacute;digo postal correctamente';
 				}
 			}
-			if(array_key_exists('txt_ciudad', $_POST)) {
+			if (array_key_exists('txt_ciudad', $_POST)) {
 				if(preg_match('/^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_ciudad'])) {
 					$datos['amex']['ciudad'] = $_POST['txt_ciudad'];
 				} else {
 					$this->reg_errores['txt_ciudad'] = 'Ingresa tu ciudad correctamente';
 				}
 			}
-			if(array_key_exists('txt_estado', $_POST)) {
+			if (array_key_exists('txt_estado', $_POST)) {
 				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_estado'])) {
 					$datos['amex']['estado'] = $_POST['txt_estado'];
 				} else {

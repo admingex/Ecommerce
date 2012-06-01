@@ -119,6 +119,18 @@ class Pago_Express {
 			}
 			//Para la facturación
 		} else {	//no tiene forma de pago
+			//se revisa la parte de dirección de envío
+			if ($this->requiere_envio) {
+				if ($this->get_dir_envio()) {
+					//poner en sesion y pasar a la orden
+					$flujo_pago_express['dir_envio'] = $this->get_dir_envio();
+				}
+			}
+			//se revisa la parte de dirección de facturación
+			if ($this->get_dir_facturacion() && $this->get_razon_social()) {
+					$flujo_pago_express['dir_facturacion'] = $this->get_dir_facturacion();
+					$flujo_pago_express['razon_social'] = $this->get_dir_facturacion();
+			}
 			
 			$flujo_pago_express['destino'] = "forma_pago";
 			$this->destino =  "forma_pago";

@@ -96,7 +96,8 @@ class Direccion_Envio extends CI_Controller {
 			$this->cargar_vista('', 'direccion_envio', $data);
 			//se puede editar
 			$this->session->set_userdata('ed', hash("sha256", "editar_direccion".$this->session->userdata('email')));
-			echo "edit: ". $this->session->userdata('ed');
+			//.strlen($this->session->userdata('ed')) //son 64
+			//echo "edit: ".$this->session->userdata('ed');
 		}
 	}
 	
