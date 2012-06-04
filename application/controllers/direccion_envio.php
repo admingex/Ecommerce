@@ -371,7 +371,7 @@ class Direccion_Envio extends CI_Controller {
 	/**
 	 * Se enecarga de definir la navegación de la plataforma de acuerdo a la actualización de las formas de pago
 	 */
-	private function obtener_destino() 
+	private function obtener_destino()
 	{
 		//Inicializar el destino con un valor por defecto.
 		$destino = $this->session->userdata('destino') ? $this->session->userdata('destino') : "forma_pago";
@@ -379,25 +379,32 @@ class Direccion_Envio extends CI_Controller {
 		if ($this->session->userdata('tarjeta') || $this->session->userdata('deposito')) {	//tiene forma de pago
 			//actualizar valores en sesión
 			if ($this->session->userdata('requiere_envio')) {
-				//Si hay dirección de envío seleccionada...
+				//Si hay dirección de envío seleccionada
 				if ($this->session->userdata('dir_envio')) {
-					//Si hay dirección de facturación Y razón Social
+					//Si hay dirección de facturación Y razón social
 					if ($this->session->userdata('direccion_f') && $this->session->userdata('razon_social')) {
 						$destino = "orden_compra";
-					} else {
-						$destino = "direccion_facturacion";
+					} else {	//NO dir. facturación
+						if ($this->direccion_envio_model->existe_compra($this->id_cliente)) {	//compra
+							$destino = "orden_compra";
+						} else {
+							$destino = "direccion_facturacion";
+						}						
 					}
 				} else {
 					$destino = "direccion_envio";
 				}
 			} else {
-				//no requiere dirección de envío
-				//Si hay dirección de facturación Y razón Social
+				//Si hay dirección de facturación Y razón social
 				if ($this->session->userdata('direccion_f') && $this->session->userdata('razon_social')) {
 					$destino = "orden_compra";
-				} else {
-					$destino = "direccion_facturacion";
-				}
+				} else {	//NO dir. facturación
+					if ($this->forma_pago_model->existe_compra($this->id_cliente)) {	//compra
+						$destino = "orden_compra";
+					} else {
+						$destino = "direccion_facturacion";
+					}						
+				} 
 			}
 		} else {	//no tiene forma de pago
 			$destino =  "forma_pago";

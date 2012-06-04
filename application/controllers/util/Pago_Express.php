@@ -92,12 +92,15 @@ class Pago_Express {
 						$flujo_pago_express['dir_facturacion'] = $this->get_dir_facturacion();
 						$flujo_pago_express['razon_social'] = $this->get_dir_facturacion();
 						
-						$flujo_pago_express['destino'] = "orden_compra";
-						$this->destino = "orden_compra";
-					} else {
+						//$flujo_pago_express['destino'] = "orden_compra";
+						//$this->destino = "orden_compra";
+					} /*else {
 						$flujo_pago_express['destino'] = "direccion_facturacion";
 						$this->destino = "direccion_facturacion";
-					}
+					}*/
+					
+					$flujo_pago_express['destino'] = "orden_compra";
+					$this->destino = "orden_compra";
 									
 				} else {
 					$flujo_pago_express['destino'] = "direccion_envio";
@@ -110,12 +113,15 @@ class Pago_Express {
 					$flujo_pago_express['dir_facturacion'] = $this->get_dir_facturacion();
 					$flujo_pago_express['razon_social'] = $this->get_dir_facturacion();
 				
-					$flujo_pago_express['destino'] = "orden_compra";
-					$this->destino = "orden_compra";
-				} else {
+					//$flujo_pago_express['destino'] = "orden_compra";
+					//$this->destino = "orden_compra";
+				} /*else {
 					$flujo_pago_express['destino'] = "direccion_facturacion";
 					$this->destino = "direccion_facturacion";
-				}
+				}*/
+				
+				$flujo_pago_express['destino'] = "orden_compra";
+				$this->destino = "orden_compra";
 			}
 			//Para la facturación
 		} else {	//no tiene forma de pago
@@ -128,8 +134,8 @@ class Pago_Express {
 			}
 			//se revisa la parte de dirección de facturación
 			if ($this->get_dir_facturacion() && $this->get_razon_social()) {
-					$flujo_pago_express['dir_facturacion'] = $this->get_dir_facturacion();
-					$flujo_pago_express['razon_social'] = $this->get_dir_facturacion();
+				$flujo_pago_express['dir_facturacion'] = $this->get_dir_facturacion();
+				$flujo_pago_express['razon_social'] = $this->get_dir_facturacion();
 			}
 			
 			$flujo_pago_express['destino'] = "forma_pago";

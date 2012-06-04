@@ -18,6 +18,8 @@ class Direccion_Facturacion extends CI_Controller {
         // Call the Model constructor
         parent::__construct();
 		
+		$this->output->nocache();
+				
 		//si no hay sesión
 		//manda al usuario a la... página de login
 		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');

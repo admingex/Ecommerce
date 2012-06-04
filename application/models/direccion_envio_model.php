@@ -95,6 +95,23 @@ class Direccion_Envio_model extends CI_Model {
 	}
 	
 	/**
+	 * Si existe alguna compra con este cliente
+	 */
+	function existe_compra($id_cliente)
+	{
+		$qry = "SELECT id_compraIn FROM CMS_IntCompra WHERE id_clienteIn = ? ";
+						
+		$res = $this->db->query($qry, array($id_cliente));
+		
+		if($res->num_rows() > 0)
+		{
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/**
 	 * Quitar la dirección predeterminada actual
 	 */
 	function quitar_predeterminado($id_cliente) {

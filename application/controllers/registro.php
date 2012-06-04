@@ -37,9 +37,11 @@ class Registro extends CI_Controller {
 					$cliente_info['id_clienteIn'] = $this->login_registro_model->next_cliente_id();	//id del cliente
 					
 					if($this->registrar_cliente($cliente_info)) {							//registro exitoso	
-						$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation']);	//crear sesion,
-						$url = $this->config->item('base_url').'/index.php/forma_pago/'; 
-						header("Location: $url");
+						$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation'], $cliente_info['email']);	//crear sesion,
+						//se va a revisar el inicio de sesión
+						/*$url = $this->config->item('base_url').'/index.php/forma_pago/'; 
+						header("Location: $url");*/
+						redirect("login/verificar_inicio_sesion/".$cliente_info['id_clienteIn'], "location", 303);
 						//exit();
 					} else {
 						$this->registro_errores['user_reg'] = "No se pudo realizar el registro en el sistema";
@@ -58,12 +60,13 @@ class Registro extends CI_Controller {
 		$this->cargar_vista('', 'registro', $data);
 	}
 	
-	private function crear_sesion($id_cliente, $nombre)
+	private function crear_sesion($id_cliente, $nombre, $email)
 	{
 		$array_session = array(
 			'logged_in' => TRUE,
 			'username' 	=> $nombre,
-			'id_cliente'=> $id_cliente
+			'id_cliente'=> $id_cliente,
+			'email' 	=> $email
 		);
 		//creacion de la sessión
 		$this->session->set_userdata($array_session);

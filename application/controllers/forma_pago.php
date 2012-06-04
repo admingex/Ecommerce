@@ -959,6 +959,41 @@ class Forma_Pago extends CI_Controller {
 		if ($this->session->userdata('tarjeta') || $this->session->userdata('deposito')) {	//tiene forma de pago
 			//actualizar valores en sesión
 			if ($this->session->userdata('requiere_envio')) {
+				//Si hay dirección de envío seleccionada
+				if ($this->session->userdata('dir_envio')) {
+					//Si hay dirección de facturación Y razón social
+					if ($this->session->userdata('direccion_f') && $this->session->userdata('razon_social')) {
+						$destino = "orden_compra";
+					} else {	//NO dir. facturación
+						if ($this->forma_pago_model->existe_compra($this->id_cliente)) {	//compra
+							$destino = "orden_compra";
+						} else {
+							$destino = "direccion_facturacion";
+						}						
+					}
+				} else {
+					$destino = "direccion_envio";
+				}
+			} else {
+				//Si hay dirección de facturación Y razón social
+				if ($this->session->userdata('direccion_f') && $this->session->userdata('razon_social')) {
+					$destino = "orden_compra";
+				} else {	//NO dir. facturación
+					if ($this->forma_pago_model->existe_compra($this->id_cliente)) {	//compra
+						$destino = "orden_compra";
+					} else {
+						$destino = "direccion_facturacion";
+					}						
+				} 
+			}
+		} else {	//no tiene forma de pago
+			$destino =  "forma_pago";
+		}
+		
+		/*
+		if ($this->session->userdata('tarjeta') || $this->session->userdata('deposito')) {	//tiene forma de pago
+			//actualizar valores en sesión
+			if ($this->session->userdata('requiere_envio')) {
 				//Si hay dirección de envío seleccionada...
 				if ($this->session->userdata('dir_envio')) {
 					//Si hay dirección de facturación Y razón Social
@@ -982,7 +1017,7 @@ class Forma_Pago extends CI_Controller {
 		} else {	//no tiene forma de pago
 			$destino =  "forma_pago";
 		}
-		
+		*/
 		//Actualizar en sesión
 		$this->session->set_userdata('destino', $destino);
 		

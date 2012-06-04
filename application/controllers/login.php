@@ -123,6 +123,27 @@ class Login extends CI_Controller {
 		$this->cargar_vista('', 'login', $data);
 	}
 	
+	/**
+	 * Si ya se cargó la sesión del cliente después de un registro o una recuperación de contraseña
+	 */
+	public function verificar_inicio_sesion($id_cliente) {
+		if ($this->session->userdata('id_cliente') == $id_cliente) {
+			//por defaulr no se considera la dirección d facturación
+			$datars = array('requiere_factura' => 'no');
+			$this->session->set_userdata($datars);
+			
+			//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
+			$destino = $this->obtener_destino($cliente->id_cliente);						
+			
+			//colocar en sessión el destino
+			$data_destino = array('destino' => $destino);
+			$this->session->set_userdata($data_destino);
+			
+			//Flujo
+			redirect($destino, 'location', 303);
+		}
+	} 
+	
 	private function get_datos_login($value='')
 	{
 		$datos = array();

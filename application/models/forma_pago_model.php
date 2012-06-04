@@ -66,6 +66,23 @@ class Forma_Pago_model extends CI_Model {
 	}
 	
 	/**
+	 * Si existe alguna compra con este cliente
+	 */
+	function existe_compra($id_cliente)
+	{
+		$qry = "SELECT id_compraIn FROM CMS_IntCompra WHERE id_clienteIn = ? ";
+						
+		$res = $this->db->query($qry, array($id_cliente));
+		
+		if($res->num_rows() > 0)
+		{
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/**
 	 * Verifica si el cliente tiene alguna tarjeta como predeterminada
 	 */
 	function existe_predetereminada($id_cliente)
