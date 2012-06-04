@@ -6,6 +6,7 @@ $(document).ready(function() {
 	
 	$("#guardar_rs").click(function(){
 		$(".error").remove();
+		$(".error2").remove();     
         if( $("#txt_razon_social").val() == "" ){
             $("#txt_razon_social").focus().after("<span class='error'>Por favor ingresa tu nombre o razón social</span>");            
             return false;            
@@ -38,7 +39,8 @@ $(document).ready(function() {
 	});
 	
 	$("#guardar_direccion").click(function() {		
-		$(".error").remove();        
+		$(".error").remove();     
+		$(".error2").remove();        
         			if($("#txt_calle").val()==""){
         				$("#txt_calle").focus().after("<span class='error'>Por favor ingresa una calle</span>");
         				return false;

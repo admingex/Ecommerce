@@ -37,6 +37,7 @@ $(document).ready(function() {
 	});
 	$("#recordar_password").click(function() {		
 		$(".error").remove();
+		$(".error2").remove();
         if($("#email").val()=="" || !email.test($("#email").val())){        	
             $("#email").focus().after("<span class='error2'>Por favor ingresa un correo electrónico <br />válido. Ejemplo: nombre@dominio.mx</span>");            
             return false;            
@@ -54,7 +55,7 @@ $(document).ready(function() {
         }   
         else{
         	if(!valida_password("aaa@",$("#password").val())){ 
-        		$("#password").focus().after("<span class='error'>Ingresa una contraseña valida</span>");            
+        		$("#password").focus().after("<span class='error2'>Por favor escribe una contraseña que contenga al menos 8 caracteres, letras mayúsculas, minúsculas y números</span>");            
             	return false;            
         	}
         	else{
