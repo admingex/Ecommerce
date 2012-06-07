@@ -23,7 +23,7 @@
 						<input type="text" name="txt_razon_social" id="txt_razon_social" size="30" value="<?php if(isset($_POST['txt_razon_social'])) echo htmlspecialchars($_POST['txt_razon_social']); else echo $datos_direccion->company;?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_razon_social'])) echo ($reg_errores['txt_razon_social']);?></span>
+					<?php if(isset($reg_errores['txt_razon_social'])) echo ($reg_errores['txt_razon_social']);?>
 				</td>
 			</tr>
 			<tr>
@@ -33,7 +33,7 @@
 						<input type="text" name="txt_rfc" id="txt_rfc" size="30" value="<?php if(isset($_POST['txt_rfc'])) echo htmlspecialchars($_POST['txt_rfc']); else echo  $datos_direccion->tax_id_number;?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_rfc'])) echo ($reg_errores['txt_rfc']);?></span>
+					<?php if(isset($reg_errores['txt_rfc'])) echo ($reg_errores['txt_rfc']);?>
 				</td>
 			</tr>
 			<tr>
@@ -43,7 +43,7 @@
 						<input type="text" name="txt_email" id="txt_email" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']); else echo  $datos_direccion->email;?>" size="30"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>					
+					<?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?>					
 				</td>
 			</tr>
 			<tr>

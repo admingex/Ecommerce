@@ -122,9 +122,9 @@ class Direccion_Facturacion_model extends CI_Model {
 		$this->db->where(array(	'id_consecutivoSi' => $id_consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => 2));
 		if($resultado) {
-			return "Direccion eliminada";
+			return "La dirección ha sido eliminada exitosamente de tu cuenta";
 		} else {
-			return "Error al tratar de eliminar la direccion.";
+			return "Hubo un error al eliminar tu dirección. Por favor intenta de nuevo.";
 		}				
 	}	
 	
@@ -132,9 +132,9 @@ class Direccion_Facturacion_model extends CI_Model {
 		$this->db->where(array(	'id_razonSocialIn' => $id_rs));
 		$resultado = $this->db->update('CMS_IntRazonSocial', array('id_estatusSi' => 2));
 		if($resultado) {
-			return "razon social eliminada";
+			return "RFC eliminado exitosamente de tu cuenta";
 		} else {
-			return "Error al tratar de eliminar la razon social.";
+			return "Hubo un error al eliminar tu RFC. Por favor intenta de nuevo.";
 		}		
 	}	
 	
@@ -183,10 +183,10 @@ class Direccion_Facturacion_model extends CI_Model {
 		$this->db->where(array(	'id_consecutivoSi' => $id_consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', $datos);
 		if($resultado) {
-			return "actualizacion.";
+			return "Tu dirección ha sido actualizada exitosamente.";
 		} 
 		else {
-			return "Error al tratar de actualizar la tarjeta.";
+			return "Hubo un error al actualizar tu dirección. Por favor intenta de nuevo.";
 		}	
 	}		
 	
@@ -194,10 +194,10 @@ class Direccion_Facturacion_model extends CI_Model {
 		$this->db->where(array(	'id_razonSocialIn' => $id_rs));
 		$resultado = $this->db->update('CMS_IntRazonSocial', $datos);
 		if($resultado) {
-			return "actualizacion.";
+			return "Tu RFC ha sido actualizado exitosamente.";
 		} 
 		else {
-			return "Error al tratar de actualizar la tarjeta.";
+			return "Hubo un error al actualizar tu RFC. Por favor intenta de nuevo.s";
 		}	
 	}
 	
@@ -208,7 +208,7 @@ class Direccion_Facturacion_model extends CI_Model {
 			return "actualizacion.";
 		} 
 		else {
-			return "Error al tratar de actualizar la tarjeta.";
+			return "Error al tratar de actualizar predeterminado.";
 		}
 	}	
 	

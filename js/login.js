@@ -41,7 +41,7 @@ $(document).ready(function() {
 		if (!registro) {
 			//email
 			if (!reg_email.test(email.val())) {
-				email.focus().after("<div class='error2'>Por favor ingresa una dirección de correo<br /> válida. Ejemplo: nombre@dominio.mx</div>");
+				email.focus().after("<div class='error2'>Por favor ingresa una dirección de correo válida. Ejemplo: nombre@dominio.mx</div>");
 				return false;
 			} 
 			else if (passwd.val() == "" ) {

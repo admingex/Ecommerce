@@ -151,7 +151,7 @@ class Login extends CI_Controller {
 		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 			$datos['email'] = htmlspecialchars(trim($_POST['email']));
 		} else {
-			$this->login_errores['email'] = 'Por favor ingresa una dirección de correo<br /> válida. Ejemplo: nombre@dominio.mx';
+			$this->login_errores['email'] = 'Por favor ingresa una dirección de correo válida. Ejemplo: nombre@dominio.mx';
 		}
 		
 		if (array_key_exists('tipo_inicio', $_POST) && $_POST['tipo_inicio'] == 'registrado') {

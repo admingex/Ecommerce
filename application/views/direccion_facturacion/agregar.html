@@ -37,7 +37,7 @@
 						<input type="text" name="txt_calle" id="txt_calle" size="30" value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>
+					<?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?>
 				</td>
 			</tr>
 			<tr>
@@ -47,7 +47,7 @@
 						<input type="text" name="txt_numero" id="txt_numero" maxlength="5" size="5" value="<?php if(isset($_POST['txt_numero'])) echo htmlspecialchars($_POST['txt_numero']);?>" />
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_numero'])) echo ($reg_errores['txt_numero']);?></span>
+					<?php if(isset($reg_errores['txt_numero'])) echo ($reg_errores['txt_numero']);?>
 				</td>
 			</tr>
 			<tr>
@@ -63,7 +63,7 @@
 						<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
+					<?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?>
 				</td>
 			</tr>
 			<tr>
@@ -94,7 +94,7 @@
 						</select>
 					</span>
 					<span class="asterisco">&nbsp;</span>	
-					<span class="error_mensaje"><?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?></span>
+					<?php if(isset($reg_errores['sel_pais'])) echo ($reg_errores['sel_pais']);?>
 				</td>
 			</tr>
 			<tr>
@@ -104,7 +104,7 @@
 						<input type="text" name="txt_estado" id="txt_estado" size="30" value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
+					<?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?>
 				</td>
 			</tr>
 			<tr>
@@ -114,7 +114,7 @@
 						<input type="text" name="txt_ciudad" id="txt_ciudad" size="30" value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
+					<?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?>
 				</td>
 			</tr>
 			<tr>
@@ -124,7 +124,7 @@
 						<input type="text" name="txt_colonia" id="txt_colonia" size="30" value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?></span>
+					<?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?>
 				</td>
 			</tr>
 			<tr>

@@ -1,3 +1,9 @@
+@font-face
+{
+    font-family: 'Gotham-Book';
+    src: url(Gotham-Book.otf);
+    src: local('Gotham-Book'), local('Gotham-Book'), url(Gotham-Book.otf) format('opentype');
+}
 /*
 @font-face
 {
@@ -22,7 +28,7 @@ body
     background: #000;
     margin: 0 auto;
     width: 1024px;
-    font-family: 'Arial';
+    font-family: 'Gotham-Book','Arial';
 }
 
 #header-container

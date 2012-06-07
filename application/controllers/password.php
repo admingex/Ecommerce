@@ -181,7 +181,7 @@ class Password extends CI_Controller {
 			if(!empty($_POST['password_temporal'])){
 				$result=$this->password_model->obtiene_cliente($_POST['password_temporal']);
 				if($result->num_rows()==0){
-					$this->registro_errores['password_temporal']='clave temporal no encontrada';										
+					$this->registro_errores['password_temporal']='<span class="error">clave temporal no encontrada</span>';										
 				}			
 				else{					
 					$this->session->set_userdata($result->row());																								

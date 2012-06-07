@@ -95,7 +95,9 @@
 			<tfoot class="contenedor-gris">
 				<tr>
 					<td colspan="7" >
-						<h3> <?php if(isset($mensaje)) { echo $mensaje; } ?></h3>
+						<div class='validation_message'>
+							<?php if(isset($mensaje)) { echo $mensaje; } ?>
+						</div>
 					</td>
 				</tr>
 				<tr>

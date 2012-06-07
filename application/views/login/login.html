@@ -1,13 +1,13 @@
-<form id="form_registro_tc" action="<?php echo site_url('login'); ?>" method="POST">
+<form id="form_registro_tc" action="<?php echo site_url('login'); ?>" method="post">
 <table width="100%">
 	<tr>
 		<td class="label">
-			Mi correo electr&oacute;nico es	
+			Mi&nbsp;correo&nbsp;electr&oacute;nico&nbsp;es	
 		</td>
 		<td colspan="2">
 			<input type="text" name="email" id="email" size="40"
 				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
-				<?php if(isset($login_errores['email'])) echo "<span class='error2'>".$login_errores['email']."</span>";?>
+				<?php if(isset($login_errores['email'])) echo $login_errores['email'];?>
 		</td>
 	</tr>
 	<tr>
@@ -31,8 +31,7 @@
 	<tr>		
 	<tr>
 		<td>
-			<input type="radio" id="tipo_inicio2" name="tipo_inicio" value="registrado" 
-						checked="<?php if(isset($_POST['tipo_inicio']) && $_POST['tipo_inicio'] == 'registrado') echo 'true'; ?>" />
+			<input type="radio" id="tipo_inicio2" name="tipo_inicio" value="registrado" checked="<?php if(isset($_POST['tipo_inicio']) && $_POST['tipo_inicio'] == 'registrado') echo 'true'; ?>" />
 			<div id="divtipo_inicio2" class="radio_selected">&nbsp;					
 			</div>		
 		</td>
@@ -48,10 +47,14 @@
 				value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
 			<span>
 				<a href="<?php echo $this->config->item('base_url').'/index.php/password/'; ?>" id="olvido_contrasena">&iquest;Olvidaste tu contrase&ntilde;a?</a>
-				<?php if(isset($login_errores['password'])) echo "<span class='error2'>".$login_errores['password']."</span>";?>
+				<?php 
+					if(isset($login_errores['password'])) echo $login_errores['password'];
+				?>
 			</span>
 			<div id="message">
-				<?php if(isset($login_errores['user_login'])) echo "<div class='validation_message'>". $login_errores['user_login']. "</div>";?>
+				<?php
+				 if(isset($login_errores['user_login'])) echo $login_errores['user_login'];
+				?>
 			</div>				
 		</td>
 	</tr>

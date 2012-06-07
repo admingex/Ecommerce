@@ -142,7 +142,7 @@ class Direccion_Envio extends CI_Controller {
 					//verificar que no exista la direccion activa en la BD
 					if($this->direccion_envio_model->existe_direccion($form_values['direccion'])) {	
 						//Redirect al listado por que ya existe
-						$this->listar("La direcci&oacute;n ya est&aacute; registrada", FALSE);
+						$this->listar("La dirección ingresada ya existe en tu cuenta. Para usarla, por favor selecciónala arriba en la lista de direcciones guardadas.", FALSE);
 						//echo "La direcci&oacute;n ya está registrada.";
 					} else {
 						//verifica si hay o no dirección activa predeterminada
@@ -165,9 +165,9 @@ class Direccion_Envio extends CI_Controller {
 							$destino = $this->obtener_destino();
 							
 							//cargar la vista de las tarjetas
-							$this->listar("Direcci&oacute;n registrada correctamente");
+							$this->listar("Tu dirección ha sido guardada exitosamente");
 						} else {
-							$this->listar("Hubo un error en el sistema", FALSE);
+							$this->listar("Hubo un error al guardar tu dirección. Por favor intenta de nuevo.", FALSE);
 							//echo "<br/>Hubo un error en el registro en CMS";
 						}
 					}						
@@ -179,7 +179,7 @@ class Direccion_Envio extends CI_Controller {
 					//Para calcular destino siguiente y actualizxarlo en sesión
 					$destino = $this->obtener_destino();
 					
-					$this->listar("Dirección capturada correctamente");
+					$this->listar("Tu dirección ha sido guardada exitosamente");
 					//redirect('direccion_facturacion');
 				}
 			} else {	//Si hubo errores en la captura
@@ -301,7 +301,7 @@ class Direccion_Envio extends CI_Controller {
 					//Para calcular destino siguiente y actualizxarlo en sesión
 					$destino = $this->obtener_destino();
 					
-					$msg_actualizacion = "Información actualizada exitosamente";
+					$msg_actualizacion = "Tu dirección ha sido actualizada exitosamente";
 					$data['msg_actualizacion'] = $msg_actualizacion;
 					//var_dump($direccion);
 					//exit();
@@ -324,7 +324,7 @@ class Direccion_Envio extends CI_Controller {
 				//redirect("direccion_facturacion");
 				//exit();
 			} else {	//ERRORES FORMULARIO
-				$data['msg_actualizacion'] = "Algunos campos son incorrectos";
+				$data['msg_actualizacion'] = "Hubo un error al actualizar tu dirección. Por favor intenta de nuevo.";
 				$data['reg_errores'] = $this->reg_errores;
 				$this->cargar_vista('', 'direccion_envio' , $data);
 			}	//ERRORES FORMULARIO
@@ -695,21 +695,21 @@ class Direccion_Envio extends CI_Controller {
 				if(preg_match('/^[A-Z0-9áéíóúÁÉÍÓÚÑñ \'.-]{1,50}$/i', $_POST['txt_calle'])) {
 					$datos['direccion']['address1'] = $_POST['txt_calle'];
 				} else {
-					$this->reg_errores['txt_calle'] = 'Ingresa tu calle y n&uacute;mero correctamente';
+					$this->reg_errores['txt_calle'] = '<span class="error">Por favor ingresa una calle</span>';
 				}
 			}
 			if (array_key_exists('txt_numero', $_POST)) {
 				if(preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['txt_numero'])) {
 					$datos['direccion']['address2'] = $_POST['txt_numero'];
 				} else {
-					$this->reg_errores['txt_numero'] = 'Ingresa tu n&uacute;mero correctamente';
+					$this->reg_errores['txt_numero'] = '<span class="error">Por favor ingresa el número exterior</span>';
 				}
 			}
 			if (!empty($_POST['txt_num_int'])) {
 				if(preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['txt_num_int'])) {
 					$datos['direccion']['address4'] = $_POST['txt_num_int'];
 				} else {
-					$this->reg_errores['txt_numero'] = 'Ingresa tu n&uacute;mero correctamente';
+					$this->reg_errores['txt_numero'] = '<span class="error">Por favor ingresa el número interior</span>';
 				}
 			} else {
 				$datos['direccion']['address4'] = NULL;
@@ -719,7 +719,7 @@ class Direccion_Envio extends CI_Controller {
 				if (preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['txt_cp'])) {
 					$datos['direccion']['zip'] = $_POST['txt_cp'];
 				} else {
-					$this->reg_errores['txt_cp'] = 'Ingresa tu c&oacute;digo postal correctamente';
+					$this->reg_errores['txt_cp'] = '<span class="error2">Por favor ingresa un código postal de 5 dígitos</span>';
 				}
 			}
 						
@@ -727,7 +727,7 @@ class Direccion_Envio extends CI_Controller {
 			//if(preg_match('/^[A-Z]{2}$/i', $_POST['sel_pais'])) {
 				$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];
 			} else {
-				$this->reg_errores['sel_pais'] = 'Selecciona tu pa&iacute;s';
+				$this->reg_errores['sel_pais'] = '<span class="error">Por favor selecciona el pa&iacute;s</span>';
 			}
 			
 			/*Mexico*/
@@ -736,19 +736,19 @@ class Direccion_Envio extends CI_Controller {
 				if (!empty($_POST['sel_estados'])) {
 					$datos['direccion']['state'] = $_POST['sel_estados'];
 				} else {
-					$this->reg_errores['sel_estados'] = 'Selecciona tu estado';
+					$this->reg_errores['sel_estados'] = '<span class="error">Por favor selecciona el estado</span>';
 				}
 				if (!empty($_POST['sel_ciudades'])) {
 				//if(preg_match('/^[A-Z ()\'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_ciudades'])) {
 					$datos['direccion']['city'] = $_POST['sel_ciudades'];
 				} else {
-					$this->reg_errores['sel_ciudades'] = 'Selecciona tu ciudad';
+					$this->reg_errores['sel_ciudades'] = '<span class="error">Por favor selecciona la ciudad</span>';
 				}
 				if (!empty($_POST['sel_colonias'])) {
 				//if(preg_match('/^[A-Z0-9  \'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_colonias'])) {
 					$datos['direccion']['address3'] = $_POST['sel_colonias'];
 				} else {
-					$this->reg_errores['sel_colonias'] = 'Selecciona tu colonia';
+					$this->reg_errores['sel_colonias'] = '<span class="error">Por favor selecciona la colonia</span>';
 				}
 			} else {
 			/*otros países*/
@@ -756,19 +756,19 @@ class Direccion_Envio extends CI_Controller {
 					$datos['direccion']['address3'] = $_POST['txt_colonia'];
 				}
 				else {
-					$this->reg_errores['txt_colonia'] = 'Ingresa una colonia válida';
+					$this->reg_errores['txt_colonia'] = '<span class="error">Por favor ingresa la colonia</span>';
 				}
 				if (array_key_exists('txt_ciudad', $_POST) && !empty($_POST['txt_ciudad'])) {
 					$datos['direccion']['city'] = $_POST['txt_ciudad'];
 				}
 				else {
-					$this->reg_errores['txt_ciudad'] = 'Por favor ingrese una ciudad valida';
+					$this->reg_errores['txt_ciudad'] = '<span class="error">Por favor ingresa la ciudad</span>';
 				}
 				if (array_key_exists('txt_estado', $_POST) && !empty($_POST['txt_estado'])) {
 					$datos['direccion']['state'] = $_POST['txt_estado'];
 				}
 				else {
-					$this->reg_errores['txt_estado'] = 'Por favor ingrese un estado valido';
+					$this->reg_errores['txt_estado'] = '<span class="error">Por favor ingresa el estado</span>';
 				}	
 			}
 			
@@ -776,7 +776,7 @@ class Direccion_Envio extends CI_Controller {
 				if(preg_match('/^[0-9 ()+-]{10,20}$/i', $_POST['txt_telefono'])) {
 					$datos['direccion']['phone'] = $_POST['txt_telefono'];
 				} else {
-					$this->reg_errores['txt_telefono'] = 'Ingresa tu tel&eacute;fono correctamente';
+					$this->reg_errores['txt_telefono'] = '<span class="error">Por favor ingresa un tel&eacute;fono</span>';
 				}
 			}
 			

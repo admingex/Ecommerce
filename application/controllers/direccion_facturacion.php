@@ -64,7 +64,7 @@ class Direccion_Facturacion extends CI_Controller {
 		if ($_POST)	{	//si hay parámetros del formulario								
 			$form_values = array();	//alojará los datos previos a la inserción	
 			$form_values = $this->get_datos_rs();			
-			$consecutivo_rs= $this->direccion_facturacion_model->get_consecutivo_rs($id_cliente);																					
+			$consecutivo_rs= $this->direccion_facturacion_model->get_consecutivo_rs($id_cliente);																						
 			if(empty($this->reg_errores)){																												   															
 			    $id_rs=$this->direccion_facturacion_model->insertar_rs($form_values['direccion']);															
 				$datars=array(
@@ -80,7 +80,8 @@ class Direccion_Facturacion extends CI_Controller {
 										 																							
 			}	
 			else{
-				$data['reg_errores'] = $this->reg_errores;				
+				$data['reg_errores'] = $this->reg_errores;		
+				$data['nueva_rs'] = TRUE;						
 				$this->cargar_vista('', 'direccion_facturacion' , $data);	
 			}			 
 		}
@@ -128,7 +129,8 @@ class Direccion_Facturacion extends CI_Controller {
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_facturacion.js'> </script>";
 		$data['script'] = $script_file;
 		
-		if ($_POST)	{	//si hay parámetros del formulario									
+		if ($_POST)	{	//si hay parámetros del formulario
+											
 			$form_values = array();	//alojará los datos previos a la inserción	
 			$form_values = $this->get_datos_direccion();			
 			$consecutivo=$this->direccion_facturacion_model->get_consecutivo($id_cliente);			
@@ -164,14 +166,14 @@ class Direccion_Facturacion extends CI_Controller {
 							redirect('orden_compra');													
 						} 	
 						else {
-							$this->listar("Hubo un error en el registro en CMS.", FALSE);
-							echo "<br/>Hubo un error en el registro en CMS";
+							$this->listar("Hubo un error al registrar tu dirección. Por favor intenta de nuevo.", FALSE);							
 						}
 					}											
 				} 				 
 			}	
 			else{
-				$data['reg_errores'] = $this->reg_errores;				
+				$data['reg_errores'] = $this->reg_errores;		
+				$data['nueva_direccion'] = TRUE;		
 				$this->cargar_vista('', 'direccion_facturacion' , $data);	
 			}
 		}
@@ -235,7 +237,7 @@ class Direccion_Facturacion extends CI_Controller {
 							$direccion = $form_values['direccion'];
 							$this->cargar_en_session($direccion);
 							
-							$msg_actualizacion = "Información actualizada";
+							$msg_actualizacion = "Tu RFC ha sido actualizado exitosamente";
 							$data['msg_actualizacion'] = $msg_actualizacion;							
 														
 						} 
@@ -313,7 +315,7 @@ class Direccion_Facturacion extends CI_Controller {
 							$direccion = $form_values['direccion'];
 							$this->cargar_en_session($direccion);
 							
-							$msg_actualizacion = "Información actualizada";
+							$msg_actualizacion = "Tu dirección ha sido actualizada exitosamente";
 							$data['msg_actualizacion'] = $msg_actualizacion;							
 														
 						} 
@@ -367,7 +369,7 @@ class Direccion_Facturacion extends CI_Controller {
 		
 		if(!empty($_POST['txt_rfc'])){
 			if((strlen($_POST['txt_rfc'])>13)||(strlen($_POST['txt_rfc'])<12)){
-			    $this->reg_errores['txt_rfc'] = 'Por favor ingrese un rfc correcto';		
+			    $this->reg_errores['txt_rfc'] = '<span class="error">Por favor ingresa tu RFC</span>';		
 			}	
 			else{
 				if(strlen($_POST['txt_rfc'])==12){
@@ -375,7 +377,7 @@ class Direccion_Facturacion extends CI_Controller {
 						$datos['direccion']['tax_id_number'] = $_POST['txt_rfc'];
 					}
 					else {
-						$this->reg_errores['txt_rfc'] = 'Por favor ingrese un rfc correcto';
+						$this->reg_errores['txt_rfc'] = '<span class="error">Por favor ingresa tu RFC</span>';
 					}	
 				}
 				else if(strlen($_POST['txt_rfc'])==13){					    
@@ -383,19 +385,19 @@ class Direccion_Facturacion extends CI_Controller {
 						$datos['direccion']['tax_id_number'] = $_POST['txt_rfc'];
 					}
 					else {
-						$this->reg_errores['txt_rfc'] = 'Por favor ingrese un rfc correcto';
+						$this->reg_errores['txt_rfc'] = '<span class="error">Por favor ingresa tu RFC</span>';
 					}
 				}
 			}
 		}
 		else{
-			$this->reg_errores['txt_rfc'] = 'Por favor ingrese un rfc';				
+			$this->reg_errores['txt_rfc'] = '<span class="error">Por favor ingresa tu RFC</span>';				
 		}
 		if(!empty($_POST['txt_razon_social'])){
 			$datos['direccion']['company'] = $_POST['txt_razon_social'];
 		}
 		else{
-			$this->reg_errores['txt_razon_social'] = 'Por favor ingrese una razón social';
+			$this->reg_errores['txt_razon_social'] = '<span class="error2">Por favor ingresa tu nombre o razón social</span>';
 		}
 		if(!empty($_POST['txt_email'])){
 			if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/', $_POST['txt_email'])) {    		
@@ -403,7 +405,7 @@ class Direccion_Facturacion extends CI_Controller {
 			}	
 		}		  	
 		else{
-			$this->reg_errores['txt_email'] = 'Por favor ingrese un correo valido';
+			$this->reg_errores['txt_email'] = '<span class="error2">Por favor ingresa un correo electrónico válido. Ejemplo: nombre@dominio.mx</span>';
 		}	
 		if (array_key_exists('chk_default', $_POST)) {
 			$datos['direccion']['id_estatusSi'] = 3;	//indica que será la razon social predeterminada			
@@ -421,42 +423,42 @@ class Direccion_Facturacion extends CI_Controller {
 			$datos['direccion']['address1'] = $_POST['txt_calle'];
 		}
 		else{
-			$this->reg_errores['txt_calle'] = 'Por favor ingrese una calle valida';
+			$this->reg_errores['txt_calle'] = '<span class="error">Por favor ingresa una calle</span>';
 		}
 		if(!empty($_POST['txt_numero'])){
 			$datos['direccion']['address2'] = $_POST['txt_numero'];
 		}
 		else{
-			$this->reg_errores['txt_numero'] = 'Por favor ingrese un numero';
+			$this->reg_errores['txt_numero'] = '<span class="error">Por favor ingresa el número exterior</span>';
 		}		
 		if(!empty($_POST['txt_cp'])){
 			if(preg_match('/^[0-9]{5,5}([- ]?[0-9]{4,4})?$/', $_POST['txt_cp'])){
 			    $datos['direccion']['zip'] = $_POST['txt_cp'];	
 			}			
 			else{
-			    $this->reg_errores['txt_cp'] = 'Por favor ingrese un codigo postal valido';	
+			    $this->reg_errores['txt_cp'] = '<span class="error2">Por favor ingresa un código postal de 5 dígitos</span>';	
 			}
 		}
 		else{
-			$this->reg_errores['txt_cp'] = 'Por favor ingrese un codigo postal valido';
+			$this->reg_errores['txt_cp'] = '<span class="error2">Por favor ingresa un código postal de 5 dígitos</span>';
 		}
 		if(!empty($_POST['txt_colonia'])){
 			$datos['direccion']['address3'] = $_POST['txt_colonia'];
 		}
 		else{
-			$this->reg_errores['txt_colonia'] = 'Por favor ingrese una colonia valida';
+			$this->reg_errores['txt_colonia'] = '<span class="error">Por favor ingresa la colonia</span>';
 		}
 		if(!empty($_POST['txt_ciudad'])){
 			$datos['direccion']['city'] = $_POST['txt_ciudad'];
 		}
 		else{
-			$this->reg_errores['txt_ciudad'] = 'Por favor ingrese una ciudad valida';
+			$this->reg_errores['txt_ciudad'] = '<span class="error">Por favor ingresa la ciudad</span>';
 		}
 		if(!empty($_POST['txt_estado'])){
 			$datos['direccion']['state'] = $_POST['txt_estado'];
 		}
 		else{
-			$this->reg_errores['txt_estado'] = 'Por favor ingrese un estado valido';
+			$this->reg_errores['txt_estado'] = '<span class="error">Por favor ingresa el estado</span>';
 		}													
 		
 		if(array_key_exists('txt_num_int', $_POST)){
