@@ -148,10 +148,12 @@ class Password extends CI_Controller {
 				$array_session = array(
 									'logged_in' => TRUE,
 									'username' 	=> $nombre,
-									'id_cliente'=> $id_clienteIn
+									'id_cliente'=> $id_clienteIn,
+									'email' 	=> $email
 								 );				
 				$this->session->set_userdata($array_session);				
-				redirect('forma_pago');	
+				//redirect('forma_pago');
+				redirect("login/verificar_inicio_sesion/".$id_clienteIn, "location", 303);	
 			}																						
 			else{					
 				$this->registro_errores['password']='Por favor ingresa una contraseña que no coincida con ninguna de las últimas ocho contraseñas usadas';

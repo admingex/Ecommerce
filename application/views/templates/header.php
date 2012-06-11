@@ -23,9 +23,6 @@
 		{ 
 			window.history.forward(1);
 		}
-		function noHistory() {
-			window.location.replace(document.URL);
-		}
 		//onLoad="noBack();"
 	</script>	
 	<?php if (isset($script)) echo $script; ?>	

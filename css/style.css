@@ -1,16 +1,11 @@
-/*
+
 @font-face
 {
-    font-family: 'Gotham-Book';  
-    src: local('Gotham-Book'), url('Gotham-Book.otf') format('opentype');
+    font-family: 'Gotham-Book';
+    src: url(./Gotham-Book.otf);
+    src: local('Gotham-Book'), local('Gotham-Book'), url(./Gotham-Book.otf) format('opentype');
 }
-@font-face {
-  font-family: 'Muli';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Muli'), url('http://themes.googleusercontent.com/static/fonts/muli/v4/kU4XYdV4jtS72BIidPtqyw.woff') format('woff');
-}
-*/
+
 
 html
 {
@@ -22,7 +17,7 @@ body
     background: #000;
     margin: 0 auto;
     width: 1024px;
-    font-family: 'Arial';
+    font-family: Gotham-Book, Arial, sans-serif;
 }
 
 #header-container
