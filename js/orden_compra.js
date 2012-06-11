@@ -38,4 +38,5 @@ $(document).ready(function() {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
+	
 });

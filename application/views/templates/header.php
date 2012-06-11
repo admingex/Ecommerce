@@ -17,33 +17,31 @@
 	<link type="text/css" href="<?php echo base_url();?>css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 	<link type="text/css" href="<?php echo base_url();?>css/validacion.css" rel="stylesheet" />	
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-1.7.1.min.js"> </script>
+	<script type="text/javascript" src="<?php echo base_url();?>js/tools.js"> </script>
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-ui-1.8.18.custom.min.js"> </script>
 	<script type="text/javascript">
-		function noBack()
-		{ 
-			window.history.forward(1);
-		}
-		function noHistory() {
-			window.location.replace(document.URL);
-		}
-		//onLoad="noBack();"
-	</script>	
-	<?php if (isset($script)) echo $script; ?>	
+	function noBack(){ 
+		window.history.forward(1);
+	}
+	function noHistory() {
+		window.location.replace(document.URL);
+	}
+	//onLoad="noBack();"
+	</script>
+	<?php if (isset($script)) echo $script; ?>
 </head>
 <body>
     <div id="header-container">
         <header>
-            <img src="<?php echo base_url();?>images/logo_expansion.gif" alt="logo gex" width="52" height="52"/>            
+            <img src="<?php echo base_url();?>images/logo_expansion.gif" alt="logo gex" width="52" height="52"/>
         </header>        
-    </div>    
-
-    
+    </div>
     <div id="main">
-    		<?php    	    					
-				include "menu.html"; 				
-				if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
-					if($this->uri->segment(1)!="orden_compra"){
-						include "promocion.html";
-					}												
-				}			    
-			?>
+		<?php
+			include "menu.html";
+			if($this->session->userdata('promociones') && $this->session->userdata('promocion')){
+				if($this->uri->segment(1)!="orden_compra"){
+					include "promocion.html";
+				}
+			}
+		?>
