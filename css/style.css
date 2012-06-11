@@ -860,14 +860,3 @@ h4{
 	margin-left: 10px;
 	margin-top: 20px;
 }
-
-.tip {
-	color: #4E4E4E;	
-	background:#FFF;
-	display:none; /*--Hides by default--*/
-	padding:10px;
-	position:absolute;	z-index:1000;	
-	border: solid 1px #4E4E4E;
-	font-size: 10px;
-	
-}
