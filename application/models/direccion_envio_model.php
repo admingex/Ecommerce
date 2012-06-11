@@ -191,9 +191,9 @@ class Direccion_Envio_model extends CI_Model {
 		$this->db->where(array('id_consecutivoSi' => $consecutivo, 'id_clienteIn' => $id_cliente));
 		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => self::$CAT_ESTATUS['DESHABILITADA']));
 		if($resultado) {
-			return "Direcci&oacute;n eliminada exitosamente";
+			return "La dirección ha sido eliminada exitosamente de tu cuenta";
 		} else {
-			return "Error al tratar de eliminar la direcci&oacute;n de env&iacute;o";
+			return "Hubo un error al eliminar tu dirección. Por favor intenta de nuevo.";
 		}
 	}
 		
@@ -207,9 +207,9 @@ class Direccion_Envio_model extends CI_Model {
 		//echo "resultado".$resultado;
 		if($resultado) {
 			//echo "Direcci&oacute;n actualizada.";
-			return "Direcci&oacute;n actualizada exitosamente";
+			return "Tu dirección ha sido actualizada exitosamente";
 		} else {
-			return "Error al tratar de actualizar la direcci&oacute;n de env&iacute;o";
+			return "Hubo un error al actualizar tu dirección. Por favor intenta de nuevo.";
 		}
 	}
 	

@@ -7,7 +7,7 @@
 		<td>
 			<input type="text" name="email" id="email" size="40"  
 				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
-			<span class="validation_message"><?php if(isset($login_errores['email'])) echo ($login_errores['email']);?></span>	
+			<?php if(isset($login_errores['email'])) echo ($login_errores['email']);?>	
 		</td>
 	</tr>	
 	<tr>

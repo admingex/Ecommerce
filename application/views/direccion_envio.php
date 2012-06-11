@@ -30,11 +30,7 @@
 		}
 		if (!empty($lista_direcciones) && $lista_direcciones->num_rows()) {
 	?>
-	<div id="dialog-confirm" title="Eliminar Dirección">
-		<!--p>
-			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;">&nbsp;</span>
-			¿Seguro que desea eliminar esta tarjeta?
-		</p-->
+	<div id="dialog-confirm" title="Eliminar Dirección">		
 	</div>
 	<?php
 		}

@@ -40,6 +40,7 @@ $(document).ready(function() {
 	$("form[id*='direccion_envio']").submit(function(e) {
 		//e.preventDefault();
 		$(".error").remove();
+		$(".error2").remove();
 		
 		estado 	= (estado_t.is(":visible")) ? estado_t : estado_s;	
 		ciudad 	= (ciudad_t.is(":visible")) ? ciudad_t : ciudad_s;
