@@ -1,5 +1,5 @@
 <table width="100%">	
-	<form id="form_registro_usuario" action="<?php echo $this->config->item('base_url').'/index.php/registro'; ?>" method="POST">	
+	<form id="form_registro_usuario" action="<?php echo site_url('registro/usuario'); ?>" method="POST">	
 	<tr>
 		<td class="label"> 
 			Nombre
@@ -68,7 +68,7 @@
 	</tr>	
 	<tr>
 		<td colspan="2" class="label_izq">			
-			<?php if(isset($registro_errores['user_reg'])) echo $registro_errores['user_reg'];?>			
+			<?php if(isset($registro_errores['user_reg'])) echo "<span class='validation_message'>".$registro_errores['user_reg']."</span>";?>			
 		</td>
 	</tr>	
 	<tr>

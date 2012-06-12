@@ -51,9 +51,9 @@
 					if(isset($login_errores['password'])) echo $login_errores['password'];
 				?>
 			</span>
-			<div id="message">
+			<div id="message">				
 				<?php
-				 if(isset($login_errores['user_login'])) echo $login_errores['user_login'];
+				 if(isset($login_errores['user_login'])) echo "<span class='validation_message'>".$login_errores['user_login']."</span>";
 				?>
 			</div>				
 		</td>

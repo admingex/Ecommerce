@@ -23,10 +23,20 @@ class Registro extends CI_Controller {
 		$data['subtitle'] = $this->subtitle;
 		//echo 'Session: '.$this->session->userdata('id_cliente');
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
-		$data['script'] = $script_file;
+		$data['script'] = $script_file;		
 		
-		if ($_POST)
-		{	
+		//echo var_dump($data)."<br/>pass ".$_POST['password']."<br/>tipo ".$_POST['tipo_inicio'];
+		
+		$this->cargar_vista('', 'registro', $data);
+	}
+	
+	public function usuario(){
+		$data['title'] = $this->title;
+		$data['subtitle'] = $this->subtitle;
+		//echo 'Session: '.$this->session->userdata('id_cliente');
+		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
+		$data['script'] = $script_file;		
+		if ($_POST){	
 			//$cliente_info = array();		
 			$cliente_info = $this->get_datos_login();
 			
@@ -36,30 +46,43 @@ class Registro extends CI_Controller {
 					
 					$cliente_info['id_clienteIn'] = $this->login_registro_model->next_cliente_id();	//id del cliente
 					
-					if($this->registrar_cliente($cliente_info)) {							//registro exitoso	
-						$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation'], $cliente_info['email']);	//crear sesion,
+					$m5_pass = md5($cliente_info['email'].'|'.$cliente_info['password']);		//encriptaciónn definida en el registro de usuarios
+    				$cliente_info['password'] = $m5_pass;
+					$qry="INSERT INTO CMS_IntCliente (id_clienteIn, salutation, fname, lname, email, password) VALUES (".$cliente_info['id_clienteIn'].", 'gio', 'est', 'ale', 'ddd@ddd.com', '0520d2ac03685b061076ffeaaa2557a2')";
+					$res = $this->db->query($qry);
+        			//$res= $this->db->insert('CMS_IntCliente', $cliente_info);		//true si se inserta
+        			echo "resultado del query:".$res;        			
+					
+					//if($this->login_registro_model->registrar_cliente($cliente_info)) {							//registro exitoso
+					if($res){	
+						//$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation'], $cliente_info['email']);	//crear sesion,
 						//se va a revisar el inicio de sesión
-						/*$url = $this->config->item('base_url').'/index.php/forma_pago/'; 
-						header("Location: $url");*/
-						redirect("login/verificar_inicio_sesion/".$cliente_info['id_clienteIn'], "location", 303);
-						//exit();
+						//$url = $this->config->item('base_url').'/index.php/forma_pago/'; 
+						//header("Location: $url");						
+						redirect('login');						
 					} else {
 						$this->registro_errores['user_reg'] = "No se pudo realizar el registro en el sistema";
 						$_POST = array();
+						$this->cargar_vista('', 'registro', $data);
 					}
+					
 				} else {
+					echo "entra aca";
 					$this->registro_errores['user_reg'] = "Solicitaste iniciar sesión como cliente nuevo, pero ya existe una cuenta con el correo ".$cliente_info['email'];
+					$this->cargar_vista('', 'registro', $data);
 				}
 			} 
+			else{
+				echo "errores";
+				$this->cargar_vista('', 'registro', $data);
+			}
 		}
+		else{
+			echo "sin POST";
+			$this->cargar_vista('', 'registro', $data);
+		}				
 		
-		$data['registro_errores'] = $this->registro_errores;
-		
-		//echo var_dump($data)."<br/>pass ".$_POST['password']."<br/>tipo ".$_POST['tipo_inicio'];
-		
-		$this->cargar_vista('', 'registro', $data);
 	}
-	
 	private function crear_sesion($id_cliente, $nombre, $email)
 	{
 		$array_session = array(

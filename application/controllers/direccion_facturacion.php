@@ -98,8 +98,7 @@ class Direccion_Facturacion extends CI_Controller {
 		$data['registrar_direccion'] = TRUE;		//para indicar que se debe mostrar formulario de registro		
 		
 		if ($_POST) {
-			if (array_key_exists('razon_social_seleccionada', $_POST)) {
-				echo "aqui";
+			if (array_key_exists('razon_social_seleccionada', $_POST)) {				
 				$this->session->set_userdata('razon_social', $_POST['razon_social_seleccionada']);
 				$this->session->set_userdata('requiere_factura', 'si');						
 			}						
@@ -172,8 +171,10 @@ class Direccion_Facturacion extends CI_Controller {
 				} 				 
 			}	
 			else{
-				$data['reg_errores'] = $this->reg_errores;		
-				$data['nueva_direccion'] = TRUE;		
+				$data['reg_errores'] = $this->reg_errores;
+				if (!array_key_exists('razon_social_seleccionada', $_POST)) {			
+					$data['nueva_direccion'] = TRUE;		
+				}
 				$this->cargar_vista('', 'direccion_facturacion' , $data);	
 			}
 		}
