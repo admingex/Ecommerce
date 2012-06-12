@@ -17,6 +17,7 @@
 	<link type="text/css" href="<?php echo base_url();?>css/blitzer/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 	<link type="text/css" href="<?php echo base_url();?>css/validacion.css" rel="stylesheet" />	
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-1.7.1.min.js"> </script>
+	<script type="text/javascript" src="<?php echo base_url();?>js/tools.js"> </script>
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-ui-1.8.18.custom.min.js"> </script>
 	<script type="text/javascript">
 		function noBack()
