@@ -18,6 +18,10 @@ class Login extends CI_Controller {
         // Call the Model constructor
         parent::__construct();
 		
+		
+		//para utilizar la sesión de PHP
+		session_start();
+		
 		/*		
 		$this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
 		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
@@ -60,12 +64,6 @@ class Login extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
 		
-		//se guarda la promoción en la session
-		if (array_key_exists("promo_id", $_GET)) {
-			$id_promocion = $_GET['promo_id'];
-			$this->session->set_userdata("id_promocion", $id_promocion);
-		}
-		
 		if ($_POST)
 		{
 			//si es usuario nuevo, se debe registrar
@@ -88,7 +86,8 @@ class Login extends CI_Controller {
 					if ($resultado->num_rows() > 0) {
 						//Reguardar la información de la promoción
 						
-						//destruir la sesión y mandar la información completa en la creación de la sesión
+						//destruir la sesión de PHP y mandar la información en la sesión de CI con un nuevo ID
+						$this->cambiar_session();
 						
 						//encryptar login y pass y guardarlo en session											
 						$cliente = $resultado->row();
@@ -174,7 +173,8 @@ class Login extends CI_Controller {
 	 */
 	private function obtener_destino($id_cliente) 
 	{
-		//Procesar la promoción	
+		//Procesar la promoción
+		
 		$respromo = $this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));
 		//echo "res_promo: ". var_dump($respromo);
 		if ($respromo) {
@@ -255,8 +255,28 @@ class Login extends CI_Controller {
 		}
 	}
 	
+	/**
+	 * regenerar el id de la sesión y re-asignarlo
+	 */
+	 private function cambiar_session() {
+		//regenerar el id de la sesión y asignarlo
+		session_regenerate_id();
+		
+		$new_id = session_id();
+		
+		$this->session->set_userdata('session_id', $new_id);
+		/*
+		echo "<pre>";
+		print_r($this->session->all_userdata());
+		echo "<pre>";
+		
+		exit();
+		 * */		
+	 }
+	
 	private function crear_sesion($id_cliente, $nombre, $email)
 	{
+		//se crea la nueva
 		$array_session = array(
 			'logged_in' => TRUE,
 			'username' 	=> $nombre,
