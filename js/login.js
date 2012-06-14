@@ -53,7 +53,7 @@ $(document).ready(function() {
 			}									
 		} 		
 		else {
-			$("form").attr("action", "/ecommerce/index.php/registro/")
+			$("form").attr("action", "index.php/registro/")
 			$("form").submit();
 		}
 	});
@@ -64,7 +64,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//alert("tipo " + tipo_inicio.val());
 		$(".error").remove();	//limpiar mensajes de error	
-		$("form").attr("action", "/ecommerce/index.php/password/")
+		$("form").attr("action", "index.php/password/")
 		$("form").submit();
 	});
 	

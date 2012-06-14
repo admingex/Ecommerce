@@ -33,7 +33,8 @@
 			</thead>
 			<tbody class="contenedor-gris">
 			<?php		
-				$hay_direcciones = false;							
+				$hay_direcciones = false;
+				$btn=0;							
 				if (isset($lista_direcciones)) {													
 					foreach($lista_direcciones as $direccion) {	
 						$hay_direcciones = true;
@@ -67,8 +68,9 @@
 					</td>
 					<td align="center" id="<?php echo $direccion['id_razonSocialIn'] ?>" width="100px">												
 						<?php 
-						if ($direccion['id_estatusSi']==3){
+						if (($direccion['id_estatusSi']==3)||($btn==0)){
 							echo "<script>cambia_boton(".$direccion['id_razonSocialIn'].")</script>";
+							$btn=1;
 						}
 						?>						
 					</td>
