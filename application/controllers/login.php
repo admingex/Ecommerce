@@ -4,7 +4,7 @@ include('util/Pago_Express.php');
 include('api.php');
 
 class Login extends CI_Controller {
-
+	
 	var $title = 'Iniciar Sesi&oacute;n'; 				// Capitalize the first letter
 	var $subtitle = 'Iniciar Sesi&oacute;n Segura'; 	// Capitalize the first letter
 	var $login_errores = array();
@@ -13,12 +13,21 @@ class Login extends CI_Controller {
 	private $email;
 	private $password;
 	
+	public static $TIPO_ACTIVIDAD = array(
+		"BLOQUEO"=> 0, 
+		"DESBLOQUEO"=> 1, 
+		"SOLICITUD_PASSWORD"=>2,
+		"CAMBIO_PASSWORD"=>3,
+		"ACCESO_INCORRECTO"=>4
+	);	
+	
+	
 	function __construct()
     {
         // Call the Model constructor
         parent::__construct();
-		
-		
+		$this->load->model('password_model', 'password_model', true);
+		$this->load->helper('date');		
 		//para utilizar la sesión de PHP
 		session_start();
 		
@@ -81,43 +90,75 @@ class Login extends CI_Controller {
 					//verificar que el usuario esté registrado
 					$this->email = $login_info['email'];
 					$this->password = $login_info['password'];
-					
-					$resultado = $this->login_registro_model->verifica_cliente($this->email, $this->password);
-					if ($resultado->num_rows() > 0) {
-						//Reguardar la información de la promoción
+					$mail_cte=$this->login_registro_model->verifica_registro_email($this->email);																		
+					if($mail_cte->num_rows()!=0){
+						$fecha_lock = $mail_cte->row()->LastLockoutDate;
+						$id_cliente = $mail_cte->row()->id_clienteIn;						
+						if($fecha_lock!='0000-00-00 00:00:00'){
+							if($this->tiempo_desbloqueo($fecha_lock)){
+								$this->login_registro_model->desbloquear_cuenta($id_cliente);
+								$t= mdate('%Y/%m/%d %h:%i:%s',time());								
+								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['DESBLOQUEO'], $t);							
+							}
+						}
+																									
+						$num_intentos = $this->login_registro_model->obtiene_numero_intentos($id_cliente);	
 						
-						//destruir la sesión de PHP y mandar la información en la sesión de CI con un nuevo ID
-						$this->cambiar_session();
-						
-						//encryptar login y pass y guardarlo en session											
-						$cliente = $resultado->row();
-						$dl = $this->api->encrypt($cliente->email."|".$this->password, $this->api->key);
-						$this->session->set_userdata('datos_login',$dl);
-						
-						//se crea la sessión con la información del cliente
-						$this->crear_sesion($cliente->id_cliente, $cliente->nombre, $this->email);	//crear sesion
-						
-						//por defaulr no se considera la dirección d facturación
-						$datars = array('requiere_factura' => 'no');
-						$this->session->set_userdata($datars);
-						
-						//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
-						$destino = $this->obtener_destino($cliente->id_cliente);						
-						
-						//colocar en sessión el destino
-						$data_destino = array('destino' => $destino);
-						$this->session->set_userdata($data_destino);
-						
-						//Flujo
-						redirect($destino);
-					} else {
-						$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";
+						if($num_intentos<3){
+							$resultado = $this->login_registro_model->verifica_cliente($this->email, $this->password);							
+							if ($resultado->num_rows() > 0) {
+								//Reguardar la información de la promoción
+								
+								//destruir la sesión de PHP y mandar la información en la sesión de CI con un nuevo ID
+								$this->cambiar_session();
+								
+								//encryptar login y pass y guardarlo en session											
+								$cliente = $resultado->row();
+								$dl = $this->api->encrypt($cliente->email."|".$this->password, $this->api->key);
+								$this->session->set_userdata('datos_login',$dl);
+								
+								//se crea la sessión con la información del cliente
+								$this->crear_sesion($cliente->id_cliente, $cliente->nombre, $this->email);	//crear sesion
+								
+								//por defaulr no se considera la dirección d facturación
+								$datars = array('requiere_factura' => 'no');
+								$this->session->set_userdata($datars);
+								
+								//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
+								$destino = $this->obtener_destino($cliente->id_cliente);						
+								
+								//colocar en sessión el destino
+								$data_destino = array('destino' => $destino);
+								$this->session->set_userdata($data_destino);
+								
+								//Flujo
+								redirect($destino);
+							} 
+							else{
+								$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";																			
+								$t= mdate('%Y/%m/%d %h:%i:%s',time());								
+								$this->password_model->guarda_actividad_historico($id_cliente, $this->password, self::$TIPO_ACTIVIDAD['ACCESO_INCORRECTO'], $t);							
+								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
+							}
+						}
+						else{
+							if($num_intentos==3){
+								$t= mdate('%Y/%m/%d %h:%i:%s',time());	
+								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['BLOQUEO'], $t);
+								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
+							}
+							$this->login_errores['user_login'] = "Ha excedido el número máximo de intentos permitidos para iniciar sesión.<br />
+							                                      Su cuenta permanecerá bloqueada por 30 minutos";
+							
+						}						
+					}					
+					else {						
+						$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";																																					
 						//$data['mensaje'] = "Correo o contrase&ntilde;a incorrectos" ;
 					}
 				}
 			}
-		}
-		
+		}		
 		$data['login_errores'] = $this->login_errores;
 		$this->cargar_vista('', 'login', $data);
 	}
@@ -182,6 +223,7 @@ class Login extends CI_Controller {
 			$temp[] = array('tarifaDc' 			=> 	$res['tarifaDc'], 
 							'tipo_productoVc' 	=> 	$res['tipo_productoVc'], 
 							'medio_entregaVc'	=>	$res['medio_entregaVc'], 
+							'monedaVc'	=>	$res['monedaVc'], 
 							'requiere_envioBi'	=>	(bool)$res['requiere_envioBi']);
 			}
 			
@@ -306,6 +348,28 @@ class Login extends CI_Controller {
 			header("Location: $url");
 			exit(); // Quit the script.
 		}
+	}
+	
+	public function tiempo_desbloqueo($fecha_lock){
+		$seg = substr($fecha_lock,17,2);
+		$min = substr($fecha_lock,14,2);
+		$hor = substr($fecha_lock,11,2);
+		$dia = substr($fecha_lock,8,2);
+		$mes = substr($fecha_lock,5,2);
+		$ano = substr($fecha_lock,0,4);
+		
+		//                   Horas Minutos Segundos mes dia ano
+		$fecha_lock_unix = mktime($hor,$min,$seg,$mes,$dia,$ano);
+		$hora_unix = mktime(mdate('%h'), mdate('%i'), mdate('%s'), mdate('%m'), mdate('%d'), mdate('%Y'));
+		// Se suman 30 minutos a la hora y fecha actual		
+		$str=strtotime('+30 minutes',$fecha_lock_unix);
+												
+		if($str<=$hora_unix){
+			return TRUE;
+		}
+		else{
+			return FALSE;
+		}	
 	}
 }
 

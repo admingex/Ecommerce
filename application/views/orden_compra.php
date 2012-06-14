@@ -78,7 +78,7 @@
 					</td>	
 					<td class="titulo-promo-rojo2" align="right">$</td>				
 					<td class="titulo-promo-rojo2" align="right">	
-						<?php echo number_format($articulo['tarifaDc'],2,'.',',');?>										
+						<?php echo number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc'];?>										
 					</td>
 				</tr>	
 					<?php
@@ -95,7 +95,7 @@
 						$						
 					</td>
 					<td class="titulo-promo-rojo2" align="right">
-						0.00
+						0.00 <?php echo $articulo['monedaVc'];?>
 					</td>
 				</tr>
 				
@@ -110,7 +110,7 @@
 						$						
 					</td>
 					<td class="titulo-promo-rojo2" align="right" style="width: 40px">
-						<?php echo number_format($total,2,'.',','); ?>
+						<?php echo number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']; ?>
 					</td>
 				</tr>												
 																																																		

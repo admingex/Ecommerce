@@ -6,7 +6,8 @@ class Password extends CI_Controller {
 		"BLOQUEO"=> 0, 
 		"DESBLOQUEO"=> 1, 
 		"SOLICITUD_PASSWORD"=>2,
-		"CAMBIO_PASSWORD"=>3
+		"CAMBIO_PASSWORD"=>3,
+		"ACCESO_INCORRECTO"=>4
 	);	
 	
 	var $title = 'Recupera tu contrase&ntilde;a'; 		// Capitalize the first letter
