@@ -113,6 +113,15 @@
 					<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
 					</div>	
 					Usar para pago express
+					<a href="#" class="tip_trigger">?
+						<span class="tip">
+							Pago express te permite hacer tus compras de forma más rápida.<br />
+							Si seleccionas “usar tus datos para pago express”, éstos serán almacenados en tu cuenta<br />
+							como datos predeterminados de pago, envío o facturación.<br />
+							La próxima vez que hagas una compra, automáticamente asignaremos a tu orden<br /> 
+							esos datos,y podrás finalizar tu pago en un solo paso, (omitiendo los otros <br />dos pasos del proceso de pago)
+						</span>
+					</a>
 					<?php 
 						if(isset($_POST['chk_default'])) { 							
 							echo "<script>cambia_check('chk_default')</script>"; 
@@ -137,7 +146,7 @@
 					<input type="submit" id="guardar_tarjeta" name="guardar_tarjeta" value=" " class="usar_tarjeta"/> &oacute;
 					<input type="submit" id="guardar_y_usar_otra" name="guardar_y_usar_otra" value=" " class="usar_otra_large"/> 
 					<div class="instrucciones_cursivas_der">
-						<a href="<?php echo site_url('forma_pago/listar/');?>"><input type="submit" value=" " class="cancelar" /></a>
+						<a href="<?php echo site_url('forma_pago/listar/'); ?>"><div class="cancelar"></div></a>						
 					</div>	
 				</td>
 			</tr>

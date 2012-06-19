@@ -45,7 +45,7 @@ $(document).ready(function() {
 				return false;
 			} 
 			else if (passwd.val() == "" ) {
-				passwd.focus().after("<div class='error2'>Por favor escribe tu contraseña. Si no has creado una cuenta, selecciona iniciar sesión como cliente nuevo.</div>");
+				passwd.focus().after("<div class='error2'>Por favor escribe tu contraseña o elige iniciar sesión como cliente nuevo</div>");
 				return false;
 			}
 			else{
@@ -53,7 +53,7 @@ $(document).ready(function() {
 			}									
 		} 		
 		else {
-			$("form").attr("action", "index.php/registro/")
+			$("form").attr("action", "/ecommerce/index.php/registro/")
 			$("form").submit();
 		}
 	});
@@ -64,7 +64,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//alert("tipo " + tipo_inicio.val());
 		$(".error").remove();	//limpiar mensajes de error	
-		$("form").attr("action", "index.php/password/")
+		$("form").attr("action", "/ecommerce/index.php/password/")
 		$("form").submit();
 	});
 	

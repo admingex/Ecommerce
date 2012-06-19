@@ -865,5 +865,28 @@ h4{
 	padding:10px;
 	position:absolute; z-index:1000; 
 	border: solid 1px #4E4E4E;
-	font-size: 10px;
+	font-size: 10px;	
+}
+.tip_trigger{
+	text-decoration: none;
+}
+.interrogacion{
+	border: none;
+	height: 14px;
+	width: 16px;	
+	background: transparent url('../images/css-sprite_icons.png') no-repeat;	
+	background-position: -153px -11px;	
+	margin: 0px 0px 0px 5px;				
+}
+
+.interrogacion:hover{
+	border: none;
+	height: 14px;
+	width: 16px;	
+	background: transparent url('../images/css-sprite_icons.png') no-repeat;	
+	background-position: -153px -27px;		
+}
+.float_izq{
+	float: left;
+	margin-top: 6px;	
 }

@@ -198,7 +198,7 @@ class Login extends CI_Controller {
 			if (!empty($_POST['password'])) {
 				$datos['password'] = htmlspecialchars(trim($_POST['password']));
 			} else {
-				$this->login_errores['password'] = 'Por favor escribe tu contraseña. Si no has creado una cuenta, selecciona iniciar sesión como cliente nuevo.';
+				$this->login_errores['password'] = 'Por favor escribe tu contraseña o selecciona iniciar sesión como cliente nuevo.';
 			}					
 		} else {
 			$this->login_errores['user_login'] = 'Selecciona alguna modalidad';

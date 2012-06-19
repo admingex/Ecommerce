@@ -3,20 +3,17 @@
 		echo $tc->descripcionVc. " con terminación " .substr($tc->terminacion_tarjetaVc, strlen($tc->terminacion_tarjetaVc) - 4);			
 	?>
 	<span><a href="<?php echo site_url('forma_pago');?>">Cambiar</a></span>	
-	<div id="tarjeta" >C&oacute;digo de seguridad:	
+	<div id="tarjeta" class="float_izq">C&oacute;digo de seguridad:
 		<input type="text" name="txt_codigo" id="txt_codigo" maxlength="5" size="5"
 				value="<?php if(isset($_POST['txt_codigo'])) echo htmlspecialchars($_POST['txt_codigo']);?>"/>
-		<span class="validation_message"><?php if(isset($reg_errores['txt_codigo'])) echo ($reg_errores['txt_codigo']);?></span>
-		<a href="#" class="tip_trigger">?
+	</div>	
+	<div class="float_izq">							
+		<a href="#" class="tip_trigger">
+			<div class="interrogacion" style="margin-top: 6px"></div>			
 			<span class="tip">
-				El código de seguridad es requerido para realizar un cargo, se encuentra <br />
-				en su tarjeta de crédito pero no se almacena en nuestro sistema, 
-				por lo que <br />la única manera de saberlo es teniendo la posesión física de la tarjeta.<br />
-				En una tarjeta Visa o Master Card, el código de seguridad se encuentra<br /> en la franja donde firmó su tarjeta y consta de 3 dígitos.<br />
-				En una tarjeta American Express, el código de seguridad se encuentra <br />arriba del final del número de tarjeta y consta de 4 dígitos.<br />
-				La siguiente imágen muestra los códigos de seguridad:<br />
 				<div style="margin-left: auto; margin-right: auto; text-align: center"><img src="<?php echo base_url();?>images/cvv2_code.jpg" /></div>
-			</span>
+			</span>			
 		</a>
-	</div>			
+		<span class="validation_message"><?php if(isset($reg_errores['txt_codigo'])) echo ($reg_errores['txt_codigo']);?></span>
+	</div>
 </div>
