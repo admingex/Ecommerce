@@ -193,7 +193,7 @@ class Password extends CI_Controller {
 				}									 									
 			}									
 			else {
-				$this->registro_errores['password_temporal'] = 'Por favor ingresa una clave temporal v&aacute;lida';				
+				$this->registro_errores['password_temporal'] = '<span class="error2">Por favor ingresa una clave temporal v&aacute;lida</span>';				
 			}
 																					 				 
 		}	

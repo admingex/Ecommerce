@@ -371,6 +371,13 @@ class Login extends CI_Controller {
 			return FALSE;
 		}	
 	}
+	
+	public function consulta_mail(){
+		//$value['mail']=$_GET['mail'];
+		$res=$this->login_registro_model->verifica_registro_email($_GET['mail']);
+		$value['mail']=$res->num_rows();
+		echo json_encode($value);			
+	}
 }
 
 /* End of file login.php */

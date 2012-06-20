@@ -23,7 +23,7 @@
 						<input type="text" name="txt_calle" id="txt_calle" size="30" value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']); else echo $direccion->address1; ?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?>
+					<?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?>
 				</td>
 			</tr>
 			<tr>
@@ -250,19 +250,12 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td class="label_izq">
-					<input type="checkbox" id="chk_default" name="chk_default"/>					
-					<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
+					<div class="float_izq">
+						<input type="checkbox" id="chk_default" name="chk_default"/>					
+						<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;</div>
+						Usar para pago express
 					</div>
-					Usar para pago express
-					<a href="#" class="tip_trigger">?
-						<span class="tip">
-							Pago express te permite hacer tus compras de forma más rápida.<br />
-							Si seleccionas “usar tus datos para pago express”, éstos serán almacenados <br />
-							en tu cuenta como datos predeterminados de pago, envío o facturación.<br />
-							La próxima vez que hagas una compra, automáticamente asignaremos a tu orden esos datos,<br />
-							y podrás finalizar tu pago en un solo paso, (omitiendo los otros dos pasos del proceso de pago)
-						</span>
-					</a>
+					<?php $this->load->view('mensaje_pago_express'); ?>						
 					<?php 
 						if(isset($_POST['chk_default'])){
 							echo "<script>cambia_check('chk_default')</script>";

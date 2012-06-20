@@ -1,19 +1,17 @@
-<table>
-	<form id="form_cambiar_password" action="<?php echo $this->config->item('base_url').'/index.php/password/verificar'; ?>" method="POST">
+<table width="100%">
+	<form id="form_cambiar_password" action="<?php echo site_url('password/verificar'); ?>" method="POST">
 	<tr>
 		<td class="label">
 			Clave
 		</td>
 		<td>
-			<input type="text" id="password_temporal" name="password_temporal" value="<?php if(isset($password_temporal)) echo $password_temporal; if(isset($_POST['password_temporal'])) echo htmlspecialchars($_POST['password_temporal']); ?>" />
-			<span class="validation_message">
-				<?php if(isset($registro_errores['password_temporal'])) echo($registro_errores['password_temporal']);?>
-			</span>
+			<input type="text" id="password_temporal" name="password_temporal" value="<?php if(isset($password_temporal)) echo $password_temporal; if(isset($_POST['password_temporal'])) echo htmlspecialchars($_POST['password_temporal']); ?>" />			
+				<?php if(isset($registro_errores['password_temporal'])) echo($registro_errores['password_temporal']);?>			
 		</td>
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
-		<td>
+		<td width="600px">
 			<input type="submit" id="cambiar_password" name="cambiar_password" value="&nbsp;" class="boton_verificar_clave"/>
 		</td>
 	</tr>			
