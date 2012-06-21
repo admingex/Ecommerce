@@ -31,6 +31,7 @@
 			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {
 				$hay_direcciones = true;
 				$direcciones = $lista_direcciones;
+				$btn=0;
 				//$default = self::$CAT_ESTATUS['DEFAULT'];	//es 3
 				foreach($direcciones->result_array() as $direccion) {
 					$check = "";
@@ -63,7 +64,7 @@
 				<td id="<?php echo $direccion['id_consecutivoSi']; ?>">&nbsp;</td>
 			</tr>			
 			<?php
-					if($direccion['id_estatusSi']==3){
+					if(($btn==0) || ($direccion['id_estatusSi']==3)){
 						echo "<script>cambia_boton(".$direccion['id_consecutivoSi'].");</script>";
 					}
 				}

@@ -6,7 +6,7 @@
 		<nav>	
 		<div class="izquierda">
 			<div class="proceso-pago">
-				<?php if(($this->uri->segment(1) =='login') || ($this->uri->segment(1) =='')) $img='-select'; else $img='';?>
+				<?php if(($this->uri->segment(1) =='registro') || ($this->uri->segment(1) =='login') || ($this->uri->segment(1) =='')) $img='-select'; else $img='';?>
 				<div class="img-proceso-pago img-inicio<?php echo $img; ?>" >							
 				</div>
 				<a href="<?php echo site_url('login');?>" class="txt-proceso-pago<?php echo $img; ?>">Inicio</a>

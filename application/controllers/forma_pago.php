@@ -1260,6 +1260,10 @@ class Forma_Pago extends CI_Controller {
 	{	
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
+		$this->load->view('templates/menu.html', $data);
+		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {					
+			$this->load->view('templates/promocion.html', $data);															
+		}
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
 	}

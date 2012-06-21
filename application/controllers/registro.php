@@ -240,6 +240,7 @@ private function valida_password($correo, $pass){
 	{	
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
+		$this->load->view('templates/menu.html', $data);		
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
 	}

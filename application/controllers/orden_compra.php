@@ -385,7 +385,7 @@ class Orden_Compra extends CI_Controller {
 						//Registro de la respuesta de CCTC de la compra en ecommerce
 						$info_detalle_pago_tc = array('id_compraIn'=> $id_compra, 'id_clienteIn' => $id_cliente, 'id_TCSi' => $tc['id_TCSi'], 
 														'id_transaccionBi' => $simple_result->id_transaccionNu, 'respuesta_bancoVc' => $simple_result->respuesta_banco,
-														'codigo_autorizacion' => $simple_result->codigo_autorizacion, 'mensaje' => $simple_result->mensaje);
+														'codigo_autorizacionVc' => $simple_result->codigo_autorizacion, 'mensaje' => $simple_result->mensaje);
 														
 						//Registro de la respuesta del pago en ecommerce
 						$this->registrar_detalle_pago_tc($info_detalle_pago_tc);
@@ -459,7 +459,7 @@ class Orden_Compra extends CI_Controller {
 						//Registro de la respuesta de CCTC de la compra en ecommerce
 						$info_detalle_pago_tc = array('id_compraIn'=> $id_compra, 'id_clienteIn' => $id_cliente, 'id_TCSi' => $consecutivo, 
 														'id_transaccionBi' => $simple_result->id_transaccionNu, 'respuesta_bancoVc' => $simple_result->respuesta_banco,
-														'codigo_autorizacion' => $simple_result->codigo_autorizacion, 'mensaje' => $simple_result->mensaje);
+														'codigo_autorizacionVc' => $simple_result->codigo_autorizacion, 'mensaje' => $simple_result->mensaje);
 
 																				
 						//Registro de la respuesta del pago en ecommerce
@@ -769,6 +769,7 @@ class Orden_Compra extends CI_Controller {
 	{	
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
+		$this->load->view('templates/menu.html', $data);		
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
 	}
