@@ -1,6 +1,14 @@
 <section id='encabezado'>
 	<header>
-		<img src="<?php echo base_url()?>/images/logo_cnn_mexico.gif" alt="CNN Mexico"/>
+		<?php
+			if(isset($this->session->userdata('sitio')->url_imageVc)){
+				echo "<img src='".base_url()."/".$this->session->userdata('sitio')->url_imageVc."' alt='Grupo Expansión' border='1' />";	
+			}	
+			else{
+				echo "<img src='".base_url()."/images/logo_cnn_expansion.jpg' alt='CNN Mexico' border='1'/>";		
+			}		
+		?>
+		
 	</header>
 	<section>
 		<nav>	

@@ -20,11 +20,16 @@
 								$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
 								$nmp=count($mp);
 								if($nmp==2){
-									echo $mp[0];		
+									$desc_promo = $mp[0];		
 								}	
 								else if($nmp==3){
-									echo $mp[1];
-								}														  																			
+									$desc_promo = $mp[1];
+								}
+								if(isset($desc_promo)){
+									$this->session->set_userdata('descrpcion_promocion', $desc_promo);
+									echo $this->session->userdata('descrpcion_promocion');
+								}
+																						  																			
 								if (!empty($articulos))
 									foreach($articulos as $articulo)                                     
 								    	echo "<br />" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'];

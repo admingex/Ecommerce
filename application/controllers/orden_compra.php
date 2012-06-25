@@ -275,10 +275,30 @@ class Orden_Compra extends CI_Controller {
 					$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
 					
 					if ($id_compra) {
-						$mensaje = "Usted elgió... correo con las instrucciones de pago con dep. bancario.";
+						$mensaje = "<html>
+									  <body>
+									  	   <div>
+										        Apreciable ".$this->session->userdata('username')."<br />
+												Hemos recibido su orden de compra ".$this->session->userdata('descrpcion_promocion')."<br /><br /> 
+												
+												Para el realizar el pago mediante depósito bancario, por favor:<br /><br />
+												
+												1.- Acuda a cualquier sucursal de BBVA Bancomer, a través del convenio CIE 57351.<br />
+												IMPORTANTE: En referencia por favor indique su nombre y número telefónico.<br /><br />
+												
+												2.- Una vez realizado el depósito, por favor comuníquese con nosotros para confirmar el pago, tel. 9177 4342 o escríbanos a confirmaciondepagos@expansion.com.mx<br />
+												Indicándonos su nombre, producto que adquiere y enviando escaneada la ficha de depósito.<br /><br />
+												
+												Sin más por el momento, quedamos a sus órdenes para cualquier pregunta o comentario al respecto.<br /><br />
+												
+												Cordialmente,<br />
+												Departamento de pagos<br /><br />																																																										  	  
+									  	   </div>
+									  </body>
+									  </html>";
 						
 						//Mandar correo al cliente con el formato de arlette para notificarle lo que debe hacer
-						$envio_correo = $this->enviar_correo("Notificaci&oacute;n de compra con dep&oacute;sito bancario", $mensaje);
+						$envio_correo = $this->enviar_correo("Notificación de compra con depósito bancario", $mensaje);
 						
 						//Redirección a la URL callback con el código nuevo
 						 
@@ -718,7 +738,7 @@ class Orden_Compra extends CI_Controller {
 		$email = $this->session->userdata('email');
 					
 		//return ($email && mail($email, $asunto, $mensaje));
-		return mail($email, $asunto, $mensaje);
+		return mail($email, "=?UTF-8?B?".base64_encode($asunto)."?=", $mensaje, $headers);
 	}
 	
 	/**
