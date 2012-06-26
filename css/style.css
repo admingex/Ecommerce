@@ -116,38 +116,38 @@ body
 	margin-right: auto;					
 }
 .img-inicio{		
-	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;	
+	background: url('../images/css-sprite_PasosCompra.png') no-repeat;	
 	background-position: -14px -11px;		
 }
 .img-inicio-select{		
-	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background: url('../images/css-sprite_PasosCompra.png') no-repeat;
 	background-position: -14px -42px;	
 }
 
 .img-pago-envio{
-	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background: url('../images/css-sprite_PasosCompra.png') no-repeat;
 	background-position: -45px -11px;
 }
 .img-pago-envio-select{
-	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background: url('../images/css-sprite_PasosCompra.png') no-repeat;
 	background-position: -45px -42px;
 }
 
 .img-facturacion{
-	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background: url('../images/css-sprite_PasosCompra.png') no-repeat;
 	background-position: -76px -11px;
 }
 .img-facturacion-select{
-	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background: url('../images/css-sprite_PasosCompra.png') no-repeat;
 	background-position: -76px -42px;
 }
 
 .img-compra{
-	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background: url('../images/css-sprite_PasosCompra.png') no-repeat;
 	background-position: -107px -11px;
 }
 .img-compra-select{
-	background: url('../images/css-sprite_PasosCompra.jpg') no-repeat;
+	background: url('../images/css-sprite_PasosCompra.png') no-repeat;
 	background-position: -107px -42px;
 }
 
@@ -156,7 +156,7 @@ body
 	height: 32px;			
 }
 .img-ayuda{
-	background: url('../images/css-sprite_btnAyuda.jpg') no-repeat;
+	background: url('../images/css-sprite_btnAyuda.png') no-repeat;
 	background-position: -28px -14px;
 }
 
@@ -317,7 +317,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 152px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -13px -15px;
 }
 
@@ -325,7 +325,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 152px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -13px -39px;	
 }
 
@@ -333,7 +333,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 150px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -1138px -15px;
 }
 
@@ -341,7 +341,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 150px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;
+	background: url('../images/css-sprite_btnN1.png') no-repeat;
 	background-position: -1138px -39px;		
 }
 
@@ -349,14 +349,14 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 131px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -1007px -15px;
 }
 .boton_continuar_compra:hover{
 	border: none;
 	height: 24px;
 	width: 131px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -1007px -39px;
 }
 
@@ -364,7 +364,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 115px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -1288px -15px;
 }
 
@@ -372,7 +372,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 115px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -1288px -39px;
 }
 
@@ -381,7 +381,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 183px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -165px -15px;
 }
 
@@ -389,7 +389,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 183px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -165px -39px;
 }
 
@@ -405,7 +405,7 @@ a:visited{
 	border: none;
 	height: 18px;
 	width: 125px;
-	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN2.png') no-repeat;	
 	background-position: -136px -13px;
 	margin-left: 3px;
 }
@@ -414,7 +414,7 @@ a:visited{
 	border: none;
 	height: 18px;
 	width: 125px;
-	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN2.png') no-repeat;	
 	background-position: -136px -31px;
 }
 
@@ -422,7 +422,7 @@ a:visited{
 	border: none;
 	height: 18px;
 	width: 125px;
-	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN2.png') no-repeat;	
 	background-position: -11px -13px;	
 }
 
@@ -430,7 +430,7 @@ a:visited{
 	border: none;
 	height: 18px;
 	width: 125px;
-	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN2.png') no-repeat;	
 	background-position: -11px -31px;	
 }
 
@@ -467,7 +467,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 210px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -348px -15px;
 	margin-top: 50px;
 }
@@ -476,7 +476,7 @@ a:visited{
 	border: none;
 	height: 24px;
 	width: 210px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -348px -39px;
 	margin-top: 50px;
 }
@@ -514,7 +514,7 @@ td{
 	border: none;
 	height: 24px;
 	width: 185px;
-	background: url('../images/css-sprite_btnN4.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN4.png') no-repeat;	
 	background-position: -9px -5px;		
 }
 
@@ -522,7 +522,7 @@ td{
 	border: none;
 	height: 24px;
 	width: 185px;
-	background: url('../images/css-sprite_btnN4.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN4.png') no-repeat;	
 	background-position: -9px -28px;		
 }
 
@@ -530,14 +530,14 @@ td{
 	border: none;
 	height: 28px;
 	width: 88px;
-	background: url('../images/css-sprite_btnN6.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN6.png') no-repeat;	
 	background-position: -7px -7px;					
 }
 .usar-razon-social:hover{
 	border: none;
 	height: 28px;
 	width: 88px;
-	background: url('../images/css-sprite_btnN6.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN6.png') no-repeat;	
 	background-position: -7px -35px;				
 }
 
@@ -545,14 +545,14 @@ td{
 	border: none;
 	height: 24px;
 	width: 175px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -702px -15px;	
 }
 .usar_razon_social_large:hover{
 	border: none;
 	height: 24px;
 	width: 175px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -702px -39px;	
 }
 
@@ -560,14 +560,14 @@ td{
 	border: none;
 	height: 18px;
 	width: 150px;
-	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN2.png') no-repeat;	
 	background-position: -531px -13px;	
 }
 .usar_razon_social_large2:hover{
 	border: none;
 	height: 18px;
 	width: 150px;
-	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN2.png') no-repeat;	
 	background-position: -531px -31px;	
 }
 .usar_otra_large {
@@ -659,14 +659,14 @@ td{
 	border: none;
 	height: 18px;
 	width: 138px;
-	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN2.png') no-repeat;	
 	background-position: -261px -13px;
 }
 .usar_nueva_direccion:hover{
 	border: none;
 	height: 18px;
 	width: 138px;
-	background: url('../images/css-sprite_btnN2.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN2.png') no-repeat;	
 	background-position: -261px -31px;
 }
 
@@ -742,14 +742,14 @@ td{
 	border: none;
 	height: 24px;
 	width: 130px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -877px -15px;	
 }
 .finalizar_compra:hover{
 	border: none;
 	height: 24px;
 	width: 130px;
-	background: url('../images/css-sprite_btnN1.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN1.png') no-repeat;	
 	background-position: -877px -39px;	
 }
 
@@ -775,7 +775,7 @@ input[type="radio"]{
 	height: 16px;
 	width: 16px;	
 	background: transparent url('../images/css-sprite_icons.png') no-repeat;	
-	background-position: -153px -65px;	
+	background-position: -153px -67px;	
 	float: left;
 }
 .label_radio{
@@ -787,7 +787,7 @@ input[type="radio"]{
 	border: none;
 	height: 17px;
 	width: 57px;
-	background: url('../images/css-sprite_btnN5.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN5.png') no-repeat;	
 	background-position: -8px -9px;
 	float: left;
 	margin-top: 5px;	
@@ -796,7 +796,7 @@ input[type="radio"]{
 	border: none;
 	height: 17px;
 	width: 57px;
-	background: url('../images/css-sprite_btnN5.jpg') no-repeat;	
+	background: url('../images/css-sprite_btnN5.png') no-repeat;	
 	background-position: -8px -26px;
 	float: left;	
 }
@@ -839,7 +839,7 @@ input[type="checkbox"]{
 	height: 15px;
 	width: 21px;	
 	background: transparent url('../images/css-sprite_checkboxes02.png') no-repeat;	
-	background-position: -5px -18px;	
+	background-position: -5px -20px;	
 	float: left;
 }
 
@@ -865,5 +865,28 @@ h4{
 	padding:10px;
 	position:absolute; z-index:1000; 
 	border: solid 1px #4E4E4E;
-	font-size: 10px;
+	font-size: 10px;	
+}
+.tip_trigger{
+	text-decoration: none;
+}
+.interrogacion{
+	border: none;
+	height: 14px;
+	width: 16px;	
+	background: transparent url('../images/css-sprite_icons.png') no-repeat;	
+	background-position: -153px -11px;	
+	margin: 0px 0px 0px 5px;				
+}
+
+.interrogacion:hover{
+	border: none;
+	height: 14px;
+	width: 16px;	
+	background: transparent url('../images/css-sprite_icons.png') no-repeat;	
+	background-position: -153px -27px;		
+}
+.float_izq{
+	float: left;
+	margin-top: 6px;	
 }

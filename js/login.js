@@ -14,7 +14,9 @@ $(document).ready(function() {
 	});
 	
 	/*tipo inicio*/
-	$("#divtipo_inicio2").click(function() {				
+	$("#divtipo_inicio2").click(function() {	
+		$(".error").remove();
+		$(".error2").remove();				
 		$("#divtipo_inicio2").removeClass('radio_no_selected').addClass('radio_selected');
 		$("#divtipo_inicio").removeClass('radio_selected').addClass('radio_no_selected');
 		document.getElementById('tipo_inicio2').checked='checked';
@@ -29,7 +31,8 @@ $(document).ready(function() {
 		document.getElementById('tipo_inicio2').checked='';
 		document.getElementById('tipo_inicio').checked='checked';				
 		passwd.attr("disabled", true);
-		registro = true;						
+		registro = true;	
+		consulta_mail($('#email').val());		
 	});
 	
 	/*Inicio de Sesión*/
@@ -45,7 +48,7 @@ $(document).ready(function() {
 				return false;
 			} 
 			else if (passwd.val() == "" ) {
-				passwd.focus().after("<div class='error2'>Por favor escribe tu contraseña. Si no has creado una cuenta, selecciona iniciar sesión como cliente nuevo.</div>");
+				passwd.focus().after("<div class='error2'>Por favor escribe tu contraseña o elige iniciar sesión como cliente nuevo</div>");
 				return false;
 			}
 			else{
@@ -79,4 +82,38 @@ $(document).ready(function() {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
+	
+	email.keyup(function(){		
+		consulta_mail(this.value);					
+	});
+		
 });
+
+
+function consulta_mail(mail) {	
+	$(".error2").remove();
+	$.ajax({
+			type: "GET",
+			data: {'mail' : mail},
+			url: "http://localhost/ecommerce/index.php/login/consulta_mail",
+			dataType: "json",				
+			async: true,
+			
+			success: function(data) {	
+				if(data.mail){
+					cte_reg=document.getElementById('tipo_inicio2').checked;							
+					if(!cte_reg && data.mail==1){										
+						$('#email').focus().after("<div class='error2'>Esta dirección de correo ya se encuentra registrada</div>");
+					}	
+				}
+																		  				  									  										
+			},
+			error: function(data) {
+				alert("error: " + data);
+			},
+			complete: function(data){				
+			},
+			//async: false,
+			cache: false
+	}); 	
+}

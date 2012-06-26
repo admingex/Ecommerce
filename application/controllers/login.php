@@ -198,7 +198,7 @@ class Login extends CI_Controller {
 			if (!empty($_POST['password'])) {
 				$datos['password'] = htmlspecialchars(trim($_POST['password']));
 			} else {
-				$this->login_errores['password'] = 'Por favor escribe tu contraseña. Si no has creado una cuenta, selecciona iniciar sesión como cliente nuevo.';
+				$this->login_errores['password'] = 'Por favor escribe tu contraseña o selecciona iniciar sesión como cliente nuevo.';
 			}					
 		} else {
 			$this->login_errores['user_login'] = 'Selecciona alguna modalidad';
@@ -332,7 +332,8 @@ class Login extends CI_Controller {
 	public function cargar_vista($folder, $page, $data)
 	{	
 		//Para automatizar un poco el desplieguee
-		$this->load->view('templates/header', $data);		
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/menu.html', $data);		
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
 	}
@@ -370,6 +371,13 @@ class Login extends CI_Controller {
 		else{
 			return FALSE;
 		}	
+	}
+	
+	public function consulta_mail(){
+		//$value['mail']=$_GET['mail'];
+		$res=$this->login_registro_model->verifica_registro_email($_GET['mail']);
+		$value['mail']=$res->num_rows();
+		echo json_encode($value);			
 	}
 }
 

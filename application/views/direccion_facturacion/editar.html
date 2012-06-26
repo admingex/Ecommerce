@@ -118,11 +118,15 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td class="label_izq">
-					<input type="checkbox" id="chk_default" name="chk_default"/>					
-					<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
-					</div>	
-					Usar como direcci&oacute;n de facturaci&oacute;n para pago express
+					<div class="float_izq">
+						<input type="checkbox" id="chk_default" name="chk_default"/>					
+						<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
+						</div>												
+						Usar como direcci&oacute;n de facturaci&oacute;n para pago express
+					</div>
 					<?php 
+						$this->load->view('mensaje_pago_express');
+					
 						if(isset($_POST['chk_default'])) { 							
 							echo "<script>cambia_check('chk_default')</script>"; 
 						}
@@ -143,11 +147,11 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td>
-					<input type="submit" id="guardar_direccion" value=" " class="usar_nueva_direccion"/>									
+					<input type="submit" name="guardar_direccion" id="guardar_direccion" value=" " class="usar_nueva_direccion"/>									
 					ó
-					<input type="submit" id="guardar_otra_rs" value=" " class="usar_otra_large"/> 										
+					<input type="submit" name="guardar_usar_otra" id="guardar_otra_direccion" value=" " class="usar_otra_large"/> 										
 					<div class="instrucciones_cursivas_der">
-						<a href="<?php echo site_url('direccion_facturacion/registrar_direccion'); ?>" title="actualizar"><input type="submit" value=" " class="cancelar" /></a>
+						<a href="<?php echo site_url('direccion_facturacion/registrar_direccion'); ?>"><div class="cancelar"></div></a>						
 					</div>	
 				</td>
 			</tr>

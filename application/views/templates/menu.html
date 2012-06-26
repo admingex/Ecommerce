@@ -1,12 +1,20 @@
 <section id='encabezado'>
 	<header>
-		<img src="<?php echo base_url()?>/images/logo_cnn_mexico.gif" alt="CNN Mexico"/>
+		<?php
+			if(isset($this->session->userdata('sitio')->url_imageVc)){
+				echo "<img src='".base_url()."/".$this->session->userdata('sitio')->url_imageVc."' alt='Grupo Expansión' border='1' />";	
+			}	
+			else{
+				echo "<img src='".base_url()."/images/logo_cnn_expansion.jpg' alt='CNN Mexico' border='1'/>";		
+			}		
+		?>
+		
 	</header>
 	<section>
 		<nav>	
 		<div class="izquierda">
 			<div class="proceso-pago">
-				<?php if(($this->uri->segment(1) =='login') || ($this->uri->segment(1) =='')) $img='-select'; else $img='';?>
+				<?php if(($this->uri->segment(1) =='registro') || ($this->uri->segment(1) =='login') || ($this->uri->segment(1) =='')) $img='-select'; else $img='';?>
 				<div class="img-proceso-pago img-inicio<?php echo $img; ?>" >							
 				</div>
 				<a href="<?php echo site_url('login');?>" class="txt-proceso-pago<?php echo $img; ?>">Inicio</a>

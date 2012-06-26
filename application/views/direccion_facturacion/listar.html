@@ -29,6 +29,7 @@
 			<tbody class="contenedor-gris">
 			<?php
 				$hay_direcciones = false;	
+				$btn=0;
 				if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {										
 					$direcciones = $lista_direcciones;
 					foreach($direcciones->result_array() as $direccion) {	
@@ -67,8 +68,9 @@
 					</td>
 					<td class="item-lista borde-derecho tam15" id="<?php echo $direccion['id_consecutivoSi'] ?>">
 						<?php 
-						if ($direccion['id_estatusSi']==3){
+						if (($direccion['id_estatusSi']==3)||($btn==0)){
 							echo '<script>cambia_boton('.$direccion["id_consecutivoSi"].')</script>';
+							$btn=1;
 						}
 						?>						
 					</td>

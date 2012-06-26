@@ -9,6 +9,7 @@ class MY_Output extends CI_Output {
         $this->set_header('Cache-Control: post-check=0, pre-check=0', FALSE);
         $this->set_header('Pragma: no-cache');
 	}
+	
 }
 
 /* End of file MY_Output.php */

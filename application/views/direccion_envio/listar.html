@@ -18,14 +18,10 @@
 	<form id="form_direccion_envio" action="<?php echo site_url('direccion_envio/seleccionar'); ?>" method="POST">
 		<table cellspacing="0" cellpadding="0" width="100%">
 			<thead>
-				<tr>
-					<th colspan="2">
-						Calle y n&uacute;mero
-					</th>									
-					<th>Colonia</th>
-					<th>CP</th>
-					<th>Ciudad y Esado</th>
-					<th>&nbsp;</th>
+				<tr>					
+					<th colspan="3">
+						Tus direcciones
+					</th>														
 					<th width='135px'>&nbsp;</th>
 				</tr>
 			</thead>
@@ -35,6 +31,7 @@
 			if (isset($lista_direcciones) && $lista_direcciones->num_rows()) {
 				$hay_direcciones = true;
 				$direcciones = $lista_direcciones;
+				$btn=0;
 				//$default = self::$CAT_ESTATUS['DEFAULT'];	//es 3
 				foreach($direcciones->result_array() as $direccion) {
 					$check = "";
@@ -51,29 +48,23 @@
 				<td>				
 					<input type="radio" id="radio<?php echo $direccion['id_consecutivoSi']; ?>" name="direccion_selecionada" <?php echo $check." ".$value_r;?>/>
 					<div id="div<?php echo $direccion['id_consecutivoSi']; ?>" <?php echo $classsi;?> onclick="cambia_boton(<?php echo $direccion['id_consecutivoSi']; ?>)">&nbsp;					
-					</div>															
+					</div>																			
 				</td>
-				<td class="item-lista borde-derecho">
-					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?>
+				<td class="item-lista borde-derecho">	
+					<?php echo $direccion['calle'].', '.$direccion['num_ext']; ?><br />								
+					<?php echo $direccion['colonia']; ?><br />				
+					<?php echo $direccion['cp']; ?><br />				
+					<?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?><br />
 					<?php echo $class;?>
 				</td>
-				<td class="item-lista borde-derecho">
-					<?php echo $direccion['colonia']; ?>
-				</td>
-				<td class="item-lista borde-derecho">
-					<?php echo $direccion['cp']; ?>
-				</td>
-				<td class="item-lista borde-derecho">
-					<?php echo $direccion['ciudad'].', '.$direccion['estado'] ; ?>
-				</td>
-				<td class="item-lista borde-derecho">
+				<td class="item-lista borde-derecho" align="center">
 					<a href="<?php echo site_url("direccion_envio/editar/".$direccion['id_consecutivoSi']); ?>" title="editar">editar</a>&nbsp;
 					<a href="<?php echo site_url("direccion_envio/eliminar/".$direccion['id_consecutivoSi']); ?>" title="eliminar">eliminar</a>
 				</td>
 				<td id="<?php echo $direccion['id_consecutivoSi']; ?>">&nbsp;</td>
 			</tr>			
 			<?php
-					if($direccion['id_estatusSi']==3){
+					if(($btn==0) || ($direccion['id_estatusSi']==3)){
 						echo "<script>cambia_boton(".$direccion['id_consecutivoSi'].");</script>";
 					}
 				}
@@ -89,19 +80,19 @@
 			?>
 	
 		<?php if (!$hay_direcciones): ?>
-			<tr><td colspan="7"><h4>No tiene direcciones registradas</h4></td></tr>						
+			<tr><td colspan="4"><h4>No tiene direcciones registradas</h4></td></tr>						
 		<?php endif ?>		
 		</tbody>	
 			<tfoot class="contenedor-gris">
 				<tr>
-					<td colspan="7" >
+					<td colspan="4" >
 						<div class='validation_message'>
 							<?php if(isset($mensaje)) { echo $mensaje; } ?>
 						</div>
 					</td>
 				</tr>
 				<tr>
-					<td colspan="7" class="borde-top">
+					<td colspan="4" class="borde-top">
 						<div id="div_enlace">
 							<a class="agregar_direccion" href="<?php echo site_url('direccion_envio/registrar/'); ?>">
 								<div class="agregar">&nbsp;</div>

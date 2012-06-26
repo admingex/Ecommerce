@@ -7,8 +7,8 @@ $(document).ready(function() {
 	}, function() {
 		tip.hide(); //Hide tooltip		  
 	}).mousemove(function(e) {
-		var mousex = e.pageX + 10; //Get X coodrinates
-		var mousey = e.pageY + 10; //Get Y coordinates
+		var mousex = e.pageX + 15; //Get X coodrinates
+		var mousey = e.pageY + 15; //Get Y coordinates
 		var tipWidth = tip.width(); //Find width of tooltip
 		var tipHeight = tip.height(); //Find height of tooltip
 		

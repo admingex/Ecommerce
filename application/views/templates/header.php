@@ -37,11 +37,4 @@
 
     
     <div id="main">
-    		<?php    	    					
-				include "menu.html"; 				
-				if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
-					if($this->uri->segment(1)!="orden_compra"){
-						include "promocion.html";
-					}												
-				}			    
-			?>
+    		

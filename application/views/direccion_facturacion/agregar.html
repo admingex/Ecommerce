@@ -130,10 +130,15 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td class="label_izq">
-					<input type="checkbox" id="chk_default" name="chk_default"/>					
-					<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
-					</div>		
-					Usar como direcci&oacute;n de facturaci&oacute;n para pago express
+					<div class="float_izq">
+						<input type="checkbox" id="chk_default" name="chk_default"/>					
+						<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
+						</div>												
+						Usar como direcci&oacute;n de facturaci&oacute;n para pago express
+					</div>
+					<?php 
+						$this->load->view('mensaje_pago_express');
+					?>																
 				</td>
 			</tr>
 			<tr>

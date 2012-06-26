@@ -62,6 +62,14 @@
 				</td>
 			</tr>
 			<tr>
+				<td>
+					&nbsp;
+				</td>
+				<td>
+					<span class="instrucciones_cursivas">Datos del titular (Escríbelos tal como aparecen en tu tarjeta)</span>	
+				</td>
+			</tr>
+			<tr>
 				<td class="label">
 					Nombre del Titular
 				</td>
@@ -146,10 +154,13 @@
 			<tr>
 				<td>&nbsp;</td>
 				<td class="label_izq">
-					<input type="checkbox" id="chk_default" name="chk_default"/>					
-					<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
-					</div>		
-					Usar para pago express
+					<div class="float_izq">
+						<input type="checkbox" id="chk_default" name="chk_default"/>					
+						<div id="divchk_default" class="checkbox_no_selected" onclick="cambia_check('chk_default')">&nbsp;					
+						</div>												
+						Usar para pago express
+					</div>
+					<?php $this->load->view('mensaje_pago_express'); ?>												
 				</td>
 			</tr>
 			<tr>
