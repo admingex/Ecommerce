@@ -63,8 +63,8 @@
 						<?php echo $class;?>											
 					</td>										
 					<td class="item-lista borde-derecho tam15">
-						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_direccion/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a>
-						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar_direccion/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a>
+						<a href="<?php echo site_url().'direccion_facturacion/editar_direccion/'.$direccion['id_consecutivoSi']; ?>" title="editar">editar</a>
+						<a href="<?php echo site_url().'direccion_facturacion/eliminar_direccion/'.$direccion['id_consecutivoSi']; ?>" title="eliminar">eliminar</a>
 					</td>
 					<td class="item-lista borde-derecho tam15" id="<?php echo $direccion['id_consecutivoSi'] ?>">
 						<?php 

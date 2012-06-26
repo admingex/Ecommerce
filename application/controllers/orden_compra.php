@@ -53,7 +53,7 @@ class Orden_Compra extends CI_Controller {
 		*/
 		//si no hay sesión
 		//manda al usuario a la... pagina de login
-		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
+		$this->redirect_cliente_invalido('id_cliente', 'login');
 		
 		//bandera de redirección a la orden en cuanto se llega acá
 		//$this->session->set_userdata("redirect_to_order", "orden_compra");
@@ -800,7 +800,7 @@ class Orden_Compra extends CI_Controller {
 	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') {
 		if (!$this->session->userdata($revisar)) {
 			//$url = $protocolo . BASE_URL . $destination; // Define the URL.
-			$url = $this->config->item('base_url') . $destino; // Define the URL.
+			$url = site_url($destino); // Define the URL.
 			header("Location: $url");
 			exit(); // Quit the script.
 		}

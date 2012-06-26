@@ -63,8 +63,8 @@
 					</td>
 					<td class="item-lista borde-derecho"><?php echo $direccion['email'];?></td>					
 					<td class="item-lista borde-derecho">
-						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/editar_rs/'.$direccion['id_razonSocialIn']; ?>" title="editar">editar</a>
-						<a href="<?php echo $this->config->item('base_url').'/index.php/direccion_facturacion/eliminar_rs/'.$direccion['id_razonSocialIn']; ?>" title="eliminar">eliminar</a>
+						<a href="<?php echo site_url().'direccion_facturacion/editar_rs/'.$direccion['id_razonSocialIn']; ?>" title="editar">editar</a>
+						<a href="<?php echo site_url().'direccion_facturacion/eliminar_rs/'.$direccion['id_razonSocialIn']; ?>" title="eliminar">eliminar</a>
 					</td>
 					<td align="center" id="<?php echo $direccion['id_razonSocialIn'] ?>" width="100px">												
 						<?php 

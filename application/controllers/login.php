@@ -77,7 +77,7 @@ class Login extends CI_Controller {
 		{
 			//si es usuario nuevo, se debe registrar
 			if (array_key_exists('tipo_inicio', $_POST) && $_POST['tipo_inicio'] == $this::NUEVO) {
-				$url = $this->config->item('base_url').'/index.php/registro/';
+				$url = site_url('registro');
 				header("Location: $url");
 				exit();
 			} else {
@@ -342,10 +342,10 @@ class Login extends CI_Controller {
 	 * Verifica la sesión del usuario
 	 * 
 	 * */
-	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') {
+	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = 'login', $protocolo = 'http://') {
 		if (!$this->session->userdata($revisar)) {
 			//$url = $protocolo . BASE_URL . $destination; // Define the URL.
-			$url = $this->config->item('base_url') . $destino; // Define the URL.
+			$url = site_url($destino); // Define the URL.
 			header("Location: $url");
 			exit(); // Quit the script.
 		}

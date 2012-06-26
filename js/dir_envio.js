@@ -141,7 +141,7 @@ $(document).ready(function() {
 	$('#sel_pais').change(function() {
 		/*hacer un toggle si es necesario*/
 		var es_mx = false; 
-		$.getJSON("http://localhost/ecommerce/index.php/direccion_envio/es_mexico/" + $(this).val(),
+		$.getJSON("http://localhost/direccion_envio/es_mexico/" + $(this).val(),
 			function(data) {
 				if (!data.result) {	//no es México
 					$('tr.div_mexico').hide();
@@ -201,7 +201,7 @@ $(document).ready(function() {
 		$.ajax({
 			type: "POST",
 			data: {'codigo_postal' : cp},
-			url: "http://localhost/ecommerce/index.php/direccion_envio/get_info_sepomex",
+			url: "http://localhost/direccion_envio/get_info_sepomex",
 			dataType: "json",				
 			async: false,
 			success: function(data) {
@@ -222,7 +222,7 @@ $(document).ready(function() {
 					
 					
 					//carga del catálogo ciudades y selección
-					$.post( 'http://localhost/ecommerce/index.php/direccion_envio/get_ciudades',
+					$.post( 'http://localhost/direccion_envio/get_ciudades',
 						// when the Web server responds to the request
 						{ 'estado': clave_estado},
 						function(datos) {
@@ -278,7 +278,7 @@ $(document).ready(function() {
 });
 
 function actualizar_ciudades(clave_estado) {
-	$.post( 'http://localhost/ecommerce/index.php/direccion_envio/get_ciudades',
+	$.post( 'http://localhost/direccion_envio/get_ciudades',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado},
 		function(datos) {
@@ -305,7 +305,7 @@ function actualizar_ciudades(clave_estado) {
 }
 
 function actualizar_colonias(clave_estado, ciudad) {
-	$.post( 'http://localhost/ecommerce/index.php/direccion_envio/get_colonias',
+	$.post( 'http://localhost/direccion_envio/get_colonias',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado, 'ciudad': ciudad },
 		function(datos) {
@@ -325,7 +325,7 @@ function actualizar_colonias(clave_estado, ciudad) {
 }
 
 function actualizar_cp(clave_estado, ciudad, colonia) {
-	$.post( 'http://localhost/ecommerce/index.php/direccion_envio/get_colonias',
+	$.post( 'http://localhost/direccion_envio/get_colonias',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado, 'ciudad': ciudad},
 		function(datos) {

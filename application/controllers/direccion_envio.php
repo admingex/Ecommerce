@@ -26,7 +26,7 @@ class Direccion_Envio extends CI_Controller {
 				
 		//si no hay sesión
 		//manda al usuario a la... página de login
-		$this->redirect_cliente_invalido('id_cliente', '/index.php/login');
+		$this->redirect_cliente_invalido('id_cliente', 'login');
 		
 		//cargar el modelo en el constructor
 		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
@@ -836,11 +836,11 @@ class Direccion_Envio extends CI_Controller {
 		$this->load->view('templates/footer', $data);
 	}
 	
-	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = '/index.php/login', $protocolo = 'http://') 
+	private function redirect_cliente_invalido($revisar = 'id_cliente', $destino = 'login', $protocolo = 'http://') 
 	{
 		if (!$this->session->userdata($revisar)) {
 			//$url = $protocolo . BASE_URL . $destination; // Define the URL.
-			$url = $this->config->item('base_url') . $destino; // Define the URL.
+			$url = site_url($destino); // Define the URL.
 			header("Location: $url");
 			exit(); // Quit the script.
 		}

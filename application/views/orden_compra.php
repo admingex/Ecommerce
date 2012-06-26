@@ -2,7 +2,7 @@
 	<div class="titulo-proceso-img">&nbsp;		
 	</div>			
 	<div class="titulo-proceso">
-		<?php echo $subtitle; ?>
+		<?php echo $subtitle; ?>	
 	</div>
 </section>
 <div id="pleca-punteada"></div>
