@@ -134,13 +134,7 @@ class Direccion_Facturacion extends CI_Controller {
 						
 					if (empty($this->reg_errores)) {
 							
-						$form_values['direccion']['id_razonSocialIn'] = $consecutivo;
-						
-						if (array_key_exists('chk_default', $_POST)) {							
-							$this->direccion_facturacion_model->quitar_predeterminado($id_cliente);									
-						} else {
-							$form_values['direccion']['id_estatusSi'] = 1;
-						}
+						$form_values['direccion']['id_razonSocialIn'] = $consecutivo;																								
 						
 						if (!$consecutivo) {
 							$direccion = $form_values['direccion'];
@@ -152,7 +146,10 @@ class Direccion_Facturacion extends CI_Controller {
 						} 
 						else {
 							$this->direccion_facturacion_model->actualizar_rs($consecutivo, $form_values['direccion']);
-														
+							if(array_key_exists('chk_default', $_POST) || $consecutivo == 0) {
+								$this->direccion_facturacion_model->establecer_predeterminado_rs($id_cliente, $consecutivo);	
+								$form_values['direccion']['id_estatusSi'] = 3;
+							}							
 							$this->cargar_en_session($consecutivo);		
 							if (array_key_exists('guardar_usar_otra', $_POST)) {
 								redirect('direccion_facturacion');
@@ -236,7 +233,7 @@ class Direccion_Facturacion extends CI_Controller {
 						);
 				$this->session->set_userdata($datadire);	
 				if(array_key_exists('chk_default', $_POST) || $consecutivo == 0) {
-							$this->direccion_facturacion_model->establecer_predeterminado($id_cliente, $id_rs);	
+							$this->direccion_facturacion_model->establecer_predeterminado($id_cliente, $id_dir);	
 							$form_values['direccion']['id_estatusSi'] = 3;
 				}	
 				
@@ -323,13 +320,7 @@ class Direccion_Facturacion extends CI_Controller {
 					if (empty($this->reg_errores)) {
 							
 						$form_values['direccion']['id_ConsecutivoSi'] = $consecutivo;
-						
-						if (array_key_exists('chk_default', $_POST)) {							
-							$this->direccion_facturacion_model->quitar_predeterminado($id_cliente);									
-						} else {
-							$form_values['direccion']['id_estatusSi'] = 1;
-						}
-						
+																														
 						if (!$consecutivo) {
 							$direccion = $form_values['direccion'];
 							$this->cargar_en_session($direccion);
@@ -340,9 +331,18 @@ class Direccion_Facturacion extends CI_Controller {
 						} 
 						else {
 							$this->direccion_facturacion_model->actualizar_direccion($id_cliente,$consecutivo, $form_values['direccion']);
-														
-							$this->cargar_en_session($consecutivo);							
-							redirect('direccion_facturacion/registrar_direccion');
+							if(array_key_exists('chk_default', $_POST)) {
+								$this->direccion_facturacion_model->establecer_predeterminado($id_cliente, $consecutivo);	
+								$form_values['direccion']['id_estatusSi'] = 3;
+							}							
+							$this->cargar_en_session($consecutivo);	
+							if (array_key_exists('guardar_usar_otra', $_POST)) {
+								redirect('direccion_facturacion/registrar_direccion');
+							}	
+							else{
+								redirect('orden_compra');								
+							}						
+							
 						}
 					}
 					else{								

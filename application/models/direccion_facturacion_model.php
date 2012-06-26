@@ -211,10 +211,10 @@ class Direccion_Facturacion_model extends CI_Model {
 	
 	function establecer_predeterminado($id_cliente, $consecutivo){
 		$this->db->where(array('id_clienteIn' => $id_cliente, 'address_type'=>1, 'id_estatusSi !='=>2));
-		$resultado = $this->db->update('CMS_IntRazonSocial', array('id_estatusSi' => 1));
+		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => 1));
 		
 		$this->db->where(array('id_clienteIn' => $id_cliente, 'id_consecutivoSi'=>$consecutivo));
-		$resultado = $this->db->update('CMS_IntRazonSocial', array('id_estatusSi' => 3));				
+		$resultado = $this->db->update('CMS_IntDireccion', array('id_estatusSi' => 3));				
 	}	
 	
 	function establecer_predeterminado_rs($id_cliente, $id_rs){
