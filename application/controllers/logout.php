@@ -29,7 +29,7 @@ class Logout extends CI_Controller {
 		$this->session->sess_destroy();
 		
 		//redirect to login
-		$url = $this->config->item('base_url').'/index.php/login/';
+		$url = site_url('login');
 		header("Location: $url");
 		exit();
 	}
