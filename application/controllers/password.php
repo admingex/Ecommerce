@@ -72,7 +72,7 @@ class Password extends CI_Controller {
 						  	   <div>
 						  	   	  
 						  	   	   	   1. Sigue el link de abajo para cambiar tu contraseña usando nuestro servidor seguro.<br />
-						  	   	   	   <a href='https://pagos.grupoexpansion.mx/password/verificar/".$p."'>    	   	   	  http://10.177.78.54/ecommerce/index.php/password/verificar/".$p."</a><br />
+						  	   	   	   <a href='https://pagos.grupoexpansion.mx/password/verificar/".$p."'>https://pagos.grupoexpansion.mx/password/verificar/".$p."</a><br />
 						  	   	   	   Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu<br />
 						  	   	   	   navegador, o reescribirla ahí.<br />
 						  	   	   	   2. Ingresa la clave: ".$p."<br />

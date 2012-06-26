@@ -92,6 +92,7 @@ body
 	display: block;
 	text-decoration: none;
 	text-align: center;		
+	cursor: default;
 }
 
 #encabezado .txt-proceso-pago-select{		
@@ -101,6 +102,7 @@ body
 	display: block;	
 	text-decoration: none;	
 	text-align: center;
+	cursor: default;
 }
 
 .proceso-pago{

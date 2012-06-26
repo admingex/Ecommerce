@@ -2,10 +2,10 @@
 	<header>
 		<?php
 			if(isset($this->session->userdata('sitio')->url_imageVc)){
-				echo "<img src='".base_url()."/".$this->session->userdata('sitio')->url_imageVc."' alt='Grupo Expansión' border='1' />";	
+				echo "<img src='".base_url().$this->session->userdata('sitio')->url_imageVc."' alt='Grupo Expansión' />";	
 			}	
 			else{
-				echo "<img src='".base_url()."/images/logo_cnn_expansion.jpg' alt='CNN Mexico' border='1'/>";		
+				echo "<img src='".base_url()."images/logo_cnn_expansion.jpg' alt='CNN Mexico' />";		
 			}		
 		?>
 		
@@ -17,25 +17,25 @@
 				<?php if(($this->uri->segment(1) =='registro') || ($this->uri->segment(1) =='login') || ($this->uri->segment(1) =='')) $img='-select'; else $img='';?>
 				<div class="img-proceso-pago img-inicio<?php echo $img; ?>" >							
 				</div>
-				<a href="<?php echo site_url('login');?>" class="txt-proceso-pago<?php echo $img; ?>">Inicio</a>
+				<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Inicio</a>
 			</div>	
 			<div class="proceso-pago">	
 				<?php if(($this->uri->segment(1) == "direccion_envio") || ($this->uri->segment(1) =="forma_pago")) $img='-select'; else $img='';?>	
 				<div class="img-proceso-pago img-pago-envio<?php echo $img; ?>">				
 				</div>
-				<a href="<?php echo site_url('forma_pago');?>" class="txt-proceso-pago<?php echo $img; ?>">Pago&nbsp;y&nbsp;Envío</a>
+				<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Pago&nbsp;y&nbsp;Envío</a>
 			</div>
 			<div class="proceso-pago">
 				<?php if($this->uri->segment(1) == "direccion_facturacion") $img='-select'; else $img='';?>	
 				<div class="img-proceso-pago img-facturacion<?php echo $img ?>" >				
 				</div>
-				<a href="<?php echo site_url('direccion_facturacion');?>" class="txt-proceso-pago<?php echo $img ?>">Facturación</a>
+				<a href="#" class="txt-proceso-pago<?php echo $img ?>">Facturación</a>
 			</div>	
 			<div class="proceso-pago">	
 				<?php if($this->uri->segment(1) == "orden_compra") $img='-select'; else $img='';?>
 				<div class="img-proceso-pago img-compra<?php echo $img; ?>">				
 				</div>
-				<a href="<?php echo site_url('orden_compra');?>" class="txt-proceso-pago<?php echo $img; ?>">Finalizar&nbsp;Compra</a>
+				<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Finalizar&nbsp;Compra</a>
 			</div>	
 		</div>		
 		<div class="derecha">
