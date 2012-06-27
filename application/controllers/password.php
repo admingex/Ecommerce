@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+include('api.php');
+
 class Password extends CI_Controller {
 
 	public static $TIPO_ACTIVIDAD = array(
@@ -20,12 +22,13 @@ class Password extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		//cargar el modelo en el constructor
-		$this->load->model('password_model', 'password_model', true);			
+		$this->load->model('password_model', 'password_model', true);	
+		$this->api = new Api();		
     }
 	
-	public function index(){
+	public function index(){		
 		$data['title'] = $this->title;
-		$data['subtitle'] = $this->subtitle;
+		$data['subtitle'] = $this->subtitle;		
 		$data['verificar']=FALSE;
 		$data['enviado']=FALSE;
 		$data['cambiar']=FALSE;	
@@ -35,7 +38,7 @@ class Password extends CI_Controller {
 		$this->cargar_vista('', 'password',$data);
 	}	
 	
-	public function enviar(){
+	public function enviar(){		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
 		$data['mensaje']='';
@@ -53,8 +56,16 @@ class Password extends CI_Controller {
 				$this->load->helper('date');
 				$data['timestamp']= $t= mdate('%Y/%m/%d %h:%i:%s',time());
 				$this->password_model->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
-				$this->password_model->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);		
-												  
+				$this->password_model->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);
+				$encript=$this->api->encrypt($this->session->userdata('id_sitio')."|".
+											 $this->session->userdata('id_canal')."|".
+											 $this->session->userdata('id_promocion')."|".
+											 $this->session->userdata('guidx')."|".
+											 $this->session->userdata('guidy')."|".
+											 $this->session->userdata('guidz')."|", $this->api->key);		
+				$encript= rtrim(strtr(base64_encode($encript), '+/', '-_'), '=');
+ 
+
 				$headers="Content-type: text/html; charset=UTF-8\r\n";
                 $headers.="MIME-Version: 1.0\r\n";
 			    $headers .= "From: GexWeb<servicioaclientes@expansion.com.mx>\r\n";       
@@ -71,8 +82,8 @@ class Password extends CI_Controller {
 						  	   <br /><br />
 						  	   <div>
 						  	   	  
-						  	   	   	   1. Sigue el link de abajo para cambiar tu contraseña usando nuestro servidor seguro.<br />
-						  	   	   	   <a href='https://pagos.grupoexpansion.mx/password/verificar/".$p."'>https://pagos.grupoexpansion.mx/password/verificar/".$p."</a><br />
+						  	   	   	   1. Sigue el link de abajo para cambiar tu contraseña usando nuestro servidor seguro.<br /><br />
+						  	   	   	   <a href='https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."'>https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."</a><br /><br />
 						  	   	   	   Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu<br />
 						  	   	   	   navegador, o reescribirla ahí.<br />
 						  	   	   	   2. Ingresa la clave: ".$p."<br />
@@ -90,14 +101,14 @@ class Password extends CI_Controller {
 						  	   	   Gracias por comprar con Grupo Expansión.
 						  	   </div>
 						  </body>
-						  </html>";     									
-								
+						  </html>"; 
+																						     		      									
 				if(mail($data['cliente']->email, "=?UTF-8?B?".base64_encode('Recuperar contraseña')."?=", $mensaje, $headers)){
 					$this->cargar_vista('', 'password', $data);	
 				}																														
 				else{
 					redirect('login');	
-				}					
+				}							
 												
 			}		
 			else{
@@ -170,7 +181,7 @@ class Password extends CI_Controller {
 															
 	}
 	
-	public function verificar($passtemp= ''){
+	public function verificar($passtemp= '', $datos_continuar=''){
 		$data['title'] = "Escribe la clave para crear una nueva contraseña";
 		$data['subtitle'] = "Escribe la clave para crear una nueva contraseña";
 		$data['mensaje']='';	
@@ -180,6 +191,18 @@ class Password extends CI_Controller {
 		$data['password_temporal']=$passtemp;		
 		$script_file = "<script type='text/javascript' src='". base_url()."js/registro.js'> </script>";
 		$data['script'] = $script_file;	
+		if($datos_continuar!=""){
+			$datos_continuar=base64_decode(str_pad(strtr($datos_continuar, '-_', '+/'), strlen($datos_continuar) % 4, '=', STR_PAD_RIGHT));
+			$datos_decrypt=$this->api->decrypt($datos_continuar,$this->api->key);
+			$mp=explode('|',$datos_decrypt);
+			$this->session->set_userdata('id_sitio', $mp[0]);
+			$this->session->set_userdata('id_canal', $mp[1]);
+			$this->session->set_userdata('id_promocion', $mp[2]);
+			$this->session->set_userdata('guidx', $mp[3]);
+			$this->session->set_userdata('guidy', $mp[4]);
+			$this->session->set_userdata('guidz', $mp[5]);				
+		}
+		
 		if($_POST){
 			if(!empty($_POST['password_temporal'])){
 				$result=$this->password_model->obtiene_cliente($_POST['password_temporal']);
