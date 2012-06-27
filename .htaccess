@@ -34,5 +34,8 @@
     # Submitted by: ElliotHaughin
 
     ErrorDocument 404 /index.php
+
 	#ErrorDocument 500 /index.php
+
 </IfModule>
+

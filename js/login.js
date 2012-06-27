@@ -56,7 +56,7 @@ $(document).ready(function() {
 			}									
 		} 		
 		else {
-			$("form").attr("action", "/registro/")
+			$("form").attr("action", "registro")
 			$("form").submit();
 		}
 	});
@@ -67,7 +67,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		//alert("tipo " + tipo_inicio.val());
 		$(".error").remove();	//limpiar mensajes de error	
-		$("form").attr("action", "/password/")
+		$("form").attr("action", "password")
 		$("form").submit();
 	});
 	
