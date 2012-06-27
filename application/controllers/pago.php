@@ -3,71 +3,19 @@
 class Pago extends CI_Controller {
 		
 	function __construct(){
-        parent::__construct();							
+        parent::__construct();	
+								
     }
 	
-	public function index(){				
-		
-		$guidy='{CE5480FD-AC35-4564-AE4D-0B881031F295}';
-			  
-		if($_POST){
-			echo "X:".$this->session->userdata('guidx');
-			echo "<br />";
-			echo "POST X:".$_POST['guidx'];
-			echo "<br />";
-			echo "Y:".$guidy;
-			echo "<br />";
-			echo "POST Y:".$_POST['guidy'];
-			echo "<br />";									
-			echo "Z:".$this->session->userdata('guidz');
-			echo "<br />";					
-			echo "POST Z:".$_POST['guidz'];
-			echo "<br />";
-			echo "Status:".$status=$_POST['status'];
-			echo "<br />";			
-			echo "<br />";
-			echo "Enviaremos:".md5($_POST['guidx'].$_POST['guidy'].$_POST['guidz'].$_POST['status']);
-			echo "<br />";
-			echo "comparar a fals:".md5($this->session->userdata('guidx').$guidy.$this->session->userdata('guidz').'0');
-			echo "<br />";
-			echo "comparar a true:".md5($this->session->userdata('guidx').$guidy.$this->session->userdata('guidz').'1');
-			echo "<br />";
-			echo "encriptado".$_POST['datos_login'];
-			echo "<br />";
-			echo "aqui".$this->decrypt($_POST['datos_login'],'AC35-4564-AE4D-0B881031F295');	
-		}	  
-		else{
-			$this->session->set_userdata('guidx', $this->guid());
-			$this->session->set_userdata('guidz', $this->guid());
-			echo "<form name='realizar_pago' action='".site_url('/api/1/1/1189/pago')."' method='POST'>
-			      	  <input type='text' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>
-			          <input type='text' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
-			          <input type='submit' name='enviar' value='Enviar' />			          
-		          </form>--**--";
-				  
-		    echo "<br />";      
-		    echo "<form name='realizar_pago' action='".site_url('/api/1/1/1190/pago')."' method='POST'>
-			      	  <input type='text' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>
-			          <input type='text' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
-			          <input type='submit' name='enviar2' value='Enviar2' />
-		          </form>";   
-			 echo "<p>Enviar clave del articulo 54e3</p>"; 
-			 echo "<form name='realizar_pago' action='".site_url('/api/54e3')."' method='POST'>
-			      	  <input type='text' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>			          
-			          <input type='submit' name='enviar3' value='Enviar3' />
-		          </form>";
-		     echo "<p>Enviar clave del articulo 114e307e43a65</p>"; 
-			 echo "<form name='realizar_pago' action='".site_url('/api/114e307e43a65')."' method='POST'>
-			      	  <input type='text' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>			          
-			          <input type='submit' name='enviar4' value='Enviar4' />
-		          </form>";
-		     echo "<p>Enviar clave del articulo 114e307e43a65a   !No existe!</p>"; 
-			 echo "<form name='realizar_pago' action='".site_url('/api/114e307e43a65a')."' method='POST'>
-			      	  <input type='text' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>			          
-			          <input type='submit' name='enviar5' value='Enviar5' />
-		          </form>";       
-		                	     
-		}		
+	public function index(){
+		foreach (array_keys($this->session->userdata) as $key){
+    		$this->session->unset_userdata($key);
+		} 		
+		$data['title']="Proceso de Pago";					  			
+		$this->session->set_userdata('guidz', $this->guid());
+		$this->load->view('templates/header', $data);	
+		$this->load->view('links_pago');
+		$this->load->view('templates/footer');   	             	        
 													
 	}	
 	

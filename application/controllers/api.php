@@ -174,7 +174,7 @@ class Api extends CI_Controller {
 					}											
 					 	
 				}		
-				else{
+				else{					
 					$this->session->unset_userdata();
 					redirect('login');					
 				}																	
