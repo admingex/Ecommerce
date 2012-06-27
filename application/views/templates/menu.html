@@ -2,47 +2,46 @@
 	<header>
 		<?php
 			if(isset($this->session->userdata('sitio')->url_imageVc)){
-				echo "<img src='".base_url().$this->session->userdata('sitio')->url_imageVc."' alt='Grupo Expansión' />";	
+				echo "<img src='".base_url() . $this->session->userdata('sitio')->url_imageVc . "' alt='Grupo Expansión' />";	
 			}	
 			else{
 				echo "<img src='".base_url()."images/logo_cnn_expansion.jpg' alt='CNN Mexico' />";		
 			}		
 		?>
-		
 	</header>
 	<section>
-		<nav>	
-		<div class="izquierda">
-			<div class="proceso-pago">
-				<?php if(($this->uri->segment(1) =='registro') || ($this->uri->segment(1) =='login') || ($this->uri->segment(1) =='')) $img='-select'; else $img='';?>
-				<div class="img-proceso-pago img-inicio<?php echo $img; ?>" >							
+		<nav>
+			<div class="izquierda">
+				<div class="proceso-pago">
+					<?php if(($this->uri->segment(1) =='registro') || ($this->uri->segment(1) =='login') || ($this->uri->segment(1) =='')) $img='-select'; else $img='';?>
+					<div class="img-proceso-pago img-inicio<?php echo $img; ?>" >
+					</div>
+					<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Inicio</a>
 				</div>
-				<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Inicio</a>
-			</div>	
-			<div class="proceso-pago">	
-				<?php if(($this->uri->segment(1) == "direccion_envio") || ($this->uri->segment(1) =="forma_pago")) $img='-select'; else $img='';?>	
-				<div class="img-proceso-pago img-pago-envio<?php echo $img; ?>">				
+				<div class="proceso-pago">
+					<?php if(($this->uri->segment(1) == "direccion_envio") || ($this->uri->segment(1) =="forma_pago")) $img='-select'; else $img='';?>
+					<div class="img-proceso-pago img-pago-envio<?php echo $img; ?>">
+					</div>
+					<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Pago&nbsp;y&nbsp;Envío</a>
 				</div>
-				<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Pago&nbsp;y&nbsp;Envío</a>
+				<div class="proceso-pago">
+					<?php if($this->uri->segment(1) == "direccion_facturacion") $img='-select'; else $img='';?>
+					<div class="img-proceso-pago img-facturacion<?php echo $img ?>" >
+					</div>
+					<a href="#" class="txt-proceso-pago<?php echo $img ?>">Facturación</a>
+				</div>
+				<div class="proceso-pago">
+					<?php if($this->uri->segment(1) == "orden_compra") $img='-select'; else $img='';?>
+					<div class="img-proceso-pago img-compra<?php echo $img; ?>">
+					</div>
+					<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Finalizar&nbsp;Compra</a>
+				</div>
 			</div>
-			<div class="proceso-pago">
-				<?php if($this->uri->segment(1) == "direccion_facturacion") $img='-select'; else $img='';?>	
-				<div class="img-proceso-pago img-facturacion<?php echo $img ?>" >				
-				</div>
-				<a href="#" class="txt-proceso-pago<?php echo $img ?>">Facturación</a>
-			</div>	
-			<div class="proceso-pago">	
-				<?php if($this->uri->segment(1) == "orden_compra") $img='-select'; else $img='';?>
-				<div class="img-proceso-pago img-compra<?php echo $img; ?>">				
-				</div>
-				<a href="#" class="txt-proceso-pago<?php echo $img; ?>">Finalizar&nbsp;Compra</a>
-			</div>	
-		</div>		
-		<div class="derecha">
-			<div class="necesita-ayuda img-ayuda">				
-			</div>	
-		</div>														
-		</nav>			
-	</section>		
+			<div class="derecha">
+				<div class="necesita-ayuda img-ayuda">				
+				</div>	
+			</div>
+		</nav>
+	</section>
 </section>
 <div id="pleca-punteada">&nbsp;</div>

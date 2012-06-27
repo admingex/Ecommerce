@@ -178,7 +178,7 @@ class Password extends CI_Controller {
 		$data['cambiar']=FALSE;	
 		$data['enviado']=FALSE;	
 		$data['password_temporal']=$passtemp;		
-		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
+		$script_file = "<script type='text/javascript' src='". base_url()."js/registro.js'> </script>";
 		$data['script'] = $script_file;	
 		if($_POST){
 			if(!empty($_POST['password_temporal'])){
