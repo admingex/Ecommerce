@@ -6,11 +6,11 @@ class Pagina extends CI_Controller {
         parent::__construct();							
     }
 	
-	public function index($page = 'NULL')
+	/*public function index($page = 'NULL')
 	{
 		
 	}
-	
+	*/
 	/**
 	 * Muestra los términos de ls links del pie de página
 	 */
@@ -21,7 +21,14 @@ class Pagina extends CI_Controller {
 		$this->cargar_vista('', 'vistas_footer', $data);						
 	}
 	
+	/**
+	 * Vista de error
+	 */
 	
+	
+	/**
+	 * Carga una vista especificada
+	 */
 	public function cargar_vista($folder, $page, $data){
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);		
