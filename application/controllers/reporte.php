@@ -32,8 +32,8 @@ class Reporte extends CI_Controller {
 	}		
 	
 	public function usuarios(){
-		$data['title']=$this->title;		
-		if($_POST){
+		$data['title']=$this->title;			
+		if(!empty($_POST['fecha_inicio']) && !empty($_POST['fecha_inicio'])){
 			$fecha_inicio=$this->input->post('fecha_inicio');
 			$fecha_fin=$this->input->post('fecha_fin');
 		}
@@ -42,13 +42,21 @@ class Reporte extends CI_Controller {
 			$fecha_fin=mdate('%Y/%m/%d',time());
 		}
 		$data['fecha_inicio']=$fecha_inicio;
-		$data['fecha_fin']=$fecha_fin;
-		
-		$usuarios=$this->reporte_model->obtener_usuarios_fecha($fecha_inicio, $fecha_fin);		
-		$data['usuarios']=$usuarios;		
-		$this->load->view('templates/header',$data);
-		echo anchor(site_url('logout'),'cerrar sesion');
-		$this->load->view('reportes/reporte_usuarios',$data);		
+		$data['fecha_fin']=$fecha_fin;	
+		$data['error']="";
+			
+		if($this->is_date($fecha_inicio) && $this->is_date($fecha_fin)){				
+			$usuarios=$this->reporte_model->obtener_usuarios_fecha($fecha_inicio, $fecha_fin);		
+			$data['usuarios']=$usuarios;		
+			$this->load->view('templates/header',$data);	
+			$this->load->view('reportes/formulario_fecha',$data);		
+			$this->load->view('reportes/reporte_usuarios',$data);		
+		}
+		else{
+			$data['error']="ingrese un intervalo valido con el formato (aaaa/mm/dd) para fecha de inicio y fecha fin";
+			$this->load->view('templates/header',$data);
+			$this->load->view('reportes/formulario_fecha',$data);											
+		}							
 	}	
 	
 	public function compras(){
@@ -69,6 +77,17 @@ class Reporte extends CI_Controller {
 		$this->load->view('templates/header',$data);
 		$this->load->view('reportes/reporte_compras',$data);	
 				
+	}
+	
+	public function is_date($date){
+         if (preg_match ("/^([0-9]{4})\/([0-9]{2})\/([0-9]{2})$/", $date, $parts)){
+             if(checkdate($parts[2],$parts[3],$parts[1]))
+             	return true;
+         	 else
+            	return false;
+      	 }
+      	 else
+      	     return false;
 	}
 	
 }

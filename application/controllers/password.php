@@ -48,73 +48,80 @@ class Password extends CI_Controller {
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/registro.js'> </script>";
 		$data['script'] = $script_file;	
 		if($_POST){
-			$datamail=$this->password_model->revisa_mail($_POST['email']);			
-			if($datamail->num_rows()==1){
-				$data['enviado'] = TRUE;				
-				$data['cliente']=$datamail->row();
-				$data['password_temporal']= $p = substr(md5(uniqid(rand( ), true)), 5,10);
-				$this->load->helper('date');
-				$data['timestamp']= $t= mdate('%Y/%m/%d %h:%i:%s',time());
-				$this->password_model->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
-				$this->password_model->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);
-				$encript=$this->api->encrypt($this->session->userdata('id_sitio')."|".
-											 $this->session->userdata('id_canal')."|".
-											 $this->session->userdata('id_promocion')."|".
-											 $this->session->userdata('guidx')."|".
-											 $this->session->userdata('guidy')."|".
-											 $this->session->userdata('guidz')."|", $this->api->key);		
-				$encript= rtrim(strtr(base64_encode($encript), '+/', '-_'), '=');
- 
-
-				$headers="Content-type: text/html; charset=UTF-8\r\n";
-                $headers.="MIME-Version: 1.0\r\n";
-			    $headers .= "From: GexWeb<servicioaclientes@expansion.com.mx>\r\n";       
-				$mensaje="<html>
-						  <body>
-						  	   <div>Hola,
-						  	   </div>
-						  	   <div>
-						  	       En pagos.grupoexpansion.mx, la plataforma de pagos de Grupo Expansión, recibimos una solicitud<br />
-						  	       para recuperar la contraseña asociada a este correo. Si tú hiciste esta solicitud, por favor sigue las<br />
-						  	       instrucciones que aparecen abajo. Si no solicitaste cambiar tu contraseña, puedes ignorar este correo<br />
-						  	       con tranquilidad, pues tu cuenta de cliente está segura.
-						  	   </div>
-						  	   <br /><br />
-						  	   <div>
-						  	   	  
-						  	   	   	   1. Sigue el link de abajo para cambiar tu contraseña usando nuestro servidor seguro.<br /><br />
-						  	   	   	   <a href='https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."'>https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."</a><br /><br />
-						  	   	   	   Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu<br />
-						  	   	   	   navegador, o reescribirla ahí.<br />
-						  	   	   	   2. Ingresa la clave: ".$p."<br />
-						  	   	   	   Esta no es una contraseña, pero la necesitarás para crear una nueva contraseña.<br />
-						  	   	   	   3. Sigue las instrucciones que aparecen en la pantalla para crear tu nueva contraseña.
-						  	   	   
-						  	   </div>
-						  	   <br /><br />
-						  	   <div>
-						  	       Si tienes alguna pregunta, por favor envía un correo a nuestra área de Atención a Clientes.<br />
-						  	       (<u>servicioaclientes@expansion.com.mx</u>).
-						  	   </div>
-						  	   <br /><br />
-						  	   <div>
-						  	   	   Gracias por comprar con Grupo Expansión.
-						  	   </div>
-						  </body>
-						  </html>"; 
-																						     		      									
-				if(mail($data['cliente']->email, "=?UTF-8?B?".base64_encode('Recuperar contraseña')."?=", $mensaje, $headers)){
-					$this->cargar_vista('', 'password', $data);	
-				}																														
+			if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {							
+				$datamail=$this->password_model->revisa_mail($_POST['email']);			
+				if($datamail->num_rows()==1){
+					$data['enviado'] = TRUE;				
+					$data['cliente']=$datamail->row();
+					$data['password_temporal']= $p = substr(md5(uniqid(rand( ), true)), 5,10);
+					$this->load->helper('date');
+					$data['timestamp']= $t= mdate('%Y/%m/%d %h:%i:%s',time());
+					$this->password_model->guardar_clave_temporal($data['cliente']->id_clienteIn, $p);		
+					$this->password_model->guarda_actividad_historico($data['cliente']->id_clienteIn, $p, self::$TIPO_ACTIVIDAD['SOLICITUD_PASSWORD'], $t);
+					$encript=$this->api->encrypt($this->session->userdata('id_sitio')."|".
+												 $this->session->userdata('id_canal')."|".
+												 $this->session->userdata('id_promocion')."|".
+												 $this->session->userdata('guidx')."|".
+												 $this->session->userdata('guidy')."|".
+												 $this->session->userdata('guidz')."|", $this->api->key);		
+					$encript= rtrim(strtr(base64_encode($encript), '+/', '-_'), '=');
+	 
+	
+					$headers="Content-type: text/html; charset=UTF-8\r\n";
+	                $headers.="MIME-Version: 1.0\r\n";
+				    $headers .= "From: GexWeb<servicioaclientes@expansion.com.mx>\r\n";       
+					$mensaje="<html>
+							  <body>
+							  	   <div>Hola,
+							  	   </div>
+							  	   <div>
+							  	       En pagos.grupoexpansion.mx, la plataforma de pagos de Grupo Expansión, recibimos una solicitud<br />
+							  	       para recuperar la contraseña asociada a este correo. Si tú hiciste esta solicitud, por favor sigue las<br />
+							  	       instrucciones que aparecen abajo. Si no solicitaste cambiar tu contraseña, puedes ignorar este correo<br />
+							  	       con tranquilidad, pues tu cuenta de cliente está segura.
+							  	   </div>
+							  	   <br /><br />
+							  	   <div>
+							  	   	  
+							  	   	   	   1. Sigue el link de abajo para cambiar tu contraseña usando nuestro servidor seguro.<br /><br />
+							  	   	   	   <a href='https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."'>https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."</a><br /><br />
+							  	   	   	   Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu<br />
+							  	   	   	   navegador, o reescribirla ahí.<br />
+							  	   	   	   2. Ingresa la clave: ".$p."<br />
+							  	   	   	   Esta no es una contraseña, pero la necesitarás para crear una nueva contraseña.<br />
+							  	   	   	   3. Sigue las instrucciones que aparecen en la pantalla para crear tu nueva contraseña.
+							  	   	   
+							  	   </div>
+							  	   <br /><br />
+							  	   <div>
+							  	       Si tienes alguna pregunta, por favor envía un correo a nuestra área de Atención a Clientes.<br />
+							  	       (<u>servicioaclientes@expansion.com.mx</u>).
+							  	   </div>
+							  	   <br /><br />
+							  	   <div>
+							  	   	   Gracias por comprar con Grupo Expansión.
+							  	   </div>
+							  </body>
+							  </html>"; 
+					/*																		     		      									
+					if(mail($data['cliente']->email, "=?UTF-8?B?".base64_encode('Recuperar contraseña')."?=", $mensaje, $headers)){
+						$this->cargar_vista('', 'password', $data);	
+					}																														
+					else{
+						redirect('login');	
+					}
+					 * */							
+													
+				}		
 				else{
-					redirect('login');	
-				}							
-												
-			}		
-			else{
-				$data['mensaje']='No se encuentra en nuestra base de datos';
+					$data['mensaje']='No se encuentra en nuestra base de datos';
+					$this->cargar_vista('', 'password', $data);
+				}
+			}else {				
+				$data['mensaje'] = '<div class="error2">Por favor ingresa una dirección de correo válida. Ejemplo: nombre@dominio.mx</div>';
 				$this->cargar_vista('', 'password', $data);
-			}
+			}	
+			
 		}
 		else{
 			$this->cargar_vista('', 'password', $data);

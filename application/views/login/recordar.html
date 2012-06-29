@@ -1,5 +1,5 @@
 <form id="form_recordar_password" action="<?php echo site_url('password/enviar'); ?>" method="POST">
-<table>
+<table width="100%">
 	<tr>
 		<td class="label">
 			Correo electr&oacute;nico			
@@ -7,7 +7,7 @@
 		<td>
 			<input type="text" name="email" id="email" size="40"  
 				value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email']);?>"/>
-			<?php if(isset($login_errores['email'])) echo ($login_errores['email']);?>	
+			<?php if(isset($mensaje)) echo ($mensaje);?>	
 		</td>
 	</tr>	
 	<tr>

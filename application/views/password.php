@@ -45,29 +45,4 @@
 			
 	?>
 	</div>
-	<script type="text/javascript">
-	$(function(){
-		$('#dialog').dialog({
-			position:['top',160],
-			modal: true,
-			show: 'slide',
-			autoOpen: true,					
-			buttons: {
-				"Ok" : function(){ 
-					       $(this).dialog("close"); 					       
-					   }
-			}
-		});		
-																						
-	});
-	</script>
-	<?php if($mensaje){
-	?>	
-		<div id="dialog" title="Mensaje del servidor" >
-			<p><?php echo $mensaje;?></p>
-		</div>
-	<?php		
-	}			
-	?>	
-
 </section>
