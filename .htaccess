@@ -26,6 +26,8 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ index.php?/$1 [L]
+	
+	#ErrorDocument 403 /ecommerce/errors/error_404.php
 </IfModule>
 
 <IfModule !mod_rewrite.c>
@@ -34,6 +36,7 @@
     # Submitted by: ElliotHaughin
 
     ErrorDocument 404 /index.php
+	ErrorDocument 403 "Lo sentimos no podemos permitirle el acceso a esta página hoy"
 
 </IfModule>
 
