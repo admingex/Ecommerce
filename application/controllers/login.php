@@ -26,7 +26,7 @@ class Login extends CI_Controller {
     {
         // Call the Model constructor
         parent::__construct();
-		$this->load->model('password_model', 'password_model', true);
+		$this->load->model('password_model', 'password_model', true);		
 		$this->load->helper('date');		
 		//para utilizar la sesión de PHP
 		session_start();
@@ -61,11 +61,18 @@ class Login extends CI_Controller {
 		$this->load->model('direccion_envio_model');
 		$this->load->model('direccion_facturacion_model');
 		
+		//carga el modelo del api para obtener el detalle del sitio 
+		$this->load->model('api_model', 'api_model', true);			
+		
 		$this->api = new Api();
     }
 	
 	public function index()
-	{		
+	{
+		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo.	
+		$datsit=$this->api_model->obtener_sitio($this->session->userdata('id_sitio'));		
+		$this->session->set_userdata('sitio', $datsit->row());
+				
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'></script>";
 		$data['script'] = $script_file;
@@ -219,13 +226,18 @@ class Login extends CI_Controller {
 		$respromo = $this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));
 		//echo "res_promo: ". var_dump($respromo);
 		if ($respromo) {
+			$i=0;
 			foreach ($respromo['articulos'] as $res) {
-			$temp[] = array('tarifaDc' 			=> 	$res['tarifaDc'], 
+			if($i<6){
+				$temp[] = array('tarifaDc' 			=> 	$res['tarifaDc'], 
 							'tipo_productoVc' 	=> 	$res['tipo_productoVc'], 
 							'medio_entregaVc'	=>	$res['medio_entregaVc'], 
 							'monedaVc'	=>	$res['monedaVc'], 
 							'requiere_envioBi'	=>	(bool)$res['requiere_envioBi']);
-			}
+				}	
+				$i++;
+			}				
+			
 			
 			$this->session->set_userdata('sitio', $respromo['sitio']);
 			$this->session->set_userdata('promocion', $respromo['promocion']);
