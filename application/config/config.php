@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/';
+$config['base_url']	= 'http://localhost/ecommerce';
 
 /*
 |--------------------------------------------------------------------------
@@ -244,7 +244,7 @@ $config['encryption_key'] = 'ecommerce_gex';
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'ci_session';
+$config['sess_cookie_name']		= 'ci_session';	//session_gex
 $config['sess_expiration']		= 6000;	//7200;
 $config['sess_expire_on_close']	= TRUE;
 $config['sess_encrypt_cookie']	= TRUE;
@@ -266,9 +266,14 @@ $config['sess_time_to_update']	= 300;
 |
 */
 $config['cookie_prefix']	= "";
-$config['cookie_domain']	= "";
+$config['cookie_domain']	= "";	//.pagos.grupoexpansion.mx
 $config['cookie_path']		= "/";
-$config['cookie_secure']	= FALSE;
+$config['cookie_secure']	= FALSE;	//TRUE;
+//$confid['cookie_httponly'] = TRUE;	
+
+//Se modificó la libary del system/libraries/Session.php 
+//agregando la propiedad 'cookie_httponly' y asignándola en el contructor y al crear la cookie.
+//esto sólo se hizo en el servidor de producción. 
 
 /*
 |--------------------------------------------------------------------------

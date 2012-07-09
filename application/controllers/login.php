@@ -191,14 +191,14 @@ class Login extends CI_Controller {
 		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 			$datos['email'] = htmlspecialchars(trim($_POST['email']));
 		} else {
-			$this->login_errores['email'] = 'Por favor ingresa una dirección de correo válida. Ejemplo: nombre@dominio.mx';
+			$this->login_errores['email'] = '<div class="error2">Por favor ingresa una dirección de correo válida. Ejemplo: nombre@dominio.mx</div>';
 		}
 		
 		if (array_key_exists('tipo_inicio', $_POST) && $_POST['tipo_inicio'] == 'registrado') {
 			if (!empty($_POST['password'])) {
 				$datos['password'] = htmlspecialchars(trim($_POST['password']));
 			} else {
-				$this->login_errores['password'] = 'Por favor escribe tu contraseña o selecciona iniciar sesión como cliente nuevo.';
+				$this->login_errores['password'] = '<div class="error2">Por favor escribe tu contraseña o selecciona iniciar sesión como cliente nuevo.</div>';
 			}					
 		} else {
 			$this->login_errores['user_login'] = 'Selecciona alguna modalidad';

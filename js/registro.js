@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	var email = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;		
+	var email = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
 	var error='';
 	$("#enviar").click(function() {		
 		$(".error").remove();
