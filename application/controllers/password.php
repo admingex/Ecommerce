@@ -103,14 +103,14 @@ class Password extends CI_Controller {
 							  	   </div>
 							  </body>
 							  </html>"; 
-					/*																		     		      									
+																							     		      									
 					if(mail($data['cliente']->email, "=?UTF-8?B?".base64_encode('Recuperar contraseña')."?=", $mensaje, $headers)){
 						$this->cargar_vista('', 'password', $data);	
 					}																														
 					else{
 						redirect('login');	
 					}
-					 * */							
+											
 													
 				}		
 				else{
