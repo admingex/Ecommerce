@@ -1,3 +1,4 @@
+<div style="position: relative; width: 100px; left: 630px; top: 40px"><a href='<?php echo site_url(); ?>' >Regresar</a></div>
 <section class="contenedor">
 	<div class="contenedor-blanco">
 		<div class="titulo-proceso">

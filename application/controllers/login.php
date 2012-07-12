@@ -70,8 +70,10 @@ class Login extends CI_Controller {
 	public function index()
 	{
 		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo.	
+		$this->session->unset_userdata('sitio');
 		$datsit=$this->api_model->obtener_sitio($this->session->userdata('id_sitio'));		
 		$this->session->set_userdata('sitio', $datsit->row());
+		$data['url_imageVc']=$datsit->row()->url_imageVc;
 				
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'></script>";

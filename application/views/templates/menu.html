@@ -1,11 +1,14 @@
 <section id='encabezado'>
 	<header>
-		<?php
-			if(isset($this->session->userdata('sitio')->url_imageVc)){
+		<?php		    			
+			if(isset($this->session->userdata('sitio')->url_imageVc) &&  $this->session->userdata('sitio')->url_imageVc!= ""){
 				echo "<img src='".base_url() . $this->session->userdata('sitio')->url_imageVc . "' alt='Grupo Expansión' />";	
 			}	
+			else if (!empty($url_imageVc)){
+				echo "<img src='".base_url() . $url_imageVc . "' alt='Grupo Expansión' />";
+			}
 			else{
-				echo "<img src='".base_url()."images/logo_cnn_expansion.jpg' alt='CNN Mexico' />";		
+				echo "<div style='width: 300px; height: 30px;'></div>";		
 			}		
 		?>
 	</header>

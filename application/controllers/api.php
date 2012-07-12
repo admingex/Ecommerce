@@ -218,7 +218,7 @@ class Api extends CI_Controller {
 				$data['promocion']=$rpromocion->row();
 				$rarticulos= $this->api_model->obtener_articulos($promocion);
 				if($rarticulos->num_rows()!=0){
-					$data['articulos']=$rarticulos->result_array();					
+					$data['articulos']=$rarticulos->result_array();																									
 				}
 				else{
 					$data['error']['articulos']="no existen articulos en esta promocion";

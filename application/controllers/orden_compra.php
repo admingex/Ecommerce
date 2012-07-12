@@ -278,21 +278,156 @@ class Orden_Compra extends CI_Controller {
 						$mensaje = "<html>
 									  <body>
 									  	   <div>
-										        Apreciable ".$this->session->userdata('username')."<br />
-												Hemos recibido su orden de compra ".$this->session->userdata('descrpcion_promocion')."<br /><br /> 
-												
-												Para el realizar el pago mediante depósito bancario, por favor:<br /><br />
-												
-												1.- Acuda a cualquier sucursal de BBVA Bancomer, a través del convenio CIE 57351.<br />
-												IMPORTANTE: En referencia por favor indique su nombre y número telefónico.<br /><br />
-												
-												2.- Una vez realizado el depósito, por favor comuníquese con nosotros para confirmar el pago, tel. 9177 4342 o escríbanos a confirmaciondepagos@expansion.com.mx<br />
-												Indicándonos su nombre, producto que adquiere y enviando escaneada la ficha de depósito.<br /><br />
-												
-												Sin más por el momento, quedamos a sus órdenes para cualquier pregunta o comentario al respecto.<br /><br />
-												
-												Cordialmente,<br />
-												Departamento de pagos<br /><br />																																																										  	  
+									  	   Hola ".$this->session->userdata('username').",<br />
+										   Hemos recibido la siguiente orden de compra en pagos.grupoexpansion.mx, con solicitud de pago por depósito bancario.<br /> 
+										   Para completar tu compra, sigue las instrucciones que aparecen abajo para realizar tu pago.
+										   <br />
+										   <br />
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										   	   <thead style='background-color: #E70030; color: #FFF'>
+										   	       <tr>
+										   	           <th colspan='4' align='left'>
+										   	               <b>Resumen de orden:</b>
+										   	           </th>
+										   	       </tr>
+										   	   </thead>
+										   	   <tbody>
+										   	       <tr>
+										   	           <td colspan='4' align='left'><b>Número de orden:</b>&nbsp;&nbsp;".$id_compra."
+										   	           </td>										   	           										   	          
+										   	       </tr>
+										   	       <tr>
+										   	       	   <td colspan='4'>
+										   	       	       <b>Productos en la orden:</b>	   
+										   	       	   </td>
+										   	       </tr>";
+										   	       				
+													if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
+														$articulos = $this->session->userdata('articulos');
+														$total = 0;
+														if (!empty($articulos)) {
+															foreach ($articulos as $a) 
+																$total += $a['tarifaDc'];
+														}
+												 
+														if ($this->session->userdata('promocion')) 																	 
+															if (!empty($articulos))
+																foreach($articulos as $articulo) {
+																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																	$nmp=count($mp);
+																	if($nmp==2){
+																		$desc_promo = $mp[0];		
+																	}	
+																	else if($nmp==3){
+																		$desc_promo = $mp[1];
+																	}
+																																		
+												  				    $mensaje.="<tr>
+																		           <td colspan='2'>".$desc_promo."<br />".
+																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
+																		           </td>	
+																				   <td>&nbsp;</td>				
+																				   <td align='right'>$".	
+																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				   </td>
+																				</tr>";														
+																}																																																																																	
+														}
+																										   	       										   	       
+				   	       $mensaje.= 			  "<tr>
+										   	           <td colspan='2'>&nbsp;
+										   	           </td>
+										   	           <td align='right'>Sub-total:
+										   	           </td>
+										   	           <td align='right'>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."
+										   	           </td>
+										   	       </tr>
+										   	       <tr>
+										   	           <td colspan='2'>&nbsp;
+										   	           </td>
+										   	           <td align='right'>I.V.A
+										   	           </td>
+										   	           <td align='right'>$0.00&nbsp;".$articulo['monedaVc']."
+										   	           </td>
+										   	       </tr>
+										   	       <tr>
+										   	           <td colspan='2' width='325px'>&nbsp;
+										   	           </td>
+										   	           <td align='right' width='180px'><b>Total de la orden</b>
+										   	           </td>
+										   	           <td align='right' width='95px'><b>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."</b>
+										   	           </td>
+										   	       </tr>										   	       												   
+										   	   </tbody>
+										   </table>";
+							$mensaje.=	   "<table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										       <thead style='background-color: #E70030; color: #FFF'>
+										           <tr>
+										               <th colspan='2' align='left'>Envío y facturación
+										               </th>
+										           </tr>    
+										       </thead>
+										       <tbody>
+											   	   <tr>
+											   	       <td valign='top' style='width: 300px;'>";
+											   	       $dir_envio = (int)$this->session->userdata('dir_envio');
+											   	       if(!empty($dir_envio)){
+											   	       	   $det_env = $this->direccion_envio_model->detalle_direccion($dir_envio, $id_cliente);
+											   	       	   $mensaje.="<b>Dirección de envío:</b><br />";
+											   	       	   $mensaje.=$det_env->address1. " " .$det_env->address2. " " . (isset($det_env->address4) ? ", Int. ".$det_env->address4 : "") . "<br/>".
+											   	       	         $det_env->zip."<br/>".
+																 $det_env->city."<br/>".
+																 $det_env->state."<br/>".
+																 $det_env->codigo_paisVc."<br/>".
+																 $det_env->phone."&nbsp;";	
+											   	       }
+											   	       										   	       													
+								$mensaje.=   	      "</td>
+											   	       <td valign='top' style='width: 300px;'>
+											   	           <b>Requiere factura:</b>&nbsp;".$this->session->userdata('requiere_factura')."<br /><br />";
+											   	       
+											   	       	   if($this->session->userdata('requiere_factura')=='si'){
+											   	       	       $mensaje.="<b>Razón social:</b><br />";	
+											   	       	       $rs = $this->direccion_facturacion_model->obtener_rs($this->session->userdata('razon_social'));
+											   	       	       $mensaje.=$rs->company."<br />";	
+											   	       	       $mensaje.=$rs->tax_id_number."<br /><br />";
+											   	       	       										   	       	       
+											   	       	       $mensaje.="<b>Dirección de facturación:</b><br />";
+											   	       	       $df = $this->direccion_facturacion_model->obtener_direccion($id_cliente, $this->session->userdata('direccion_f'));	  										   	       	       
+											   	       	       $mensaje.= $df->calle."&nbsp;".$df->num_ext."&nbsp;".(!empty($df->num_int) ? ", Int. ".$df->num_int : "") . "<br/>";
+															   $mensaje.= $df->cp."<br/>".
+																 		  $df->ciudad."<br/>".
+														 		          $df->estado."<br/>".
+															 	 		  $df->pais."&nbsp;";
+											   	       	   }
+											   	       	   
+								$mensaje.=			  "</td>
+											   	   </tr>
+											   </tbody>	   
+										   </table>
+										   <br />
+										   <br />
+										   <b>Instrucciones para pago con depósito bancario o transferencia electrónica</b><br />
+										   Para completar tu orden, sigue los pasos que enlistamos abajo:<br />
+										   1. Realiza un depósito por el total de la orden acudiendo a cualquier sucursal BBVA Bancomer,
+										   o realizando una transferencia electrónica, por medio del convenio CIE 57351 o directamente a la cuenta que aparece abajo.<br />
+										   Es importante que indiques tu nombre y número telefónico como referencia. La cuenta de depósito es la siguiente:<br />
+								           Banco: BBVA Bancomer<br />
+										   Beneficiario: Expansión S.A. de C.V.<br />
+										   Cuenta CLABE:  012180004465210022<br />
+										   Cuenta:  0446521002 <br />
+										   Sucursal: 1820<br />
+										   Plaza: 001<br /><br /> 
+
+										   2. Una vez realizado el depósito por favor confirma tu pago llamando al teléfono (55) 5061 2413 o escribiendo al correo pagosmercadotecnia@expansion.com.mx. <br />
+										   Si confirmas por correo, no olvides indicar tu nombre y el producto que adquieres, y enviar escaneada tu ficha de depósito. <br /><br /> 
+
+										   3. Recibirás un correo electrónico confirmando que tu compra ha sido completada.<br /><br />
+
+										   Si tienes dudas, comunícate con nuestro equipo de Atención a Clientes al  (55) 9177 4342 o al correo atencionaclientes@expansion.com.mx<br /><br />		
+
+										   Gracias por comprar en Grupo Expansión.
+									  	   																																																										  	  
 									  	   </div>
 									  </body>
 									  </html>";

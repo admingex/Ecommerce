@@ -1,8 +1,7 @@
 		<br/>
 		<div id="pleca-punteada"></div>
 	 	<footer class="footer_main">
-	   		<div><a href="<?php echo site_url('pagina/mostrar/privacidad');?>">Pol&iacute;tica de Privacidad</a></div>            
-	   		<div><a href="<?php echo site_url('pagina/mostrar/condiciones');?>">Condiciones de uso</a></div>
+	   		<div><a href="<?php echo site_url('pagina/mostrar/privacidad');?>">Pol&iacute;tica de Privacidad</a></div>            	   		
 	   		<div><a href="<?php echo site_url('pagina/mostrar/ayuda');?>">P&aacute;gina de ayuda</a></div>
 	   		<div><a href="<?php echo site_url('pagina/mostrar/contacto');?>">Cont&aacute;ctanos</a></div>
 	   	</footer>
