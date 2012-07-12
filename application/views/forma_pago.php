@@ -7,41 +7,40 @@
 </section>
 <div id="pleca-punteada"></div>
 <section class="contenedor">
-	
-		<?php
-			$total_pagar=0;
-			foreach($this->session->userdata('articulos') as $articulo){
-				$total_pagar=$total_pagar+$articulo['tarifaDc'];
+	<?php
+		$total_pagar=0;
+		foreach($this->session->userdata('articulos') as $articulo){
+			$total_pagar=$total_pagar+$articulo['tarifaDc'];
+		}
+		
+		if (isset($vista_detalle)) {	//Tipo de detalle a desplegar
+			if($vista_detalle == 'tc') {
+				include ('forma_pago/editar.html'); 	
+			} else if ($vista_detalle == 'amex') {
+				include ('forma_pago/editar_amex.html');
 			}
-			
-			if (isset($vista_detalle)) {	//Tipo de detalle a desplegar
-				if($vista_detalle == 'tc') {
-					include ('forma_pago/editar.html'); 	
-				} else if ($vista_detalle == 'amex') {
-					include ('forma_pago/editar_amex.html');
-				}
-			} else {
-				//si re registrará una nueva tarjeta, se incluyen las formas 
-				if (isset($form)) {
-					if($form == 'tc') {
-						include ('forma_pago/listar.html');
-						include ('forma_pago/agregar.html');
-						//otras formas de pago
-						if($total_pagar>100)
-						include ('forma_pago/otras_formas.html');
-						
-					} else if ($form == 'amex') {
-						include ('forma_pago/agregar_amex.html');
-					}
-				} else {
+		} else {
+			//si re registrará una nueva tarjeta, se incluyen las formas 
+			if (isset($form)) {
+				if($form == 'tc') {
 					include ('forma_pago/listar.html');
+					include ('forma_pago/agregar.html');
 					//otras formas de pago
 					if($total_pagar>100)
 					include ('forma_pago/otras_formas.html');
+					
+				} else if ($form == 'amex') {
+					include ('forma_pago/agregar_amex.html');
 				}
-			} 
-		?>
-	
+			} else {
+				include ('forma_pago/listar.html');
+				//otras formas de pago
+				if($total_pagar>100)
+				include ('forma_pago/otras_formas.html');
+			}
+		} 
+	?>
+
 	<?php
 		if (!empty($mensaje)) {
 	?>

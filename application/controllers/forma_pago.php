@@ -535,19 +535,19 @@ class Forma_Pago extends CI_Controller {
 					}
 					
 					//redirect('forma_pago/editar/amex/'.$consecutivo, 'location', 303);
-					$url = site_url().'/forma_pago/editar/amex/'.$consecutivo;
+					$url = site_url('forma_pago/editar/amex/'.$consecutivo);
 					header("HTTP/1.1 303 See Other");
 					header("Location: $url", TRUE, 303);
 				} else {
 					//$this->listar($msg_actualizacion, $redirect);
 					if ($redirect) {
 						//redirect($destino, "location", 303);
-						$url = site_url().'/'.$destino;
+						$url = site_url($destino);
 						header("HTTP/1.1 303 See Other");
 						header("Location: $url", TRUE, 303);
 					} else {
 						//redirect("forma_pago", 'location', 303);
-						$url = site_url().'/forma_pago';
+						$url = site_url('forma_pago');
 						header("HTTP/1.1 303 See Other");
 						header("Location: $url", TRUE, 303);
 					}
@@ -581,19 +581,19 @@ class Forma_Pago extends CI_Controller {
 							$this->session->set_userdata('destino', 'forma_pago/');
 						}
 						//redirect('forma_pago/editar/amex/'.$consecutivo, "location", 303);
-						$url = site_url().'/forma_pago/editar/amex/'.$consecutivo;
+						$url = site_url('forma_pago/editar/amex/'.$consecutivo);
 						header("HTTP/1.1 303 See Other");
 						header("Location: $url", TRUE, 303);
 					} else {
 						//$this->listar($msg_actualizacion, $redirect);
 						if ($redirect) {
 							//redirect($destino, "location", 303);
-							$url = site_url().'/'.$destino;
+							$url = site_url($destino);
 							header("HTTP/1.1 303 See Other");
 							header("Location: $url", TRUE, 303);
 						} else {
 							//redirect("forma_pago", 'location', 303);
-							$url = site_url().'/forma_pago';
+							$url = site_url('forma_pago');
 							header("HTTP/1.1 303 See Other");
 							header("Location: $url", TRUE, 303);
 						}
@@ -602,7 +602,8 @@ class Forma_Pago extends CI_Controller {
 					$data['msg_actualizacion'] = "Error de actualización en el sistema para el cobro";
 					//echo "Error de actualización hacia CCTC.<br/>";	//redirect
 					//$this->cargar_vista('', 'forma_pago' , $data);
-					$this->listar($data['msg_actualizacion'], FALSE);					
+					$this->listar($data['msg_actualizacion'], FALSE);
+					exit;
 				}
 			}
 		} else {	//sí hubo errores
@@ -767,8 +768,9 @@ class Forma_Pago extends CI_Controller {
 			return $simple_result;
 			
 		} catch (SoapFault $exception) {
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
+			//echo "//tarjeta No Eliminada";
+			//echo $exception;  
+			//echo '<br/>error: <br/>'.$exception->getMessage();
 			//exit();
 			return false;
 		}
@@ -790,8 +792,9 @@ class Forma_Pago extends CI_Controller {
 			return $tarjeta_amex;
 			
 		} catch (SoapFault $exception) {
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
+			//echo "detalle_tarjeta_CCTC";
+			//echo $exception;  
+			//echo '<br/>error: <br/>'.$exception->getMessage();
 			//exit();
 			return false;
 		}
@@ -843,8 +846,8 @@ class Forma_Pago extends CI_Controller {
 		
 		try {  
 			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-				
-			$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap);
+			
+			$parameter = array('informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap);
 			
 			$obj_result = $cliente->EditarTC($parameter);
 			$simple_result = $obj_result->EditarTCResult;
@@ -854,8 +857,9 @@ class Forma_Pago extends CI_Controller {
 			return $simple_result;
 			
 		} catch (SoapFault $exception) {
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
+			//echo "error editar_TC";
+			//echo $exception;  
+			//echo '<br/>error: <br/>'.$exception->getMessage();
 			//exit();
 			return false;
 		}
@@ -908,9 +912,10 @@ class Forma_Pago extends CI_Controller {
 			return $simple_result;
 			
 		} catch (SoapFault $exception) {
+//			echo "registrar_tarjeta_CCTC";
 			//errores en desarrollo
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
+			//echo $exception;  
+			//echo '<br/>error: <br/>'.$exception->getMessage();
 			//exit();
 			return false;
 		}
@@ -933,9 +938,10 @@ class Forma_Pago extends CI_Controller {
 			return $InformacionBancoArray;
 			
 		} catch (Exception $e) {
-			echo "No se pudo recuperar el catálogo de bancos.<br/>";
-			echo $e->getMessage();
-			exit();
+			//echo "No se pudo recuperar el catálogo de bancos.<br/>";
+			//echo $e->getMessage();
+			//exit();
+			return FALSE;
 		}
 	}
 	
