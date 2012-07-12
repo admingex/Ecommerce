@@ -613,13 +613,15 @@ td{
 	display: block;
 	padding: 20px 0 20px 0;
 	clear: both;
-	padding-left: 18%;
+	margin-left: auto;
+	margin-right: auto;
+	width: 380px;		
 }
 
 .footer_main div {
 	float: left;
 	text-align: center;
-	padding: 0 15px 0 15px;
+	padding: 0 15px 0 15px;	
 }
 
 .instrucciones_cursivas {

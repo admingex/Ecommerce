@@ -110,7 +110,7 @@ class Password extends CI_Controller {
 					else{
 						redirect('login');	
 					}
-											
+					 						
 													
 				}		
 				else{
