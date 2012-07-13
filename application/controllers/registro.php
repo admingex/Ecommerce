@@ -54,14 +54,35 @@ class Registro extends CI_Controller {
         			echo "resultado del query:".$res;        			
 					*/
 					//if($this->login_registro_model->registrar_cliente($cliente_info)) {							//registro exitoso
-					if($res){	
+					if($res){
+						//se va a revisar el inicio de sesión		
 						$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation'], $cliente_info['email']);	//crear sesion,
-						//se va a revisar el inicio de sesión
-						//$url = $this->config->item('base_url').'/index.php/forma_pago/'; 
-						//header("Location: $url");						
-						redirect('login', 'location', 302);
-						$_POST = array();	
-						exit();					
+												
+						$headers="Content-type: text/html; charset=UTF-8\r\n";
+		                $headers.="MIME-Version: 1.0\r\n";
+					    $headers .= "From: GexWeb<servicioaclientes@expansion.com.mx>\r\n";       
+						$mensaje="<html>
+								  <body>
+								  	   <div>Hola, ".$cliente_info['salutation'].",<br /><br /> 
+								  	   </div>									   
+								  	   <div>
+								  	      Gracias por crear tu cuenta en pagos.grupoexpansion.mx.<br /><br /> 
+										  Con tu cuenta podrás almacenar tus datos para que tus siguientes compras sean más ágiles, pues no tendrás necesidad de registrar tus datos cada vez que compres aquí.<br /><br />
+										  Te damos la más cordial bienvenida y esperamos que disfrutes tu compra.<br /><br />
+										  Estamos disponibles para cualquier pregunta o duda sobre tu cuenta en:<br /><br/>
+										  Atención a clientes<br/><br/>
+										  Tel. (55) 9177 4342<br/><br/>
+										  atencionaclientes@expansion.com.mx<br/><br/>
+										  Cordialmente,<br/><br/>
+										  Grupo Expansión.<br/>
+								  	   </div>								  	   
+								  </body>
+								  </html>"; 
+																								     		      									
+						if(mail($cliente_info['email'], "=?UTF-8?B?".base64_encode('¡Bienvenido a la plataforma de pagos de Grupo Expansión!')."?=", $mensaje, $headers)){							
+							redirect('login', 'location', 302);	
+							$_POST = array();						
+						}																																																						
 					} else {
 						$this->registro_errores['user_reg'] = "No se pudo realizar el registro en el sistema";
 						$_POST = array();

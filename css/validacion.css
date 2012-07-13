@@ -50,3 +50,20 @@
     padding: 10px 20px;
     text-align: center;
 }
+.footer-titulo{
+	font-size: 13px;
+	color: #E60000;
+	font-weight: bold;	
+	font-family: Arial, Helvetica, sans-serif;		
+}	
+.footer-subtitulo{
+	font-size: 13px;
+	color: #000;
+	font-weight: bold;	
+	font-family: Arial, Helvetica, sans-serif;			
+}
+.footer-instrucciones{
+	font-size: 13px;
+	color: #000;	
+	font-family: Arial, Helvetica, sans-serif;	
+}

@@ -1,8 +1,7 @@
 <!--h1>Orden de Compra de <?php echo $this->session->userdata('username');?></h1-->
 <div class="contenedor-gris">
 	<div id="list_results">
-
-		<h4>Respuesta de Solicitud de cobro</h4>
+		<div class="titulo-proceso">Respuesta de Solicitud de cobro</div><br /><br />		
 		<?php 
 		//Si se solicitó pago con TC
 		if (isset($resultado)) {
@@ -22,9 +21,9 @@
 		} else if (isset($deposito)) {
 			//En caso contrario si se hizo el pago con depósito
 		?>
-			<h5>
-				Se te ha enviado un correo con las instrucciones para que realices el pago a trav&eacute;s del depósito bancario.
-			</h5>
+			<div class="instrucciones">
+				Se te ha enviado un correo con las instrucciones para que realices el pago a trav&eacute;s de depósito bancario.	
+			</div>							
 		
 		<?php
 		}
@@ -32,11 +31,13 @@
 		<?php
 			if($url_back['estatus']!=0){
 		?>
+		<p>
 		<form name="envio_result" action="<?php echo $url_back['urlback'];?>" method="POST" accept-charset="UTF8">
 			<input type="hidden" name="cadena_comprobacion" value="<?php echo $url_back['cadena_comprobacion']; ?>" />
 			<textarea name="datos_login" style="display: none"><?php echo $url_back['datos_login']; ?></textarea>							
 			<input type="submit" name="Continuar" value="Continuar"/>
 		</form>
+		</p>
 		<script type="text/javascript">
 			//setTimeout('document.envio_result.submit();', 3000);
 		</script>

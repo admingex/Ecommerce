@@ -262,11 +262,13 @@ class Orden_Compra extends CI_Controller {
 				
 				//Configuración de la forma de pago y solicitud de cobro a CCTC
 				if ($this->session->userdata('deposito')) {	//Depósito Bancario
-					//el usuario de ecommerce será el que se registre para el cobro con esta forma de pago
-					$id_cliente = $this->id_cliente;	//self::User_Ecommerce;	
+					//el usuario de ecommerce será el que se registre para el cobro con esta forma de pago					
+					$id_cliente = $this->id_cliente;	//self::User_Ecommerce;						
 					
 					//para el registro de la compra en ecommerce
 					$tipo_pago = self::$TIPO_PAGO['Deposito_Bancario'];
+					//para que se muestre el mensaje de pago con deposito bancario
+					$data['deposito'] = TRUE;
 					//$id_forma_pago = 0;
 										
 					//echo " tipo pago depósito: " . $tipo_pago;
