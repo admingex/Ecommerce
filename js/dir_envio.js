@@ -206,7 +206,7 @@ $(document).ready(function() {
 			async: false,
 			success: function(data) {
 				//alert("success: " + data.msg);
-				if (typeof data.sepomex != null)	{	//regresa un array con las colonias
+				if (typeof data.sepomex != null && data.sepomex.length != 0)	{	//regresa un array con las colonias
 					//alert('data is ok, tipo: ' + typeof(data));
 					var sepomex = data.sepomex;			//colonias
 					var codigo_postal = sepomex[0].codigo_postal;
@@ -261,8 +261,11 @@ $(document).ready(function() {
 						}, 
 						"json"
 					);
-					
-					
+				} else if (data.sepomex.length == 0) {
+					$("#sel_estados").val('');
+					$('#sel_estados').trigger('change');
+					alert("El código no devolvió resultados");
+					//Remover información del formulario
 				}
 			},
 			error: function(data) {
