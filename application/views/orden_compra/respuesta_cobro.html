@@ -1,7 +1,6 @@
 <!--h1>Orden de Compra de <?php echo $this->session->userdata('username');?></h1-->
 <div class="contenedor-gris">
-	<div id="list_results">
-		<div class="titulo-proceso">Respuesta de Solicitud de cobro</div><br /><br />		
+	<div id="list_results">				
 		<?php 
 		//Si se solicitó pago con TC
 		if (isset($resultado)) {
@@ -22,7 +21,16 @@
 			//En caso contrario si se hizo el pago con depósito
 		?>
 			<div class="instrucciones">
-				Se te ha enviado un correo con las instrucciones para que realices el pago a trav&eacute;s de depósito bancario.	
+				Para completar tu orden, sigue los pasos que enlistamos abajo:<br /><br />
+				Realiza un depósito por el total de la orden acudiendo a cualquier sucursal BBVA Bancomer, o realizando una transferencia electrónica, por medio del convenio CIE 57351 o directamente a la cuenta que aparece abajo.  Es importante que indiques tu nombre y número telefónico como referencia. La cuenta de depósito es la siguiente:<br /><br />
+				Banco: BBVA Bancomer<br />
+				Beneficiario: Expansión S.A. de C.V.<br />
+				Cuenta CLABE:  012180004465210022<br />
+				Cuenta:  0446521002<br />
+				Sucursal: 1820<br />
+				Plaza: 001<br /><br /> 
+				Una vez realizado el depósito por favor confirma tu pago llamando al teléfono (55) 5061 2413 o escribiendo al correo pagosmercadotecnia@expansion.com.mx . Si confirmas por correo, no olvides indicar tu nombre y el producto que adquieres, y enviar escaneada tu ficha de depósito.<br /><br /> 
+				Recibirás un correo electrónico confirmando que tu compra ha sido completada.
 			</div>							
 		
 		<?php

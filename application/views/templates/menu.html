@@ -1,7 +1,7 @@
 <section id='encabezado'>
 	<header>
 		<?php		    			
-			if(isset($this->session->userdata('sitio')->url_imageVc) &&  $this->session->userdata('sitio')->url_imageVc!= ""){
+			if(isset($this->session->userdata('sitio')->url_imageVc) &&  $this->session->userdata('sitio')->url_imageVc!= ""){				
 				echo "<img src='".base_url() . $this->session->userdata('sitio')->url_imageVc . "' alt='Grupo Expansión' />";	
 			}	
 			else if (!empty($url_imageVc)){

@@ -6,15 +6,18 @@
 				<?php 
 					if (!empty($cargar_pagina))
 					{
+						$var=0;
 						switch($cargar_pagina) {
 							case("privacidad"):
-								include ('templates/privacidad.html');
+								include ('templates/privacidad.html');	
+								$var = 1;							
 								break;
 							case("condiciones"):
 								include ('templates/condiciones.html');
 								break;
 							case("ayuda"):
 								include ('templates/ayuda.html');
+								$var = 1;																
 								break;
 							case("contacto"):
 								include ('templates/contacto.html');
@@ -31,3 +34,8 @@
 		</div> 
 	</div>
 </section>
+<?php 
+	if($var==1){
+		echo '<div style="position: relative; width: 100px; left: 630px;"><a href='.site_url().' >Regresar</a></div>';
+	}
+?>
