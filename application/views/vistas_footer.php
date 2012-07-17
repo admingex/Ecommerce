@@ -1,8 +1,9 @@
-<div style="position: relative; width: 100px; left: 630px; top: 40px"><a href='<?php echo site_url(); ?>' >Regresar</a></div>
+<?php
+	echo '<div style="float: right; width: 100px; margin-top: 40px"><a href='.site_url().' >Regresar</a></div>'; 
+?>
 <section class="contenedor">
 	<div class="contenedor-blanco">
-		<div class="titulo-proceso">
-			<p>
+		<div class="titulo-proceso">			
 				<?php 
 					if (!empty($cargar_pagina))
 					{
@@ -30,12 +31,12 @@
 						redirect('login', 'refresh', 303);
 					}
 				?>
-			</p>			
+					
 		</div> 
 	</div>
 </section>
 <?php 
 	if($var==1){
-		echo '<div style="position: relative; width: 100px; left: 630px;"><a href='.site_url().' >Regresar</a></div>';
+		echo '<div style="width: 100px; float: right; margin-bottom: 20px"><a href='.site_url().' >Regresar</a></div>';
 	}
 ?>
