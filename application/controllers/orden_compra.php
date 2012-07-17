@@ -69,7 +69,10 @@ class Orden_Compra extends CI_Controller {
 		$this->id_cliente = $this->session->userdata('id_cliente');
 		
 		//traer del controlador api las funciones encrypt y decrypt
-		$this->api = new Api();		
+		$this->api = new Api();	
+		
+		//carga el helper para la funcion mdate() para obtener la fecha
+		$this->load->helper('date');	
 		/*
 		echo "<pre>";
 		var_dump($this->session->all_userdata());
@@ -457,14 +460,17 @@ class Orden_Compra extends CI_Controller {
 						//Muestra la pantalla de resultado de cobro
 						$this->cargar_vista('', 'orden_compra', $data);
 						
-						$this->session->sess_destroy();
+						if($data['url_back']['estatus']!=0){
+							$this->session->sess_destroy();	
+						}						
 						
 					} else {
 						redirect('mensaje/'.md5(2), 'refresh');
 					}
 				} else if (is_array($this->session->userdata('tarjeta'))) {	//Pago con tarjetas
-					$detalle_tarjeta = $this->session->userdata('tarjeta');
+					$detalle_tarjeta = $this->session->userdata('tarjeta');					
 					$tc = $detalle_tarjeta['tc'];
+					$data['tc']= (object)$detalle_tarjeta['tc'];
 					$tc = (array)$tc;
 					
 					//echo var_dump($tc);
@@ -549,9 +555,154 @@ class Orden_Compra extends CI_Controller {
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
 						
 						//Envío del correo
-						$mensaje = "Se ha solicitado el cobro al banco con la tarjeta solcitada y la respuesta es la siguiente: " . $simple_result->respuesta_banco;
+						$mensaje = "<html>
+									  <body>
+									  	   <div>
+									  	   Hola ".$this->session->userdata('username').",<br />
+										   Gracias por tu orden en 
+										   <br />
+										   <br />
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										       <thead style='background-color: #E70030; color: #FFF'>
+										           <tr>
+										               <th colspan='2' align='left'>Pago, envío y facturación
+										               </th>
+										           </tr>    
+										       </thead>
+										       <tbody>
+											   	   <tr>
+											   	       <td valign='top' style='width: 300px;'>
+											   	         <b>Método de pago:</b><br />".$detalle_tarjeta['tc']['descripcionVc']." con terminación ".substr($detalle_tarjeta['tc']['terminacion_tarjetaVc'], -4)."<br />
+											   	         <b>Código de autorización:</b>&nbsp;&nbsp;".$simple_result->codigo_autorizacion."<br />
+											   	         <b>Fecha de autorización:</b>&nbsp;&nbsp;".mdate('%d-%m-%Y')."<br /><br />";
+													   
+											   	      
+											   	       $dir_envio = (int)$this->session->userdata('dir_envio');
+											   	       if(!empty($dir_envio)){
+											   	       	   $det_env = $this->direccion_envio_model->detalle_direccion($dir_envio, $id_cliente);
+											   	       	   $mensaje.="<b>Dirección de envío:</b><br />";
+											   	       	   $mensaje.=$det_env->address1. " " .$det_env->address2. " " . (isset($det_env->address4) ? ", Int. ".$det_env->address4 : "") . "<br/>".
+											   	       	         $det_env->zip."<br/>".
+																 $det_env->city."<br/>".
+																 $det_env->state."<br/>".
+																 $det_env->codigo_paisVc."<br/>".
+																 $det_env->phone."&nbsp;";	
+											   	       }
+											   	       										   	       													
+								$mensaje.=   	      "</td>
+											   	       <td valign='top' style='width: 300px;'>
+											   	           <b>Requiere factura:</b>&nbsp;".$this->session->userdata('requiere_factura')."<br /><br />";
+											   	       
+											   	       	   if($this->session->userdata('requiere_factura')=='si'){
+											   	       	       $mensaje.="<b>Razón social:</b><br />";	
+											   	       	       $rs = $this->direccion_facturacion_model->obtener_rs($this->session->userdata('razon_social'));
+											   	       	       $mensaje.=$rs->company."<br />";	
+											   	       	       $mensaje.=$rs->tax_id_number."<br /><br />";
+											   	       	       										   	       	       
+											   	       	       $mensaje.="<b>Dirección de facturación:</b><br />";
+											   	       	       $df = $this->direccion_facturacion_model->obtener_direccion($id_cliente, $this->session->userdata('direccion_f'));	  										   	       	       
+											   	       	       $mensaje.= $df->calle."&nbsp;".$df->num_ext."&nbsp;".(!empty($df->num_int) ? ", Int. ".$df->num_int : "") . "<br/>";
+															   $mensaje.= $df->cp."<br/>".
+																 		  $df->ciudad."<br/>".
+														 		          $df->estado."<br/>".
+															 	 		  $df->pais."&nbsp;";
+											   	       	   }
+											   	       	   
+								$mensaje.=			  "</td>
+											   	   </tr>
+											   </tbody>	   
+										   </table>
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										   	   <thead style='background-color: #E70030; color: #FFF'>
+										   	       <tr>
+										   	           <th colspan='4' align='left'>
+										   	               <b>Resumen de orden:</b>
+										   	           </th>
+										   	       </tr>
+										   	   </thead>
+										   	   <tbody>
+										   	       <tr>
+										   	           <td colspan='4' align='left'><b>Número de orden:</b>&nbsp;&nbsp;".$id_compra."
+										   	           </td>										   	           										   	          
+										   	       </tr>
+										   	       <tr>
+										   	       	   <td colspan='4'>
+										   	       	       <b>Productos en la orden:</b>	   
+										   	       	   </td>
+										   	       </tr>";
+										   	       				
+													if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
+														$articulos = $this->session->userdata('articulos');
+														$total = 0;
+														if (!empty($articulos)) {
+															foreach ($articulos as $a) 
+																$total += $a['tarifaDc'];
+														}
+												 
+														if ($this->session->userdata('promocion')) 																	 
+															if (!empty($articulos))
+																foreach($articulos as $articulo) {
+																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																	$nmp=count($mp);
+																	if($nmp==2){
+																		$desc_promo = $mp[0];		
+																	}	
+																	else if($nmp==3){
+																		$desc_promo = $mp[1];
+																	}
+																																		
+												  				    $mensaje.="<tr>
+																		           <td colspan='2'>".$desc_promo."<br />".
+																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
+																		           </td>	
+																				   <td>&nbsp;</td>				
+																				   <td align='right'>$".	
+																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				   </td>
+																				</tr>";														
+																}																																																																																	
+														}
+																										   	       										   	       
+				   	       $mensaje.= 			  "<tr>
+										   	           <td colspan='2'>&nbsp;
+										   	           </td>
+										   	           <td align='right'>Sub-total:
+										   	           </td>
+										   	           <td align='right'>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."
+										   	           </td>
+										   	       </tr>
+										   	       <tr>
+										   	           <td colspan='2'>&nbsp;
+										   	           </td>
+										   	           <td align='right'>I.V.A
+										   	           </td>
+										   	           <td align='right'>$0.00&nbsp;".$articulo['monedaVc']."
+										   	           </td>
+										   	       </tr>
+										   	       <tr>
+										   	           <td colspan='2' width='325px'>&nbsp;
+										   	           </td>
+										   	           <td align='right' width='180px'><b>Total de la orden</b>
+										   	           </td>
+										   	           <td align='right' width='95px'><b>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."</b>
+										   	           </td>
+										   	       </tr>										   	       												   
+										   	   </tbody>
+										   </table>
+										   <br />
+										   <br />
+										   <b>¿Solicitaste factura?</b>
+										   <br />
+										   <br />
+										   Si solicitaste factura, recibirás un correo con la liga para descargarla en un periodo máximo de 24 horas.
+										   <br />
+										   <br />
+										   Gracias por comprar en Grupo Expansión.									  	   																																																										  	
+									  	   </div>
+									  </body>
+									  </html>";
 						
-						$envio_correo = $this->enviar_correo("Notificaci&oacute;n de cobro con tarjeta no guardada", $mensaje);
+						$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
 						$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
 						
 						//manejo envío correo
@@ -565,8 +716,9 @@ class Orden_Compra extends CI_Controller {
 						$data['resultado'] = $simple_result;	
 																	
 						$this->cargar_vista('', 'orden_compra', $data);
-						
-						$this->session->sess_destroy();
+						if($data['url_back']['estatus']!=0){
+							$this->session->sess_destroy();	
+						}						
 						
 					} catch (SoapFault $exception) { 
 						echo $exception;  
@@ -579,7 +731,7 @@ class Orden_Compra extends CI_Controller {
 					
 					$detalle_tarjeta = $this->forma_pago_model->detalle_tarjeta($consecutivo, $id_cliente);
 					$tc = $detalle_tarjeta;	//trae la tc
-					
+					$data['tc']=$detalle_tarjeta;
 					
 					$tipo_pago = ($tc->id_tipo_tarjetaSi == self::Tipo_AMEX) ? self::$TIPO_PAGO['American_Express'] : self::$TIPO_PAGO['Prosa'];
 					
@@ -623,10 +775,155 @@ class Orden_Compra extends CI_Controller {
 						$this->registrar_detalle_pago_tc($info_detalle_pago_tc);
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
 						
-						//Envío del correo
-						$mensaje = "Se ha solicitado el cobro al banco con la tarjeta solcitada y la respuesta es la siguiente:  " . $simple_result->respuesta_banco;
 						
-						$envio_correo = $this->enviar_correo("Notificaci&oacute;n de cobro con tarjeta registrada", $mensaje);
+						//Envío del correo
+						$mensaje = "<html>
+									  <body>
+									  	   <div>
+									  	   Hola ".$this->session->userdata('username').",<br />
+										   Gracias por tu orden en 
+										   <br />
+										   <br />
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										       <thead style='background-color: #E70030; color: #FFF'>
+										           <tr>
+										               <th colspan='2' align='left'>Pago, envío y facturación
+										               </th>
+										           </tr>    
+										       </thead>
+										       <tbody>
+											   	   <tr>
+											   	       <td valign='top' style='width: 300px;'>
+											   	           <b>Método de pago:</b><br />".$detalle_tarjeta->descripcionVc." con terminación ".$detalle_tarjeta->terminacion_tarjetaVc."<br />
+											   	           <b>Código de autorización:</b>&nbsp;&nbsp;".$simple_result->codigo_autorizacion."<br />
+											   	           <b>Fecha de autorización:</b>&nbsp;&nbsp;".mdate('%d-%m-%Y')."<br /><br />";
+													   
+											   	       $dir_envio = (int)$this->session->userdata('dir_envio');
+											   	       if(!empty($dir_envio)){
+											   	       	   $det_env = $this->direccion_envio_model->detalle_direccion($dir_envio, $id_cliente);
+											   	       	   $mensaje.="<b>Dirección de envío:</b><br />";
+											   	       	   $mensaje.=$det_env->address1. " " .$det_env->address2. " " . (isset($det_env->address4) ? ", Int. ".$det_env->address4 : "") . "<br/>".
+											   	       	         $det_env->zip."<br/>".
+																 $det_env->city."<br/>".
+																 $det_env->state."<br/>".
+																 $det_env->codigo_paisVc."<br/>".
+																 $det_env->phone."&nbsp;";	
+											   	       }
+											   	       										   	       													
+								$mensaje.=   	      "</td>
+											   	       <td valign='top' style='width: 300px;'>
+											   	           <b>Requiere factura:</b>&nbsp;".$this->session->userdata('requiere_factura')."<br /><br />";
+											   	       
+											   	       	   if($this->session->userdata('requiere_factura')=='si'){
+											   	       	       $mensaje.="<b>Razón social:</b><br />";	
+											   	       	       $rs = $this->direccion_facturacion_model->obtener_rs($this->session->userdata('razon_social'));
+											   	       	       $mensaje.=$rs->company."<br />";	
+											   	       	       $mensaje.=$rs->tax_id_number."<br /><br />";
+											   	       	       										   	       	       
+											   	       	       $mensaje.="<b>Dirección de facturación:</b><br />";
+											   	       	       $df = $this->direccion_facturacion_model->obtener_direccion($id_cliente, $this->session->userdata('direccion_f'));	  										   	       	       
+											   	       	       $mensaje.= $df->calle."&nbsp;".$df->num_ext."&nbsp;".(!empty($df->num_int) ? ", Int. ".$df->num_int : "") . "<br/>";
+															   $mensaje.= $df->cp."<br/>".
+																 		  $df->ciudad."<br/>".
+														 		          $df->estado."<br/>".
+															 	 		  $df->pais."&nbsp;";
+											   	       	   }
+											   	       	   
+								$mensaje.=			  "</td>
+											   	   </tr>
+											   </tbody>	   
+										   </table>
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										   	   <thead style='background-color: #E70030; color: #FFF'>
+										   	       <tr>
+										   	           <th colspan='4' align='left'>
+										   	               <b>Resumen de orden:</b>
+										   	           </th>
+										   	       </tr>
+										   	   </thead>
+										   	   <tbody>
+										   	       <tr>
+										   	           <td colspan='4' align='left'><b>Número de orden:</b>&nbsp;&nbsp;".$id_compra."
+										   	           </td>										   	           										   	          
+										   	       </tr>
+										   	       <tr>
+										   	       	   <td colspan='4'>
+										   	       	       <b>Productos en la orden:</b>	   
+										   	       	   </td>
+										   	       </tr>";
+										   	       				
+													if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
+														$articulos = $this->session->userdata('articulos');
+														$total = 0;
+														if (!empty($articulos)) {
+															foreach ($articulos as $a) 
+																$total += $a['tarifaDc'];
+														}
+												 
+														if ($this->session->userdata('promocion')) 																	 
+															if (!empty($articulos))
+																foreach($articulos as $articulo) {
+																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																	$nmp=count($mp);
+																	if($nmp==2){
+																		$desc_promo = $mp[0];		
+																	}	
+																	else if($nmp==3){
+																		$desc_promo = $mp[1];
+																	}
+																																		
+												  				    $mensaje.="<tr>
+																		           <td colspan='2'>".$desc_promo."<br />".
+																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
+																		           </td>	
+																				   <td>&nbsp;</td>				
+																				   <td align='right'>$".	
+																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				   </td>
+																				</tr>";														
+																}																																																																																	
+														}
+																										   	       										   	       
+				   	       $mensaje.= 			  "<tr>
+										   	           <td colspan='2'>&nbsp;
+										   	           </td>
+										   	           <td align='right'>Sub-total:
+										   	           </td>
+										   	           <td align='right'>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."
+										   	           </td>
+										   	       </tr>
+										   	       <tr>
+										   	           <td colspan='2'>&nbsp;
+										   	           </td>
+										   	           <td align='right'>I.V.A
+										   	           </td>
+										   	           <td align='right'>$0.00&nbsp;".$articulo['monedaVc']."
+										   	           </td>
+										   	       </tr>
+										   	       <tr>
+										   	           <td colspan='2' width='325px'>&nbsp;
+										   	           </td>
+										   	           <td align='right' width='180px'><b>Total de la orden</b>
+										   	           </td>
+										   	           <td align='right' width='95px'><b>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."</b>
+										   	           </td>
+										   	       </tr>										   	       												   
+										   	   </tbody>
+										   </table>
+										   <br />
+										   <br />
+										   <b>¿Solicitaste factura?</b>
+										   <br />
+										   <br />
+										   Si solicitaste factura, recibirás un correo con la liga para descargarla en un periodo máximo de 24 horas.
+										   <br />
+										   <br />
+										   Gracias por comprar en Grupo Expansión.									  	   																																																										  	
+									  	   </div>
+									  </body>
+									  </html>";
+						
+						$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
 						$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
 						
 						//manejo envío correo
@@ -642,7 +939,9 @@ class Orden_Compra extends CI_Controller {
 										
 						$this->cargar_vista('', 'orden_compra', $data);
 												
-						$this->session->sess_destroy();
+						if($data['url_back']['estatus']!=0){
+							$this->session->sess_destroy();	
+						}
 						
 						//return $simple_result;
 					} catch (SoapFault $exception) {
@@ -680,6 +979,7 @@ class Orden_Compra extends CI_Controller {
 		$datos['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
 		$datos['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
 		$datos['estatus']=$estatus_pago;
+		$datos['id_compra']=$id_compra;
 		/*echo "<pre>";
 		print_r($datos);
 		echo "</pre>";

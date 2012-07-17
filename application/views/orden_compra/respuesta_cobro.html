@@ -3,16 +3,125 @@
 	<div id="list_results">				
 		<?php 
 		//Si se solicitó pago con TC
-		if (isset($resultado)) {
-			/*
-			echo "<pre>";
-			print_r($resultado);
-			echo "</pre>";	
-			*/
+		if (isset($resultado)) {	
+						
+			echo "  <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #C90002;'>
+					    <tr style='background-color: #C90002;'>
+					    	<td colspan='4' align='left' height='25px'>
+								<b style='color: #FFF;'>Resumen de orden:</b>
+							</td>
+						</tr>										   	   
+						<tr>
+			   	        	<td colspan='4' align='left'><b>Número de orden:</b>&nbsp;&nbsp;<span class='instrucciones'>".$url_back['id_compra']."</span>
+			   	           	</td>										   	           										   	          
+			   	       	</tr>
+			   	       	<tr>
+			   	       		<td colspan='4'>
+			   	       	    	<b>Productos en la orden:</b>	   
+			   	       	   	</td>
+			   	       </tr>";
+				   	       				
+						if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
+							$articulos = $this->session->userdata('articulos');
+							$total = 0;
+							if (!empty($articulos)) {
+								foreach ($articulos as $a) 
+									$total += $a['tarifaDc'];
+							}
+					 
+							if ($this->session->userdata('promocion')) 																	 
+								if (!empty($articulos))
+									foreach($articulos as $articulo) {
+										$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+										$nmp=count($mp);
+										if($nmp==2){
+											$desc_promo = $mp[0];		
+										}	
+										else if($nmp==3){
+											$desc_promo = $mp[1];
+										}
+																											
+					  				    echo "	<tr>
+													<td colspan='2' class='instrucciones'>".$desc_promo."<br />".
+											        	$articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
+											        </td>	
+													<td>&nbsp;</td>				
+													<td align='right' class='instrucciones'>$".	
+														number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+													</td>
+												</tr>";														
+									}																																																																																	
+							}
+																										   	       										   	       
+			echo "		<tr>
+		   	           		<td colspan='2'>&nbsp;
+		   	           		</td>
+		   	           		<td align='right' class='label'>Sub-total:
+		   	           		</td>
+		   	           		<td align='right' class='instrucciones'>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."
+		   	           		</td>
+		   	       		</tr>
+		   	       		<tr>
+		   	           		<td colspan='2'>&nbsp;
+		   	           		</td>
+		   	           		<td align='right' class='label'>I.V.A
+		   	           		</td>
+		   	           		<td align='right' class='instrucciones'>$0.00&nbsp;".$articulo['monedaVc']."
+		   	           		</td>
+		   	       		</tr>
+		   	       		<tr>
+		   	           		<td colspan='2' width='325px'>&nbsp;
+		   	           		</td>
+		   	           		<td align='right' width='180px' class='label'><b>Total de la orden</b>
+		   	           		</td>
+		   	           		<td align='right' width='95px'><b>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."</b>
+		   	           		</td>
+		   	       		</tr>	
+		   	       		<tr>
+		   	       			<td colspan='4'> 
+		   	       				<b>Método de pago:</b>
+		   	       			</td>
+		   	       		</tr>	
+		   	       		<tr>
+		   	       			<td colspan='4' class='instrucciones'>".$tc->descripcionVc." con terminación ".substr($tc->terminacion_tarjetaVc, -4)."		   	       				
+		   	       			</td>
+		   	       		</tr>
+		   	       		<tr>
+		   	       			<td colspan='4'>
+		   	       				<b>Código de Autorización:&nbsp;&nbsp;</b><span class='instrucciones'>" . $resultado->codigo_autorizacion . "</span>	
+		   	       			</td>
+		   	       		</tr>
+		   	       		<tr>
+		   	       			<td colspan='4'>
+		   	       				<b>Respuesta del Banco:&nbsp;&nbsp;</b><span class='instrucciones'>";
+		   	       				if($resultado->respuesta_banco!="approved"){
+									echo "Declined";
+								}
+								else{
+									echo "Approved";
+								}
+		   	       	echo "  </span>
+		   	       			</td>	
+		   	       		</tr>
+		   	       		<tr>
+		   	       			<td colspan='4'>
+		   	       				<b>Fecha de autorización:&nbsp;&nbsp;</b>";		   	       				
+		   	       				$this->load->helper('date');	
+		   	       				echo "<span class='instrucciones'>".mdate('%d-%m-%Y', time())."</span>";	
+		   	       					       			
+		   	       	echo "	</td>
+		   	       		</tr>								   	       												   										   	   
+		   			</table>";
+		
+		/*	
 			echo "<p>Número de Transacción: " . $resultado->id_transaccionNu . "</p>";
 			echo "<p>Respuesta del Banco: " . $resultado->respuesta_banco . "</p>";
+			if($resultado->respuesta_banco!="approved"){
+				echo "Declined";
+			}
 			//echo "<p>Código de Autorización: " . $resultado->codigo_autorizacion . "</p>";
 			echo "<p>Mensaje: " . $resultado->mensaje . "</p>";
+		*/	
 		?>	
 		
 						
@@ -21,7 +130,7 @@
 			//En caso contrario si se hizo el pago con depósito
 		?>
 			<div class="instrucciones">
-				Para completar tu orden, sigue los pasos que enlistamos abajo:<br /><br />
+				Para completar tu orden, sigue los pasos que enlistamos abajo. Estas instrucciones también serán enviadas a tu correo electrónico registrado.<br /><br />
 				Realiza un depósito por el total de la orden acudiendo a cualquier sucursal BBVA Bancomer, o realizando una transferencia electrónica, por medio del convenio CIE 57351 o directamente a la cuenta que aparece abajo.  Es importante que indiques tu nombre y número telefónico como referencia. La cuenta de depósito es la siguiente:<br /><br />
 				Banco: BBVA Bancomer<br />
 				Beneficiario: Expansión S.A. de C.V.<br />
@@ -52,7 +161,7 @@
 		<?php
 			} 
 			else{
-				echo anchor('orden_compra', 'intentar Nuevamente');
+				echo "<p>".anchor('orden_compra', 'intentar Nuevamente')."</p>";
 			}
 		?>
 	</div>
