@@ -249,17 +249,11 @@ class Orden_Compra extends CI_Controller {
 				// Informaciòn de la Orden //
 				$informacion_orden = new InformacionOrden(
 					$id_cliente,
-					$consecutivo,
-					$id_promocionIn,
-					$digito
+					$consecutivo,		//de la TC
+					$id_promocionIn,	
+					$digito				//CVV
 				);
-				
-				//echo var_dump($informacion_orden);				
-				//exit();				
-				
-				$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-				//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
-				
+
 				// Si la información esta en la Session //
 				$tipo_pago = self::$TIPO_PAGO['Otro'];	//ninguno válido al inicio
 				
@@ -467,7 +461,8 @@ class Orden_Compra extends CI_Controller {
 					} else {
 						redirect('mensaje/'.md5(2), 'refresh');
 					}
-				} else if (is_array($this->session->userdata('tarjeta'))) {	//Pago con tarjetas
+				} else if (is_array($this->session->userdata('tarjeta'))) {	//Pago con tarjetas y está en sesión
+				
 					$detalle_tarjeta = $this->session->userdata('tarjeta');					
 					$tc = $detalle_tarjeta['tc'];
 					$data['tc']= (object)$detalle_tarjeta['tc'];
@@ -523,19 +518,26 @@ class Orden_Compra extends CI_Controller {
 					echo "</pre>";
 					exit();
 					 * */
-					
-					//$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+					 
+					#### TEST Interfase 
+					//Paso de Objetos
+					$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
+									
 					
 					//Intentamos el Pago con pasando los objetos a CCTC //
 					try {
-						$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
-						
-						//Registro inicial de la compra
+						//registro inicial de la compra, si falla, redirecciona
 						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
 						
 						if (!$id_compra) {	//Si falla el registro inicial de la compra en CCTC
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
+						
+						#### Ajuste de Interfase, ya no se ocupará
+						$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+						//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
+						
+						$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
 						
 						$obj_result = $cliente->PagarTC($parameter);
 						
@@ -746,7 +748,11 @@ class Orden_Compra extends CI_Controller {
 					
 									
 					// Intentamos el Pago con los Id's en  CCTC //
-					try {  
+					try {
+						#### Ajuste de Interfase, ya no se ocupará
+						$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+						//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
+						  
 						$parameter = array('informacion_orden' => $informacion_orden);
 						
 						//Registro inicial de la compra						
