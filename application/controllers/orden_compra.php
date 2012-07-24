@@ -475,7 +475,7 @@ class Orden_Compra extends CI_Controller {
 					$tc_soap->renovacion_automatica = 1;
 					
 					//consecutivo de la información del pago es 1 para que pase el cobro
-					$informacion_orden->consecutivo_cmsSi = 1;	//$tc['id_TCSi'];
+					$informacion_orden->consecutivo_cmsSi = $tc['id_TCSi'];		//Debe ser 0
 					/*
 					$tc_soap = new Tc(
 						$tc['id_clienteIn'],
