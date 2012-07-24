@@ -304,6 +304,7 @@ class Orden_Compra extends CI_Controller {
 														if ($this->session->userdata('promocion')) 																	 
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
+																	$desc_promo = '';
 																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
 																	$nmp=count($mp);
 																	if($nmp==2){
@@ -666,6 +667,7 @@ class Orden_Compra extends CI_Controller {
 														if ($this->session->userdata('promocion')) 																	 
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
+																	$desc_promo = '';
 																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
 																	$nmp=count($mp);
 																	if($nmp==2){
@@ -899,6 +901,7 @@ class Orden_Compra extends CI_Controller {
 														if ($this->session->userdata('promocion')) 																	 
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
+																	$desc_promo = '';
 																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
 																	$nmp=count($mp);
 																	if($nmp==2){
