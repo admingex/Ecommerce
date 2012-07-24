@@ -5,15 +5,15 @@
 	<span><a href="<?php echo site_url('forma_pago');?>">Cambiar</a></span>	
 	<div id="tarjeta" class="float_izq">C&oacute;digo de seguridad:
 		<input type="text" name="txt_codigo" id="txt_codigo" maxlength="5" size="5"
-				value="<?php if(isset($_POST['txt_codigo'])) echo htmlspecialchars($_POST['txt_codigo']);?>"/>
-	</div>	
-	<div class="float_izq">							
+				value="<?php if(isset($_POST['txt_codigo'])) echo htmlspecialchars($_POST['txt_codigo']);?>"/>				
+	</div>		
+	<div class="float_izq">
+		<?php if(isset($reg_errores['txt_codigo'])) echo ("<div class='error'>".$reg_errores['txt_codigo']."</div>");?>							
 		<a href="#" class="tip_trigger">
 			<div class="interrogacion" style="margin-top: 6px"></div>			
 			<span class="tip">
 				<div style="margin-left: auto; margin-right: auto; text-align: center"><img src="<?php echo base_url();?>images/cvv2_code.jpg" /></div>
 			</span>			
-		</a>
-		<span class="validation_message"><?php if(isset($reg_errores['txt_codigo'])) echo ($reg_errores['txt_codigo']);?></span>
+		</a>		
 	</div>
 </div>
