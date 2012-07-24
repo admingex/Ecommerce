@@ -583,7 +583,7 @@ class Orden_Compra extends CI_Controller {
 									  <body>
 									  	   <div>
 									  	   Hola ".$this->session->userdata('username').",<br />
-										   Gracias por tu orden en 
+										   Gracias por tu orden en paogs.grupoexpansion.mx
 										   <br />
 										   <br />
 										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
@@ -728,15 +728,15 @@ class Orden_Compra extends CI_Controller {
 
 						$envio_correo = FALSE;
 						///Envío de correo sólo en caso de que el cobro haya sido exitoso
-						if (strtolower($simple_result->respuesta_banco) == "approved") {
+						if(strtolower($simple_result->respuesta_banco)=="approved"){							
 							$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
 							$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
-						}
-						
-						//manejo envío correo
-						if (!($envio_correo && $estatus_correo)) {	//Error
-							redirect('mensaje/'.md5(4), 'refresh');
-						}
+							
+							//manejo envío correo
+							if (!($envio_correo && $estatus_correo)) {	//Error
+								redirect('mensaje/'.md5(4), 'refresh');
+							}
+						}						
 																	
 						//obtiene os datos que se van a regresar al sitio	(Teo)																						
 						$data['url_back'] = $this->datos_urlback($simple_result->respuesta_banco, $id_compra);
@@ -817,7 +817,7 @@ class Orden_Compra extends CI_Controller {
 									  <body>
 									  	   <div>
 									  	   Hola ".$this->session->userdata('username').",<br />
-										   Gracias por tu orden en 
+										   Gracias por tu orden en paogs.grupoexpansion.mx
 										   <br />
 										   <br />
 										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
@@ -958,13 +958,15 @@ class Orden_Compra extends CI_Controller {
 									  	   </div>
 									  </body>
 									  </html>";
-						
-						$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
-						$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
-						
-						//manejo envío correo
-						if (!($envio_correo && $estatus_correo)) {	//Error
-							redirect('mensaje/'.md5(4), 'refresh');
+												
+						if(strtolower($simple_result->respuesta_banco)=="approved"){							
+							$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
+							$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
+							
+							//manejo envío correo
+							if (!($envio_correo && $estatus_correo)) {	//Error
+								redirect('mensaje/'.md5(4), 'refresh');
+							}
 						}
 					
 						
