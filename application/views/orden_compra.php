@@ -7,7 +7,7 @@
 </section>
 <div id="pleca-punteada"></div>
 <div class="contenedor-blanco">
-	<?php if(!isset($deposito)){ ?>			
+	<?php if(!isset($deposito) && empty($resultado)){ ?>			
 	<div class="instrucciones">Por favor verifica la informaci&oacute;n que aparece abajo. Si tu pago es con tarjeta, escribe el c&oacute;digo de seguridad que aparece en tu tarjeta. Cuando est&eacute;s listo, da click en finalizar compra para continuar.</div>
 	<?php }?>	
 </div>

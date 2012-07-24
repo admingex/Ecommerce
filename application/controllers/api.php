@@ -28,14 +28,28 @@ class Api extends CI_Controller {
 			if(($cad=="json")||($cad=="xml")||($cad=="html")){
 				$sitio="";
 				$formato=$cad;
-			}
-			//buscar los articulos con la clave enviada
+			}								
+			//buscar los articulos con la clave enviada			
 			else if(((!is_numeric($cad))|| (strlen($cad)>2)) && ($_POST) ){				
 				echo $this->obtener_url_promo($cad, $_POST);
 				exit();				
 			}
+			
 		}
-		if($segm==3){
+		if($segm==3){			
+			if($this->uri->segment(2)=='carrito'){
+				$datos_decrypt_url=base64_decode(str_pad(strtr($this->uri->segment(3), '-_', '+/'), strlen($this->uri->segment(3)) % 4, '=', STR_PAD_RIGHT));
+				$datos_decrypt=$this->decrypt($datos_decrypt_url, $this->key);
+				$datos_decrypt=unserialize($datos_decrypt);
+				
+				if($_POST){
+					echo "<pre>";
+						print_r($_POST);
+						print_r($datos_decrypt);						
+					echo "</pre>";
+				}												
+				exit();
+			}
 			$cad=$this->uri->segment(3);
 			if(($cad=="json")||($cad=="xml")||($cad=="html")){
 				$canal="";
@@ -51,7 +65,7 @@ class Api extends CI_Controller {
 		}														
 		if($formato=="pago"){
 		    $formato="";
-		}		
+		}				
 		
 		if((empty($sitio)) && (empty($canal)) && (empty($promocion))){			
 			$sitios=$this->api_model->obtener_sitios();
@@ -117,7 +131,7 @@ class Api extends CI_Controller {
 			if($rsitio->num_rows()!=0){
 				$data['sitio']=$rsitio->row();
 			}		 
-			else{
+			else{				
 				$data['error']['sitio']="no existe informacion de este sitio";
 			} 
     	}
@@ -144,10 +158,14 @@ class Api extends CI_Controller {
 					}
 				}
 				else{
+					unset($data['sitio']);
+					unset($data['canal']);
 					$data['error']['articulos']="no existen articulos en esta promocion";
 				}				
 			}      		
 			else{
+				unset($data['sitio']);
+				unset($data['canal']);
 				$data['error']['promocion']="no existe informacion de esta promocion";
 			}
     	}							  
