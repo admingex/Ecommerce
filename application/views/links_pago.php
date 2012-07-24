@@ -26,7 +26,7 @@ echo "	    IDC Online
           <td class='label'>Nueva ley de ayuda alimentaría
           </td>
           <td>";
-echo "<form name='realizar_pago' action='".site_url('/api/1/1/1189/pago')."' method='POST'>
+echo "<form name='realizar_pago' action='".site_url('/api/1/7/115/pago')."' method='POST'>
       	  <input type='hidden' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>
           <input type='hidden' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
           <input type='submit' name='enviar' value='Comprar' class='boton' />			          
@@ -38,7 +38,7 @@ echo "<form name='realizar_pago' action='".site_url('/api/1/1/1189/pago')."' met
             Factura digital 2011
           </td>
           <td>";      		
-echo "<form name='realizar_pago' action='".site_url('/api/1/7/1801/pago')."' method='POST'>
+echo "<form name='realizar_pago' action='".site_url('/api/1/7/116/pago')."' method='POST'>
       	  <input type='hidden' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>
           <input type='hidden' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
           <input type='submit' name='enviar' value='Comprar' class='boton' />		          
@@ -50,7 +50,7 @@ echo "<form name='realizar_pago' action='".site_url('/api/1/7/1801/pago')."' met
           Servicio de declaraciones y pagos
         </td>
         <td>";	    	  	 
-echo "<form name='realizar_pago' action='".site_url('/api/1/1/1819/pago')."' method='POST'>
+echo "<form name='realizar_pago' action='".site_url('/api/1/7/117/pago')."' method='POST'>
       	  <input type='hidden' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>
           <input type='hidden' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
           <input type='submit' name='enviar' value='Comprar' class='boton' />
@@ -67,7 +67,7 @@ echo "<form name='realizar_pago' action='".site_url('/api/1/1/1819/pago')."' met
           Noviembre 2010
         </td>
         <td>";	    	  	 
-echo "<form name='realizar_pago' action='".site_url('/api/2/9/2020/pago')."' method='POST'>
+echo "<form name='realizar_pago' action='".site_url('/api/2/8/266/pago')."' method='POST'>
       	  <input type='hidden' name='guidx' value='{119FFA5C-9A1B-11E1-B947-3CF26188709B}' size='70'/>
           <input type='hidden' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
           <input type='submit' name='enviar' value='Comprar' class='boton' />
@@ -79,7 +79,7 @@ echo "<form name='realizar_pago' action='".site_url('/api/2/9/2020/pago')."' met
           EXPANSION 1 de Abril 2011
         </td>
         <td>";	    	  	 
-echo "<form name='realizar_pago' action='".site_url('/api/2/9/2023/pago')."' method='POST'>
+echo "<form name='realizar_pago' action='".site_url('/api/2/8/267/pago')."' method='POST'>
       	  <input type='hidden' name='guidx' value='{119FFA5C-9A1B-11E1-B947-3CF26188709B}' size='70'/>
           <input type='hidden' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
           <input type='submit' name='enviar' value='Comprar' class='boton' />
