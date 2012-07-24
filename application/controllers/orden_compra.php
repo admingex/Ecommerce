@@ -9,14 +9,10 @@ class Orden_Compra extends CI_Controller {
 	var $subtitle = 'Verifica tu orden';
 	var $registro_errores = array();				//validación para los errores
 	
-	const Tipo_AMEX = 1;
-	const User_Ecommerce = 0;
-	//var $pago_express;
-	
 	private $id_cliente;
-	private $id_direccion_envio;
-	private $id_direccion_facturacion;
+	private $api;
 	
+	const Tipo_AMEX = 1;
 	
 	public static $ESTATUS_COMPRA = array(
 		"SOLICITUD_CCTC"			=> 1, 
@@ -45,19 +41,10 @@ class Orden_Compra extends CI_Controller {
         parent::__construct();
 		
 		$this->output->nocache();
-		/*
-		$this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
-		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-		$this->output->set_header('Pragma: no-cache');
-		$this->output->set_header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-		*/
+		
 		//si no hay sesión
 		//manda al usuario a la... pagina de login
 		$this->redirect_cliente_invalido('id_cliente', 'login');
-		
-		//bandera de redirección a la orden en cuanto se llega acá
-		//$this->session->set_userdata("redirect_to_order", "orden_compra");
-		//$this->session->set_userdata("destino", "orden_compra");
 		
 		//cargar el modelo en el constructor
 		$this->load->model('orden_compra_model', 'orden_compra_model', true);
@@ -73,12 +60,7 @@ class Orden_Compra extends CI_Controller {
 		
 		//carga el helper para la funcion mdate() para obtener la fecha
 		$this->load->helper('date');	
-		/*
-		echo "<pre>";
-		var_dump($this->session->all_userdata());
-		echo "</pre>";
-		exit();
-		*/
+		
     }
 
 	public function index() {					
@@ -172,7 +154,8 @@ class Orden_Compra extends CI_Controller {
 				$data['tc'] = $detalle_tarjeta;	//trae la tc
 			
 				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1) { //es AMERICAN EXPRESS
-					$data['amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+					//$data['amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+					$data['amex'] = $this->obtener_detalle_interfase_CCTC($id_cliente, $consecutivo);
 					//en este caso se consultará la info del WS
 				}
 			} 
@@ -247,18 +230,27 @@ class Orden_Compra extends CI_Controller {
 				$digito 		= (isset($_POST['txt_codigo'])) ? $_POST['txt_codigo'] : 0;
 				
 				// Informaciòn de la Orden //
+				$informacion_orden = new stdClass;
+				$informacion_orden->id_clienteIn = $id_cliente;
+				$informacion_orden->consecutivo_cmsSi = $consecutivo;
+				$informacion_orden->id_promocionIn = $id_promocionIn;
+				$informacion_orden->digito = $digito;
+				/*
 				$informacion_orden = new InformacionOrden(
 					$id_cliente,
 					$consecutivo,		//de la TC
 					$id_promocionIn,	
 					$digito				//CVV
 				);
+				 * */
 
 				// Si la información esta en la Session //
 				$tipo_pago = self::$TIPO_PAGO['Otro'];	//ninguno válido al inicio
 				
 				//Configuración de la forma de pago y solicitud de cobro a CCTC
-				if ($this->session->userdata('deposito')) {	//Depósito Bancario
+				
+				///////////////pago con Depósito Bancario
+				if ($this->session->userdata('deposito')) {			
 					//el usuario de ecommerce será el que se registre para el cobro con esta forma de pago					
 					$id_cliente = $this->id_cliente;	//self::User_Ecommerce;						
 					
@@ -431,10 +423,10 @@ class Orden_Compra extends CI_Controller {
 									  </body>
 									  </html>";
 						
-						//Mandar correo al cliente con el formato de arlette para notificarle lo que debe hacer
+						//mandar correo al cliente con el formato de arlette para notificarle lo que debe hacer
 						$envio_correo = $this->enviar_correo("Notificación de compra con depósito bancario", $mensaje);
 						
-						//Redirección a la URL callback con el código nuevo
+						//redirección a la URL callback con el código nuevo
 						 
 						//registrar el estatus de la compra correspondiente a la notificación final, esto es después del proceso nocturno
 						//$envio_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
@@ -461,7 +453,8 @@ class Orden_Compra extends CI_Controller {
 					} else {
 						redirect('mensaje/'.md5(2), 'refresh');
 					}
-				} else if (is_array($this->session->userdata('tarjeta'))) {	//Pago con tarjetas y está en sesión
+					
+				} else if (is_array($this->session->userdata('tarjeta'))) {		//////////// pago con tarjetas no guardada y que está en sesión
 				
 					$detalle_tarjeta = $this->session->userdata('tarjeta');					
 					$tc = $detalle_tarjeta['tc'];
@@ -469,7 +462,21 @@ class Orden_Compra extends CI_Controller {
 					$tc = (array)$tc;
 					
 					//echo var_dump($tc);
+					$tc_soap = new stdClass;
+					$tc_soap->id_clienteIn = $tc['id_clienteIn'];
+					$tc_soap->consecutivo_cmsSi = $tc['id_TCSi'];
+					$tc_soap->id_tipo_tarjeta = $tc['id_tipo_tarjetaSi'];
+					$tc_soap->nombre_titular = $tc['nombre_titularVc'];
+					$tc_soap->apellidoP_titular = $tc['apellidoP_titularVc'];
+					$tc_soap->apellidoM_titular = $tc['apellidoM_titularVc'];
+					$tc_soap->numero = $tc['terminacion_tarjetaVc'];
+					$tc_soap->mes_expiracion = $tc['mes_expiracionVc'];
+					$tc_soap->anio_expiracion = $tc['anio_expiracionVc'];
+					$tc_soap->renovacion_automatica = 1;
 					
+					//consecutivo de la información del pago es 1 para que pase el cobro
+					$informacion_orden->consecutivo_cmsSi = 1;	//$tc['id_TCSi'];
+					/*
 					$tc_soap = new Tc(
 						$tc['id_clienteIn'],
 						$tc['id_TCSi'],
@@ -481,7 +488,7 @@ class Orden_Compra extends CI_Controller {
 						$tc['mes_expiracionVc'],
 						$tc['anio_expiracionVc']
 					);
-					
+					*/
 					//si es Visa o Master card
 					$tipo_pago = self::$TIPO_PAGO['Prosa'];	
 					
@@ -490,6 +497,20 @@ class Orden_Compra extends CI_Controller {
 					if ($detalle_tarjeta['tc']['id_tipo_tarjetaSi'] == 1) { //es AMERICAN EXPRESS
 						$amex = $detalle_tarjeta['amex'];
 						if (isset($amex)) {
+							$amex_soap = new stdClass;
+							$amex_soap->id_clienteIn = $amex['id_clienteIn'];
+							$amex_soap->consecutivo_cmsSi = $amex['id_TCSi'];
+							$amex_soap->nombre =$amex['nombre_titularVc'];
+							$amex_soap->apellido_paterno = $amex['apellidoP_titularVc'];
+							$amex_soap->apellido_materno = $amex['apellidoM_titularVc'];
+							$amex_soap->pais = $amex['pais'];
+							$amex_soap->codigo_postal = $amex['codigo_postal'];
+							$amex_soap->calle = $amex['calle'];
+							$amex_soap->ciudad = $amex['ciudad'];
+							$amex_soap->estado = $amex['estado'];
+							$amex_soap->mail = $amex['mail'];
+							$amex_soap->telefono = $amex['telefono'];
+							/*
 							$amex_soap = new Amex(
 								$amex['id_clienteIn'],
 								$amex['id_TCSi'],
@@ -504,6 +525,7 @@ class Orden_Compra extends CI_Controller {
 								$amex['mail'],
 								$amex['telefono']
 							);
+							 * */
 						}
 						
 						//si es AMEX
@@ -517,32 +539,32 @@ class Orden_Compra extends CI_Controller {
 					var_dump($informacion_orden);
 					echo "</pre>";
 					exit();
-					 * */
-					 
-					#### TEST Interfase 
-					//Paso de Objetos
-					$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
-									
-					
-					//Intentamos el Pago con pasando los objetos a CCTC //
+					*/								
+										
+					//intentamos el Pago con pasando los objetos a CCTC //
 					try {
 						//registro inicial de la compra, si falla, redirecciona
 						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
 						
-						if (!$id_compra) {	//Si falla el registro inicial de la compra en CCTC
+						if (!$id_compra) {			//Si falla el registro inicial de la compra en CCTC
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
 						
-						#### Ajuste de Interfase, ya no se ocupará
+						//petición de pago a través de la interfase, el resultado ya es un objeto
+						$simple_result = $this->solicitar_pago_CCTC_objetos($tc_soap, $amex_soap, $informacion_orden);
+						
+						#### Ajuste de Interfase, ya no se ocupará, 23.07.2012
+						/*
 						$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
 						//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
 						
-						$parameter = array(	'informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
+						$parameter = array('informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
 						
 						$obj_result = $cliente->PagarTC($parameter);
 						
 						//Resultado de la petición de cobro a CCTC
 						$simple_result = $obj_result->PagarTCResult;
+						*/
 						
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
@@ -703,9 +725,13 @@ class Orden_Compra extends CI_Controller {
 									  	   </div>
 									  </body>
 									  </html>";
-						
-						$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
-						$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
+
+						$envio_correo = FALSE;
+						///Envío de correo sólo en caso de que el cobro haya sido exitoso
+						if (strtolower($simple_result->respuesta_banco) == "approved") {
+							$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
+							$estatus_correo = $this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['ENVIO_CORREO']);
+						}
 						
 						//manejo envío correo
 						if (!($envio_correo && $estatus_correo)) {	//Error
@@ -723,8 +749,8 @@ class Orden_Compra extends CI_Controller {
 						}						
 						
 					} catch (SoapFault $exception) { 
-						echo $exception;  
-						echo '<br/>error: <br/>'.$exception->getMessage();
+						//echo $exception;  
+						//echo '<br/>error: <br/>'.$exception->getMessage();
 						return NULL;
 					}
 					
@@ -749,12 +775,6 @@ class Orden_Compra extends CI_Controller {
 									
 					// Intentamos el Pago con los Id's en  CCTC //
 					try {
-						#### Ajuste de Interfase, ya no se ocupará
-						$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-						//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
-						  
-						$parameter = array('informacion_orden' => $informacion_orden);
-						
 						//Registro inicial de la compra						
 						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
 						
@@ -762,12 +782,22 @@ class Orden_Compra extends CI_Controller {
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
 						
+						//petición de pago a través de la interfase, el resultado ya es un objeto
+						$simple_result = $this->solicitar_pago_CCTC_ids($informacion_orden);
+						
+						#### Ajuste de Interfase, ya no se ocupará, 23.07.2012
+						/*
+						$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+						//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
+						  
+						$parameter = array('informacion_orden' => $informacion_orden);
+						
 						//Intento de cobro en CCTC
 						$obj_result = $cliente->PagarTcUsandoId($parameter);
 						
 						//Resultado de la petición de cobro a CCTC
 						$simple_result = $obj_result->PagarTcUsandoIdResult;
-						
+						*/
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
 					
@@ -952,8 +982,8 @@ class Orden_Compra extends CI_Controller {
 						//return $simple_result;
 					} catch (SoapFault $exception) {
 						//errores en desarrollo
-						echo $exception;  
-						echo '<br/>error: <br/>'.$exception->getMessage();
+						//echo $exception;  
+						//echo '<br/>error: <br/>'.$exception->getMessage();
 						return NULL;
 					}
 				}				
@@ -963,6 +993,173 @@ class Orden_Compra extends CI_Controller {
 			}
 		} else { //si llega sin una petición
 			redirect('orden_compra', 'refresh');
+		}
+	}
+	
+	/**
+	 * Función que realiza la petición a la interfase de cobro que enlaza con CCTC 
+	 */
+	private function solicitar_pago_CCTC_objetos($tc_soap = NULL, $amex_soap = NULL, $informacion_orden = NULL) {		
+		if (isset($tc_soap, $informacion_orden)) {
+			// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+			$parametros = new stdClass;
+			$parametros->tc_soap = $tc_soap;
+			$parametros->amex_soap = $amex_soap;
+			$parametros->informacion_orden = $informacion_orden;
+			
+			// Hacemos un encode de los objetos para poderlos pasar por POST ...
+			$param = json_encode($parametros);
+			
+			//echo "<pre>";
+			//print_r($parametros);
+			//echo "</pre>";
+			//echo $param."<br/>";
+			//exit;
+			
+			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+			$c = curl_init();
+			// CURL de la URL donde se haran las peticiones //
+			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/orden_compra.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			// Se enviaran los datos por POST //
+			curl_setopt($c, CURLOPT_POST, true);
+			// Que nos envie el resultado del JSON //
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+			// Enviamos los parametros POST //
+			curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=PagarConObjetos&token=123456&parametros='.$param);
+			// Ejecutamos y recibimos el JSON //
+			$resultado = curl_exec($c);
+			// Cerramos el CURL //
+			curl_close($c);
+			
+			//echo "<pre>";
+			//print_r(json_decode($resultado));
+			//echo "</pre>";
+			//exit;
+			
+			return json_decode($resultado);
+		}
+	}
+	
+	/**
+	 * Función que realiza la petición a la interfase de cobro que enlaza con CCTC 
+	 */
+	private function solicitar_pago_CCTC_ids($informacion_orden) {
+		if (isset($informacion_orden)) {
+			// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+			$parametros = new stdClass;
+			$parametros->informacion_orden = $informacion_orden;
+			
+			// Hacemos un encode de los objetos para poderlos pasar por POST ...
+			$param = json_encode($parametros);
+			/*
+			echo "<pre>";
+			print_r($parametros);
+			echo "</pre>";
+			echo $param."<br/>";
+			exit;
+			*/
+			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+			$c = curl_init();
+			// CURL de la URL donde se haran las peticiones //
+			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/orden_compra.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			// Se enviaran los datos por POST //
+			curl_setopt($c, CURLOPT_POST, true);
+			// Que nos envie el resultado del JSON //
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+			// Enviamos los parametros POST //
+			curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=PagarConIds&token=123456&parametros='.$param);
+			// Ejecutamos y recibimos el JSON //
+			$resultado = curl_exec($c);
+			// Cerramos el CURL //
+			curl_close($c);
+			/*
+			echo "<pre>";
+			print_r(json_decode($resultado));
+			echo "</pre>";
+			exit;
+			*/
+			return json_decode($resultado);
+		}
+	}
+	
+	/**
+	 * Obtiene el detalle de la tarjeta Amex desde CCTC.
+	 * Siempre será la información de AMEX sólamente
+	 */
+	private function obtener_detalle_interfase_CCTC($id_cliente = 0, $consecutivo = 0) {
+		if (isset($id_cliente, $consecutivo)) {
+			// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+			$parametros = new stdClass;
+			$parametros->id_cliente = $id_cliente;
+			$parametros->consecutivo = $consecutivo;
+			
+			// Hacemos un encode de los objetos para poderlos pasar por POST ...
+			$param = json_encode($parametros);
+			/*
+			echo "<pre>";
+			print_r($parametros);
+			echo "</pre>Param: ";
+			echo $param."<br/>";
+			
+			$p = json_decode($param);
+			$objetos = $this->ArrayToObject($p);
+			echo "<pre>";
+			print_r($objetos);
+			echo "</pre>";
+		    //return $obj;
+			//exit;
+			*/
+			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+			$c = curl_init();
+			// CURL de la URL donde se haran las peticiones //
+			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/orden_compra.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			// Se enviaran los datos por POST //
+			curl_setopt($c, CURLOPT_POST, true);
+			// Que nos envie el resultado del JSON //
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+			// Enviamos los parametros POST //
+			curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=ObtenerDetalleAmex&token=123456&parametros='.$param);
+			// Ejecutamos y recibimos el JSON //
+			$resultado = curl_exec($c);
+			// Cerramos el CURL //
+			curl_close($c);
+			/*
+			echo "Resultado<pre>";
+			print_r(json_decode($resultado));
+			echo "</pre>";
+			exit;
+			*/
+			return json_decode($resultado);
+		}
+	}
+
+	/**
+	 * Obtiene el detalle de la tarjeta Amex desde CCTC
+	 */
+	private function detalle_tarjeta_CCTC($id_cliente = 0, $consecutivo = 0)	//siempre será la información de AMEX
+	{
+		
+		//Traer la info de amex
+		try {  
+			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
+				
+			$parameter = array(	'id_clienteNu' => $id_cliente, 'consecutivo_cmsSi' => $consecutivo);
+			
+			$obj_result = $cliente->ConsultarAmex($parameter);
+			$tarjeta_amex = $obj_result->ConsultarAmexResult;	//regresa un objeto
+			
+			//print($simple_result);
+			
+			return $tarjeta_amex;
+			
+		} catch (SoapFault $exception) {
+			echo $exception;  
+			echo '<br/>error: <br/>'.$exception->getMessage();
+			//exit();
+			return false;
 		}
 	}
 	
@@ -1123,32 +1320,6 @@ class Orden_Compra extends CI_Controller {
 	 
 	
 	/**
-	 * Obtiene el detalle de la tarjeta Amex desde CCTC
-	 */
-	private function detalle_tarjeta_CCTC($id_cliente=0, $consecutivo=0)	//siempre será la información de AMEX
-	{
-		//Traer la info de amex
-		try {  
-			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-				
-			$parameter = array(	'id_clienteNu' => $id_cliente, 'consecutivo_cmsSi' => $consecutivo);
-			
-			$obj_result = $cliente->ConsultarAmex($parameter);
-			$tarjeta_amex = $obj_result->ConsultarAmexResult;	//regresa un objeto
-			
-			//print($simple_result);
-			
-			return $tarjeta_amex;
-			
-		} catch (SoapFault $exception) {
-			echo $exception;  
-			echo '<br/>error: <br/>'.$exception->getMessage();
-			//exit();
-			return false;
-		}
-	}
-	
-	/**
 	 * Obtiene los datos para solicitar el cobro de la orden de compra
 	 */
 	private function get_datos_orden() {
@@ -1248,7 +1419,20 @@ class Orden_Compra extends CI_Controller {
 			exit(); // Quit the script.
 		}
 	}
-
+	
+	/**
+	 * Covierte recursivamente los objetos en arrays
+	 */
+	private function ArrayToObject($array){
+      $obj= new stdClass();
+      foreach ($array as $k=> $v) {
+         if (is_array($v)){
+            $v = ArrayToObject($v);   
+         }
+         $obj->{$k} = $v;
+      }
+      return $obj;
+   }
 }
 
 /* End of file orden_compra.php */

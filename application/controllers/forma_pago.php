@@ -19,14 +19,6 @@ class Forma_Pago extends CI_Controller {
 		
 		$this->output->nocache();
 		
-		/*
-		$this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
-		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-		$this->output->set_header('Pragma: no-cache');
-		$this->output->set_header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-		*/
-		//exit();
-		 
 		//si no hay sesión
 		//manda al usuario a la... pagina de login
 		$this->redirect_cliente_invalido('id_cliente', 'login');
@@ -81,12 +73,6 @@ class Forma_Pago extends CI_Controller {
 					$this->session->set_userdata('deposito', TRUE);
 					$this->session->unset_userdata('tarjeta');
 				}
-				/*
-				echo "<pre>";
-				var_dump($this->session->all_userdata());
-				echo "</pre>";
-				exit();
-				*/
 				
 				//Control de Flujo
 				//Para calcular destino siguiente y actualizxarlo en sesión
@@ -134,18 +120,14 @@ class Forma_Pago extends CI_Controller {
 		
 		if ($_POST && empty($this->reg_errores))	{	//si hay parámetros del formulario
 			if ($tipo == "tc") {
-				
 				$this->registrar_tc($id_cliente);
-				//exit();	
 			} else if ($tipo == "amex") {
 				$this->registrar_amex($id_cliente);
 			}
-
 		} else if (!empty($this->reg_errores)){	//Si hubo errores en los datos enviados
 			$data['reg_errores'] = $this->reg_errores;
 			$this->cargar_vista('', 'forma_pago' , $data);
 		} else {
-			//echo "id_tarjeta: " .$this->session->userdata('tarjeta');
 			if ($tipo == "amex") $data['subtitle'] = "Ingresa o edita tu direcci&oacute;n de tarjeta AMEX";
 			$this->cargar_vista('', 'forma_pago' , $data);
 		}
@@ -153,7 +135,7 @@ class Forma_Pago extends CI_Controller {
 	
 	/*
 	 * Registro de la información de la tarjeta
-	 * */
+	 */
 	private function registrar_tc($id_cliente) {
 		$data['title'] = $this->title;
 		$data['subtitle'] = 'Selecciona una forma de pago';
@@ -174,7 +156,17 @@ class Forma_Pago extends CI_Controller {
 			$form_values['amex'] = null;	//para que no se tome encuenta por el momento
 			
 			$tipo = $form_values['tc']['id_tipo_tarjetaSi'];	//1 es AMEX
+			/*if ($tipo != 1) {
+				$form_values['amex'] = null;	//para que no se tome encuenta por el momento
+			} else {
+				$form_values['amex']['id_clienteIn'] = $id_cliente;
+				$form_values['amex']['id_TCSi'] = $consecutivo + 1;
+			}
 			
+			echo "<pre>";
+			print_r($form_values);
+			echo "<pre>";
+			exit;*/
 			//si no hay errores y se solicita registrar la tarjeta en BD
 			if (isset($form_values['tc']['id_estatusSi'])) {
 				//verificar que no exista la tarjeta activa en la BD
@@ -198,7 +190,8 @@ class Forma_Pago extends CI_Controller {
 					$form_values['tc']['terminacion_tarjetaVc'] = $num_completo;
 					
 					//se manda insertar en CCTC
-					if ($this->registrar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
+					//if ($this->registrar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
+					if ($this->registrar_tarjeta_interfase_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
 						//Sólo registrar los últimos 4 dígitos de la TC
 						$form_values['tc']['terminacion_tarjetaVc'] = $num_temp;
 						
@@ -210,10 +203,7 @@ class Forma_Pago extends CI_Controller {
 							
 							//Para calcular destino siguiente y actualizxarlo en sesión
 							$destino = $this->obtener_destino();
-							/*
-							echo "destino: " .$destino;
-							exit();
-							*/
+							
 							//Redirección
 							if ($tipo == 1)	{
 								redirect("forma_pago/registrar/amex", "location", 303);	//se puede invocar pasando el consecutivo como parámetro
@@ -244,9 +234,6 @@ class Forma_Pago extends CI_Controller {
 				
 				//Para calcular destino siguiente y actualizxarlo en sesión
 				$destino = $this->obtener_destino();
-				
-				//echo "<br/>sig destino: " .$destino;
-				//exit();
 				
 				if ($tipo == 1)	{
 					redirect("forma_pago/registrar/amex", 'location', 303);	//se puede invocar pasando el consecutivo como parámetro
@@ -300,7 +287,8 @@ class Forma_Pago extends CI_Controller {
 				//exit();
 				
 				if (isset($form_values['tc']['id_estatusSi'])) {	//Se guardará en la BD, actualizando la tarjeta que se registró
-					if ($this->editar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
+					//if ($this->editar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
+					if ($this->editar_tarjeta_interfase_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
 						//Para calcular destino siguiente y actualizxarlo en sesión
 						$destino = $this->obtener_destino();
 						
@@ -399,7 +387,8 @@ class Forma_Pago extends CI_Controller {
 				$data['tarjeta_tc'] = $this->forma_pago_model->detalle_tarjeta($consecutivo, $id_cliente);
 				//var_dump($data['tarjeta_tc']);
 			} else if ($tipo == 'amex') {
-				$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				//$data['tarjeta_amex'] = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				$data['tarjeta_amex'] = $this->obtener_detalle_interfase_CCTC($id_cliente, $consecutivo);
 				//lista paises
 				$lista_paises_amex = $this->forma_pago_model->listar_paises_amex();
 				$data['lista_paises_amex'] = $lista_paises_amex;
@@ -444,7 +433,8 @@ class Forma_Pago extends CI_Controller {
 			
 			//info_amex
 			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1 ) 
-				$detalle_amex = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				//$detalle_amex = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				$detalle_amex = $this->obtener_detalle_interfase_CCTC($id_cliente, $consecutivo);
 			
 			//echo print_r($detalle_tarjeta);
 			//echo print_r($detalle_amex);
@@ -555,7 +545,8 @@ class Forma_Pago extends CI_Controller {
 			} else {
 				
 				//actualizar en CCTC, si el consecutivo es distinto de 0				
-				if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+				//if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+				if ($this->editar_tarjeta_interfase_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
 					//actualizar predeterminado
 					if (isset($nueva_info['predeterminar'])) {
 						$this->forma_pago_model->quitar_predeterminado($id_cliente);
@@ -632,7 +623,8 @@ class Forma_Pago extends CI_Controller {
 			
 			//info_amex
 			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1 ) 
-				$detalle_amex = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				//$detalle_amex = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				$detalle_amex = $this->obtener_detalle_interfase_CCTC($id_cliente, $consecutivo);
 			
 		} else	if ($this->session->userdata('tarjeta') && $consecutivo == 0) {	
 			//tarjeta en session y no registrada en BD, viene de la Orden => $consecutivo debería ser 0
@@ -693,7 +685,8 @@ class Forma_Pago extends CI_Controller {
 				
 			} else {					
 				//actualizar SÓLO en CCTC, si el consecutivo es distinto de 0
-				if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+				//if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+				if ($this->editar_tarjeta_interfase_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
 					//verificar Flujo y cargar en session si es necesario en la misma validación
 					//////////*********************
 					
@@ -728,7 +721,8 @@ class Forma_Pago extends CI_Controller {
 		$data['subtitle'] = ucfirst('Eliminar Forma de Pago');
 		
 		//exit();
-		if ($this->eliminar_tarjeta_CCTC($id_cliente, $consecutivo)) {
+		//if ($this->eliminar_tarjeta_CCTC($id_cliente, $consecutivo)) {
+		if ($this->eliminar_tarjeta_interfase_CCTC($id_cliente, $consecutivo)) {			
 		//if (1) {
 			//echo "Eliminado correctamente de CCTC";
 			//eliminar lógicamente en la bd local
@@ -753,12 +747,61 @@ class Forma_Pago extends CI_Controller {
 		//$this->cargar_vista('', 'forma_pago' , $data);
 	}
 	
+	/**
+	 * Eliminar tarjeta del cliente, dejándola inactiva tanto en CCTC como en la BD de ecommerce.
+	 */
+	private function eliminar_tarjeta_interfase_CCTC($id_cliente = 0, $consecutivo = 0) {
+		if (isset($id_cliente, $consecutivo)) {
+			// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+			$parametros = new stdClass;
+			$parametros->id_cliente = $id_cliente;
+			$parametros->consecutivo = $consecutivo;
+			
+			// Hacemos un encode de los objetos para poderlos pasar por POST ...
+			$param = json_encode($parametros);
+			
+			/*
+			echo "<pre>";
+			print_r($parametros);
+			echo "</pre>". "ecoded:" ;
+			echo $param."<br/>";
+			exit;
+			*/
+			
+			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+			$c = curl_init();
+			// CURL de la URL donde se haran las peticiones //
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			// Se enviaran los datos por POST //
+			curl_setopt($c, CURLOPT_POST, true);
+			// Que nos envie el resultado del JSON //
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+			// Enviamos los parametros POST //
+			curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=EliminarTarjeta&token=123456&parametros='.$param);
+			// Ejecutamos y recibimos el JSON //
+			$resultado = curl_exec($c);
+			// Cerramos el CURL //
+			curl_close($c);
+			/*
+			echo "Resultado<pre>";
+			print_r(json_decode($resultado));
+			echo "</pre>";
+			exit;
+			*/
+			return json_decode($resultado);
+		}
+	}
+
+	/**
+	 * Eliminar tarjeta del cliente, dejándola inactiva tanto en CCTC como en la BD de ecommerce.
+	 */
 	private function eliminar_tarjeta_CCTC($id_cliente = 0, $consecutivo = 0)
 	{
 		try {  
 			$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
 				
-			$parameter = array(	'id_clienteNu' => $id_cliente, 'consecutivo_cmsSi' => $consecutivo);
+			$parameter = array('id_clienteNu' => $id_cliente, 'consecutivo_cmsSi' => $consecutivo);
 			
 			$obj_result = $cliente->EliminarTC($parameter);
 			$simple_result = $obj_result->EliminarTCResult;
@@ -775,7 +818,49 @@ class Forma_Pago extends CI_Controller {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Obtiene el detalle de la tarjeta Amex desde CCTC.
+	 * Siempre será la información de AMEX sólamente.
+	 */
+	private function obtener_detalle_interfase_CCTC($id_cliente = 0, $consecutivo = 0) {
+		if (isset($id_cliente, $consecutivo)) {
+			// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+			$parametros = new stdClass;
+			$parametros->id_cliente = $id_cliente;
+			$parametros->consecutivo = $consecutivo;
+			
+			// Hacemos un encode de los objetos para poderlos pasar por POST ...
+			$param = json_encode($parametros);
+			
+			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+			$c = curl_init();
+			// CURL de la URL donde se haran las peticiones //
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			// Se enviaran los datos por POST //
+			curl_setopt($c, CURLOPT_POST, true);
+			// Que nos envie el resultado del JSON //
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+			// Enviamos los parametros POST //
+			curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=ObtenerDetalleAmex&token=123456&parametros='.$param);
+			// Ejecutamos y recibimos el JSON //
+			$resultado = curl_exec($c);
+			// Cerramos el CURL //
+			curl_close($c);
+			/*
+			echo "Resultado<pre>";
+			print_r(json_decode($resultado));
+			echo "</pre>";
+			exit;
+			*/
+			return json_decode($resultado);
+		}
+	}
+
+	/**
+	 * Obtiene el detalle de la tarjeta Amex desde CCTC
+	 */
 	private function detalle_tarjeta_CCTC($id_cliente=0, $consecutivo=0)	//siempre será la información de AMEX
 	{
 		//Traer la info de amex
@@ -800,6 +885,95 @@ class Forma_Pago extends CI_Controller {
 		}
 	}
 	
+	/**
+	 * Actualiza la información de la tarjeta Amex en CCTC.
+	 * Siempre será la información de AMEX sólamente.
+	 */
+	private function editar_tarjeta_interfase_CCTC($tc, $amex = null)
+	{
+		//mapeo de la tc
+		$tc_soap = new stdClass;
+		$tc_soap->id_clienteIn = $tc['id_clienteIn'];
+		$tc_soap->consecutivo_cmsSi = $tc['id_TCSi'];
+		$tc_soap->id_tipo_tarjeta = $tc['id_tipo_tarjetaSi'];
+		$tc_soap->nombre_titular = $tc['nombre_titularVc'];
+		$tc_soap->apellidoP_titular = $tc['apellidoP_titularVc'];
+		$tc_soap->apellidoM_titular = $tc['apellidoM_titularVc'];
+		$tc_soap->numero = $tc['terminacion_tarjetaVc'];
+		$tc_soap->mes_expiracion = $tc['mes_expiracionVc'];
+		$tc_soap->anio_expiracion = $tc['anio_expiracionVc'];
+		$tc_soap->renovacion_automatica = 1;
+		
+		//mapeo Amex
+		if (isset($amex)) {
+			$amex_soap = new stdClass;
+			$amex_soap->id_clienteIn = $amex['id_clienteIn'];
+			$amex_soap->consecutivo_cmsSi = $amex['id_TCSi'];
+			$amex_soap->nombre =$amex['nombre_titularVc'];
+			$amex_soap->apellido_paterno = $amex['apellidoP_titularVc'];
+			$amex_soap->apellido_materno = $amex['apellidoM_titularVc'];
+			$amex_soap->pais = $amex['pais'];
+			$amex_soap->codigo_postal = $amex['codigo_postal'];
+			$amex_soap->calle = $amex['calle'];
+			$amex_soap->ciudad = $amex['ciudad'];
+			$amex_soap->estado = $amex['estado'];
+			$amex_soap->mail = $amex['mail'];
+			$amex_soap->telefono = $amex['telefono'];
+			
+		} else {
+			$amex_soap = null;
+		}
+		
+		########## petición a la Interfase
+		// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+		$parametros = new stdClass;
+		$parametros->tc_soap = $tc_soap;
+		$parametros->amex_soap = $amex_soap;
+		
+		// Hacemos un encode de los objetos para poderlos pasar por POST ...
+		$param = json_encode($parametros);
+		
+		/*
+		echo "<pre>";
+		print_r($parametros);
+		echo "</pre>". "ecoded:" ;
+		echo $param."<br/>";
+		exit;
+		
+		$p = json_decode($param);
+		$objetos = $this->ArrayToObject($p);
+		echo "<pre>";
+		print_r($objetos);
+		echo "</pre>";
+		*/
+				
+		// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+		$c = curl_init();
+		// CURL de la URL donde se haran las peticiones //
+		curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+		//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+		// Se enviaran los datos por POST //
+		curl_setopt($c, CURLOPT_POST, true);
+		// Que nos envie el resultado del JSON //
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+		// Enviamos los parametros POST //
+		curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=ActualizarAmex&token=123456&parametros='.$param);
+		// Ejecutamos y recibimos el JSON //
+		$resultado = curl_exec($c);
+		// Cerramos el CURL //
+		curl_close($c);
+		/*
+		echo "Resultado<pre>";
+		print_r(json_decode($resultado));
+		echo "</pre>";
+		exit;
+		*/
+		return json_decode($resultado);
+	}
+ 
+	/**
+	 * Actualiza la información de la tarjeta Amex en CCTC
+	 */
 	private function editar_tarjeta_CCTC($tc, $amex = null)
 	{
 		//var_dump($tc);
@@ -864,7 +1038,97 @@ class Forma_Pago extends CI_Controller {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Registra una tarjeta en CCTC
+	 * En principio se usa para registrar una tarjeta en forma genérica,
+	 * es decir, con o sin dirección Amex.
+	 */
+	private function registrar_tarjeta_interfase_CCTC($tc, $amex = null)
+	{
+		//mapeo de la tc
+		$tc_soap = new stdClass;
+		$tc_soap->id_clienteIn = $tc['id_clienteIn'];
+		$tc_soap->consecutivo_cmsSi = $tc['id_TCSi'];
+		$tc_soap->id_tipo_tarjeta = $tc['id_tipo_tarjetaSi'];
+		$tc_soap->nombre_titular = $tc['nombre_titularVc'];
+		$tc_soap->apellidoP_titular = $tc['apellidoP_titularVc'];
+		$tc_soap->apellidoM_titular = $tc['apellidoM_titularVc'];
+		$tc_soap->numero = $tc['terminacion_tarjetaVc'];
+		$tc_soap->mes_expiracion = $tc['mes_expiracionVc'];
+		$tc_soap->anio_expiracion = $tc['anio_expiracionVc'];
+		$tc_soap->renovacion_automatica = 1;
+		
+		//mapeo Amex
+		if (isset($amex)) {
+			$amex_soap = new stdClass;
+			$amex_soap->id_clienteIn = $amex['id_clienteIn'];
+			$amex_soap->consecutivo_cmsSi = $amex['id_TCSi'];
+			$amex_soap->nombre =$amex['nombre_titularVc'];
+			$amex_soap->apellido_paterno = $amex['apellidoP_titularVc'];
+			$amex_soap->apellido_materno = $amex['apellidoM_titularVc'];
+			$amex_soap->pais = $amex['pais'];
+			$amex_soap->codigo_postal = $amex['codigo_postal'];
+			$amex_soap->calle = $amex['calle'];
+			$amex_soap->ciudad = $amex['ciudad'];
+			$amex_soap->estado = $amex['estado'];
+			$amex_soap->mail = $amex['mail'];
+			$amex_soap->telefono = $amex['telefono'];
+			
+		} else {
+			$amex_soap = null;
+		}
+		
+		########## petición a la Interfase
+		// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+		$parametros = new stdClass;
+		$parametros->tc_soap = $tc_soap;
+		$parametros->amex_soap = $amex_soap;
+		
+		// Hacemos un encode de los objetos para poderlos pasar por POST ...
+		$param = json_encode($parametros);
+		
+		/*
+		echo "<pre>";
+		print_r($parametros);
+		echo "</pre>". "ecoded:" ;
+		echo $param."<br/>";
+		//exit;
+		
+		$p = json_decode($param);
+		$objetos = $this->ArrayToObject($p);
+		echo "<pre>";
+		print_r($objetos);
+		echo "</pre>";
+		exit;
+		*/
+		// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+		$c = curl_init();
+		// CURL de la URL donde se haran las peticiones //
+		curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+		//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+		// Se enviaran los datos por POST //
+		curl_setopt($c, CURLOPT_POST, true);
+		// Que nos envie el resultado del JSON //
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+		// Enviamos los parametros POST //
+		curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=RegistrarTarjeta&token=123456&parametros='.$param);
+		// Ejecutamos y recibimos el JSON //
+		$resultado = curl_exec($c);
+		// Cerramos el CURL //
+		curl_close($c);
+		/*
+		echo "Resultado<pre>";
+		print_r(json_decode($resultado));
+		echo "</pre>";
+		exit;
+		*/
+		return json_decode($resultado);
+	}
+ 
+	/**
+	 * Registra una tarjeta en CCTC
+	 */
 	private function registrar_tarjeta_CCTC($tc, $amex = null) 
 	{
 		$resultado = FALSE;
@@ -1136,7 +1400,9 @@ class Forma_Pago extends CI_Controller {
 				} else {
 					$this->reg_errores['txt_calle'] = 'Ingresa tu calle y n&uacute;mero correctamente';
 				}
-			}
+			} /*else {
+				$datos['amex']['calle'] = '';
+			}*/
 			if (array_key_exists('txt_cp', $_POST)) {
 				//regex usada en js
 				if(preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['txt_cp'])) {
@@ -1144,35 +1410,45 @@ class Forma_Pago extends CI_Controller {
 				} else {
 					$this->reg_errores['txt_cp'] = 'Ingresa tu c&oacute;digo postal correctamente';
 				}
-			}
+			} /*else {
+				$datos['amex']['codigo_postal'] = '';
+			}*/
 			if (array_key_exists('txt_ciudad', $_POST)) {
 				if(preg_match('/^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_ciudad'])) {
 					$datos['amex']['ciudad'] = $_POST['txt_ciudad'];
 				} else {
 					$this->reg_errores['txt_ciudad'] = 'Ingresa tu ciudad correctamente';
 				}
-			}
+			} /*else {
+				$datos['amex']['ciudad'] = '';
+			}*/
 			if (array_key_exists('txt_estado', $_POST)) {
 				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_estado'])) {
 					$datos['amex']['estado'] = $_POST['txt_estado'];
 				} else {
 					$this->reg_errores['txt_estado'] = 'Ingresa tu estado correctamente';
 				}
-			}
+			} /*else {
+				$datos['amex']['estado'] = '';
+			}*/
 			if (array_key_exists('txt_pais', $_POST)) {
 				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_pais'])) {
 					$datos['amex']['pais'] = $_POST['txt_pais'];
 				} else {
 					$this->reg_errores['txt_pais'] = 'Ingresa tu pa&iacute;s correctamente';
 				}
-			}
+			} /*else {
+				$datos['amex']['pais'] = '';
+			}*/
 			if (array_key_exists('sel_pais', $_POST)) {
 				if ($_POST['sel_pais'] != "") {
 					$datos['amex']['pais'] = $_POST['sel_pais'];
 				} else {
 					$this->reg_errores['sel_pais'] = 'Selecciona tu pa&iacute;s';
 				}
-			}
+			} /*else {
+				$datos['amex']['pais'] = '';
+			}*/
 			if (array_key_exists('txt_email', $_POST) && trim($_POST['txt_email']) != "") {
 				if(filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
 					$datos['amex']['mail'] = $_POST['txt_email'];
@@ -1189,7 +1465,9 @@ class Forma_Pago extends CI_Controller {
 				} else {
 					$this->reg_errores['txt_telefono'] = 'Ingresa tu tel&eacute;fono correctamente';
 				}
-			}
+			} /*else {
+				$datos['amex']['telefono'] = '';
+			}*/
 
 			if (array_key_exists('guardar_y_usar_otra', $_POST)) {
 				$datos['redirect'] = FALSE;
@@ -1286,7 +1564,20 @@ class Forma_Pago extends CI_Controller {
 			exit(); // Quit the script.
 		}
 	}
-
+	/**
+	 * Covierte recursivamente los objetos en arrays
+	 */
+	private function ArrayToObject($array){
+      $obj= new stdClass();
+      foreach ($array as $k=> $v) {
+         if (is_array($v)){
+            $v = ArrayToObject($v);   
+         }
+         $obj->{$k} = $v;
+      }
+      return $obj;
+   }
+	
 }
 
 /* End of file forma_pago.php */

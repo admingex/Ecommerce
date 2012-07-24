@@ -6,6 +6,8 @@ $(document).ready(function() {
 	var email = $("#email");
 	var passwd = $("#password");
 	var registro = false;
+	var url_base = "http://localhost/ecommerce/";
+	//var url_base = "http://10.177.78.54/ecommerce/";
 	
 	$('input').bind("click keypress", function() {
 		$(".error").remove();
@@ -95,7 +97,7 @@ function consulta_mail(mail) {
 	$.ajax({
 			type: "GET",
 			data: {'mail' : mail},
-			url: "http://localhost/ecommerce/login/consulta_mail",
+			url: url_base + "login/consulta_mail",
 			dataType: "json",				
 			async: true,
 			
