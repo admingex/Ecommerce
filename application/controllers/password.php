@@ -114,7 +114,7 @@ class Password extends CI_Controller {
 													
 				}		
 				else{
-					$data['mensaje']='No se encuentra en nuestra base de datos';
+					$data['mensaje']='<span class="error">No se encuentra en nuestra base de datos</span>';
 					$this->cargar_vista('', 'password', $data);
 				}
 			}else {				

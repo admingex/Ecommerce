@@ -12,6 +12,13 @@ class Administrador_reportes extends CI_Controller {
 		$this->load->view('reportes/acceso_reportes');
 		$this->load->view('templates/footer');	  					
 	}
+	
+	public function acceso_pago(){
+		$data['title']='Acceso a Pago';
+		$this->load->view('templates/header',$data);
+		$this->load->view('reportes/acceso_pago');
+		$this->load->view('templates/footer');	  					
+	}
 }
 
 /* End of file administrador_reportes.php */

@@ -94,16 +94,18 @@ echo "<form name='realizar_pago' action='".site_url('/api/2/8/267/pago')."' meth
 		      	  <input type='text' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>			          
 		          <input type='submit' name='enviar3' value='Enviar3' />
 	          </form>";
-	     echo "<p>Enviar clave del articulo 114e307e43a65</p>"; 
-		 echo "<form name='realizar_pago' action='".site_url('/api/114e307e43a65')."' method='POST'>
+	          */
+	     echo "<p>Enviar clave del articulo 154e3085e402abd</p>"; 
+		 echo "<form name='realizar_pago' action='".site_url('/api/154e3085e402abd')."' method='POST'>
 		      	  <input type='text' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>			          
 		          <input type='submit' name='enviar4' value='Enviar4' />
 	          </form>";
+	          /*
 	     echo "<p>Enviar clave del articulo 114e307e43a65a   !No existe!</p>"; 
 		 echo "<form name='realizar_pago' action='".site_url('/api/114e307e43a65a')."' method='POST'>
 		      	  <input type='text' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>			          
 		          <input type='submit' name='enviar5' value='Enviar5' />
-	          </form>";       */   
+	          </form>";*/         
 ?>
 </section>
 

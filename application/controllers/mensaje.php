@@ -26,10 +26,12 @@ class Mensaje extends CI_Controller {
 			$data['mensaje'] = "No se pudo enviar el correo de notificación al cliente al registrar la compra.";
 			$this->cargar_vista('', 'mensaje', $data);
 		}
-		 else if ($id==md5(5)){	//Error en el registro de la compra en Ecommerce			
-			$data['mensaje'] = "Acceso Denegado <br /><a href='".site_url('administrador_reportes')."'>Ingresar a reportes</a>";
-			$this->cargar_vista('', 'mensaje', $data);
+		 else if ($id==md5(5)){	//Error en el registro de la compra en Ecommerce
+		 	redirect('administrador_reportes');							
 		}
+		else if ($id==md5(6)){	//Error en el registro de la compra en Ecommerce			
+			redirect('administrador_reportes/acceso_pago');			
+		} 
 	}
 	public function cargar_vista($folder, $page, $data){
 		//Para automatizar un poco el desplieguee
