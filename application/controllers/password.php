@@ -22,7 +22,8 @@ class Password extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		//cargar el modelo en el constructor
-		$this->load->model('password_model', 'password_model', true);	
+		$this->load->model('password_model', 'password_model', true);
+		$this->load->model('login_registro_model', 'login_registro_model', true);		
 		$this->api = new Api();		
     }
 	
@@ -141,7 +142,7 @@ class Password extends CI_Controller {
 			$val_pass=$this-> valida_password($this->session->userdata('email'), $_POST['password']);						
 			if (preg_match ('/^(\w*(?=\w*\d)(?=\w*[a-z])(?=\w*[A-Z])\w*){6,20}$/', $_POST['password']) ) {
 				if ($_POST['password'] != $_POST['password_2']) {
-					$this->registro_errores['password_2'] = 'Tus contrase&ntilde;as no coincden';									
+					$this->registro_errores['password_2'] = '<div class="error2">Las contraseñas ingresadas no son idénticas. Por favor intenta de nuevo.</div>';									
 				} 	
 				else {								
 					$datos['password'] = htmlspecialchars(trim($_POST['password']));
@@ -149,7 +150,7 @@ class Password extends CI_Controller {
 			}							
 		}				
 		else {
-			$this->registro_errores['password']='Ingrese una nueva contraseña';			
+			$this->registro_errores['password']='<div class="error">Ingrese una nueva contraseña</div>';			
 		}					 
 		/////revisar
 		if(empty($this->registro_errores)){
@@ -158,7 +159,7 @@ class Password extends CI_Controller {
 			$password=$this->session->userdata('password');
 			$nombre=$this->session->userdata('salutation');
 						
-			if($this->password_model->historico_clave($id_clienteIn, $email, $_POST['password'])!=1){
+			if($this->password_model->historico_clave($id_clienteIn, $email, $_POST['password'])!=1){				
 				$this->password_model->cambia_password($id_clienteIn, $email,$_POST['password']);
 				$this->load->helper('date');
 				$t= mdate('%Y/%m/%d %h:%i:%s',time());
@@ -170,12 +171,14 @@ class Password extends CI_Controller {
 									'id_cliente'=> $id_clienteIn,
 									'email' 	=> $email
 								 );				
-				$this->session->set_userdata($array_session);				
+				$this->session->set_userdata($array_session);
+				$this->login_registro_model->desbloquear_cuenta($id_clienteIn);												
+				$this->password_model->guarda_actividad_historico($id_clienteIn, '', self::$TIPO_ACTIVIDAD['DESBLOQUEO'], $t);				
 				//redirect('forma_pago');
 				redirect("login", "location", 303);	
 			}																						
 			else{					
-				$this->registro_errores['password']='Por favor ingresa una contraseña que no coincida con ninguna de las últimas ocho contraseñas usadas';
+				$this->registro_errores['password']='<div class="validation_message">Por favor ingresa una contraseña que no coincida con ninguna de las últimas ocho contraseñas usadas</div>';
 				$data['registro_errores'] = $this->registro_errores;
 				$this->cargar_vista('', 'password',$data);										
 			}	
@@ -214,7 +217,7 @@ class Password extends CI_Controller {
 			if(!empty($_POST['password_temporal'])){
 				$result=$this->password_model->obtiene_cliente($_POST['password_temporal']);
 				if($result->num_rows()==0){
-					$this->registro_errores['password_temporal']='<span class="error">clave temporal no encontrada</span>';										
+					$this->registro_errores['password_temporal']='<span class="error2">clave temporal utilizada anteriormente solicita el cambio de contraseña  <a href="'.site_url('password').'" style="color: #FFF">aquí</a></span>';										
 				}			
 				else{					
 					$this->session->set_userdata($result->row());																								
@@ -281,31 +284,31 @@ class Password extends CI_Controller {
 	private function valida_password($correo, $pass){		
 		$cadlogin = explode('@',$correo);
 		if(strlen($pass)<8){		
-			$this->registro_errores['password'] = 'debe contener por lo menos 8 caracteres';
+			$this->registro_errores['password'] = '<div class="error">Debe contener por lo menos 8 caracteres</div>';
 		}
 		else{
 			if(preg_match('/[^a-zA-Z0-9]/', $pass)){
-				$this->registro_errores['password'] = 'deben ser numero y letras solamente';			
+				$this->registro_errores['password'] = '<div class="error">Solo debe incluir letras y numeros</div>';			
 			}
 			else{
 				if(stristr($pass,$cadlogin[0])){
-					$this->registro_errores['password'] = 'no debe contener login';				
+					$this->registro_errores['password'] = '<div class="error2">La contraseña no debe contener una parte del correo electrónico ingresado</div>';				
 				}					
 				else{
 					if(!$this->contiene_mayuscula($pass)){
-						$this->registro_errores['password'] = 'debe contener por lo menos 1 mayuscula';					
+						$this->registro_errores['password'] = '<div class="error2">Debe contener por lo menos una mayuscula</div>';					
 					}	
 					else{
 						if(!$this->contiene_minuscula($pass)){
-							$this->registro_errores['password'] = 'debe contener por lo menos 1 minuscula';						
+							$this->registro_errores['password'] = '<div class="error2"> Debe  contener por lo menos una minuscula </div>';						
 						}
 						else{
 							if(!$this->contiene_numero($pass)){
-								$this->registro_errores['password'] = 'debe contener por lo menos 1 numero';							
+								$this->registro_errores['password'] = '<div class="error">Debe contener por lo menos un numero</div>';							
 							}
 							else{
 								if(!$this->contiene_consecutivos($pass)){
-									$this->registro_errores['password'] = 'contiene consecutivos';								
+									$this->registro_errores['password'] = '<div class="error2">No se debe incluir el mismo caracter mas de 2 veces</div>';								
 								}
 								else{
 									$datos['password']=htmlspecialchars(trim($pass));

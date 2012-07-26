@@ -143,7 +143,7 @@ $(document).ready(function() {
 	$('#sel_pais').change(function() {
 		/*hacer un toggle si es necesario*/
 		var es_mx = false; 
-		$.getJSON("direccion_envio/es_mexico/" + $(this).val(),
+		$.getJSON(url_base + "direccion_envio/es_mexico/" + $(this).val(),
 			function(data) {
 				if (!data.result) {	//no es México
 					$('tr.div_mexico').hide();

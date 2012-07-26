@@ -87,19 +87,24 @@
 		<div class="orden-compra-derecha">			
 				<?php
 				if ($mdf) {
-					if (isset($dir_facturacion))
+					if (isset($dir_facturacion)){
 				?>
 				<div class="bloque-orden-compra">
 					<b>Raz&oacute;n social:</b><br />
 				<?php	
-						include("detalle_facturacion.html"); 																																
+						include("detalle_facturacion.html");
+					}	 																																
 				?>
 				</div>
-				<div id="pleca-gris"></div>
+				<div id="pleca-gris"></div>				
+				<?php 
+					if (!empty($direccion_f)){
+				?>	
 				<div class="bloque-orden-compra">
 					<b>Direcci&oacute;n de facturaci&oacute;n:</b><br />
 				<?php	
-						include("detalle_direccion_facturacion.html"); 																																
+						include("detalle_direccion_facturacion.html"); 	
+					}																																
 				?>
 				</div>
 				<div id="pleca-gris"></div>

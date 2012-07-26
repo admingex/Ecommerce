@@ -55,7 +55,7 @@ $(document).ready(function() {
         }   
         else{
         	if(!valida_password("aaa@",$("#password").val())){ 
-        		$("#password").focus().after("<span class='error2'>Por favor escribe una contraseña que contenga al menos 8 caracteres, letras mayúsculas, minúsculas y números</span>");            
+        		//$("#password").focus().after("<span class='error2'>Por favor escribe una contraseña que contenga al menos 8 caracteres, letras mayúsculas, minúsculas y números</span>");            
             	return false;            
         	}
         	else{

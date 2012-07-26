@@ -1,14 +1,12 @@
-<table>
+<table width="100%">
 <form id="form_cambiar_password" action="<?php echo site_url('password/cambiar'); ?>" method="POST">	
 		<tr>
-			<td class="label">
+			<td class="label" width="140px">
 				Nueva contrase&ntilde;a	
 			</td>
 			<td>
-				<input type="password" id="password" name="password" value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />
-				<span class="validation_message">
-					<?php if(isset($registro_errores['password'])) echo($registro_errores['password']);?>
-				</span>
+				<input type="password" id="password" name="password" value="<?php if(isset($_POST['password'])) echo htmlspecialchars($_POST['password']);?>" />				
+					<?php if(isset($registro_errores['password'])) echo($registro_errores['password']);?>				
 			</td>
 		</tr>
 		<tr>
@@ -16,10 +14,8 @@
 				Confirmar contrase&ntilde;a	
 			</td>
 			<td>
-				<input type="password" id="password_2" name="password_2" value="<?php if(isset($_POST['password_2'])) echo htmlspecialchars($_POST['password_2']); ?>" />
-				<span class="validation_message">
-					<?php if(isset($registro_errores['password_2'])) echo($registro_errores['password_2']);?>
-				</span>
+				<input type="password" id="password_2" name="password_2" value="<?php if(isset($_POST['password_2'])) echo htmlspecialchars($_POST['password_2']); ?>" />				
+					<?php if(isset($registro_errores['password_2'])) echo($registro_errores['password_2']);?>				
 			</td>
 		</tr>
 		<tr>
