@@ -274,7 +274,7 @@ class Orden_Compra extends CI_Controller {
 										   Para completar tu compra, sigue las instrucciones que aparecen abajo para realizar tu pago.
 										   <br />
 										   <br />
-										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030; width: 600px'>
 										   	   <thead style='background-color: #E70030; color: #FFF'>
 										   	       <tr>
 										   	           <th colspan='4' align='left'>
@@ -352,7 +352,7 @@ class Orden_Compra extends CI_Controller {
 										   	       </tr>										   	       												   
 										   	   </tbody>
 										   </table>";
-							$mensaje.=	   "<table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+							$mensaje.=	   "<table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030; width: 600px'>
 										       <thead style='background-color: #E70030; color: #FFF'>
 										           <tr>
 										               <th colspan='2' align='left'>Envío y facturación
@@ -584,10 +584,10 @@ class Orden_Compra extends CI_Controller {
 									  <body>
 									  	   <div>
 									  	   Hola ".$this->session->userdata('username').",<br />
-										   Gracias por tu orden en paogs.grupoexpansion.mx
+										   Gracias por tu orden en pagos.grupoexpansion.mx
 										   <br />
 										   <br />
-										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030; width: 600px'>
 										       <thead style='background-color: #E70030; color: #FFF'>
 										           <tr>
 										               <th colspan='2' align='left'>Pago, envío y facturación
@@ -637,7 +637,7 @@ class Orden_Compra extends CI_Controller {
 											   	   </tr>
 											   </tbody>	   
 										   </table>
-										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030; width: 600px'>
 										   	   <thead style='background-color: #E70030; color: #FFF'>
 										   	       <tr>
 										   	           <th colspan='4' align='left'>
@@ -819,10 +819,10 @@ class Orden_Compra extends CI_Controller {
 									  <body>
 									  	   <div>
 									  	   Hola ".$this->session->userdata('username').",<br />
-										   Gracias por tu orden en paogs.grupoexpansion.mx
+										   Gracias por tu orden en pagos.grupoexpansion.mx
 										   <br />
 										   <br />
-										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030; width: 600px'>
 										       <thead style='background-color: #E70030; color: #FFF'>
 										           <tr>
 										               <th colspan='2' align='left'>Pago, envío y facturación
@@ -871,7 +871,7 @@ class Orden_Compra extends CI_Controller {
 											   	   </tr>
 											   </tbody>	   
 										   </table>
-										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030;'>
+										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030; width: 600px'>
 										   	   <thead style='background-color: #E70030; color: #FFF'>
 										   	       <tr>
 										   	           <th colspan='4' align='left'>

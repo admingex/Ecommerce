@@ -3,21 +3,44 @@
 class Pago extends CI_Controller {
 		
 	function __construct(){
-        parent::__construct();	
+        parent::__construct();
+					
+		if(array_key_exists('user', $this->session->all_userdata()) || array_key_exists('pass', $this->session->all_userdata()) || array_key_exists('user', $_POST) || array_key_exists('pass', $_POST)){
+			if(($this->session->userdata('user')=='aespinosa') || ($_POST['user']=='aespinosa')){
+				if(($this->session->userdata('pass')=='Aesp1n0_20120618') || ($_POST['pass']=='Aesp1n0_20120618')){
+					$this->session->set_userdata('user', 'aespinosa');
+					$this->session->set_userdata('pass', 'Aesp1n0_20120618');
+					$this->pago();				
+				}	
+				else{
+					redirect('mensaje/'.md5(6));
+				}
+			}				
+			else{
+					redirect('mensaje/'.md5(6));
+			}
+		}
+		else{
+			redirect('mensaje/'.md5(6));
+		}	
 								
     }
 	
-	public function index(){
+	public function index(){  	             	        
+													
+	}	
+	public function pago(){
 		foreach (array_keys($this->session->userdata) as $key){
-    		$this->session->unset_userdata($key);
-		} 		
+			if(($key!='ip_address') && ($key!='session_id') && ($key!='user_agent') && ($key!='last_activity') && ($key!='user') && ($key!='pass')){
+				$this->session->unset_userdata($key);	
+			}			    		
+		} 				
 		$data['title']="Proceso de Pago";					  			
 		$this->session->set_userdata('guidz', $this->guid());
 		$this->load->view('templates/header', $data);	
 		$this->load->view('links_pago');
-		$this->load->view('templates/footer');   	             	        
-													
-	}	
+		$this->load->view('templates/footer'); 
+	}
 	
 	public function guid(){
     	if (function_exists('com_create_guid')){

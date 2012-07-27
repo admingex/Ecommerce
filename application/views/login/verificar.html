@@ -1,5 +1,5 @@
 <table width="100%">
-	<form id="form_cambiar_password" action="<?php echo site_url('password/verificar'); ?>" method="POST">
+	<form id="form_cambiar_password" name="form_cambiar_password" action="<?php echo site_url('password/verificar'); ?>" method="POST">
 	<tr>
 		<td class="label">
 			Clave
@@ -12,8 +12,13 @@
 	<tr>
 		<td>&nbsp;</td>
 		<td width="600px">
-			<input type="submit" id="cambiar_password" name="cambiar_password" value="&nbsp;" class="boton_verificar_clave"/>
+			<input type="submit" id="cambiar_password" name="cambiar_password" value=" " class="boton_verificar_clave"/>
 		</td>
 	</tr>			
 	</form>			
 </table>
+<?php
+	if($password_temporal){
+		echo "<script>document.form_cambiar_password.submit();</script>";
+	}
+?>

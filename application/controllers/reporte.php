@@ -12,19 +12,24 @@ class Reporte extends CI_Controller {
 		$this->load->model('reporte_model', 'reporte_model', true);				
 		$this->load->helper('date');
 						
-		if(($this->session->userdata('user')=='aespinosa') || ($_POST['user']=='aespinosa')){
-			if(($this->session->userdata('pass')=='Aesp1n0_20120618') || ($_POST['pass']=='Aesp1n0_20120618')){
-				$this->session->set_userdata('user', 'aespinosa');
-				$this->session->set_userdata('pass', 'Aesp1n0_20120618');
-				$this->usuarios();
-			}	
+		if(array_key_exists('user', $this->session->all_userdata()) || array_key_exists('pass', $this->session->all_userdata()) || array_key_exists('user', $_POST) || array_key_exists('pass', $_POST)){
+			if(($this->session->userdata('user')=='aespinosa') || ($_POST['user']=='aespinosa')){
+				if(($this->session->userdata('pass')=='Aesp1n0_20120618') || ($_POST['pass']=='Aesp1n0_20120618')){
+					$this->session->set_userdata('user', 'aespinosa');
+					$this->session->set_userdata('pass', 'Aesp1n0_20120618');
+					$this->usuarios();				
+				}	
+				else{
+					redirect('mensaje/'.md5(5));
+				}
+			}				
 			else{
-				redirect('mensaje/'.md5(5));
-			}			
+					redirect('mensaje/'.md5(5));
+			}
 		}
 		else{
 			redirect('mensaje/'.md5(5));
-		}							
+		}						
     }
 	
 	public function index(){		

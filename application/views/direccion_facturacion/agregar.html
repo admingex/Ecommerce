@@ -60,7 +60,7 @@
 				<td class="label">C&oacute;digo postal</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
+						<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>" onkeyup='checa_cp(this.value)'/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?>
@@ -121,7 +121,9 @@
 				<td class="label">Colonia</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_colonia" id="txt_colonia" size="30" value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/>
+						<div>
+							<input type="text" name="txt_colonia" id="txt_colonia" size="30" value="<?php if(isset($_POST['txt_colonia'])) echo htmlspecialchars($_POST['txt_colonia']);?>"/>
+						</div>	
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<?php if(isset($reg_errores['txt_colonia'])) echo ($reg_errores['txt_colonia']);?>
@@ -153,15 +155,3 @@
 		</table>
 	</form>
 </div>
-<script>
-	function llena_formulario(val){
-		var datos = val.split(",");
-		document.getElementById('txt_calle').value=datos[0];
-		document.getElementById('txt_numero').value=datos[1];
-		document.getElementById('txt_num_int').value=datos[2];
-		document.getElementById('txt_cp').value=datos[3];	
-		document.getElementById('txt_estado').value=datos[4];
-		document.getElementById('txt_ciudad').value=datos[5];	
-		document.getElementById('txt_colonia').value=datos[6];		
-	}
-</script>

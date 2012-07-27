@@ -24,13 +24,18 @@ class Api_model extends CI_Model {
 	
 	function obtener_promocion_like($cad){
 		$this->db->like('descripcionVc', $cad, 'before');
-		$res = $this->db->get('CMS_IntPromocion');		
-		if($res->num_rows()!=0){
-			return $res;	
+		$res = $this->db->get('CMS_IntIssue');				
+		if($res->num_rows()!=0){			
+			$res_art=$this->db->get_where('CMS_IntArticulo', array('issue_id'=>$res->row()->issue_id));
+			if($res_art->num_rows()>0){
+				$res_prom=$this->db->get_where('CMS_IntPromocion', array('id_promocionIn'=>$res_art->row()->id_promocionIn));
+				return $res_prom;				
+			}	
 		} 
 		else{
 			return FALSE;
-		}				
+		}			
+			
 	}
 	
 	function obtener_sitio_guidx($guidx){

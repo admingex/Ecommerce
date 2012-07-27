@@ -95,9 +95,9 @@ class Registro extends CI_Controller {
 					//$this->cargar_vista('', 'registro', $data);
 				}
 			} 
-			else{
-				echo "errores";
-				$this->cargar_vista('', 'registro', $data);
+			else{				
+				$data['registro_errores']=$this->registro_errores;				
+				$this->cargar_vista('', 'registro', $data);				
 			}
 		}
 		else{
@@ -136,20 +136,20 @@ class Registro extends CI_Controller {
 			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_nombre'])) { 
 				$datos['salutation'] = $_POST['txt_nombre'];
 			} else {
-				$this->registro_errores['txt_nombre'] = 'Por favor ingresa tu nombre';
+				$this->registro_errores['txt_nombre'] = '<div class="error">Por favor ingresa tu nombre</div>';
 			}
 		}
 		if(array_key_exists('txt_apellidoPaterno', $_POST)) {
 			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_apellidoPaterno'])) { 
 				$datos['fname'] = $_POST['txt_apellidoPaterno'];
 			} else {
-				$this->registro_errores['txt_apellidoPaterno'] = 'Por favor ingresa tu apellido paterno';
+				$this->registro_errores['txt_apellidoPaterno'] = '<div class="error">Por favor ingresa tu apellido paterno</div>';
 			}
 		}		
 		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {			
 			$datos['email'] = htmlspecialchars(trim($_POST['email']));
 		} else {			
-			$this->registro_errores['email'] = 'Por favor ingresa un correo electrónico <br />válido. Ejemplo: nombre@dominio.mx';
+			$this->registro_errores['email'] = '<div class="error2">Por favor ingresa un correo electrónico <br />válido. Ejemplo: nombre@dominio.mx</div>';
 		}
 		if(isset($_POST['email'])&& isset($_POST['password'])){
 			if($_POST['email']!=""){
@@ -161,101 +161,100 @@ class Registro extends CI_Controller {
 					$datos['password'] = htmlspecialchars(trim($_POST['password']));
 				} 
 				else {
-					$this->registro_errores['password_2'] = 'Las contraseñas ingresadas no son idénticas. Por favor intenta de nuevo.';
+					$this->registro_errores['password_2'] = '<div class="error2">Las contraseñas ingresadas no son idénticas. Por favor intenta de nuevo.</div>';
 				}
 			} 
 			else {
-				$this->registro_errores['password_2'] = 'Por favor ingresa una contrase&ntilde;a v&aacute;lida';
+				$this->registro_errores['password_2'] = '<div class="error">Por favor ingresa una contrase&ntilde;a v&aacute;lida</div>';
 			}
 		}					 			 
 		else{
-			$this->registro_errores['password'] = 'Información incompleta';
+			$this->registro_errores['password'] = '<div class="error">Información incompleta</div>';
 		}		
 		
 		return $datos;
 	}
 	
 
-private function contiene_mayuscula($cad){
-	$may='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	for($i=0; $i<strlen($cad); $i++){
-		if(strstr($may, $cad[$i])){
-			return TRUE;		
-		}
-	}	
-	return FALSE;
-}
-
-private function contiene_minuscula($cad){
-	$min='abcdefghijklmnopqrstuvwxyz';
-	for($i=0; $i<strlen($cad); $i++){
-		if(strstr($min, $cad[$i])){
-			return TRUE;		
-		}
-	}	
-	return FALSE;
-}
-private function contiene_numero($cad){
-	$num='0123456789';
-	for($i=0; $i<strlen($cad); $i++){
-		if(strstr($num, $cad[$i])){
-			return TRUE;		
-		}
-	}	
-	return FALSE;
-}
-private function contiene_consecutivos($cad){
-	for($i=2; $i<strlen($cad); $i++){		
-		$term0=$cad[($i-2)];
-		$term1=$cad[($i-1)];
-		$term2=$cad[$i];									
-		if(($term0==$term1)&&($term1==$term2)){
-			return FALSE;
-		}		     		            			  		
-   	}   	
-   	return TRUE;
-}
-
-
-private function valida_password($correo, $pass){		
-	$cadlogin = explode('@',$correo);	
-	if(strlen($pass)<8){		
-		$this->registro_errores['password'] = 'debe contener por lo menos 8 caracteres';
+	private function contiene_mayuscula($cad){
+		$may='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		for($i=0; $i<strlen($cad); $i++){
+			if(strstr($may, $cad[$i])){
+				return TRUE;		
+			}
+		}	
+		return FALSE;
 	}
-	else{
-		if(preg_match('/[^a-zA-Z0-9]/', $pass)){
-			$this->registro_errores['password'] = 'deben ser numero y letras solamente';			
+	
+	private function contiene_minuscula($cad){
+		$min='abcdefghijklmnopqrstuvwxyz';
+		for($i=0; $i<strlen($cad); $i++){
+			if(strstr($min, $cad[$i])){
+				return TRUE;		
+			}
+		}	
+		return FALSE;
+	}
+	private function contiene_numero($cad){
+		$num='0123456789';
+		for($i=0; $i<strlen($cad); $i++){
+			if(strstr($num, $cad[$i])){
+				return TRUE;		
+			}
+		}	
+		return FALSE;
+	}
+	private function contiene_consecutivos($cad){
+		for($i=2; $i<strlen($cad); $i++){		
+			$term0=$cad[($i-2)];
+			$term1=$cad[($i-1)];
+			$term2=$cad[$i];									
+			if(($term0==$term1)&&($term1==$term2)){
+				return FALSE;
+			}		     		            			  		
+	   	}   	
+	   	return TRUE;
+	}
+
+	private function valida_password($correo, $pass){		
+		$cadlogin = explode('@',$correo);
+		if(strlen($pass)<8){		
+			$this->registro_errores['password'] = '<div class="error">Debe contener por lo menos 8 caracteres</div>';
 		}
 		else{
-			if($cadlogin[0]==$pass){
-				$this->registro_errores['password'] = 'La contraseña no debe contener una parte del correo electrónico ingresado.';							
-			}					
+			if(preg_match('/[^a-zA-Z0-9]/', $pass)){
+				$this->registro_errores['password'] = '<div class="error">Solo debe incluir letras y numeros</div>';			
+			}
 			else{
-				if(!$this->contiene_mayuscula($pass)){
-					$this->registro_errores['password'] = 'debe contener por lo menos 1 mayuscula';					
-				}	
+				if(stristr($pass,$cadlogin[0])){
+					$this->registro_errores['password'] = '<div class="error2">La contraseña no debe contener una parte del correo electrónico ingresado</div>';				
+				}					
 				else{
-					if(!$this->contiene_minuscula($pass)){
-						$this->registro_errores['password'] = 'debe contener por lo menos 1 minuscula';						
-					}
+					if(!$this->contiene_mayuscula($pass)){
+						$this->registro_errores['password'] = '<div class="error2">Debe contener por lo menos una mayuscula</div>';					
+					}	
 					else{
-						if(!$this->contiene_numero($pass)){
-							$this->registro_errores['password'] = 'debe contener por lo menos 1 numero';							
+						if(!$this->contiene_minuscula($pass)){
+							$this->registro_errores['password'] = '<div class="error2"> Debe contener por lo menos una minuscula</div>';						
 						}
 						else{
-							if(!$this->contiene_consecutivos($pass)){
-								$this->registro_errores['password'] = 'contiene consecutivos';								
+							if(!$this->contiene_numero($pass)){
+								$this->registro_errores['password'] = '<div class="error">Debe contener por lo menos un numero</div>';							
 							}
 							else{
-								$datos['password']=htmlspecialchars(trim($pass));
+								if(!$this->contiene_consecutivos($pass)){
+									$this->registro_errores['password'] = '<div class="error2">No se debe incluir el mismo caracter mas de 2 veces</div>';								
+								}
+								else{
+									$datos['password']=htmlspecialchars(trim($pass));
+								}
 							}
-						}
-					}				
-				}							
+						}				
+					}							
+				}
 			}
-		}
-	}		
-}
+		}		
+	}	
 		
 	private function cargar_vista($folder, $page, $data)
 	{	
