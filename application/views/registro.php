@@ -12,7 +12,7 @@
 		Para crear tu cuenta, escribe tu nombre y la contrase&ntilde;a que quieres usar. La contrase&ntilde;a debe tener al menos 8 caracteres, incluir may&uacute;sculas y min&uacute;sculas y al menos un n&uacute;mero.
 	</div>
 	<div class="contenedor-gris">
-	<?php		
+	<?php
 		include ('login/registro.html');
 	?>	
 	</div>				

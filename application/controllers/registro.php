@@ -92,6 +92,7 @@ class Registro extends CI_Controller {
 				} else {
 					redirect('login', 'location', 302);
 					//$this->registro_errores['user_reg'] = "Solicitaste iniciar sesión como cliente nuevo, pero ya existe una cuenta con el correo ".$cliente_info['email'];
+					//$data['registro_errores'] = $this->registro_errores; 
 					//$this->cargar_vista('', 'registro', $data);
 				}
 			} 

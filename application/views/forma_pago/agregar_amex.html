@@ -8,7 +8,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_calle" id="txt_calle" size="40" value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);?>"/>
+						<input type="text" name="txt_calle" id="txt_calle" size="40" autocomplete="off" value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>
@@ -20,7 +20,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
+						<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" autocomplete="off" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
@@ -65,7 +65,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_estado" id="txt_estado" size="30" value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
+						<input type="text" name="txt_estado" id="txt_estado" size="30" autocomplete="off" value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
@@ -77,7 +77,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_ciudad" id="txt_ciudad" size="30" value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
+						<input type="text" name="txt_ciudad" id="txt_ciudad" size="30" autocomplete="off" value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
@@ -89,7 +89,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_email" id="txt_email" size="30" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);  else echo $this->session->userdata('email');?>"/>
+						<input type="text" name="txt_email" id="txt_email" size="30" autocomplete="off" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);  else echo $this->session->userdata('email');?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
@@ -101,7 +101,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_telefono" id="txt_telefono" size="30" value="<?php if(isset($_POST['txt_telefono'])) echo htmlspecialchars($_POST['txt_telefono']);?>"/>
+						<input type="text" name="txt_telefono" id="txt_telefono" size="30" autocomplete="off" value="<?php if(isset($_POST['txt_telefono'])) echo htmlspecialchars($_POST['txt_telefono']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_telefono'])) echo ($reg_errores['txt_telefono']);?></span>
