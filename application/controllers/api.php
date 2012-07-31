@@ -31,6 +31,13 @@ class Api extends CI_Controller {
 			}								
 			//buscar los articulos con la clave enviada			
 			else if(((!is_numeric($cad))|| (strlen($cad)>2)) && ($_POST) ){				
+				//echo $cad;
+				//$file_path = '/var/www/html/pagos/application/controllers/log.txt';
+				$file_path = './utils/log.txt';
+				$file=fopen($file_path, 'a');
+				fwrite($file,json_encode($_POST)."--".$cad."--".time()."--".$_SERVER['REMOTE_ADDR']."\n");
+				fclose($file);
+				//print_r($_POST);
 				echo $this->obtener_url_promo($cad, $_POST);
 				exit();				
 			}

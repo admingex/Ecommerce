@@ -55,7 +55,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_numeroTarjeta" id="txt_numeroTarjeta" maxlength="16" value="<?php if(isset($_POST['txt_numeroTarjeta'])) echo htmlspecialchars($_POST['txt_numeroTarjeta']);?>"/>
+						<input type="text" name="txt_numeroTarjeta" id="txt_numeroTarjeta" maxlength="16" autocomplete="off" value="<?php if(isset($_POST['txt_numeroTarjeta'])) echo htmlspecialchars($_POST['txt_numeroTarjeta']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_numeroTarjeta'])) echo ($reg_errores['txt_numeroTarjeta']);?></span>
@@ -75,7 +75,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_nombre" id="txt_nombre" value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);?>"/>
+						<input type="text" name="txt_nombre" id="txt_nombre" autocomplete="off" value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_nombre'])) echo ($reg_errores['txt_nombre']);?></span>
@@ -87,7 +87,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);?>"/>
+						<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" autocomplete="off" value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_apellidoPaterno'])) echo ($reg_errores['txt_apellidoPaterno']);?></span>
@@ -99,7 +99,7 @@
 				</td>
 				<td>
 					<span class="alinear_izquierda">
-						<input type="text" name="txt_apellidoMaterno" id="txt_apellidoMaterno" value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']);?>"/>
+						<input type="text" name="txt_apellidoMaterno" id="txt_apellidoMaterno" autocomplete="off" value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']);?>"/>
 					</span>
 					<span class="error_mensaje"><?php if(isset($reg_errores['txt_apellidoMaterno'])) echo ($reg_errores['txt_apellidoMaterno']);?></span>
 				</td>
