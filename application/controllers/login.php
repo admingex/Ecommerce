@@ -231,11 +231,19 @@ class Login extends CI_Controller {
 			$i=0;
 			foreach ($respromo['articulos'] as $res) {
 			if($i<6){
+				$desc_issue='';
+				if(!empty($res['issue_id'])){
+					$issue=$this->api_model->obtener_issue($res['issue_id']);
+					$desc_issue = $issue->row()->descripcionVc; 
+				}
 				$temp[] = array('tarifaDc' 			=> 	$res['tarifaDc'], 
 							'tipo_productoVc' 	=> 	$res['tipo_productoVc'], 
 							'medio_entregaVc'	=>	$res['medio_entregaVc'], 
 							'monedaVc'	=>	$res['monedaVc'], 
-							'requiere_envioBi'	=>	(bool)$res['requiere_envioBi']);
+							'requiere_envioBi'	=>	(bool)$res['requiere_envioBi'],
+							'issue_id'	=>	$res['issue_id'],
+							'descripcion_issue'	=>	$desc_issue,
+							);														
 				}	
 				$i++;
 			}				

@@ -305,14 +305,19 @@ class Orden_Compra extends CI_Controller {
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
 																	$desc_promo = '';
-																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-																	$nmp=count($mp);
-																	if($nmp==2){
-																		$desc_promo = $mp[0];		
-																	}	
-																	else if($nmp==3){
-																		$desc_promo = $mp[1];
-																	}
+																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																		$nmp=count($mp);
+																		if($nmp==2){
+																			$desc_promo = $mp[0];		
+																		}	
+																		else if($nmp==3){
+																			$desc_promo = $mp[1];
+																		}
+																	}				
+																	else{
+																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+																	}																	
 																																		
 												  				    $mensaje.="<tr>
 																		           <td colspan='2'>".$desc_promo."<br />".
@@ -668,13 +673,18 @@ class Orden_Compra extends CI_Controller {
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
 																	$desc_promo = '';
-																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-																	$nmp=count($mp);
-																	if($nmp==2){
-																		$desc_promo = $mp[0];		
-																	}	
-																	else if($nmp==3){
-																		$desc_promo = $mp[1];
+																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																		$nmp=count($mp);
+																		if($nmp==2){
+																			$desc_promo = $mp[0];		
+																		}	
+																		else if($nmp==3){
+																			$desc_promo = $mp[1];
+																		}
+																	}				
+																	else{
+																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
 																	}
 																																		
 												  				    $mensaje.="<tr>
@@ -902,13 +912,18 @@ class Orden_Compra extends CI_Controller {
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
 																	$desc_promo = '';
-																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-																	$nmp=count($mp);
-																	if($nmp==2){
-																		$desc_promo = $mp[0];		
-																	}	
-																	else if($nmp==3){
-																		$desc_promo = $mp[1];
+																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																		$nmp=count($mp);
+																		if($nmp==2){
+																			$desc_promo = $mp[0];		
+																		}	
+																		else if($nmp==3){
+																			$desc_promo = $mp[1];
+																		}
+																	}				
+																	else{
+																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
 																	}
 																																		
 												  				    $mensaje.="<tr>

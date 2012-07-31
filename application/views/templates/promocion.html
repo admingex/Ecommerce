@@ -16,23 +16,50 @@
 				<div class="titulo-promo-rojo">Est&aacute;s comprando:</div>
 				<div class="titulo-promo-negro">
 					<?php 
-						if ($this->session->userdata('promocion'))							
-								$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-								$nmp=count($mp);
-								if($nmp==2){
-									$desc_promo = $mp[0];		
-								}	
-								else if($nmp==3){
-									$desc_promo = $mp[1];
+						if ($this->session->userdata('promocion'))
+								 			
+								if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+									$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+									$nmp=count($mp);
+									if($nmp==2){
+										$desc_promo = $mp[0];		
+									}	
+									else if($nmp==3){
+										$desc_promo = $mp[1];
+									}
+								}				
+								else{
+									$desc_promo = $this->session->userdata('promocion')->descripcionVc;
 								}
-								if(isset($desc_promo)){
+								
+								if(isset($desc_promo)){									
 									$this->session->set_userdata('descrpcion_promocion', $desc_promo);
-									echo $this->session->userdata('descrpcion_promocion');
+									echo $desc_promo;
 								}
 																						  																			
 								if (!empty($articulos))
-									foreach($articulos as $articulo)                                     
-								    	echo "<br />" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'];
+									foreach($articulos as $articulo)  {                                   
+										if(!empty($articulo['descripcion_issue'])){
+											if( strstr($articulo['descripcion_issue'], '|' )){
+												$mp=explode('|',$articulo['descripcion_issue']);
+												$nmp=count($mp);
+												if($nmp==2){
+													$desc_promo = $mp[0];		
+												}	
+												else if($nmp==3){
+													$desc_promo = $mp[1];
+												}
+											}				
+											else{
+												$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+											}	
+											echo "<br />".$desc_promo;												
+										}
+										else{
+											echo "<br />" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'];
+										}
+								    	
+								   } 	
 					?>														
 				</div>					
 			</div>
