@@ -264,7 +264,7 @@ class Api extends CI_Controller {
 	}	
 			
 	private function formato($formato, $data){		
-		if((empty($formato)) || ($formato=='json')){			
+		if((empty($formato)) || ($formato=='json')){						
 			echo json_encode($data);					 																	
 		}
 		else{

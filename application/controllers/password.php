@@ -162,7 +162,7 @@ class Password extends CI_Controller {
 			if($this->password_model->historico_clave($id_clienteIn, $email, $_POST['password'])!=1){				
 				$this->password_model->cambia_password($id_clienteIn, $email,$_POST['password']);
 				$this->load->helper('date');
-				$t= mdate('%Y/%m/%d %h:%i:%s',time());
+				$t= mdate('%Y/%m/%d %h:%i:%s',time());				
 				$this->password_model->guarda_actividad_historico($id_clienteIn, $password, self::$TIPO_ACTIVIDAD['CAMBIO_PASSWORD'], $t);
 				//creación de la sesión
 				$array_session = array(
@@ -172,10 +172,16 @@ class Password extends CI_Controller {
 									'email' 	=> $email
 								 );				
 				$this->session->set_userdata($array_session);
-				$this->login_registro_model->desbloquear_cuenta($id_clienteIn);												
-				$this->password_model->guarda_actividad_historico($id_clienteIn, '', self::$TIPO_ACTIVIDAD['DESBLOQUEO'], $t);				
+				$this->login_registro_model->desbloquear_cuenta($id_clienteIn);													
 				//redirect('forma_pago');
-				redirect("login", "location", 303);	
+				echo "  <form name='inicio_sesion' action='".site_url('login')."' method='post'>
+								    	<input type='text' name='email' value='".$email."' style='display: none' />
+								    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
+								    	<input type='text' name='password' value='".$_POST['password']."' style='display: none' />
+								    	<input type='submit' name='enviar' value='Iniciar sesion' />
+									</form>";
+							echo "<script>document.inicio_sesion.submit();</script>";
+				//redirect("login", "location", 303);	
 			}																						
 			else{					
 				$this->registro_errores['password']='<div class="validation_message">Por favor ingresa una contraseña que no coincida con ninguna de las últimas ocho contraseñas usadas</div>';

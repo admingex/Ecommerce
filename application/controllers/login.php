@@ -68,7 +68,7 @@ class Login extends CI_Controller {
     }
 	
 	public function index()
-	{
+	{		
 		/*
 		echo "<pre>";
 			print_r($this->session->all_userdata());
@@ -113,7 +113,7 @@ class Login extends CI_Controller {
 						$id_cliente = $mail_cte->row()->id_clienteIn;						
 						if($fecha_lock!='0000-00-00 00:00:00'){
 							if($this->tiempo_desbloqueo($fecha_lock)){
-								$this->login_registro_model->desbloquear_cuenta($id_cliente);
+								$this->login_registro_model->desbloquear_cuenta($id_cliente);								
 								$t= mdate('%Y/%m/%d %h:%i:%s',time());								
 								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['DESBLOQUEO'], $t);							
 							}
@@ -154,7 +154,8 @@ class Login extends CI_Controller {
 							else{
 								$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";																			
 								$t= mdate('%Y/%m/%d %h:%i:%s',time());								
-								$this->password_model->guarda_actividad_historico($id_cliente, $this->password, self::$TIPO_ACTIVIDAD['ACCESO_INCORRECTO'], $t);							
+								$this->password_model->guarda_actividad_historico($id_cliente, $this->password, self::$TIPO_ACTIVIDAD['ACCESO_INCORRECTO'], $t);
+								$t= mdate('%Y/%m/%d %h:%i:%s',time());									
 								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
 							}
 						}
@@ -162,6 +163,7 @@ class Login extends CI_Controller {
 							if($num_intentos==3){
 								$t= mdate('%Y/%m/%d %h:%i:%s',time());	
 								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['BLOQUEO'], $t);
+								$t= mdate('%Y/%m/%d %h:%i:%s',time());		
 								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
 							}
 							$this->login_errores['user_login'] = "Ha excedido el número máximo de intentos permitidos para iniciar sesión.<br />
