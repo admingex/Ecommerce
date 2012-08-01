@@ -11,13 +11,20 @@ class Api extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		$this->load->model('api_model', 'api_model', true);
-		$this->key='AC35-4564-AE4D-0B881031F295';					
+		$this->key='AC35-4564-AE4D-0B881031F295';										
     }
 	
 	public function index(){												
 	}
 	
-	public function listar($sitio= "", $canal= "", $promocion= "", $formato= ""){								
+	public function listar($sitio= "", $canal= "", $promocion= "", $formato= ""){
+		//limpiar datos en session 
+		foreach (array_keys($this->session->userdata) as $key){			
+			if(($key!='ip_address') && ($key!='session_id') && ($key!='user_agent') && ($key!='last_activity')){
+				$this->session->unset_userdata($key);	
+			}			    		
+		} 
+													
 		$data['title']='Promociones';		
 		$data['listar'] = TRUE;
 		$data['detalle'] = FALSE;						

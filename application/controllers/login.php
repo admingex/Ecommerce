@@ -69,6 +69,14 @@ class Login extends CI_Controller {
 	
 	public function index()
 	{
+		/*
+		echo "<pre>";
+			print_r($this->session->all_userdata());
+		echo "</pre>";	
+		exit;
+		*/						
+						
+						
 		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo.	
 		$this->session->unset_userdata('sitio');
 		$datsit=$this->api_model->obtener_sitio($this->session->userdata('id_sitio'));		

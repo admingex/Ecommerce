@@ -96,10 +96,10 @@
 		   	       			<td colspan='4'>
 		   	       				<b>Respuesta del Banco:&nbsp;&nbsp;</b><span class='instrucciones'>";
 		   	       				if($resultado->respuesta_banco!="approved"){
-									echo "Declined";
+									echo "<b style='color: #E60000'>Pago Declinado</b>";
 								}
 								else{
-									echo "Approved";
+									echo "<b style='color: #E60000'>Pago Aprobado</b>";
 								}
 		   	       	echo "  </span>
 		   	       			</td>	

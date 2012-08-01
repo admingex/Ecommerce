@@ -38,11 +38,24 @@ class Login_Registro_model extends CI_Model {
 	
 	function registrar_cliente($cliente = array())
     {
-    	$m5_pass = md5($cliente['email'].'|'.$cliente['password']);		//encriptaciónn definida en el registro de usuarios
-    	$cliente['password'] = $m5_pass;
-        $res = $this->db->insert('CMS_IntCliente', $cliente);		//true si se inserta
-
-        return $res;	//true_false
+    	$nuevo_res='';
+    	$this->db->trans_start();	//begin Trans
+    	/*
+    	$qry = "SELECT MAX(id_clienteIn) as consecutivo 
+				FROM CMS_IntCliente";
+		$res = $this->db->query($qry);
+		
+		$row = $res->row();	//regresa un objeto
+		$cliente['id_clienteIn']= ($row->consecutivo+1);
+		$res->free_result();
+		*/
+				 		    						
+        $nuevo_res= $this->db->insert('CMS_IntCliente', $cliente);		//true si se inserta
+        
+        $this->db->trans_complete();
+        return (int)$nuevo_res;        	
+                
+				
     }
 	
 	function next_cliente_id()

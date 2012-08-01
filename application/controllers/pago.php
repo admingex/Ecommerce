@@ -29,12 +29,7 @@ class Pago extends CI_Controller {
 	public function index(){  	             	        
 													
 	}	
-	public function pago(){
-		foreach (array_keys($this->session->userdata) as $key){
-			if(($key!='ip_address') && ($key!='session_id') && ($key!='user_agent') && ($key!='last_activity') && ($key!='user') && ($key!='pass')){
-				$this->session->unset_userdata($key);	
-			}			    		
-		} 				
+	public function pago(){						
 		$data['title']="Proceso de Pago";					  			
 		$this->session->set_userdata('guidz', $this->guid());
 		$this->load->view('templates/header', $data);	

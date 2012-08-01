@@ -70,7 +70,7 @@ class Password extends CI_Controller {
 	
 					$headers="Content-type: text/html; charset=UTF-8\r\n";
 	                $headers.="MIME-Version: 1.0\r\n";
-				    $headers .= "From: GexWeb<servicioaclientes@expansion.com.mx>\r\n";       
+				    $headers .= "From: Pagos Grupo Expansión<servicioaclientes@expansion.com.mx>\r\n";       
 					$mensaje="<html>
 							  <body>
 							  	   <div>Hola,
@@ -88,7 +88,7 @@ class Password extends CI_Controller {
 							  	   	   	   <a href='https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."'>https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."</a><br /><br />
 							  	   	   	   Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu<br />
 							  	   	   	   navegador, o reescribirla ahí.<br />
-							  	   	   	   2. Ingresa la clave: ".$p."<br />
+							  	   	   	   2. Si se solicita ingresa la clave: ".$p.", caso contrario ir al paso 3<br />
 							  	   	   	   Esta no es una contraseña, pero la necesitarás para crear una nueva contraseña.<br />
 							  	   	   	   3. Sigue las instrucciones que aparecen en la pantalla para crear tu nueva contraseña.
 							  	   	   
@@ -192,7 +192,7 @@ class Password extends CI_Controller {
 	}
 	
 	public function verificar($passtemp= '', $datos_continuar=''){
-		$data['title'] = "Escribe la clave para crear una nueva contraseña";
+		$data['title'] = "Crea una nueva contraseña";
 		$data['subtitle'] = "Escribe la clave para crear una nueva contraseña";
 		$data['mensaje']='';	
 		$data['verificar']=TRUE;

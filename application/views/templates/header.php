@@ -8,7 +8,7 @@
     <meta http-equiv='Expires' content='Sat, 26 Jul 1997 05:00:00 GMT' />
     
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title><?php echo $title ?> - CMS GEX</title>
+    <title><?php echo $title ?> - Pagos Grupo Expansión</title>
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width,initial-scale=1">

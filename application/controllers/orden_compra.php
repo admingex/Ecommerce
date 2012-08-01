@@ -262,8 +262,14 @@ class Orden_Compra extends CI_Controller {
 										
 					//echo " tipo pago depósito: " . $tipo_pago;
 					
-					//Registrar la orden de compra y el detalle del pago con depósito 
-					$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+					//Registrar la orden de compra y el detalle del pago con depósito
+					if($this->session->userdata('id_compra')){
+						$id_compra=$this->session->userdata('id_compra');
+					} 
+					else {
+						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);	
+					}
+					
 					
 					if ($id_compra) {
 						$mensaje = "<html>
@@ -549,8 +555,13 @@ class Orden_Compra extends CI_Controller {
 										
 					//intentamos el Pago con pasando los objetos a CCTC //
 					try {
-						//registro inicial de la compra, si falla, redirecciona
-						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+						//Registrar la orden de compra y el detalle del pago con depósito
+						if($this->session->userdata('id_compra')){
+							$id_compra=$this->session->userdata('id_compra');
+						} 
+						else {
+							$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);	
+						}
 						
 						if (!$id_compra) {			//Si falla el registro inicial de la compra en CCTC
 							redirect('mensaje/'.md5(3), 'refresh');
@@ -787,8 +798,14 @@ class Orden_Compra extends CI_Controller {
 									
 					// Intentamos el Pago con los Id's en  CCTC //
 					try {
-						//Registro inicial de la compra						
-						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+						//Registrar la orden de compra y el detalle del pago con depósito
+						if($this->session->userdata('id_compra')){
+							$id_compra=$this->session->userdata('id_compra');
+						} 
+						else {
+							$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);	
+						}
+						
 						
 						if (!$id_compra) {	//Si falla el registro inicial de la compra en CCTC
 							redirect('mensaje/'.md5(3), 'refresh');
@@ -1039,8 +1056,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1082,8 +1100,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1134,8 +1153,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1220,7 +1240,7 @@ class Orden_Compra extends CI_Controller {
 		//echo "<br/>cliente: ". $id_cliente ;
 		
 		if ($id_compra) {
-			
+			$this->session->set_userdata('id_compra', $id_compra);	
 			///artiulos de la promoción
 			$articulos_compra = array();
 			$articulos_compra = $this->orden_compra_model->obtener_articulos_promocion($id_promocion);
@@ -1293,6 +1313,7 @@ class Orden_Compra extends CI_Controller {
 			return $id_compra;
 		} else {
 			//Error en el registro de la compra
+			$this->session->unset_userdata('id_compra');	
 			return FALSE;
 		}
 		
@@ -1367,7 +1388,7 @@ class Orden_Compra extends CI_Controller {
 	private function enviar_correo($asunto, $mensaje) {
 		$headers = "Content-type: text/html; charset=UTF-8\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-	    $headers .= "From: GexWeb<soporte@expansion.com.mx>\r\n";
+	    $headers .= "From: Pagos Grupo Expansión<soporte@expansion.com.mx>\r\n";
 		
 		$email = $this->session->userdata('email');
 					
