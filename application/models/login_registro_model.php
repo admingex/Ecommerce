@@ -67,7 +67,7 @@ class Login_Registro_model extends CI_Model {
 		$row = $res->row();	//regresa un objeto
 		
 		if(!$row->consecutivo)	{//si regresa null
-			return 0;
+			return 1;
 		} else {
 			return $row->consecutivo + 1;	
 		}

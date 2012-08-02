@@ -61,6 +61,10 @@ class Api extends CI_Controller {
 						print_r($_POST);
 						print_r($datos_decrypt);						
 					echo "</pre>";
+					if(array_key_exists('datos_login', $_POST)){
+						echo $this->decrypt($_POST['datos_login'], $this->key);	
+					}
+					
 				}												
 				exit();
 			}
@@ -197,8 +201,23 @@ class Api extends CI_Controller {
 												   'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
 												   'guidz'=>$_POST['guidz']
 												   )
-											 );				 
-						redirect('login');					 
+											 );
+						// si vienen los datos de login de la tienda manda el formuario de acceso					 								
+						if(array_key_exists('datos_login', $_POST)){							
+							$dat_log=$this->decrypt($_POST['datos_login'], $this->key);
+							$mp=explode('|',$dat_log);
+							echo "  <form name='inicio_sesion' action='".site_url('login')."' method='post'>
+								    	<input type='text' name='email' value='".$mp[0]."' style='display: none' />
+								    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
+								    	<input type='text' name='password' value='".$mp[1]."' style='display: none' />
+								    	<input type='submit' name='enviar' value='Iniciar sesion' style='display: none' />
+									</form>";
+							echo "<script>document.inicio_sesion.submit();</script>";
+						}
+						else{
+							//si no hay datos de uauario redirige a la tienda a login
+							redirect('login');	
+						}											 		 											
 					}
 					else{
 						$this->session->unset_userdata();
