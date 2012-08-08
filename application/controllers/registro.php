@@ -50,7 +50,7 @@ class Registro extends CI_Controller {
 					if( $this->registro_cliente($cliente_info)){																													
 						$headers="Content-type: text/html; charset=UTF-8\r\n";
 		                $headers.="MIME-Version: 1.0\r\n";
-					    $headers .= "From: Pagos Grupo Expansión<soporte@expansion.com.mx>\r\n";       
+					    $headers .= "From: Pagos Grupo Expansión<servicioaclientes@expansion.com.mx>\r\n";       
 						$mensaje="<html>
 								  <body>
 								  	   <div>Hola, ".$cliente_info['salutation'].",<br /><br /> 
@@ -62,7 +62,7 @@ class Registro extends CI_Controller {
 										  Estamos disponibles para cualquier pregunta o duda sobre tu cuenta en:<br /><br/>
 										  Atención a clientes<br/><br/>
 										  Tel. (55) 9177 4342<br/><br/>
-										  atencionaclientes@expansion.com.mx<br/><br/>
+										  servicioaclientes@expansion.com.mx<br/><br/>
 										  Cordialmente,<br/><br/>
 										  Grupo Expansión.<br/>
 								  	   </div>								  	   

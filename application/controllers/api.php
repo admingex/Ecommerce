@@ -60,14 +60,59 @@ class Api extends CI_Controller {
 				$datos_decrypt=unserialize($datos_decrypt);
 				
 				if($_POST){
+					// como viene de la tienda y el id_sitio de la tienda es 0 entonces asignamos cero a la siguiente variable
+					$sitio=3;
 					echo "<pre>";
 						print_r($_POST);
 						print_r($datos_decrypt);						
-					echo "</pre>";
-					if(array_key_exists('datos_login', $_POST)){
-						echo $this->decrypt($_POST['datos_login'], $this->key);	
+					echo "</pre>";					
+					//
+					if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
+						//obtengo la llave privada en la DB
+						$guidxdb=$this->api_model->obtener_sitio($sitio)->row();						
+						//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
+						if($guidxdb->private_KeyVc==$_POST['guidx']){
+							echo "pasa";
+							exit;
+							$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
+													   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
+													   			'guidz'=>$_POST['guidz'],
+													   			$datos_decrypt												   			
+													   )
+												 );
+							echo "<pre>";						
+								print_r($this->session->all_userdata());						
+							echo "</pre>";						 
+							exit;
+							// si vienen los datos de login de la tienda manda el formuario de acceso					 								
+							if(array_key_exists('datos_login', $_POST)){							
+								$dat_log=$this->decrypt($_POST['datos_login'], $this->key);
+								$mp=explode('|',$dat_log);
+								echo "  <form name='inicio_sesion' action='".site_url('login')."' method='post'>
+									    	<input type='text' name='email' value='".$mp[0]."' style='display: none' />
+									    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
+									    	<input type='text' name='password' value='".$mp[1]."' style='display: none' />
+									    	<input type='submit' name='enviar' value='Iniciar sesion' style='display: none' />
+										</form>";
+								echo "<script>document.inicio_sesion.submit();</script>";
+							}
+							else{
+								//si no hay datos de uauario redirige a la tienda a login
+								redirect('login');	
+							}											 		 											
+						}
+						else{
+							echo "no pasa";
+							exit;
+							$this->session->unset_userdata();
+							redirect('login');	
+						}																 	
+					}		
+					else{					
+						$this->session->unset_userdata();
+						redirect('login');					
 					}
-					
+					//										
 				}												
 				exit();
 			}
@@ -197,12 +242,12 @@ class Api extends CI_Controller {
 					$guidxdb=$this->api_model->obtener_sitio($sitio)->row();
 					//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
 					if($guidxdb->private_KeyVc==$_POST['guidx']){
-						$this->session->set_userdata(array('id_sitio'=>$sitio, 
-												   'id_canal'=>$canal, 
-												   'id_promocion'=>$promocion,
-												   'guidx'=>$_POST['guidx'],
-												   'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
-												   'guidz'=>$_POST['guidz']
+						$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
+												   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
+												   			'guidz'=>$_POST['guidz'],
+												   			array('id_sitio'=>$sitio, 
+												   				  'id_canal'=>$canal, 
+												   				  'id_promocion'=>$promocion)												   			
 												   )
 											 );
 						// si vienen los datos de login de la tienda manda el formuario de acceso					 								

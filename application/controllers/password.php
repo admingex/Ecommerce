@@ -199,7 +199,7 @@ class Password extends CI_Controller {
 	
 	public function verificar($passtemp= '', $datos_continuar=''){
 		$data['title'] = "Crea una nueva contraseña";
-		$data['subtitle'] = "Escribe la clave para crear una nueva contraseña";
+		$data['subtitle'] = "Crea una nueva contraseña";
 		$data['mensaje']='';	
 		$data['verificar']=TRUE;
 		$data['cambiar']=FALSE;	

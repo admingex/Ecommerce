@@ -69,12 +69,12 @@ class Login extends CI_Controller {
 	
 	public function index()
 	{		
-		/*
+		
 		echo "<pre>";
 			print_r($this->session->all_userdata());
 		echo "</pre>";	
 		exit;
-		*/						
+						
 						
 						
 		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo.	
