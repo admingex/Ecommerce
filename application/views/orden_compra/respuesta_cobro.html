@@ -21,7 +21,7 @@
 			   	       	   	</td>
 			   	       </tr>";
 				   	       				
-						if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
+						if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {									
 							$articulos = $this->session->userdata('articulos');
 							$total = 0;
 							if (!empty($articulos)) {
@@ -32,20 +32,49 @@
 							if ($this->session->userdata('promocion')) 																	 
 								if (!empty($articulos))
 									foreach($articulos as $articulo) {
+										
 										$desc_promo = '';
-										$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-										$nmp=count($mp);
-										if($nmp==2){
-											$desc_promo = $mp[0];		
-										}	
-										else if($nmp==3){
-											$desc_promo = $mp[1];
-										}
+										if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+											$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+											$nmp=count($mp);
+											if($nmp==2){
+												$desc_promo = $mp[0];		
+											}	
+											else if($nmp==3){
+												$desc_promo = $mp[1];
+											}
+										}				
+										else{
+											$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+										}																																															
 																											
 					  				    echo "	<tr>
-													<td colspan='2' class='instrucciones'>".$desc_promo."<br />".
-											        	$articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
-											        </td>	
+													<td colspan='2' class='instrucciones'>".$desc_promo;
+														
+														if(!empty($articulo['descripcion_issue'])){
+															if( strstr($articulo['descripcion_issue'], '|' )){
+																$mp=explode('|',$articulo['descripcion_issue']);
+																$nmp=count($mp);
+																if($nmp==2){
+																	$desc_promo = $mp[0];		
+																}	
+																else if($nmp==3){
+																	$desc_promo = $mp[1];
+																}
+															}				
+															else{
+																$desc_promo = $articulo['descripcion_issue'];
+															}	
+															echo "<br />".$desc_promo;												
+														}
+														else{
+															echo "<br />" . $articulo['tipo_productoVc'];
+															if(!empty($articulo['medio_entregaVc'])){
+																echo ", " . $articulo['medio_entregaVc']; 
+															} 
+														}																												 
+											        	
+										echo "      </td>	
 													<td>&nbsp;</td>				
 													<td align='right' class='instrucciones'>$".	
 														number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."

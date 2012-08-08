@@ -323,17 +323,40 @@ class Orden_Compra extends CI_Controller {
 																	}				
 																	else{
 																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-																	}																	
+																	}																																															
 																																		
-												  				    $mensaje.="<tr>
-																		           <td colspan='2'>".$desc_promo."<br />".
-																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
-																		           </td>	
-																				   <td>&nbsp;</td>				
-																				   <td align='right'>$".	
-																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				   </td>
-																				</tr>";														
+												  				 	$mensaje.="<tr>
+																			    <td colspan='2' class='instrucciones'>".$desc_promo;
+																					
+																					if(!empty($articulo['descripcion_issue'])){
+																						if( strstr($articulo['descripcion_issue'], '|' )){
+																							$mp=explode('|',$articulo['descripcion_issue']);
+																							$nmp=count($mp);
+																							if($nmp==2){
+																								$desc_promo = $mp[0];		
+																							}	
+																							else if($nmp==3){
+																								$desc_promo = $mp[1];
+																							}
+																						}				
+																						else{
+																							$desc_promo = $articulo['descripcion_issue'];
+																						}	
+																						$mensaje.="<br />".$desc_promo;												
+																					}
+																					else{
+																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
+																						if(!empty($articulo['medio_entregaVc'])){
+																							$mensaje.=", " . $articulo['medio_entregaVc']; 
+																						} 
+																					}																												 
+																		        	
+																	$mensaje.="      </td>	
+																				<td>&nbsp;</td>				
+																				<td align='right' class='instrucciones'>$".	
+																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				</td>
+																			</tr>";														
 																}																																																																																	
 														}
 																										   	       										   	       
@@ -683,6 +706,7 @@ class Orden_Compra extends CI_Controller {
 														if ($this->session->userdata('promocion')) 																	 
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
+																	
 																	$desc_promo = '';
 																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
 																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
@@ -696,17 +720,42 @@ class Orden_Compra extends CI_Controller {
 																	}				
 																	else{
 																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-																	}
+																	}																																															
 																																		
-												  				    $mensaje.="<tr>
-																		           <td colspan='2'>".$desc_promo."<br />".
-																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
-																		           </td>	
-																				   <td>&nbsp;</td>				
-																				   <td align='right'>$".	
-																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				   </td>
-																				</tr>";														
+												  				 	$mensaje.="<tr>
+																			    <td colspan='2' class='instrucciones'>".$desc_promo;
+																					
+																					if(!empty($articulo['descripcion_issue'])){
+																						if( strstr($articulo['descripcion_issue'], '|' )){
+																							$mp=explode('|',$articulo['descripcion_issue']);
+																							$nmp=count($mp);
+																							if($nmp==2){
+																								$desc_promo = $mp[0];		
+																							}	
+																							else if($nmp==3){
+																								$desc_promo = $mp[1];
+																							}
+																						}				
+																						else{
+																							$desc_promo = $articulo['descripcion_issue'];
+																						}	
+																						$mensaje.="<br />".$desc_promo;												
+																					}
+																					else{
+																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
+																						if(!empty($articulo['medio_entregaVc'])){
+																							$mensaje.=", " . $articulo['medio_entregaVc']; 
+																						} 
+																					}																												 
+																		        	
+																	$mensaje.="      </td>	
+																				<td>&nbsp;</td>				
+																				<td align='right' class='instrucciones'>$".	
+																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				</td>
+																			</tr>";	
+																	
+																														
 																}																																																																																	
 														}
 																										   	       										   	       
@@ -928,6 +977,7 @@ class Orden_Compra extends CI_Controller {
 														if ($this->session->userdata('promocion')) 																	 
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
+																	
 																	$desc_promo = '';
 																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
 																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
@@ -941,17 +991,42 @@ class Orden_Compra extends CI_Controller {
 																	}				
 																	else{
 																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-																	}
+																	}																																															
 																																		
-												  				    $mensaje.="<tr>
-																		           <td colspan='2'>".$desc_promo."<br />".
-																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
-																		           </td>	
-																				   <td>&nbsp;</td>				
-																				   <td align='right'>$".	
-																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				   </td>
-																				</tr>";														
+												  				 $mensaje.="<tr>
+																			    <td colspan='2' class='instrucciones'>".$desc_promo;
+																					
+																					if(!empty($articulo['descripcion_issue'])){
+																						if( strstr($articulo['descripcion_issue'], '|' )){
+																							$mp=explode('|',$articulo['descripcion_issue']);
+																							$nmp=count($mp);
+																							if($nmp==2){
+																								$desc_promo = $mp[0];		
+																							}	
+																							else if($nmp==3){
+																								$desc_promo = $mp[1];
+																							}
+																						}				
+																						else{
+																							$desc_promo = $articulo['descripcion_issue'];
+																						}	
+																						$mensaje.="<br />".$desc_promo;												
+																					}
+																					else{
+																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
+																						if(!empty($articulo['medio_entregaVc'])){
+																							$mensaje.=", " . $articulo['medio_entregaVc']; 
+																						} 
+																					}																												 
+																		        	
+																	$mensaje.="      </td>	
+																				<td>&nbsp;</td>				
+																				<td align='right' class='instrucciones'>$".	
+																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				</td>
+																			</tr>";		
+																	
+																																													  				   													
 																}																																																																																	
 														}
 																										   	       										   	       

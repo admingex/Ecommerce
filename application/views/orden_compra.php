@@ -95,12 +95,15 @@
 									}
 								}				
 								else{
-									$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+									$desc_promo = $articulo['descripcion_issue'];
 								}	
 								echo "<br />".$desc_promo;												
 							}
 							else{
-								echo "<br />" . $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc'];
+								echo "<br />" . $articulo['tipo_productoVc'];
+								if(!empty($articulo['medio_entregaVc'])){
+									echo ", " . $articulo['medio_entregaVc']; 
+								}  
 							}												
 							//echo "<br />".$articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']; 
 						?>
