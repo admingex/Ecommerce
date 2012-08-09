@@ -81,5 +81,8 @@ class Api_model extends CI_Model {
 		}
 	}	
 	
-			
+	function obtener_issue($issue_id){
+		$res = $this->db->get_where('CMS_IntIssue', array('issue_id'=>$issue_id));
+		return $res;
+	}		
 }

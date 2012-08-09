@@ -262,8 +262,14 @@ class Orden_Compra extends CI_Controller {
 										
 					//echo " tipo pago depósito: " . $tipo_pago;
 					
-					//Registrar la orden de compra y el detalle del pago con depósito 
-					$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+					//Registrar la orden de compra y el detalle del pago con depósito
+					if($this->session->userdata('id_compra')){
+						$id_compra=$this->session->userdata('id_compra');
+					} 
+					else {
+						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);	
+					}
+					
 					
 					if ($id_compra) {
 						$mensaje = "<html>
@@ -305,24 +311,52 @@ class Orden_Compra extends CI_Controller {
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
 																	$desc_promo = '';
-																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-																	$nmp=count($mp);
-																	if($nmp==2){
-																		$desc_promo = $mp[0];		
-																	}	
-																	else if($nmp==3){
-																		$desc_promo = $mp[1];
-																	}
+																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																		$nmp=count($mp);
+																		if($nmp==2){
+																			$desc_promo = $mp[0];		
+																		}	
+																		else if($nmp==3){
+																			$desc_promo = $mp[1];
+																		}
+																	}				
+																	else{
+																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+																	}																																															
 																																		
-												  				    $mensaje.="<tr>
-																		           <td colspan='2'>".$desc_promo."<br />".
-																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
-																		           </td>	
-																				   <td>&nbsp;</td>				
-																				   <td align='right'>$".	
-																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				   </td>
-																				</tr>";														
+												  				 	$mensaje.="<tr>
+																			    <td colspan='2' class='instrucciones'>".$desc_promo;
+																					
+																					if(!empty($articulo['descripcion_issue'])){
+																						if( strstr($articulo['descripcion_issue'], '|' )){
+																							$mp=explode('|',$articulo['descripcion_issue']);
+																							$nmp=count($mp);
+																							if($nmp==2){
+																								$desc_promo = $mp[0];		
+																							}	
+																							else if($nmp==3){
+																								$desc_promo = $mp[1];
+																							}
+																						}				
+																						else{
+																							$desc_promo = $articulo['descripcion_issue'];
+																						}	
+																						$mensaje.="<br />".$desc_promo;												
+																					}
+																					else{
+																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
+																						if(!empty($articulo['medio_entregaVc'])){
+																							$mensaje.=", " . $articulo['medio_entregaVc']; 
+																						} 
+																					}																												 
+																		        	
+																	$mensaje.="      </td>	
+																				<td>&nbsp;</td>				
+																				<td align='right' class='instrucciones'>$".	
+																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				</td>
+																			</tr>";														
 																}																																																																																	
 														}
 																										   	       										   	       
@@ -544,8 +578,13 @@ class Orden_Compra extends CI_Controller {
 										
 					//intentamos el Pago con pasando los objetos a CCTC //
 					try {
-						//registro inicial de la compra, si falla, redirecciona
-						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+						//Registrar la orden de compra y el detalle del pago con depósito
+						if($this->session->userdata('id_compra')){
+							$id_compra=$this->session->userdata('id_compra');
+						} 
+						else {
+							$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);	
+						}
 						
 						if (!$id_compra) {			//Si falla el registro inicial de la compra en CCTC
 							redirect('mensaje/'.md5(3), 'refresh');
@@ -667,25 +706,56 @@ class Orden_Compra extends CI_Controller {
 														if ($this->session->userdata('promocion')) 																	 
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
+																	
 																	$desc_promo = '';
-																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-																	$nmp=count($mp);
-																	if($nmp==2){
-																		$desc_promo = $mp[0];		
-																	}	
-																	else if($nmp==3){
-																		$desc_promo = $mp[1];
-																	}
+																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																		$nmp=count($mp);
+																		if($nmp==2){
+																			$desc_promo = $mp[0];		
+																		}	
+																		else if($nmp==3){
+																			$desc_promo = $mp[1];
+																		}
+																	}				
+																	else{
+																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+																	}																																															
 																																		
-												  				    $mensaje.="<tr>
-																		           <td colspan='2'>".$desc_promo."<br />".
-																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
-																		           </td>	
-																				   <td>&nbsp;</td>				
-																				   <td align='right'>$".	
-																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				   </td>
-																				</tr>";														
+												  				 	$mensaje.="<tr>
+																			    <td colspan='2' class='instrucciones'>".$desc_promo;
+																					
+																					if(!empty($articulo['descripcion_issue'])){
+																						if( strstr($articulo['descripcion_issue'], '|' )){
+																							$mp=explode('|',$articulo['descripcion_issue']);
+																							$nmp=count($mp);
+																							if($nmp==2){
+																								$desc_promo = $mp[0];		
+																							}	
+																							else if($nmp==3){
+																								$desc_promo = $mp[1];
+																							}
+																						}				
+																						else{
+																							$desc_promo = $articulo['descripcion_issue'];
+																						}	
+																						$mensaje.="<br />".$desc_promo;												
+																					}
+																					else{
+																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
+																						if(!empty($articulo['medio_entregaVc'])){
+																							$mensaje.=", " . $articulo['medio_entregaVc']; 
+																						} 
+																					}																												 
+																		        	
+																	$mensaje.="      </td>	
+																				<td>&nbsp;</td>				
+																				<td align='right' class='instrucciones'>$".	
+																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				</td>
+																			</tr>";	
+																	
+																														
 																}																																																																																	
 														}
 																										   	       										   	       
@@ -777,8 +847,14 @@ class Orden_Compra extends CI_Controller {
 									
 					// Intentamos el Pago con los Id's en  CCTC //
 					try {
-						//Registro inicial de la compra						
-						$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);
+						//Registrar la orden de compra y el detalle del pago con depósito
+						if($this->session->userdata('id_compra')){
+							$id_compra=$this->session->userdata('id_compra');
+						} 
+						else {
+							$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);	
+						}
+						
 						
 						if (!$id_compra) {	//Si falla el registro inicial de la compra en CCTC
 							redirect('mensaje/'.md5(3), 'refresh');
@@ -901,25 +977,56 @@ class Orden_Compra extends CI_Controller {
 														if ($this->session->userdata('promocion')) 																	 
 															if (!empty($articulos))
 																foreach($articulos as $articulo) {
+																	
 																	$desc_promo = '';
-																	$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-																	$nmp=count($mp);
-																	if($nmp==2){
-																		$desc_promo = $mp[0];		
-																	}	
-																	else if($nmp==3){
-																		$desc_promo = $mp[1];
-																	}
+																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+																		$nmp=count($mp);
+																		if($nmp==2){
+																			$desc_promo = $mp[0];		
+																		}	
+																		else if($nmp==3){
+																			$desc_promo = $mp[1];
+																		}
+																	}				
+																	else{
+																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+																	}																																															
 																																		
-												  				    $mensaje.="<tr>
-																		           <td colspan='2'>".$desc_promo."<br />".
-																		           $articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']."
-																		           </td>	
-																				   <td>&nbsp;</td>				
-																				   <td align='right'>$".	
-																				       number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				   </td>
-																				</tr>";														
+												  				 $mensaje.="<tr>
+																			    <td colspan='2' class='instrucciones'>".$desc_promo;
+																					
+																					if(!empty($articulo['descripcion_issue'])){
+																						if( strstr($articulo['descripcion_issue'], '|' )){
+																							$mp=explode('|',$articulo['descripcion_issue']);
+																							$nmp=count($mp);
+																							if($nmp==2){
+																								$desc_promo = $mp[0];		
+																							}	
+																							else if($nmp==3){
+																								$desc_promo = $mp[1];
+																							}
+																						}				
+																						else{
+																							$desc_promo = $articulo['descripcion_issue'];
+																						}	
+																						$mensaje.="<br />".$desc_promo;												
+																					}
+																					else{
+																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
+																						if(!empty($articulo['medio_entregaVc'])){
+																							$mensaje.=", " . $articulo['medio_entregaVc']; 
+																						} 
+																					}																												 
+																		        	
+																	$mensaje.="      </td>	
+																				<td>&nbsp;</td>				
+																				<td align='right' class='instrucciones'>$".	
+																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
+																				</td>
+																			</tr>";		
+																	
+																																													  				   													
 																}																																																																																	
 														}
 																										   	       										   	       
@@ -1024,8 +1131,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1067,8 +1175,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1119,8 +1228,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1205,7 +1315,7 @@ class Orden_Compra extends CI_Controller {
 		//echo "<br/>cliente: ". $id_cliente ;
 		
 		if ($id_compra) {
-			
+			$this->session->set_userdata('id_compra', $id_compra);	
 			///artiulos de la promoción
 			$articulos_compra = array();
 			$articulos_compra = $this->orden_compra_model->obtener_articulos_promocion($id_promocion);
@@ -1278,6 +1388,7 @@ class Orden_Compra extends CI_Controller {
 			return $id_compra;
 		} else {
 			//Error en el registro de la compra
+			$this->session->unset_userdata('id_compra');	
 			return FALSE;
 		}
 		
@@ -1352,7 +1463,7 @@ class Orden_Compra extends CI_Controller {
 	private function enviar_correo($asunto, $mensaje) {
 		$headers = "Content-type: text/html; charset=UTF-8\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-	    $headers .= "From: GexWeb<soporte@expansion.com.mx>\r\n";
+	    $headers .= "From: Pagos Grupo Expansión<soporte@expansion.com.mx>\r\n";
 		
 		$email = $this->session->userdata('email');
 					

@@ -11,13 +11,20 @@ class Api extends CI_Controller {
         // Call the Model constructor
         parent::__construct();		
 		$this->load->model('api_model', 'api_model', true);
-		$this->key='AC35-4564-AE4D-0B881031F295';					
+		$this->key='AC35-4564-AE4D-0B881031F295';										
     }
 	
 	public function index(){												
 	}
 	
-	public function listar($sitio= "", $canal= "", $promocion= "", $formato= ""){								
+	public function listar($sitio= "", $canal= "", $promocion= "", $formato= ""){
+		//limpiar datos en session 
+		foreach (array_keys($this->session->userdata) as $key){			
+			if(($key!='ip_address') && ($key!='session_id') && ($key!='user_agent') && ($key!='last_activity')){
+				$this->session->unset_userdata($key);	
+			}			    		
+		} 
+													
 		$data['title']='Promociones';		
 		$data['listar'] = TRUE;
 		$data['detalle'] = FALSE;						
@@ -33,11 +40,14 @@ class Api extends CI_Controller {
 			else if(((!is_numeric($cad))|| (strlen($cad)>2)) && ($_POST) ){				
 				//echo $cad;
 				//$file_path = '/var/www/html/pagos/application/controllers/log.txt';
+				/*
 				$file_path = './utils/log.txt';
 				$file=fopen($file_path, 'a');
 				fwrite($file,json_encode($_POST)."--".$cad."--".time()."--".$_SERVER['REMOTE_ADDR']."\n");
 				fclose($file);
 				//print_r($_POST);
+				*/
+				
 				echo $this->obtener_url_promo($cad, $_POST);
 				exit();				
 			}
@@ -50,10 +60,59 @@ class Api extends CI_Controller {
 				$datos_decrypt=unserialize($datos_decrypt);
 				
 				if($_POST){
+					// como viene de la tienda y el id_sitio de la tienda es 0 entonces asignamos cero a la siguiente variable
+					$sitio=3;
 					echo "<pre>";
 						print_r($_POST);
 						print_r($datos_decrypt);						
-					echo "</pre>";
+					echo "</pre>";					
+					//
+					if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
+						//obtengo la llave privada en la DB
+						$guidxdb=$this->api_model->obtener_sitio($sitio)->row();						
+						//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
+						if($guidxdb->private_KeyVc==$_POST['guidx']){
+							echo "pasa";
+							exit;
+							$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
+													   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
+													   			'guidz'=>$_POST['guidz'],
+													   			$datos_decrypt												   			
+													   )
+												 );
+							echo "<pre>";						
+								print_r($this->session->all_userdata());						
+							echo "</pre>";						 
+							exit;
+							// si vienen los datos de login de la tienda manda el formuario de acceso					 								
+							if(array_key_exists('datos_login', $_POST)){							
+								$dat_log=$this->decrypt($_POST['datos_login'], $this->key);
+								$mp=explode('|',$dat_log);
+								echo "  <form name='inicio_sesion' action='".site_url('login')."' method='post'>
+									    	<input type='text' name='email' value='".$mp[0]."' style='display: none' />
+									    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
+									    	<input type='text' name='password' value='".$mp[1]."' style='display: none' />
+									    	<input type='submit' name='enviar' value='Iniciar sesion' style='display: none' />
+										</form>";
+								echo "<script>document.inicio_sesion.submit();</script>";
+							}
+							else{
+								//si no hay datos de uauario redirige a la tienda a login
+								redirect('login');	
+							}											 		 											
+						}
+						else{
+							echo "no pasa";
+							exit;
+							$this->session->unset_userdata();
+							redirect('login');	
+						}																 	
+					}		
+					else{					
+						$this->session->unset_userdata();
+						redirect('login');					
+					}
+					//										
 				}												
 				exit();
 			}
@@ -183,15 +242,30 @@ class Api extends CI_Controller {
 					$guidxdb=$this->api_model->obtener_sitio($sitio)->row();
 					//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
 					if($guidxdb->private_KeyVc==$_POST['guidx']){
-						$this->session->set_userdata(array('id_sitio'=>$sitio, 
-												   'id_canal'=>$canal, 
-												   'id_promocion'=>$promocion,
-												   'guidx'=>$_POST['guidx'],
-												   'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
-												   'guidz'=>$_POST['guidz']
+						$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
+												   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
+												   			'guidz'=>$_POST['guidz'],
+												   			array('id_sitio'=>$sitio, 
+												   				  'id_canal'=>$canal, 
+												   				  'id_promocion'=>$promocion)												   			
 												   )
-											 );				 
-						redirect('login');					 
+											 );
+						// si vienen los datos de login de la tienda manda el formuario de acceso					 								
+						if(array_key_exists('datos_login', $_POST)){							
+							$dat_log=$this->decrypt($_POST['datos_login'], $this->key);
+							$mp=explode('|',$dat_log);
+							echo "  <form name='inicio_sesion' action='".site_url('login')."' method='post'>
+								    	<input type='text' name='email' value='".$mp[0]."' style='display: none' />
+								    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
+								    	<input type='text' name='password' value='".$mp[1]."' style='display: none' />
+								    	<input type='submit' name='enviar' value='Iniciar sesion' style='display: none' />
+									</form>";
+							echo "<script>document.inicio_sesion.submit();</script>";
+						}
+						else{
+							//si no hay datos de uauario redirige a la tienda a login
+							redirect('login');	
+						}											 		 											
 					}
 					else{
 						$this->session->unset_userdata();
@@ -257,7 +331,7 @@ class Api extends CI_Controller {
 	}	
 			
 	private function formato($formato, $data){		
-		if((empty($formato)) || ($formato=='json')){			
+		if((empty($formato)) || ($formato=='json')){						
 			echo json_encode($data);					 																	
 		}
 		else{

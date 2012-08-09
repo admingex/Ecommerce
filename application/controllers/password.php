@@ -70,7 +70,7 @@ class Password extends CI_Controller {
 	
 					$headers="Content-type: text/html; charset=UTF-8\r\n";
 	                $headers.="MIME-Version: 1.0\r\n";
-				    $headers .= "From: GexWeb<servicioaclientes@expansion.com.mx>\r\n";       
+				    $headers .= "From: Pagos Grupo Expansión<servicioaclientes@expansion.com.mx>\r\n";       
 					$mensaje="<html>
 							  <body>
 							  	   <div>Hola,
@@ -88,7 +88,7 @@ class Password extends CI_Controller {
 							  	   	   	   <a href='https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."'>https://pagos.grupoexpansion.mx/password/verificar/".$p."/".$encript."</a><br /><br />
 							  	   	   	   Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu<br />
 							  	   	   	   navegador, o reescribirla ahí.<br />
-							  	   	   	   2. Ingresa la clave: ".$p."<br />
+							  	   	   	   2. Si se solicita ingresa la clave: ".$p.", caso contrario ir al paso 3<br />
 							  	   	   	   Esta no es una contraseña, pero la necesitarás para crear una nueva contraseña.<br />
 							  	   	   	   3. Sigue las instrucciones que aparecen en la pantalla para crear tu nueva contraseña.
 							  	   	   
@@ -162,7 +162,7 @@ class Password extends CI_Controller {
 			if($this->password_model->historico_clave($id_clienteIn, $email, $_POST['password'])!=1){				
 				$this->password_model->cambia_password($id_clienteIn, $email,$_POST['password']);
 				$this->load->helper('date');
-				$t= mdate('%Y/%m/%d %h:%i:%s',time());
+				$t= mdate('%Y/%m/%d %h:%i:%s',time());				
 				$this->password_model->guarda_actividad_historico($id_clienteIn, $password, self::$TIPO_ACTIVIDAD['CAMBIO_PASSWORD'], $t);
 				//creación de la sesión
 				$array_session = array(
@@ -172,10 +172,16 @@ class Password extends CI_Controller {
 									'email' 	=> $email
 								 );				
 				$this->session->set_userdata($array_session);
-				$this->login_registro_model->desbloquear_cuenta($id_clienteIn);												
-				$this->password_model->guarda_actividad_historico($id_clienteIn, '', self::$TIPO_ACTIVIDAD['DESBLOQUEO'], $t);				
+				$this->login_registro_model->desbloquear_cuenta($id_clienteIn);													
 				//redirect('forma_pago');
-				redirect("login", "location", 303);	
+				echo "  <form name='inicio_sesion' action='".site_url('login')."' method='post'>
+								    	<input type='text' name='email' value='".$email."' style='display: none' />
+								    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
+								    	<input type='text' name='password' value='".$_POST['password']."' style='display: none' />
+								    	<input type='submit' name='enviar' value='Iniciar sesion' />
+									</form>";
+							echo "<script>document.inicio_sesion.submit();</script>";
+				//redirect("login", "location", 303);	
 			}																						
 			else{					
 				$this->registro_errores['password']='<div class="validation_message">Por favor ingresa una contraseña que no coincida con ninguna de las últimas ocho contraseñas usadas</div>';
@@ -192,8 +198,8 @@ class Password extends CI_Controller {
 	}
 	
 	public function verificar($passtemp= '', $datos_continuar=''){
-		$data['title'] = "Escribe la clave para crear una nueva contraseña";
-		$data['subtitle'] = "Escribe la clave para crear una nueva contraseña";
+		$data['title'] = "Crea una nueva contraseña";
+		$data['subtitle'] = "Crea una nueva contraseña";
 		$data['mensaje']='';	
 		$data['verificar']=TRUE;
 		$data['cambiar']=FALSE;	

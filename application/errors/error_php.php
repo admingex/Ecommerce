@@ -56,7 +56,10 @@
     	</div>    	    	
     	<div class="textos-error">
     		<div class="tipo-error">
-    			Error	<?php //echo $heading.$message; ?>
+    			Error	<?php echo $severity; ?></p>
+<p>Message:  <?php echo $message; ?></p>
+<p>Filename: <?php echo $filepath; ?></p>
+<p>Line Number: <?php echo $line; ?>
     		</div>
     		<div id='pleca-2'></div>
     		<div class="detalle-error">

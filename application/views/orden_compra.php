@@ -63,19 +63,49 @@
 						if ($this->session->userdata('promocion')) 																	 
 							if (!empty($articulos))
 								foreach($articulos as $articulo) {
+									
 				?>
 				<tr>
 					<td colspan="2" class="titulo-promo-negro2">											
 						<?php
-							$mp = explode('|',$this->session->userdata('promocion')->descripcionVc);
+							if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
+								$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
+								$nmp=count($mp);
+								if($nmp==2){
+									$desc_promo = $mp[0];		
+								}	
+								else if($nmp==3){
+									$desc_promo = $mp[1];
+								}
+							}				
+							else{
+								$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+							}
+							echo $desc_promo;		
+							
+							if(!empty($articulo['descripcion_issue'])){
+								if( strstr($articulo['descripcion_issue'], '|' )){
+									$mp=explode('|',$articulo['descripcion_issue']);
 									$nmp=count($mp);
-									if ($nmp==2) {
-										echo $mp[0];		
+									if($nmp==2){
+										$desc_promo = $mp[0];		
 									}	
-									else if($nmp==3) {
-										echo $mp[1];
-							} 
-							echo "<br />".$articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']; 
+									else if($nmp==3){
+										$desc_promo = $mp[1];
+									}
+								}				
+								else{
+									$desc_promo = $articulo['descripcion_issue'];
+								}	
+								echo "<br />".$desc_promo;												
+							}
+							else{
+								echo "<br />" . $articulo['tipo_productoVc'];
+								if(!empty($articulo['medio_entregaVc'])){
+									echo ", " . $articulo['medio_entregaVc']; 
+								}  
+							}												
+							//echo "<br />".$articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']; 
 						?>
 					</td>	
 					<td class="titulo-promo-rojo2" align="right">$</td>				

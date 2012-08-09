@@ -68,7 +68,15 @@ class Login extends CI_Controller {
     }
 	
 	public function index()
-	{
+	{		
+		
+		echo "<pre>";
+			print_r($this->session->all_userdata());
+		echo "</pre>";	
+		exit;
+						
+						
+						
 		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo.	
 		$this->session->unset_userdata('sitio');
 		$datsit=$this->api_model->obtener_sitio($this->session->userdata('id_sitio'));		
@@ -105,7 +113,7 @@ class Login extends CI_Controller {
 						$id_cliente = $mail_cte->row()->id_clienteIn;						
 						if($fecha_lock!='0000-00-00 00:00:00'){
 							if($this->tiempo_desbloqueo($fecha_lock)){
-								$this->login_registro_model->desbloquear_cuenta($id_cliente);
+								$this->login_registro_model->desbloquear_cuenta($id_cliente);								
 								$t= mdate('%Y/%m/%d %h:%i:%s',time());								
 								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['DESBLOQUEO'], $t);							
 							}
@@ -146,7 +154,8 @@ class Login extends CI_Controller {
 							else{
 								$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";																			
 								$t= mdate('%Y/%m/%d %h:%i:%s',time());								
-								$this->password_model->guarda_actividad_historico($id_cliente, $this->password, self::$TIPO_ACTIVIDAD['ACCESO_INCORRECTO'], $t);							
+								$this->password_model->guarda_actividad_historico($id_cliente, $this->password, self::$TIPO_ACTIVIDAD['ACCESO_INCORRECTO'], $t);
+								$t= mdate('%Y/%m/%d %h:%i:%s',time());									
 								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
 							}
 						}
@@ -154,6 +163,7 @@ class Login extends CI_Controller {
 							if($num_intentos==3){
 								$t= mdate('%Y/%m/%d %h:%i:%s',time());	
 								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['BLOQUEO'], $t);
+								$t= mdate('%Y/%m/%d %h:%i:%s',time());		
 								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
 							}
 							$this->login_errores['user_login'] = "Ha excedido el número máximo de intentos permitidos para iniciar sesión.<br />
@@ -231,11 +241,19 @@ class Login extends CI_Controller {
 			$i=0;
 			foreach ($respromo['articulos'] as $res) {
 			if($i<6){
+				$desc_issue='';
+				if(!empty($res['issue_id'])){
+					$issue=$this->api_model->obtener_issue($res['issue_id']);
+					$desc_issue = $issue->row()->descripcionVc; 
+				}
 				$temp[] = array('tarifaDc' 			=> 	$res['tarifaDc'], 
 							'tipo_productoVc' 	=> 	$res['tipo_productoVc'], 
 							'medio_entregaVc'	=>	$res['medio_entregaVc'], 
 							'monedaVc'	=>	$res['monedaVc'], 
-							'requiere_envioBi'	=>	(bool)$res['requiere_envioBi']);
+							'requiere_envioBi'	=>	(bool)$res['requiere_envioBi'],
+							'issue_id'	=>	$res['issue_id'],
+							'descripcion_issue'	=>	$desc_issue,
+							);														
 				}	
 				$i++;
 			}				
