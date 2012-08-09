@@ -62,28 +62,35 @@ class Api extends CI_Controller {
 				if($_POST){
 					// como viene de la tienda y el id_sitio de la tienda es 0 entonces asignamos cero a la siguiente variable
 					$sitio=3;
+					/*
 					echo "<pre>";
 						print_r($_POST);
 						print_r($datos_decrypt);						
-					echo "</pre>";					
-					//
+					echo "</pre>";	
+					*/				
+					
 					if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
 						//obtengo la llave privada en la DB
 						$guidxdb=$this->api_model->obtener_sitio($sitio)->row();						
 						//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
-						if($guidxdb->private_KeyVc==$_POST['guidx']){
-							echo "pasa";
-							exit;
+						if($guidxdb->private_KeyVc==$_POST['guidx']){							
 							$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
 													   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
 													   			'guidz'=>$_POST['guidz'],
-													   			$datos_decrypt												   			
+													   			'promociones'=>$datos_decrypt												   			
 													   )
 												 );
+							/*					 
 							echo "<pre>";						
 								print_r($this->session->all_userdata());						
-							echo "</pre>";						 
+							echo "</pre>";								
+								
+							foreach($this->session->userdata('promociones') as $v){
+								echo "<br />".$v['id_sitio']."--".$v['id_canal']."--".$v['id_promocion'];
+							}		
 							exit;
+							*/		
+													 							
 							// si vienen los datos de login de la tienda manda el formuario de acceso					 								
 							if(array_key_exists('datos_login', $_POST)){							
 								$dat_log=$this->decrypt($_POST['datos_login'], $this->key);
@@ -101,9 +108,7 @@ class Api extends CI_Controller {
 								redirect('login');	
 							}											 		 											
 						}
-						else{
-							echo "no pasa";
-							exit;
+						else{							
 							$this->session->unset_userdata();
 							redirect('login');	
 						}																 	
@@ -112,7 +117,7 @@ class Api extends CI_Controller {
 						$this->session->unset_userdata();
 						redirect('login');					
 					}
-					//										
+													
 				}												
 				exit();
 			}
@@ -245,9 +250,10 @@ class Api extends CI_Controller {
 						$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
 												   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
 												   			'guidz'=>$_POST['guidz'],
-												   			array('id_sitio'=>$sitio, 
+												   			'promociones'=>
+												   			array(array('id_sitio'=>$sitio, 
 												   				  'id_canal'=>$canal, 
-												   				  'id_promocion'=>$promocion)												   			
+												   				  'id_promocion'=>$promocion))	  												   			
 												   )
 											 );
 						// si vienen los datos de login de la tienda manda el formuario de acceso					 								

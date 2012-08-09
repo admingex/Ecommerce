@@ -1,5 +1,11 @@
 <section id="detalle-promocion">
 	<?php
+	
+	echo "<pre>";
+		print_r($this->session->all_userdata());
+	echo "</pre>";		
+		
+	/*
 		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
 			
 			$articulos = $this->session->userdata('articulos');
@@ -8,6 +14,7 @@
 				foreach ($articulos as $a) 
 					$total += $a['tarifaDc'];
 			}
+	*/		
 	?>	
 	
 		<div class="img-producto-compra"></div>
@@ -15,7 +22,7 @@
 			<div class="izquierda">
 				<div class="titulo-promo-rojo">Est&aacute;s comprando:</div>
 				<div class="titulo-promo-negro">
-					<?php 
+					<?php /*
 						if ($this->session->userdata('promocion'))
 								 			
 								if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
@@ -62,7 +69,8 @@
 											} 											
 										}
 								    	
-								   } 	
+								   } 
+					*/			   	
 					?>														
 				</div>					
 			</div>
@@ -71,13 +79,13 @@
 					Total
 				</div>
 				<div class="titulo-promo-negro">
-					$<?php echo $total."&nbsp;".$articulo['monedaVc'];?>
+					$<?php //echo $total."&nbsp;".$articulo['monedaVc'];?>
 				</div>									
 			</div>					
 		</div>
 																			
 	<?php 
-		} 
+		//} 
 	?>
 </section>
 <div id="pleca-punteada"></div>
