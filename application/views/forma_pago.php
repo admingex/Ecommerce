@@ -8,13 +8,7 @@
 <div id="pleca-punteada"></div>
 <section class="contenedor">
 	<?php
-		$total_pagar=0;
-		/*
-		foreach($this->session->userdata('articulos') as $articulo){
-			$total_pagar=$total_pagar+$articulo['tarifaDc'];
-		}
-		 */
-		
+		$total_pagar=0;		
 		if (isset($vista_detalle)) {	//Tipo de detalle a desplegar
 			if($vista_detalle == 'tc') {
 				include ('forma_pago/editar.html'); 	

@@ -1,28 +1,20 @@
-<section id="detalle-promocion">
-	<?php
-	
-	echo "<pre>";
-		print_r($this->session->all_userdata());
-	echo "</pre>";		
-		
-	/*
-		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
-			
-			$articulos = $this->session->userdata('articulos');
-			$total = 0;
-			if (!empty($articulos)) {
-				foreach ($articulos as $a) 
-					$total += $a['tarifaDc'];
-			}
-	*/		
-	?>	
-	
+<section id="detalle-promocion">	
 		<div class="img-producto-compra"></div>
 		<div class="producto-compra">
 			<div class="izquierda">
 				<div class="titulo-promo-rojo">Est&aacute;s comprando:</div>
 				<div class="titulo-promo-negro">
-					<?php /*
+					<?php 
+						echo $detalle_promociones['descripcion_promocion'];
+						foreach($detalle_promociones['articulo_promocion'] as $articulo){
+							echo "<br />".$articulo;							
+						}						
+						/*
+						echo "<pre>";
+							print_r($detalle_promociones['descripciones_promocion']);
+						echo "</pre>";
+						*/
+					/*
 						if ($this->session->userdata('promocion'))
 								 			
 								if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
@@ -70,7 +62,11 @@
 										}
 								    	
 								   } 
-					*/			   	
+					*/	
+					
+					if($detalle_promociones['numero_promociones']>1){
+						echo "<br />y ".($detalle_promociones['numero_promociones']-1)." artículos mas";
+					}		   	
 					?>														
 				</div>					
 			</div>
@@ -79,7 +75,7 @@
 					Total
 				</div>
 				<div class="titulo-promo-negro">
-					$<?php //echo $total."&nbsp;".$articulo['monedaVc'];?>
+					$<?php echo $detalle_promociones['total_pagar'];?>
 				</div>									
 			</div>					
 		</div>
