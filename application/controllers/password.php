@@ -178,7 +178,7 @@ class Password extends CI_Controller {
 								    	<input type='text' name='email' value='".$email."' style='display: none' />
 								    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
 								    	<input type='text' name='password' value='".$_POST['password']."' style='display: none' />
-								    	<input type='submit' name='enviar' value='Iniciar sesion' />
+								    	<input type='submit' name='enviar' value='Iniciar sesion' style='display: none' />
 									</form>";
 							echo "<script>document.inicio_sesion.submit();</script>";
 				//redirect("login", "location", 303);	

@@ -40,115 +40,89 @@
 	</div>
 	
 	<div class="contenedor-blanco">
-		<table width="100%" cellpadding="0" cellspacing="0" >
-			<thead>
-				<th>
+		<table cellpadding="0" cellspacing="0">
+			<thead>				
+				<th colspan="3">
 					Productos en la orden 
 				</th>
-				<th colspan="3">
-					&nbsp;
-				</th>	
+				<th>&nbsp;</th>				
 			</thead>
-			<tbody class="contenedor-gris"> 				
-				<?php
-					if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
-						$articulos = $this->session->userdata('articulos');
-						$total = 0;
-						if (!empty($articulos)) {
-							foreach ($articulos as $a) 
-								$total += $a['tarifaDc'];
-						}
-				?>	
-				<?php 
-						if ($this->session->userdata('promocion')) 																	 
-							if (!empty($articulos))
-								foreach($articulos as $articulo) {
-									
-				?>
-				<tr>
-					<td colspan="2" class="titulo-promo-negro2">											
-						<?php
-							if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
-								$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-								$nmp=count($mp);
-								if($nmp==2){
-									$desc_promo = $mp[0];		
-								}	
-								else if($nmp==3){
-									$desc_promo = $mp[1];
-								}
-							}				
-							else{
-								$desc_promo = $this->session->userdata('promocion')->descripcionVc;
+			<tbody class="contenedor-gris"> 
+				<?php					
+					foreach($detalle_promociones['descripciones_promocion'] as $promociones){
+						if( strstr($promociones['promocion']->descripcionVc, '|' )){
+							$mp=explode('|',$promociones['promocion']->descripcionVc);
+							$nmp=count($mp);
+							if($nmp==2){
+								$desc_promo = $mp[0];		
+							}	
+							else if($nmp==3){
+								$desc_promo = $mp[1];
 							}
-							echo $desc_promo;		
-							
-							if(!empty($articulo['descripcion_issue'])){
-								if( strstr($articulo['descripcion_issue'], '|' )){
-									$mp=explode('|',$articulo['descripcion_issue']);
-									$nmp=count($mp);
-									if($nmp==2){
-										$desc_promo = $mp[0];		
-									}	
-									else if($nmp==3){
-										$desc_promo = $mp[1];
-									}
-								}				
-								else{
-									$desc_promo = $articulo['descripcion_issue'];
-								}	
-								echo "<br />".$desc_promo;												
+						}				
+						else{
+							$desc_promo = $promociones['promocion']->descripcionVc;
+						}											
+						
+						foreach($promociones['articulos'] as $articulo){
+							echo "<tr>
+								<td colspan='2' class='titulo-promo-negro2'>".$desc_promo;
+							if($articulo['issue_id']){
+								foreach($detalle_promociones['tipo_productoVc'] as $k => $v){
+									if($k==$articulo['issue_id']){
+										if( strstr($v, '|' )){
+											$mp=explode('|',$v);
+											$nmp=count($mp);
+											if($nmp==2){
+												$desc_art = $mp[0];		
+											}	
+											else if($nmp==3){
+												$desc_art = $mp[1];
+											}
+										}				
+										else{
+											$desc_art = $v;
+										}
+									}									 
+								}																								
 							}
 							else{
-								echo "<br />" . $articulo['tipo_productoVc'];
-								if(!empty($articulo['medio_entregaVc'])){
-									echo ", " . $articulo['medio_entregaVc']; 
-								}  
-							}												
-							//echo "<br />".$articulo['tipo_productoVc'] . ", " . $articulo['medio_entregaVc']; 
-						?>
-					</td>	
-					<td class="titulo-promo-rojo2" align="right">$</td>				
-					<td class="titulo-promo-rojo2" align="right">	
-						<?php echo number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc'];?>										
-					</td>
-				</tr>	
-					<?php
-						}
-					?>				
-				<tr>
-					<td class="titulo-promo-negro2">
-						&nbsp;
-					</td>
-					<td class="titulo-promo-negro2" align="right">
+								$desc_art=$articulo['tipo_productoVc'];
+							}
+							echo "<div>".$desc_art."</div>
+								</td>
+								<td class='titulo-promo-rojo2' align='right'>$
+								</td>
+								<td class='titulo-promo-rojo2' align='right'>".number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$detalle_promociones['moneda']."
+								</td>
+								</tr>";							
+						}								
+																																										
+					}					
+				?>				
+				<tr>					
+					<td class="titulo-promo-negro2" align="right" colspan="2">
 						IVA
 					</td>
 					<td class="titulo-promo-rojo2" align="right">
 						$						
 					</td>
 					<td class="titulo-promo-rojo2" align="right">
-						0.00 <?php echo $articulo['monedaVc'];?>
+						0.00 <?php echo $detalle_promociones['moneda'];?>
 					</td>
 				</tr>
 				
-				<tr>
-					<td class="titulo-promo-negro2">
-						&nbsp;
-					</td>
-					<td class="titulo-promo-negro2" align="right">
+				<tr>					
+					<td class="titulo-promo-negro2" align="right" colspan="2" style="width: 80%">
 						Total
 					</td>
-					<td class="titulo-promo-rojo2" style="width: 15px;" align="right">
+					<td class="titulo-promo-rojo2" style="width: 5%;" align="right">
 						$						
 					</td>
-					<td class="titulo-promo-rojo2" align="right" style="width: 40px">
-						<?php echo number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']; ?>
+					<td class="titulo-promo-rojo2" style="width: 150px" align="right">
+						<?php echo number_format(($detalle_promociones['total_pagar']),2,'.',',')."&nbsp;".$detalle_promociones['moneda']; ?>
 					</td>
-				</tr>												
-																																																		
-					<?php
-					}
-					?>										
+				</tr>																																																																											
 				<tr>
 					<td colspan="4" class="titulo-promo-negro2" align="right">						
 						<input type="submit" id="enviar" name="enviar" value="&nbsp;" class="finalizar_compra"/>						

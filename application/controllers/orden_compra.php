@@ -1519,7 +1519,10 @@ class Orden_Compra extends CI_Controller {
 	{	
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
-		$this->load->view('templates/menu.html', $data);		
+		$this->load->view('templates/menu.html', $data);
+		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
+			$data['detalle_promociones']=$this->api->obtiene_articulos_y_promociones();																							
+		}		
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
 	}

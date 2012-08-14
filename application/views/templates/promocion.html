@@ -4,69 +4,51 @@
 			<div class="izquierda">
 				<div class="titulo-promo-rojo">Est&aacute;s comprando:</div>
 				<div class="titulo-promo-negro">
-					<?php 
-						echo $detalle_promociones['descripcion_promocion'];
+					<?php
+						////**Muestra el detalle de la promocion**//// 
+						if( strstr($detalle_promociones['descripcion_promocion'], '|' )){
+							$mp=explode('|',$detalle_promociones['descripcion_promocion']);
+							$nmp=count($mp);
+							if($nmp==2){
+								$desc_promo = $mp[0];		
+							}	
+							else if($nmp==3){
+								$desc_promo = $mp[1];
+							}
+						}				
+						else{
+							$desc_promo = $detalle_promociones['descripcion_promocion'];
+						}
+						echo $desc_promo;
+						////****////
+												
+						////**Muestra los articulos en la promocion**////
 						foreach($detalle_promociones['articulo_promocion'] as $articulo){
-							echo "<br />".$articulo;							
-						}						
+							if( strstr($articulo, '|' )){
+								$mp=explode('|',$articulo);
+								$nmp=count($mp);
+								if($nmp==2){
+									$desc_art = $mp[0];		
+								}	
+								else if($nmp==3){
+									$desc_art = $mp[1];
+								}
+							}				
+							else{
+								$desc_art = $articulo;
+							}
+							
+							echo "<br />".$desc_art;							
+						}
+						////****////	
+						if($detalle_promociones['numero_promociones']>1){
+							echo "<br /><a href='#' id='mostrar_promo'>y ".($detalle_promociones['numero_promociones']-1)." artículos mas</a>";								
+						}					
 						/*
 						echo "<pre>";
 							print_r($detalle_promociones['descripciones_promocion']);
 						echo "</pre>";
-						*/
-					/*
-						if ($this->session->userdata('promocion'))
-								 			
-								if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
-									$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-									$nmp=count($mp);
-									if($nmp==2){
-										$desc_promo = $mp[0];		
-									}	
-									else if($nmp==3){
-										$desc_promo = $mp[1];
-									}
-								}				
-								else{
-									$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-								}
-								
-								if(isset($desc_promo)){									
-									$this->session->set_userdata('descrpcion_promocion', $desc_promo);
-									echo $desc_promo;
-								}
-																						  																			
-								if (!empty($articulos))
-									foreach($articulos as $articulo)  {                                   
-										if(!empty($articulo['descripcion_issue'])){
-											if( strstr($articulo['descripcion_issue'], '|' )){
-												$mp=explode('|',$articulo['descripcion_issue']);
-												$nmp=count($mp);
-												if($nmp==2){
-													$desc_promo = $mp[0];		
-												}	
-												else if($nmp==3){
-													$desc_promo = $mp[1];
-												}
-											}				
-											else{
-												$desc_promo = $articulo['descripcion_issue'];
-											}	
-											echo "<br />".$desc_promo;												
-										}
-										else{
-											echo "<br />" . $articulo['tipo_productoVc'];
-											if(!empty($articulo['medio_entregaVc'])){
-												echo ", " . $articulo['medio_entregaVc']; 
-											} 											
-										}
-								    	
-								   } 
-					*/	
-					
-					if($detalle_promociones['numero_promociones']>1){
-						echo "<br />y ".($detalle_promociones['numero_promociones']-1)." artículos mas";
-					}		   	
+						*/																   	
 					?>														
 				</div>					
 			</div>
@@ -75,7 +57,7 @@
 					Total
 				</div>
 				<div class="titulo-promo-negro">
-					$<?php echo $detalle_promociones['total_pagar'];?>
+					$<?php echo number_format($detalle_promociones['total_pagar'],2,'.',',')."&nbsp;".$detalle_promociones['moneda'];?>
 				</div>									
 			</div>					
 		</div>
@@ -84,4 +66,80 @@
 		//} 
 	?>
 </section>
+	<script type="text/javascript">
+	$(function(){
+		$('#dialog-modal').dialog({
+			position:['top', 120],
+			modal: true,
+			show: 'slide',
+			width:'400px',
+			stack: true,
+			autoOpen: false,
+			//esta parte hace que se cierre el popup al dar click en cualquier parte fuera del mismo
+			open: function(){
+            	$('.ui-widget-overlay').bind('click',function(){
+                	$('#dialog-modal').dialog('close');
+            	})
+        	}	
+																
+		});		
+		$( "#mostrar_promo" ).click(function() {
+			$( "#dialog-modal" ).dialog( "open" );
+			return false;
+		});																					
+	});
+	</script>	
+	<div>
+		<div id="dialog-modal" title="Estás comprando:">
+			<div style='font-size: 12px'>
+				<?php					
+					foreach($detalle_promociones['descripciones_promocion'] as $promociones){
+						if( strstr($promociones['promocion']->descripcionVc, '|' )){
+							$mp=explode('|',$promociones['promocion']->descripcionVc);
+							$nmp=count($mp);
+							if($nmp==2){
+								$desc_promo = $mp[0];		
+							}	
+							else if($nmp==3){
+								$desc_promo = $mp[1];
+							}
+						}				
+						else{
+							$desc_promo = $promociones['promocion']->descripcionVc;
+						}												
+						
+						foreach($promociones['articulos'] as $articulo){
+							echo "<div style='clear: both'>".$desc_promo."</div>";
+							if($articulo['issue_id']){
+								foreach($detalle_promociones['tipo_productoVc'] as $k => $v){
+									if($k==$articulo['issue_id']){
+										if( strstr($v, '|' )){
+											$mp=explode('|',$v);
+											$nmp=count($mp);
+											if($nmp==2){
+												$desc_art = $mp[0];		
+											}	
+											else if($nmp==3){
+												$desc_art = $mp[1];
+											}
+										}				
+										else{
+											$desc_art = $v;
+										}
+									}									 
+								}																								
+							}
+							else{
+								$desc_art=$articulo['tipo_productoVc'];
+							}
+							echo "<div style='float: left; margin-bottom: 5px; font-weight: bold'>".$desc_art."</div><div style='float: right'>".number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$detalle_promociones['moneda']."</div>";							
+						}																																							
+					}					
+					echo "<div style='clear: both; float: right'>Total:&nbsp;&nbsp;$ ".number_format(($detalle_promociones['total_pagar']),2,'.',',')."&nbsp;".$detalle_promociones['moneda']."</div>";
+					
+				?>
+			</div>
+		</div>
+	</div>	
+	
 <div id="pleca-punteada"></div>

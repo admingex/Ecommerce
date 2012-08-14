@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+include ('api.php');
+
 class Direccion_Facturacion extends CI_Controller {
 	var $title = 'Direcci&oacute;n de Facturaci&oacute;n'; 		
 	var $subtitle = 'Direcci&oacute;n de Facturaci&oacute;n'; 	
@@ -31,6 +33,9 @@ class Direccion_Facturacion extends CI_Controller {
 		
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
+		
+		$this->api= new Api();
+		
     }
 
 	public function index() {		
@@ -505,7 +510,8 @@ class Direccion_Facturacion extends CI_Controller {
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/menu.html', $data);
-		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {					
+		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
+			$data['detalle_promociones']=$this->api->obtiene_articulos_y_promociones();					
 			$this->load->view('templates/promocion.html', $data);															
 		}
 		$this->load->view($folder.'/'.$page, $data);

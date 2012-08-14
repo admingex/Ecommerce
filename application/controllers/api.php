@@ -60,8 +60,8 @@ class Api extends CI_Controller {
 				$datos_decrypt=unserialize($datos_decrypt);
 				
 				if($_POST){
-					// como viene de la tienda y el id_sitio de la tienda es 0 entonces asignamos cero a la siguiente variable
-					$sitio=3;
+					// como viene de la tienda y el id_sitio de la tienda es 3 entonces asignamos tres a la siguiente variable para IDC es 1
+					$sitio=1;
 					/*
 					echo "<pre>";
 						print_r($_POST);
@@ -595,6 +595,7 @@ class Api extends CI_Controller {
 		}		
 	}		
 	
+	## funcion que devuelve los parametros sitio, canal, promocion en un JSON para IDC mediante la busqueda en el campo descripcionVc en la tabla IntIssue
 	public function obtener_url_promo($cad, $post){
 		$url=FALSE;
 		$sitio=$this->api_model->obtener_sitio_guidx($post['guidx']);
@@ -612,6 +613,59 @@ class Api extends CI_Controller {
 		}				
 		return $url;
 	}
+	
+	public function obtiene_articulos_y_promociones(){
+		$datos=array();
+		$total = 0;
+		$det_promo=0;
+		$datos['numero_promociones']=count($this->session->userdata('promociones'));
+		$datos['tipo_productoVc']=array();	
+		foreach($this->session->userdata('promociones') as $promocion){				
+			// obtiene las promociones y los articulos que contienen				 
+			$respromo = $this->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);
+			if($det_promo==0){
+				/*
+				echo "<pre>";
+					print_r($respromo['promocion']);					
+				echo "</pre>";
+				*/	
+				//obtiene 			
+				$datos['descripcion_promocion'] = $respromo['promocion']->descripcionVc;
+				foreach($respromo['articulos'] as $articulo){																	
+					if($articulo['issue_id']){
+						$issue = $this->api_model->obtener_issue($articulo['issue_id']);						
+						$datos['articulo_promocion'][] =  $issue->row()->descripcionVc;	
+					}
+					else{
+						$datos['articulo_promocion'][]= $articulo['tipo_productoVc'];	
+					}												
+				}
+				
+				//exit;
+				//if(){
+					
+				//}
+				//$datos['articulo_promocion'] = $respromo['articulos']; 	
+				$det_promo=1;								
+			}		
+			$datos['descripciones_promocion'][] =	$respromo;
+						
+			foreach($respromo['articulos'] as $articulo){
+				if($articulo['issue_id']){
+					$issue = $this->api_model->obtener_issue($articulo['issue_id']);
+					$datos['tipo_productoVc'][($articulo['issue_id'])] = $issue->row()->descripcionVc;
+				}
+				$total = $total + $articulo['tarifaDc']; 	
+				if($articulo['monedaVc']){
+					$datos['moneda'] = $articulo['monedaVc'];	
+				}
+							
+			}									
+		}
+				
+		$datos['total_pagar']=$total;
+		return $datos;
+	}	
 	
 	public function encrypt($str, $key){
 		$str=trim($str);

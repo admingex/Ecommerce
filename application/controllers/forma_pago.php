@@ -25,11 +25,11 @@ class Forma_Pago extends CI_Controller {
 		$this->redirect_cliente_invalido('id_cliente', 'login');
 		
 		//cargar el modelo en el constructor
-		$this->load->model('forma_pago_model', 'forma_pago_model', true);
-		$this->load->model('api_model', 'api_model', true);
+		$this->load->model('forma_pago_model', 'forma_pago_model', true);		
 
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
+		
 		$this->api= new Api();
 		//echo "requiere_envio: " . $this->session->userdata('requiere_envio');
     }
@@ -1548,11 +1548,17 @@ class Forma_Pago extends CI_Controller {
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/menu.html', $data);
 		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
-			$data['detalle_promociones']=$this->obtiene_articulos_y_promociones();					
+			$data['detalle_promociones']=$this->api->obtiene_articulos_y_promociones();					
 			$this->load->view('templates/promocion.html', $data);															
 		}
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
+		/*
+		echo "<pre>";
+			print_r($data);
+		echo "</pre>";
+		 */
+		
 	}
 	
 	/*
@@ -1579,51 +1585,7 @@ class Forma_Pago extends CI_Controller {
          $obj->{$k} = $v;
       }
       return $obj;
-   }
-	
-	public function obtiene_articulos_y_promociones(){
-		$datos=array();
-		$total = 0;
-		$det_promo=0;
-		$datos['numero_promociones']=count($this->session->userdata('promociones'));
-		foreach($this->session->userdata('promociones') as $promocion){				
-			// obtiene las promociones y los articulos que contienen				 
-			$respromo = $this->api->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);
-			if($det_promo==0){
-				/*
-				echo "<pre>";
-					print_r($respromo['promocion']);					
-				echo "</pre>";
-				*/	
-				//obtiene 			
-				$datos['descripcion_promocion'] = $respromo['promocion']->descripcionVc;
-				foreach($respromo['articulos'] as $articulo){					
-					if($articulo['issue_id']){
-						$issue = $this->api_model->obtener_issue($articulo['issue_id']);						
-						$datos['articulo_promocion'][] =  $issue->row()->descripcionVc;	
-					}
-					else{
-						$datos['articulo_promocion'][]= $articulo['tipo_productoVc'];	
-					}						
-				}
-				
-				//exit;
-				//if(){
-					
-				//}
-				//$datos['articulo_promocion'] = $respromo['articulos']; 	
-				$det_promo=1;								
-			}		
-			$datos['descripciones_promocion'][] =	$respromo['promocion']->descripcionVc;				
-			foreach($respromo['articulos'] as $articulo){
-				$total = $total + $articulo['tarifaDc']; 					
-			}									
-		}
-		
-		$datos['total_pagar']=$total;
-		return $datos;
-	}	
-	
+   }			
 }
 
 /* End of file forma_pago.php */
