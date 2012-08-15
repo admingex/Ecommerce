@@ -8,11 +8,7 @@
 <div id="pleca-punteada"></div>
 <section class="contenedor">
 	<?php
-		$total_pagar=0;
-		foreach($this->session->userdata('articulos') as $articulo){
-			$total_pagar=$total_pagar+$articulo['tarifaDc'];
-		}
-		
+		$total_pagar=0;		
 		if (isset($vista_detalle)) {	//Tipo de detalle a desplegar
 			if($vista_detalle == 'tc') {
 				include ('forma_pago/editar.html'); 	
@@ -26,7 +22,7 @@
 					include ('forma_pago/listar.html');
 					include ('forma_pago/agregar.html');
 					//otras formas de pago
-					if($total_pagar>100)
+					if($total_pagar>1000)
 					include ('forma_pago/otras_formas.html');
 					
 				} else if ($form == 'amex') {
@@ -35,7 +31,7 @@
 			} else {
 				include ('forma_pago/listar.html');
 				//otras formas de pago
-				if($total_pagar>100)
+				if($total_pagar>1000)
 				include ('forma_pago/otras_formas.html');
 			}
 		} 

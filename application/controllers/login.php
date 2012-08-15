@@ -70,18 +70,15 @@ class Login extends CI_Controller {
 	public function index()
 	{		
 		
-		echo "<pre>";
-			print_r($this->session->all_userdata());
-		echo "</pre>";	
-		exit;
-						
-						
-						
-		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo.	
-		$this->session->unset_userdata('sitio');
-		$datsit=$this->api_model->obtener_sitio($this->session->userdata('id_sitio'));		
-		$this->session->set_userdata('sitio', $datsit->row());
-		$data['url_imageVc']=$datsit->row()->url_imageVc;
+		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo.
+		if($this->session->userdata('promociones')){
+			$v = $this->session->userdata('promociones');
+			$id_sit =  $v[0]['id_sitio'];				
+			$this->session->unset_userdata('sitio');
+			$datsit=$this->api_model->obtener_sitio($id_sit);		
+			$this->session->set_userdata('sitio', $datsit->row());
+			$data['url_imageVc']=$datsit->row()->url_imageVc;
+		}																								
 				
 		//inclusión de Scripts
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/login.js'></script>";
@@ -233,36 +230,35 @@ class Login extends CI_Controller {
 	 */
 	private function obtener_destino($id_cliente) 
 	{
-		//Procesar la promoción
-		
-		$respromo = $this->api->obtener_detalle_promo($this->session->userdata('id_sitio'), $this->session->userdata('id_canal'), $this->session->userdata('id_promocion'));
-		//echo "res_promo: ". var_dump($respromo);
-		if ($respromo) {
-			$i=0;
-			foreach ($respromo['articulos'] as $res) {
-			if($i<6){
-				$desc_issue='';
-				if(!empty($res['issue_id'])){
-					$issue=$this->api_model->obtener_issue($res['issue_id']);
-					$desc_issue = $issue->row()->descripcionVc; 
-				}
-				$temp[] = array('tarifaDc' 			=> 	$res['tarifaDc'], 
-							'tipo_productoVc' 	=> 	$res['tipo_productoVc'], 
-							'medio_entregaVc'	=>	$res['medio_entregaVc'], 
-							'monedaVc'	=>	$res['monedaVc'], 
-							'requiere_envioBi'	=>	(bool)$res['requiere_envioBi'],
-							'issue_id'	=>	$res['issue_id'],
-							'descripcion_issue'	=>	$desc_issue,
-							);														
-				}	
-				$i++;
-			}				
+		//Procesar la promoción		
+		/*
+		echo "<pre>";
+			print_r($this->session->all_userdata());
+		echo "</pre>";				
+		*/	
+		//revisamos que por lo menos tengamos una promocion	
+		if (count($this->session->userdata('promociones'))>0) {
 			
+			//revisar si requiere forma de envío
+			$requiere_envio = FALSE;
 			
-			$this->session->set_userdata('sitio', $respromo['sitio']);
-			$this->session->set_userdata('promocion', $respromo['promocion']);
-			$this->session->set_userdata('articulos', $temp);				
-			$this->session->set_userdata('promociones', TRUE);
+			foreach($this->session->userdata('promociones') as $promocion){
+				
+				// obtiene los articulos de la promocion				 
+				$respromo = $this->api->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);				
+				foreach($respromo['articulos'] as $articulo){
+					if ($articulo['requiere_envioBi'] != FALSE) {
+						$requiere_envio = TRUE;
+						//echo "requiere envio";
+						break;
+					}					
+				}									
+			}																												
+			
+			//Requiere envío en sesión
+			$this->session->set_userdata('requiere_envio', $requiere_envio);	
+			//el siguiente parametro es para indicar al controlador si es necesario cargar el archivo views/templates/promocion.html		
+			$this->session->set_userdata('promocion', TRUE);								
 			
 			//echo "<pre>";
 			//var_dump($this->session->all_userdata());
@@ -276,25 +272,7 @@ class Login extends CI_Controller {
 			$razon_social_express = $this->direccion_facturacion_model->get_pago_express_rs($id_cliente);	//devolverá un obj
 			
 			//se crea el objeto con la informción del pago exprés, a través de los consecutivos
-			$pago_express = new Pago_Express($forma_pago_express->consecutivo, $dir_envio_express->consecutivo, $dir_facturacion_express->consecutivo, $razon_social_express->consecutivo);
-			
-			//revisar si requiere forma de envío
-			$requiere_envio = FALSE;		
-			
-			if ($this->session->userdata('promociones')) {			
-				$articulos = $this->session->userdata('articulos');
-				
-				foreach($articulos as $articulo) {				
-					if ($articulo['requiere_envioBi'] != FALSE) {
-						$requiere_envio = TRUE;
-						//echo "requiere envio";
-						break;
-					}
-				}
-			}
-			
-			//Requiere envío en sesión
-			$this->session->set_userdata('requiere_envio', $requiere_envio);
+			$pago_express = new Pago_Express($forma_pago_express->consecutivo, $dir_envio_express->consecutivo, $dir_facturacion_express->consecutivo, $razon_social_express->consecutivo);					
 				
 			//obtener el array de lo que se subirá a sesion
 			$flujo_pago_express = $pago_express->definir_destino_inicial($requiere_envio);

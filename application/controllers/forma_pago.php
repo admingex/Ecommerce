@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 include ('dtos/Tipos_Tarjetas.php');
+include ('api.php');
 
 class Forma_Pago extends CI_Controller {
 	var $title = 'Forma de Pago'; 		// Capitalize the first letter
@@ -24,11 +25,12 @@ class Forma_Pago extends CI_Controller {
 		$this->redirect_cliente_invalido('id_cliente', 'login');
 		
 		//cargar el modelo en el constructor
-		$this->load->model('forma_pago_model', 'forma_pago_model', true);
+		$this->load->model('forma_pago_model', 'forma_pago_model', true);		
 
 		//si la sesión se acaba de crear, toma el valor inicializar el id del cliente de la session creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
 		
+		$this->api= new Api();
 		//echo "requiere_envio: " . $this->session->userdata('requiere_envio');
     }
 
@@ -1545,11 +1547,18 @@ class Forma_Pago extends CI_Controller {
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/menu.html', $data);
-		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {					
+		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
+			$data['detalle_promociones']=$this->api->obtiene_articulos_y_promociones();					
 			$this->load->view('templates/promocion.html', $data);															
 		}
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
+		/*
+		echo "<pre>";
+			print_r($data);
+		echo "</pre>";
+		 */
+		
 	}
 	
 	/*
@@ -1576,8 +1585,7 @@ class Forma_Pago extends CI_Controller {
          $obj->{$k} = $v;
       }
       return $obj;
-   }
-	
+   }			
 }
 
 /* End of file forma_pago.php */

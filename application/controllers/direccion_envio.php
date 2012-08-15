@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+include ('api.php');
+
 class Direccion_Envio extends CI_Controller {
 	var $title = 'Direcci&oacute;n de Env&iacute;o'; 		// Capitalize the first letter
 	var $subtitle = 'Selecciona una direcci&oacute;n de env&iacute;o'; 	// Capitalize the first letter
@@ -34,6 +36,8 @@ class Direccion_Envio extends CI_Controller {
 		
 		//toma el valor del id cliente de la sesión creada en el login/registro
 		$this->id_cliente = $this->session->userdata('id_cliente');
+		
+		$this->api= new Api();
 		
 		//echo "requiere_envio: " . $this->session->userdata('requiere_envio');
     }
@@ -829,9 +833,10 @@ class Direccion_Envio extends CI_Controller {
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/menu.html', $data);
-		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {					
+		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
+			$data['detalle_promociones']=$this->api->obtiene_articulos_y_promociones();					
 			$this->load->view('templates/promocion.html', $data);															
-		}		
+		}				
 		$this->load->view($folder.'/'.$page, $data);
 		$this->load->view('templates/footer', $data);
 	}
