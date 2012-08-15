@@ -144,12 +144,17 @@ class Registro extends CI_Controller {
 			}
 		}
 		if(array_key_exists('txt_apellidoPaterno', $_POST)) {
-			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_apellidoPaterno'])) { 
+			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{1,30}$/i', $_POST['txt_apellidoPaterno'])) { 
 				$datos['fname'] = $_POST['txt_apellidoPaterno'];
 			} else {
 				$this->registro_errores['txt_apellidoPaterno'] = '<div class="error">Por favor ingresa tu apellido paterno</div>';
 			}
-		}		
+		}
+		if(array_key_exists('txt_apellidoMaterno', $_POST)) {
+			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{1,30}$/i', $_POST['txt_apellidoMaterno'])) { 
+				$datos['lname'] = $_POST['txt_apellidoMaterno'];
+			}
+		}
 		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {			
 			$datos['email'] = htmlspecialchars(trim($_POST['email']));
 		} else {			
@@ -179,7 +184,6 @@ class Registro extends CI_Controller {
 		return $datos;
 	}
 	
-
 	private function contiene_mayuscula($cad){
 		$may='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		for($i=0; $i<strlen($cad); $i++){

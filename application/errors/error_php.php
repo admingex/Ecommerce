@@ -56,7 +56,7 @@
     	</div>    	    	
     	<div class="textos-error">
     		<div class="tipo-error">
-    			Error	<?php echo $severity; ?></p>
+    			Error	<?php echo $severity; ?>
 <p>Message:  <?php echo $message; ?></p>
 <p>Filename: <?php echo $filepath; ?></p>
 <p>Line Number: <?php echo $line; ?>

@@ -56,7 +56,7 @@
     	</div>    	    	
     	<div class="textos-error">
     		<div class="tipo-error">
-    			Error	<?php echo $heading.$message; ?>
+    			Error	<?php echo //$heading.$message; ?>
     		</div>
     		<div id='pleca-2'></div>
     		<div class="detalle-error">
