@@ -59,17 +59,19 @@ class Api extends CI_Controller {
 				$datos_decrypt=$this->decrypt($datos_decrypt_url, $this->key);
 				$datos_decrypt=unserialize($datos_decrypt);
 				
-				if($_POST){
-					// como viene de la tienda y el id_sitio de la tienda es 3 entonces asignamos tres a la siguiente variable para IDC es 1
-					$sitio=1;
+				if($_POST){										
 					/*
 					echo "<pre>";
 						print_r($_POST);
 						print_r($datos_decrypt);						
-					echo "</pre>";	
-					*/				
+					echo "</pre>";
+					exit;	
+					*/													
 					
 					if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
+						//obtener el id del sitio por medio del guidx 						
+						$ressit = $this->api_model->obtener_sitio_guidx($_POST['guidx']);
+						$sitio = $ressit->row()->id_sitioSi;
 						//obtengo la llave privada en la DB
 						$guidxdb=$this->api_model->obtener_sitio($sitio)->row();						
 						//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									

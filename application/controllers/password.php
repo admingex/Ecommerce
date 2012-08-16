@@ -67,10 +67,10 @@ class Password extends CI_Controller {
 												 $this->session->userdata('guidz')."|", $this->api->key);		
 					$encript= rtrim(strtr(base64_encode($encript), '+/', '-_'), '=');
 	 
-	
-					$headers="Content-type: text/html; charset=UTF-8\r\n";
-	                $headers.="MIME-Version: 1.0\r\n";
-				    $headers .= "From: Pagos Grupo Expansión<servicioaclientes@expansion.com.mx>\r\n";       
+					
+					$headers = "From: Pagos Grupo Expansión<servicioaclientes@expansion.com.mx>"."\n"; 
+					$headers .= "MIME-Version: 1.0"."\n"; 
+					$headers .= "Content-type: text/html; charset=UTF-8"."\r\n"; 											                				           
 					$mensaje="<html>
 							  <body>
 							  	   <div>Hola,

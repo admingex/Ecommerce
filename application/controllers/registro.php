@@ -72,10 +72,10 @@ class Registro extends CI_Controller {
 						if(mail($cliente_info['email'], "=?UTF-8?B?".base64_encode('¡Bienvenido a la plataforma de pagos de Grupo Expansión!')."?=", $mensaje, $headers)){
 							$this->crear_sesion($cliente_info['id_clienteIn'], $cliente_info['salutation'], $cliente_info['email']);	//crear sesion,
 							echo "  <form name='inicio_sesion' action='".site_url('login')."' method='post'>
-								    	<input type='text' name='email' value='".$cliente_info['email']."' />
-								    	<input type='text' name='tipo_inicio' value='registrado' />
-								    	<input type='text' name='password' value='".$cliente_info['password']."' />
-								    	<input type='submit' name='enviar' value='Iniciar sesion' />
+								    	<input type='text' name='email' value='".$cliente_info['email']."' style='display: none' />
+								    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
+								    	<input type='text' name='password' value='".$cliente_info['password']."' style='display: none' />
+								    	<input type='submit' name='enviar' value='Iniciar sesion' style='display: none' />
 									</form>";
 							echo "<script>document.inicio_sesion.submit();</script>";		
 								

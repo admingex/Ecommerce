@@ -1,8 +1,11 @@
 eclipse.preferences.version=1
 encoding//application/config/config.php=UTF-8
+encoding//application/config/database.php=UTF-8
 encoding//application/controllers/api.php=UTF-8
 encoding//application/controllers/orden_compra.php=UTF-8
 encoding//application/controllers/password.php=UTF-8
+encoding//application/errors/error_db.php=UTF-8
+encoding//application/errors/error_php.php=UTF-8
 encoding//application/views/login/login.html=UTF-8
 encoding//application/views/templates/header.php=UTF-8
 encoding//css/style.css=UTF-8
