@@ -1,5 +1,5 @@
 /**
- * @author harteaga956
+ * @author admingex
  */
 $(document).ready(function() {
 	var cvv = $("#txt_codigo");
@@ -10,6 +10,8 @@ $(document).ready(function() {
 	/*Enviar orden*/
 	$("#enviar").click(function(e) {
 		e.preventDefault();
+		//prevenir doble click
+		$(this).attr("disabled", "disabled");
 		
 		$(".error").remove();	//limpiar mensajes de error
 		
@@ -19,14 +21,18 @@ $(document).ready(function() {
 			if (cvv.length > 0) {
 				if (!reg_cvv.test($.trim(cvv.val()))) {
 					cvv.focus().after("<span class='error'>Ingresa un código de seguridad válido</span>");
+					//habilitar de nuevo al botón
+					$(this).removeAttr("disabled");
 					return false;
 				}
 			}
 			//Ok
 			//alert("Se envía la orden.");
-			$("form").submit();	
+			$("form").submit();
+			//alert("envio tarjeta");	
 		} else if (pago_deposito.length > 0) {
 			$("form").submit();
+			//alert("envio depósito");
 		} else {
 			alert("No hay forma de pago seleccioada.");
 		}
