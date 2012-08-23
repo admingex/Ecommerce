@@ -235,6 +235,22 @@ class Orden_Compra extends CI_Controller {
 				$informacion_orden->consecutivo_cmsSi = $consecutivo;
 				$informacion_orden->id_promocionIn = $id_promocionIn;
 				$informacion_orden->digito = $digito;
+				
+				//cambios Armando pago varias promociones
+				
+				//Obtener el montro total desde el api
+				if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
+					$detalle_promociones = $this->api->obtiene_articulos_y_promociones();																							
+				}
+				
+				$monto = $detalle_promociones['total_pagar'];
+				$clave_hash = "P3lux33n3l347ux3";
+				
+				$informacion_orden->id_compraIn = 0;
+				$informacion_orden->monto = 0;
+				//el hash se debe calcular hasta que se registra la compra
+				$informacion_orden->clave_hash = md5($digito.$id_cliente.$clave_hash.$monto);
+				
 				/*
 				$informacion_orden = new InformacionOrden(
 					$id_cliente,
@@ -590,6 +606,9 @@ class Orden_Compra extends CI_Controller {
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
 						
+						//pasar el id de la compra para el pago
+						$informacion_orden->id_compra = $id_compra;
+						
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_objetos($tc_soap, $amex_soap, $informacion_orden);
 						
@@ -860,6 +879,8 @@ class Orden_Compra extends CI_Controller {
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
 						
+						//pasar el id de la compra para el pago
+						$informacion_orden->id_compra = $id_compra;
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_ids($informacion_orden);
 						
