@@ -6,6 +6,13 @@ class Reporte extends CI_Controller {
 	
 	var $title = 'Reporte de Usuarios'; 		// Capitalize the first letter
 	var $subtitle = 'Reporte de Usuarios'; 	// Capitalize the first letter
+	
+	public static $FORMA_PAGO = array(
+		1 =>	"Prosa", 
+		2 =>	"American Express", 
+		3 =>	"Deposito Bancario",
+		4 =>	"Otro"
+	);
 		
 	function __construct(){
         parent::__construct();						
@@ -82,7 +89,7 @@ class Reporte extends CI_Controller {
 				
 		foreach($compras->result_array() as $i => $compra){
 						
-			$data['compras'][$i]['compra'] = $compra;									
+			$data['compras'][$i]['compra'] = $compra;													
 			$cliente = $this->reporte_model->obtener_cliente($compra['id_clienteIn']);												
 			$data['compras'][$i]['cliente'] = $cliente->row();
 						
@@ -91,22 +98,30 @@ class Reporte extends CI_Controller {
 					$data['compras'][$i]['dir_envio'] = $dir_envio->row();	
 			}
 			else{
-				$data['compras'][$i]['dir_envio']= NULL;
+				$data['compras'][$i]['dir_envio']= "No requiere";
 			}	
 			
-			//$forma_pago = $this->								
+			$forma_pago = $this->reporte_model->obtener_medio_pago($compra['id_compraIn'], $compra['id_clienteIn']);
+			$data['compras'][$i]['medio_pago'] = self::$FORMA_PAGO[($forma_pago->row()->id_tipoPagoSi)];	
+			$data['compras'][$i]['fecha_compra'] = 	$forma_pago->row()->fecha_registroTs;
+						
+			$id_promo = $this->reporte_model->obtener_promo_compra($compra['id_compraIn'], $compra['id_clienteIn']);
+			
+			$articulos = $this->reporte_model->obtener_articulos($id_promo);
+			$monto = 0;			
+			foreach($articulos->result_array() as $articulo){
+				$monto+= $articulo['tarifaDc'];
+			}
+			$data['compras'][$i]['monto'] = $monto;																			
 								
 		}
-		
+		/*
 		echo "<pre>";
 				print_r($data);
 		echo "</pre>";
-		 
-		
-			
-				
-		//$this->load->view('templates/header',$data);
-		//$this->load->view('reportes/reporte_compras',$data);	
+		 */						
+		$this->load->view('templates/header',$data);
+		$this->load->view('reportes/reporte_compras',$data);	
 				
 	}
 	

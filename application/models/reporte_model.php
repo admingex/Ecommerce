@@ -33,11 +33,40 @@ class Reporte_model extends CI_Model {
 		$res = $this->db->query($qry);			
 		return $res;	
 	}
+	
 	function obtener_dir_envio($id_compra, $id_cliente){		
 		$qry = "SELECT * FROM CMS_RelCompraDireccion 
 		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra." AND address_type=0";
 		$res = $this->db->query($qry);			
 		return $res;	
+	}
+	
+	function obtener_medio_pago($id_compra, $id_cliente){		
+		$qry = "SELECT * FROM CMS_RelCompraPago 
+		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra;
+		$res = $this->db->query($qry);			
+		return $res;	
+	}
+	
+	function obtener_promo_compra($id_compra, $id_cliente){
+		$qry = "SELECT * FROM CMS_RelCompraArticulo 
+		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra;
+		$res = $this->db->query($qry);
+		if($res->num_rows()>0){
+			$id_promo = $res->row()->id_promocionIn;						
+		}			
+		else{
+			$id_promo = 0; 
+		}
+		return $id_promo;	
+		
+	}
+	
+	function obtener_articulos($id_promo){
+		$qry = "SELECT * FROM CMS_IntArticulo 
+		        WHERE id_promocionIn=".$id_promo;
+		$res = $this->db->query($qry);	
+		return $res;
 	}
 	
 	

@@ -22,70 +22,72 @@ Fecha Fin: <input type="text" name="fecha_fin" id="fecha_fin" value="<?php echo 
 <input type="submit" name="Consultar" value="Consultar" />
 </form>
 <?php 
-if($compras->num_rows()!=0){
+		
+	if(count($compras)>0){
+?>	
+		<table width="100%" cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th class="doble-linea">			
+						Nombre Cliente				
+					</th>		
+					<th class="doble-linea">
+						Direccion de Envio
+					</th>		
+					<th class="doble-linea">
+						Medio de Pago
+					</th>
+					<th class="doble-linea">
+						Monto
+					</th>
+					<th class="doble-linea">
+						Razon Social
+					</th>
+					<th class="doble-linea">
+						Dir Facturacion			
+					</th>
+					<th class="doble-linea">
+						Codigo Aut
+					</th>
+					<th class="doble-linea">
+						Fecha Compra
+					</th>
+				</tr>
+			</thead>
+			<tbody class="contenedor-gris">
+			<?php 			
+				foreach ($compras as $nueva_compra) {
+										
+					echo  " <tr>
+								<td class='item-lista'>
+									".$nueva_compra['cliente']->salutation."
+								</td>
+								<td class='item-lista'>
+									".$nueva_compra['dir_envio']."
+								</td>
+								<td class='item-lista'>
+									".$nueva_compra['medio_pago']."
+								</td>
+								<td class='item-lista'>
+									".$nueva_compra['monto']."
+								</td>
+								<td class='item-lista'>
+								</td>
+								<td class='item-lista'>
+								</td>
+								<td class='item-lista'>
+								</td>
+								<td class='item-lista'>
+									".$nueva_compra['fecha_compra']."
+								</td>
+							</tr>";	
+				}
+			?>	
+			</tbody>
+		</table>	
+<?php		
+	}
+?>		
 	
-	foreach ($compras->result_array() as $compra) {
-		echo "<br />id compra: ".$compra['id_compraIn']." id cliente: ".$compra['id_clienteIn']." fecha compra".$compra['fecha_compraDt'];
-	}	
-}
-?>
-<table width="100%" cellpadding="0" cellspacing="0">
-	<thead>
-		<tr>
-			<th>			
-				Nombre Cliente				
-			</th>		
-			<th>
-				Dir Envio
-			</th>		
-			<th>
-				Medio de Pago
-			</th>
-			<th>
-				Monto
-			</th>
-			<th>
-				Razon Social
-			</th>
-			<th>
-				Dir Facturacion			
-			</th>
-			<th>
-				Codigo Aut
-			</th>
-			<th>
-				Fecha Compra
-			</th>
-		</tr>
-	</thead>	
-	<tbody class="contenedor-gris">	
-		<tr>
-			<td>
-				1
-			</td>
-			<td>
-				2
-			</td>
-			<td>
-				3
-			</td>
-			<td>
-				4
-			</td>
-			<td>
-				5
-			</td>
-			<td>
-				6
-			</td>
-			<td>
-				7
-			</td>	
-			<td>
-				8
-			</td>		
-		</tr>
-	</tbody>
-</table>
 </div>
 </section>
