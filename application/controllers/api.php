@@ -243,7 +243,15 @@ class Api extends CI_Controller {
 			}
     	}							  
 		if($pago){
-			if($_POST){				
+			if($_POST){
+					/*
+					echo "<pre>";
+						print_r($_POST);
+												
+					echo "</pre>";
+					exit;	
+					*/
+									
 				if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
 					//obtengo la llave privada en la DB
 					$guidxdb=$this->api_model->obtener_sitio($sitio)->row();

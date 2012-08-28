@@ -16,6 +16,7 @@
 				include ('forma_pago/editar_amex.html');
 			}
 		} else {
+			$total_pagar = $detalle_promociones['total_pagar'];
 			//si re registrará una nueva tarjeta, se incluyen las formas 
 			if (isset($form)) {
 				if($form == 'tc') {

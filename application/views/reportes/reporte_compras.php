@@ -22,10 +22,12 @@ Fecha Fin: <input type="text" name="fecha_fin" id="fecha_fin" value="<?php echo 
 <input type="submit" name="Consultar" value="Consultar" />
 </form>
 <?php 
+echo "llega";
+print_r($compras);
 if($compras->num_rows()!=0){
 	
 	foreach ($compras->result_array() as $compra) {
-		echo "<br />".$compra['id_compraIn'];
+		echo "<br />id compra: ".$compra['id_compraIn']." id cliente: ".$compra['id_clienteIn']." fecha compra".$compra['fecha_compraDt'];
 	}	
 }
 ?>

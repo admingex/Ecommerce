@@ -16,8 +16,7 @@ class Reporte extends CI_Controller {
 			if(($this->session->userdata('user')=='aespinosa') || ($_POST['user']=='aespinosa')){
 				if(($this->session->userdata('pass')=='Aesp1n0_20120618') || ($_POST['pass']=='Aesp1n0_20120618')){
 					$this->session->set_userdata('user', 'aespinosa');
-					$this->session->set_userdata('pass', 'Aesp1n0_20120618');
-					$this->usuarios();				
+					$this->session->set_userdata('pass', 'Aesp1n0_20120618');									
 				}	
 				else{
 					redirect('mensaje/'.md5(5));
@@ -32,7 +31,8 @@ class Reporte extends CI_Controller {
 		}						
     }
 	
-	public function index(){		
+	public function index(){
+		$this->usuarios();		
 								
 	}		
 	
