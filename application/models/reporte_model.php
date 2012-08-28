@@ -27,6 +27,20 @@ class Reporte_model extends CI_Model {
 		
 	} 
 	
+	function obtener_cliente($id_cliente){
+		$qry = "SELECT * FROM CMS_IntCliente 
+		        WHERE id_clienteIn=".$id_cliente;
+		$res = $this->db->query($qry);			
+		return $res;	
+	}
+	function obtener_dir_envio($id_compra, $id_cliente){		
+		$qry = "SELECT * FROM CMS_RelCompraDireccion 
+		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra." AND address_type=0";
+		$res = $this->db->query($qry);			
+		return $res;	
+	}
+	
+	
 	public function fecha_fin($fecha_fin){
 		$dia=substr($fecha_fin,8,2);
     	$mes=substr($fecha_fin,5,2);

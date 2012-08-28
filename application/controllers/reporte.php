@@ -78,9 +78,35 @@ class Reporte extends CI_Controller {
 		$data['fecha_fin']=$fecha_fin;
 		
 		$compras= $this->reporte_model->obtener_compras_fecha($fecha_inicio, $fecha_fin);
-		$data['compras']=$compras;		
-		$this->load->view('templates/header',$data);
-		$this->load->view('reportes/reporte_compras',$data);	
+		$data['compras']=array();	
+				
+		foreach($compras->result_array() as $i => $compra){
+						
+			$data['compras'][$i]['compra'] = $compra;									
+			$cliente = $this->reporte_model->obtener_cliente($compra['id_clienteIn']);												
+			$data['compras'][$i]['cliente'] = $cliente->row();
+						
+			$dir_envio = $this->reporte_model->obtener_dir_envio($compra['id_compraIn'], $compra['id_clienteIn']);
+			if($dir_envio->num_rows() > 0){
+					$data['compras'][$i]['dir_envio'] = $dir_envio->row();	
+			}
+			else{
+				$data['compras'][$i]['dir_envio']= NULL;
+			}	
+			
+			//$forma_pago = $this->								
+								
+		}
+		
+		echo "<pre>";
+				print_r($data);
+		echo "</pre>";
+		 
+		
+			
+				
+		//$this->load->view('templates/header',$data);
+		//$this->load->view('reportes/reporte_compras',$data);	
 				
 	}
 	

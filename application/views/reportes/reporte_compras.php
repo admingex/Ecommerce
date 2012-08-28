@@ -22,8 +22,6 @@ Fecha Fin: <input type="text" name="fecha_fin" id="fecha_fin" value="<?php echo 
 <input type="submit" name="Consultar" value="Consultar" />
 </form>
 <?php 
-echo "llega";
-print_r($compras);
 if($compras->num_rows()!=0){
 	
 	foreach ($compras->result_array() as $compra) {
