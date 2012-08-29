@@ -1,6 +1,6 @@
 <?php 
 if($usuarios->num_rows()!=0){
-
+	echo "<div style='padding: 5px 0px 5px 0px; color: #E70030; font-size: 12px'>Se encontraron ".$usuarios->num_rows()." registros </div>";
 ?>
 <table width="100%" cellpadding="0" cellspacing="0">
 	<thead>
@@ -36,5 +36,5 @@ else{
 <?php	
 }
 ?>	
-</div>
+
 </section>

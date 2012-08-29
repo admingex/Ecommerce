@@ -21,7 +21,7 @@ class Reporte_model extends CI_Model {
 		$ffin=$this->fecha_fin($fecha_fin);			
 			
 		$qry = "SELECT * FROM CMS_IntCompra 
-		        WHERE fecha_compraDt>='$fini' and fecha_compraDt<'$ffin' ORDER BY id_compraIn ASC ";
+		        WHERE fecha_compraDt>='$fini' and fecha_compraDt<'$ffin' ORDER BY fecha_compraDt ASC ";
 		$res = $this->db->query($qry);			
 		return $res;
 		
@@ -41,9 +41,37 @@ class Reporte_model extends CI_Model {
 		return $res;	
 	}
 	
+	function obtener_facturacion($id_compra, $id_cliente){		
+		$qry = "SELECT * FROM CMS_RelCompraDireccion 
+		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra." AND address_type=1";
+		$res = $this->db->query($qry);			
+		return $res;	
+	}
+	
+	function obtener_dir_facturacion($id_consecutivo, $id_cliente){		
+		$qry = "SELECT * FROM CMS_IntDireccion 
+		        WHERE id_clienteIn=".$id_cliente." AND id_consecutivoSi=".$id_consecutivo;
+		$res = $this->db->query($qry);			
+		return $res;	
+	}
+	
+	function obtener_razon_social($id_rs){		
+		$qry = "SELECT * FROM CMS_IntRazonSocial 
+		        WHERE id_razonSocialIn=".$id_rs;
+		$res = $this->db->query($qry);			
+		return $res;	
+	}
+	
 	function obtener_medio_pago($id_compra, $id_cliente){		
 		$qry = "SELECT * FROM CMS_RelCompraPago 
 		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra;
+		$res = $this->db->query($qry);			
+		return $res;	
+	}
+	
+	function obtener_codigo_autorizacion($id_compra, $id_cliente){		
+		$qry = "SELECT * FROM CMS_RelCompraPagoDetalleTC 
+		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra."  ORDER BY fecha_registroTs DESC";
 		$res = $this->db->query($qry);			
 		return $res;	
 	}
@@ -69,6 +97,17 @@ class Reporte_model extends CI_Model {
 		return $res;
 	}
 	
+	function obtener_detalle_think($id_compra, $id_cliente){
+		$qry = "SELECT * FROM CMS_RelOrdenThink 
+		        WHERE id_compraIn=".$id_compra." AND id_clienteIn=".$id_cliente;
+		$res = $this->db->query($qry);	
+		if($res->num_rows > 0){
+			return $res;
+		}
+		else{
+			return FALSE;
+		}			
+	}
 	
 	public function fecha_fin($fecha_fin){
 		$dia=substr($fecha_fin,8,2);

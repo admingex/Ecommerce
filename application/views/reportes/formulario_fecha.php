@@ -1,5 +1,4 @@
-<section class="contenedor">
-<div class="contenedor-blanco">
+<section class="contenedor" style='padding: 5px 10px 20px 10px'>
 <script type="text/javascript">
     $(function(){
     $("#fecha_inicio").datepicker({changeMonth: true, changeYear: true, autoSize: true });
@@ -16,13 +15,19 @@
 
 <div class="float_izq">
 	<?php
-		echo "<p>Reporte del dia ".$fecha_inicio." al dia ".$fecha_fin."</p>";		
+		//echo "<p>Reporte del dia ".$fecha_inicio." al dia ".$fecha_fin."</p>";		
 	?>	
 </div>
-<div style="float: right">
-	<?php
-	echo anchor(site_url('logout'),'cerrar sesion');
-?>	
+<div style="float: right; padding-bottom: 5px">
+	<div style="float: left; margin-right: 5px">
+		<?php echo anchor(site_url('reporte/usuarios'),'Reporte Usuarios'); ?>
+	</div>
+	<div style="float: left; margin-right: 5px">
+		<?php echo anchor(site_url('reporte/compras'),'Reporte Compras'); ?>
+	</div>	
+	<div style="float: left">
+		<?php echo anchor(site_url('logout'),'cerrar sesion'); ?>
+	</div>		
 </div>
 <div id="pleca-gris"></div>
 
