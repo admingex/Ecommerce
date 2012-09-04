@@ -18,7 +18,12 @@ class Reporte extends CI_Controller {
         parent::__construct();						
 		$this->load->model('reporte_model', 'reporte_model', true);				
 		$this->load->helper('date');
-						
+		/*
+		echo "<pre>";
+			print_r($_POST);				
+		echo "</pre>";
+		exit;
+		 */
 		if(array_key_exists('user', $this->session->all_userdata()) || array_key_exists('pass', $this->session->all_userdata()) || array_key_exists('user', $_POST) || array_key_exists('pass', $_POST)){
 			if(($this->session->userdata('user')=='aespinosa') || ($_POST['user']=='aespinosa') || ($_POST['user']=='mercadotecnia')){
 				if(($this->session->userdata('pass')=='Aesp1n0_20120618') || ($_POST['pass']=='Aesp1n0_20120618') || ($_POST['pass']=='m3rc4d0t3cn14')){
@@ -211,6 +216,60 @@ class Reporte extends CI_Controller {
 		}		
 				
 	}
+	
+	public function compra_cliente(){		
+		//$data['id_cliente'] = $id_cliente = $_POST['id_cliente'];
+		$data['id_cliente'] = $id_cliente = 28;		 
+		$compras_cliente = $this->reporte_model->obtener_compras_cliente($id_cliente);
+		if($compras_cliente->num_rows()>0){
+			$data['compras'] = array();
+			$todas_compras = $compras_cliente->result_array();			
+			foreach($todas_compras as $ind => $compra){
+				$id_compra = $compra['id_compraIn'];				
+				$data['compras'][$ind]['compra'] = $compra;
+				
+				//se obtiene el medio y la fecha de pago
+				$forma_pago = $this->reporte_model->obtener_medio_pago($id_compra, $id_cliente);
+				if($forma_pago -> num_rows > 0){
+					$data['compras'][$ind]['medio_pago'] = self::$FORMA_PAGO[($forma_pago->row()->id_tipoPagoSi)];	
+					$data['compras'][$ind]['fecha_compra'] = 	$forma_pago->row()->fecha_registroTs;				
+				}
+				else{
+					$data['compras'][$ind]['medio_pago'] = "no existe";
+					$data['compras'][$ind]['fecha_pago'] = "no existe";
+					
+				}
+				
+				//se obtiene el id de promocion de la compra
+				$id_promo = $this->reporte_model->obtener_promo_compra($id_compra, $id_cliente);
+				
+				//se obtiene el total de articulos en la promocion y el total que se pago por ellos 
+				$articulos_res = $this->reporte_model->obtener_articulos($id_promo);
+				$articulos = $articulos_res->result_array();							 
+				$monto = 0;
+				echo "-->";
+				echo "<pre>";
+					print_r($articulos);
+				echo "</pre>";			
+				foreach( $articulos as $articulo){
+					$monto+= $articulo['tarifaDc'];
+				}
+				echo "<pre>";
+					print_r($articulos);
+				echo "</pre>";
+				
+				
+				$data['compras'][$ind]['monto'] = $monto;
+												
+			}
+		}
+		else{
+			$data['compras'] = NULL;
+		}
+		
+		$this->load->view('reportes/reporte_compras_usuario', $data);		
+	}
+	
 	
 	public function is_date($date){
          if (preg_match ("/^([0-9]{4})\/([0-9]{2})\/([0-9]{2})$/", $date, $parts)){
