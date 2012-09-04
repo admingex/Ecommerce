@@ -83,6 +83,13 @@ class Reporte_model extends CI_Model {
 		return $res;	
 	}
 	
+	function obtener_tc($id_cliente, $id_tc){
+		$qry = "SELECT * FROM CMS_IntTC 
+		        WHERE id_clienteIn=".$id_cliente." AND id_TCSi=".$id_tc;
+		$res = $this->db->query($qry);			
+		return $res;		
+	}
+	
 	function obtener_promo_compra($id_compra, $id_cliente){		
 		$qry = "SELECT * FROM CMS_RelCompraArticulo 
 		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra;
@@ -97,10 +104,22 @@ class Reporte_model extends CI_Model {
 		
 	}
 	
+	function obtener_detalle_promo($id_promo){
+		$qry = "SELECT * FROM CMS_IntPromocion 
+		        WHERE id_promocionIn=".$id_promo;
+		$res = $this->db->query($qry);	
+		return $res;	
+	}
+	
 	function obtener_articulos($id_promo){
 		$qry = "SELECT * FROM CMS_IntArticulo 
 		        WHERE id_promocionIn=".$id_promo;
 		$res = $this->db->query($qry);	
+		return $res;
+	}
+	
+	function obtener_issue($issue_id){
+		$res = $this->db->get_where('CMS_IntIssue', array('issue_id'=>$issue_id));
 		return $res;
 	}
 	
