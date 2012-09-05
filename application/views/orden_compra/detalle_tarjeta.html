@@ -4,7 +4,7 @@
 	?>
 	<span><a href="<?php echo site_url('forma_pago');?>">Cambiar</a></span>	
 	<div id="tarjeta" class="float_izq">C&oacute;digo de seguridad:
-		<input type="text" name="txt_codigo" id="txt_codigo" maxlength="5" size="5" autocomplete="off"
+		<input type="text" name="txt_codigo" id="txt_codigo" maxlength="4" size="5" autocomplete="off"
 				value="<?php if(isset($_POST['txt_codigo'])) echo htmlspecialchars($_POST['txt_codigo']);?>"/>				
 	</div>		
 	<div class="float_izq">
