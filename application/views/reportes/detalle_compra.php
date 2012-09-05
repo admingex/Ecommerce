@@ -22,9 +22,68 @@
 						<span class='info-rojo'>".number_format($compra['monto'], 2, '.', ',')."</span>
 					</div>
 				</div>";
-		
-		
 				
+		echo "	<div class='encabezado-descripcion'>Producto ordenado</div>				
+					<table width='100%' cellspacing='0' cellpadding='0'>
+						<thead>
+							<th>Producto
+							</th>
+							<th>Dirección de Envío
+							</th>
+							<th>Precio
+							</th>
+						</thead>	
+						<tbody class='contenedor1'>
+							<tr>
+								<td>";
+								$monto_compra = 0;
+								foreach($compra['articulos'] as $articulo){
+							
+									//revisar si la descripcion de la promocion tiene slash's quitarlos
+									if(stristr($compra['promocion']->descripcionVc, "|")){
+										$mp=explode('|',$compra['promocion']->descripcionVc);
+										$nmp=count($mp);
+										if($nmp==2){
+											$desc_promo = $mp[0];		
+										}	
+										else if($nmp==3){
+											$desc_promo = $mp[1];
+										}								
+									}
+									else{
+										$desc_promo = $compra['promocion']->descripcionVc;	
+									}
+									//revisar si la descripcion del articulo tiene slash's quitarlos	
+									if(stristr($articulo['tipo_productoVc'], "|")){
+										$ma=explode('|',$articulo['tipo_productoVc']);
+										$nma=count($ma);
+										if($nma==2){
+											$desc_art = $ma[0];		
+										}	
+										else if($nma==3){
+											$desc_art = $ma[1];
+										}								
+									}
+									else{
+										$desc_art = $articulo['tipo_productoVc'];	
+									}
+									// mostrar la descripcion de promocion y articulo sin slash's
+									echo $desc_promo."<br />".
+										 $desc_art."<br />";	
+									$monto_compra+= $articulo['tarifaDc'];	 						
+								}
+		echo "					</td>
+								<td>".$compra['dir_envio']."
+								</td>
+								<td>".number_format($monto_compra, 2, '.', ',')."
+								</td>
+							</tr>
+						</tbody>					
+					</table>
+					<div style='margin-top:18px'>
+					</div>";		
+		
+						
 		echo "	<div class='encabezado-descripcion'>Información de pagos</div>
 				<div class='contenedor1'>
 					<span class='info-negro'>Pagado con: </span>

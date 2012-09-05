@@ -77,6 +77,6 @@
 		echo "</table>";	
 	}
 	else{
-		echo "Aun no compras nada";
+		echo "<p class='info-rojo'>Aún no tienes ninguna compra</p>";
 	}
 ?>

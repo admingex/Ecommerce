@@ -218,8 +218,8 @@ class Reporte extends CI_Controller {
 	}
 	
 	public function compras_cliente(){		
-		//$data['id_cliente'] = $id_cliente = $_POST['id_cliente'];
-		$data['id_cliente'] = $id_cliente = 28;		 
+		$data['id_cliente'] = $id_cliente = $_POST['id_cliente'];
+		//$data['id_cliente'] = $id_cliente = 28;		 
 		$compras_cliente = $this->reporte_model->obtener_compras_cliente($id_cliente);
 		if($compras_cliente->num_rows()>0){
 			$data['compras'] = array();
@@ -300,14 +300,14 @@ class Reporte extends CI_Controller {
 				$ca = $this->reporte_model->obtener_codigo_autorizacion($id_compra, $id_cliente);
 				if($ca->num_rows() > 0 ){									
 					if($ca->row()->codigo_autorizacionVc > 0){
-						$data['compra']['codigo_autorizacion'] = "codigo de autorización: ".$ca->row()->codigo_autorizacionVc;
+						$data['compra']['codigo_autorizacion'] = "<span class='info-negro'>codigo de autorización:</span> ".$ca->row()->codigo_autorizacionVc;
 					}
 					else{
-						$data['compra']['codigo_autorizacion'] = "codigo de autorización: ".$ca->row()->codigo_autorizacionVc ."<br />". $ca->row()->respuesta_bancoVc ;
+						$data['compra']['codigo_autorizacion'] = "<span class='info-negro'>codigo de autorización:</span> ".$ca->row()->codigo_autorizacionVc ."<br />". $ca->row()->respuesta_bancoVc ;
 					}
 				}	
 				else{
-					$data['compra']['codigo_autorizacion'] = "(No se realizo el cobro)";	
+					$data['compra']['codigo_autorizacion'] = "<span class='info-negro'>(No se realizo el cobro)</span>";	
 				}
 					
 			}
@@ -327,7 +327,20 @@ class Reporte extends CI_Controller {
 			$data['compra']['fecha_pago'] = NULL;				
 		}
 				
-		
+		//se obtiene la direccion de envio si es que existe			
+		$dir_envio = $this->reporte_model->obtener_dir_envio($id_compra, $id_cliente);
+		if($dir_envio->num_rows() > 0){
+				$data['compra']['dir_envio'] = 	$dir_envio->row()->address1." ".
+												$dir_envio->row()->address2." ".
+												$dir_envio->row()->address4."<br />".
+												$dir_envio->row()->zip."<br />".
+														$dir_envio->row()->address3."<br />".
+														$dir_envio->row()->city."<br />".
+														$dir_envio->row()->state;	
+		}
+		else{
+			$data['compra']['dir_envio']= "No requiere";
+		}
 		
 		//se obtiene la direccion de facturacion y Razon Social
 		$facturacion = $this->reporte_model->obtener_facturacion($id_compra, $id_cliente);
@@ -361,6 +374,8 @@ class Reporte extends CI_Controller {
 		if($promocion->num_rows()>0){
 			$data['compra']['promocion'] = $promocion->row();
 		}
+					
+		
 		//se obtiene el total de articulos en la promocion y el total que se pago por ellos 
 		$articulos_res = $this->reporte_model->obtener_articulos($id_promo);
 		$articulos = $articulos_res->result_array();							 
