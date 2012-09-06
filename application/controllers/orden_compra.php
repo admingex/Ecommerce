@@ -11,6 +11,7 @@ class Orden_Compra extends CI_Controller {
 	
 	private $id_cliente;
 	private $api;
+	private $clave_hash;		//para el pago de varias promociones
 	
 	const Tipo_AMEX = 1;
 	
@@ -144,8 +145,7 @@ class Orden_Compra extends CI_Controller {
 					$data['amex'] = (object)$tarjeta->amex;
 					//en este caso se consultará la info del WS
 				}
-				//echo var_dump($data);
-				//exit();
+				
 			} else if (is_integer((int)$this->session->userdata('tarjeta'))) {
 				
 				$consecutivo = $this->session->userdata('tarjeta');
@@ -219,11 +219,15 @@ class Orden_Compra extends CI_Controller {
 			$orden_info = $this->get_datos_orden();
 						
 			if (empty($this->registro_errores)) {
-				
-				//echo "El pago se realizará aquí. CVV: ".$_POST['txt_codigo'];
-				
+								
 				/*Recuperar la info gral. de la orden*/
 				$id_cliente 	= $this->id_cliente;
+				
+				echo "<pre>";
+				print_r($this->session->all_userdata());
+				echo "</pre>";
+				exit;
+				
 				//forma pago
 				$consecutivo 	= $this->session->userdata('tarjeta') ? $this->session->userdata('tarjeta') : $this->session->userdata('deposito');				
 				$id_promocionIn = $this->session->userdata('promocion')->id_promocionIn;
@@ -236,29 +240,25 @@ class Orden_Compra extends CI_Controller {
 				$informacion_orden->id_promocionIn = $id_promocionIn;
 				$informacion_orden->digito = $digito;
 				
-				//cambios Armando pago varias promociones
+				//ajuste para el cambio de Armando pago varias promociones 05.08.2012 
 				
 				//Obtener el montro total desde el api
 				if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
 					$detalle_promociones = $this->api->obtiene_articulos_y_promociones();																							
 				}
 				
+				echo "<pre>";
+				print_r($detalle_promociones);
+				echo "</pre>";
+				exit;
+				
 				$monto = $detalle_promociones['total_pagar'];
-				$clave_hash = "P3lux33n3l347ux3";
+				$this->clave_hash = "P3lux33n3l357ux3";
 				
 				$informacion_orden->id_compraIn = 0;
 				$informacion_orden->monto = 0;
 				//el hash se debe calcular hasta que se registra la compra
-				$informacion_orden->clave_hash = md5($digito.$id_cliente.$clave_hash.$monto);
-				
-				/*
-				$informacion_orden = new InformacionOrden(
-					$id_cliente,
-					$consecutivo,		//de la TC
-					$id_promocionIn,	
-					$digito				//CVV
-				);
-				 * */
+				$informacion_orden->clave_hash = md5($digito.$id_cliente.$this->clave_hash.$monto);
 
 				// Si la información esta en la Session //
 				$tipo_pago = self::$TIPO_PAGO['Otro'];	//ninguno válido al inicio
@@ -505,7 +505,8 @@ class Orden_Compra extends CI_Controller {
 						redirect('mensaje/'.md5(2), 'refresh');
 					}
 					
-				} else if (is_array($this->session->userdata('tarjeta'))) {		//////////// pago con tarjetas no guardada y que está en sesión
+				} else if (is_array($this->session->userdata('tarjeta'))) {
+					//////////// pago con tarjetas no guardada y que está en sesión
 				
 					$detalle_tarjeta = $this->session->userdata('tarjeta');					
 					$tc = $detalle_tarjeta['tc'];
@@ -596,9 +597,8 @@ class Orden_Compra extends CI_Controller {
 					try {
 						//Registrar la orden de compra y el detalle del pago con depósito
 						if($this->session->userdata('id_compra')){
-							$id_compra=$this->session->userdata('id_compra');
-						} 
-						else {
+							$id_compra = $this->session->userdata('id_compra');
+						} else {
 							$id_compra = $this->registrar_orden_compra($id_cliente, $id_promocionIn, $tipo_pago);	
 						}
 						
@@ -611,19 +611,6 @@ class Orden_Compra extends CI_Controller {
 						
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_objetos($tc_soap, $amex_soap, $informacion_orden);
-						
-						#### Ajuste de Interfase, ya no se ocupará, 23.07.2012
-						/*
-						$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-						//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
-						
-						$parameter = array('informacion_tarjeta' => $tc_soap, 'informacion_amex' => $amex_soap, 'informacion_orden' => $informacion_orden);
-						
-						$obj_result = $cliente->PagarTC($parameter);
-						
-						//Resultado de la petición de cobro a CCTC
-						$simple_result = $obj_result->PagarTCResult;
-						*/
 						
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
@@ -854,9 +841,10 @@ class Orden_Compra extends CI_Controller {
 					
 					$tipo_pago = ($tc->id_tipo_tarjetaSi == self::Tipo_AMEX) ? self::$TIPO_PAGO['American_Express'] : self::$TIPO_PAGO['Prosa'];
 					
-					//echo " tipo pago: " . $tipo_pago;
-					//exit();
+					
+					
 					/*
+					//echo " tipo pago: " . $tipo_pago;
 					echo " tipo pago de la DB: " . $tipo_pago;
 					echo "<pre>";
 					var_dump($informacion_orden);
@@ -884,19 +872,6 @@ class Orden_Compra extends CI_Controller {
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_ids($informacion_orden);
 						
-						#### Ajuste de Interfase, ya no se ocupará, 23.07.2012
-						/*
-						$cliente = new SoapClient("https://cctc.gee.com.mx/ServicioWebCCTC/ws_cms_cctc.asmx?WSDL");
-						//$cliente = new SoapClient("http://localhost:11622/ServicioWebPago/ws_cms_cctc.asmx?WSDL");
-						  
-						$parameter = array('informacion_orden' => $informacion_orden);
-						
-						//Intento de cobro en CCTC
-						$obj_result = $cliente->PagarTcUsandoId($parameter);
-						
-						//Resultado de la petición de cobro a CCTC
-						$simple_result = $obj_result->PagarTcUsandoIdResult;
-						*/
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
 					

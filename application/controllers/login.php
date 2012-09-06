@@ -227,29 +227,29 @@ class Login extends CI_Controller {
 	
 	/**
 	 * Regresa el destino del flujo a partir del perfil inicial del cliente,
-	 * dependiendo de lo que los artículos de la promoción requieran 
+	 * dependiendo de lo que los artículos de la promoción requieran
 	 * y coloca en sesión lo necesario para el pago exprés
 	 */
-	private function obtener_destino($id_cliente) 
+	private function obtener_destino($id_cliente)
 	{
-		//Procesar la promoción		
+		//Procesar la promoción
 		/*
 		echo "<pre>";
 			print_r($this->session->all_userdata());
-		echo "</pre>";				
+		echo "</pre>";
 		*/	
 		//revisamos que por lo menos tengamos una promocion
-		if(($this->session->userdata('promociones'))!=""){	
-			if (count($this->session->userdata('promociones'))>0) {
+		if (($this->session->userdata('promociones')) != "") {
+			if (count($this->session->userdata('promociones')) > 0) {
 				
 				//revisar si requiere forma de envío
 				$requiere_envio = FALSE;
 				
-				foreach($this->session->userdata('promociones') as $promocion){
+				foreach ($this->session->userdata('promociones') as $promocion) {
 					
 					// obtiene los articulos de la promocion				 
 					$respromo = $this->api->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);				
-					foreach($respromo['articulos'] as $articulo){
+					foreach($respromo['articulos'] as $articulo) {
 						if ($articulo['requiere_envioBi'] != FALSE) {
 							$requiere_envio = TRUE;
 							//echo "requiere envio";

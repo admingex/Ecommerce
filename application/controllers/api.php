@@ -53,50 +53,52 @@ class Api extends CI_Controller {
 			}
 			
 		}
-		if($segm==3){			
-			if($this->uri->segment(2)=='carrito'){
-				$datos_decrypt_url=base64_decode(str_pad(strtr($this->uri->segment(3), '-_', '+/'), strlen($this->uri->segment(3)) % 4, '=', STR_PAD_RIGHT));
-				$datos_decrypt=$this->decrypt($datos_decrypt_url, $this->key);
-				$datos_decrypt=unserialize($datos_decrypt);
+		//atención al carrito de compras de la tienda
+		if ($segm == 3) {	//es el token con la información de las promociónes y la sesión
+			if ($this->uri->segment(2) == 'carrito') {	//verifica que venga a procesar la información del carrito
+				$datos_decrypt_url = base64_decode(str_pad(strtr($this->uri->segment(3), '-_', '+/'), strlen($this->uri->segment(3)) % 4, '=', STR_PAD_RIGHT));
+				$datos_decrypt = $this->decrypt($datos_decrypt_url, $this->key);
+				$datos_decrypt = unserialize($datos_decrypt);
 				
-				if($_POST){										
-					/*
-					echo "<pre>";
+				if ($_POST) {
+					echo "POST<pre>";
 						print_r($_POST);
-						print_r($datos_decrypt);						
+						print_r($datos_decrypt);
 					echo "</pre>";
-					exit;	
-					*/													
+					exit;
 					
-					if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
+					
+					if (!empty($_POST['guidx']) && !empty($_POST['guidz'])) {
 						//obtener el id del sitio por medio del guidx 						
 						$ressit = $this->api_model->obtener_sitio_guidx($_POST['guidx']);
 						$sitio = $ressit->row()->id_sitioSi;
+						
 						//obtengo la llave privada en la DB
-						$guidxdb=$this->api_model->obtener_sitio($sitio)->row();						
+						$guidxdb = $this->api_model->obtener_sitio($sitio)->row();
+												
 						//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
-						if($guidxdb->private_KeyVc==$_POST['guidx']){							
+						if ($guidxdb->private_KeyVc == $_POST['guidx']) {
 							$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
 													   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
 													   			'guidz'=>$_POST['guidz'],
-													   			'promociones'=>$datos_decrypt												   			
-													   )
-												 );
-							/*					 
-							echo "<pre>";						
-								print_r($this->session->all_userdata());						
-							echo "</pre>";								
-								
+													   			'promociones'=>$datos_decrypt
+															   )
+														 );
+							/*
+							echo "<pre>";
+								print_r($this->session->all_userdata());
+							echo "</pre>";
+							
 							foreach($this->session->userdata('promociones') as $v){
 								echo "<br />".$v['id_sitio']."--".$v['id_canal']."--".$v['id_promocion'];
-							}		
+							}
 							exit;
-							*/		
-													 							
-							// si vienen los datos de login de la tienda manda el formuario de acceso					 								
-							if(array_key_exists('datos_login', $_POST)){							
-								$dat_log=$this->decrypt($_POST['datos_login'], $this->key);
-								$mp=explode('|',$dat_log);
+							*/
+
+							// si vienen los datos de login de la tienda manda el formuario de acceso
+							if (array_key_exists('datos_login', $_POST)) {
+								$dat_log = $this->decrypt($_POST['datos_login'], $this->key);
+								$mp = explode('|',$dat_log);
 								echo "  <form name='inicio_sesion' action='".site_url('login')."' method='post'>
 									    	<input type='text' name='email' value='".$mp[0]."' style='display: none' />
 									    	<input type='text' name='tipo_inicio' value='registrado' style='display: none' />
@@ -104,29 +106,31 @@ class Api extends CI_Controller {
 									    	<input type='submit' name='enviar' value='Iniciar sesion' style='display: none' />
 										</form>";
 								echo "<script>document.inicio_sesion.submit();</script>";
-							}
-							else{
-								//si no hay datos de uauario redirige a la tienda a login
+								
+							} else {
+								//si no hay datos de uauario redirije a la tienda a login
 								redirect('login');	
-							}											 		 											
-						}
-						else{							
+							}
+															 		 											
+						} else {	// IF encuentra el sitio
 							$this->session->unset_userdata();
 							redirect('login');	
-						}																 	
-					}		
-					else{					
+						}
+																			 	
+					} else { //IF empty(guidx && guidY)
 						$this->session->unset_userdata();
 						redirect('login');					
 					}
-													
-				}												
+				}	//IF $_POST											
 				exit();
-			}
-			$cad=$this->uri->segment(3);
-			if(($cad=="json")||($cad=="xml")||($cad=="html")){
-				$canal="";
-				$formato=$cad;
+			}	//IF viene del carrito
+			
+			//si no viene del carrito de la tienda, atiende la petición al API 
+			$cad = $this->uri->segment(3);
+			
+			if (($cad=="json") || ($cad=="xml") || ($cad=="html")){
+				$canal = "";
+				$formato = $cad;
 			}
 		}
 		if($segm==4){
@@ -606,29 +610,31 @@ class Api extends CI_Controller {
 	}		
 	
 	## funcion que devuelve los parametros sitio, canal, promocion en un JSON para IDC mediante la busqueda en el campo descripcionVc en la tabla IntIssue
-	public function obtener_url_promo($cad, $post){
-		$url=FALSE;
-		$sitio=$this->api_model->obtener_sitio_guidx($post['guidx']);
-		if($sitio){
-			$id_sitio=$sitio->row()->id_sitioSi;	
-		}				
+	public function obtener_url_promo($cad, $post) {
+		$url = FALSE;
+		$sitio = $this->api_model->obtener_sitio_guidx($post['guidx']);
+		if ($sitio) {
+			$id_sitio = $sitio->row()->id_sitioSi;
+		}
 		$promociones=$this->api_model->obtener_promocion_like($cad);
-		if($promociones){			
-			foreach($promociones->result_array() as $promocion){
+		if ($promociones) {
+			foreach ($promociones->result_array() as $promocion) {
 				$canal=$this->api_model->obtener_canal_promocion($promocion['id_promocionIn'], $id_sitio);
-				if($canal){
-					$url= json_encode($canal->row());																									
-				}								
+				if ($canal) {
+					$url= json_encode($canal->row());
+				}
 			}
-		}				
+		}
 		return $url;
 	}
-	
+	/**
+	 * Regresa un allar con la información que se tiene sobre las promociones uy los artículos que se van a comprar
+	 */
 	public function obtiene_articulos_y_promociones(){
-		$datos=array();
+		$datos = array();
 		$total = 0;
-		$det_promo=0;
-		$datos['numero_promociones']=count($this->session->userdata('promociones'));
+		$det_promo = 0;
+		$datos['numero_promociones'] = count($this->session->userdata('promociones'));
 		$datos['tipo_productoVc']=array();	
 		foreach($this->session->userdata('promociones') as $promocion){				
 			// obtiene las promociones y los articulos que contienen				 
