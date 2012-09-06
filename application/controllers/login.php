@@ -68,16 +68,16 @@ class Login extends CI_Controller {
     }
 	
 	public function index()
-	{		
+	{
+		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo correspondiente
 		
-		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo.
-		if($this->session->userdata('promociones')){
+		if ($this->session->userdata('promociones')) {	//si trae varias promociones
 			$promociones = $this->session->userdata('promociones');
 			foreach ($promociones as $promocion){				
 				$id_sit = $promocion['id_sitio'];
 			}																
 			$this->session->unset_userdata('sitio');
-			$datsit=$this->api_model->obtener_sitio($id_sit);		
+			$datsit = $this->api_model->obtener_sitio($id_sit);		
 			$this->session->set_userdata('sitio', $datsit->row());
 			$data['url_imageVc']=$datsit->row()->url_imageVc;
 		}																								
@@ -106,77 +106,97 @@ class Login extends CI_Controller {
 					//verificar que el usuario esté registrado
 					$this->email = $login_info['email'];
 					$this->password = $login_info['password'];
-					$mail_cte=$this->login_registro_model->verifica_registro_email($this->email);																		
-					if($mail_cte->num_rows()!=0){
+					$mail_cte = $this->login_registro_model->verifica_registro_email($this->email);
+					
+					//si encontró al usuario registrado										
+					if ($mail_cte->num_rows()!=0) {	
 						$fecha_lock = $mail_cte->row()->LastLockoutDate;
-						$id_cliente = $mail_cte->row()->id_clienteIn;						
-						if($fecha_lock!='0000-00-00 00:00:00'){
-							if($this->tiempo_desbloqueo($fecha_lock)){
-								$this->login_registro_model->desbloquear_cuenta($id_cliente);								
-								$t= mdate('%Y/%m/%d %h:%i:%s',time());								
-								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['DESBLOQUEO'], $t);							
+						$id_cliente = $mail_cte->row()->id_clienteIn;
+						
+						if ($fecha_lock != '0000-00-00 00:00:00') {	//verificar que la cuenta no esté bloqueada
+							if ($this->tiempo_desbloqueo($fecha_lock)) {
+								$this->login_registro_model->desbloquear_cuenta($id_cliente);	//desbloquear la cuenta
+								$t = mdate('%Y/%m/%d %h:%i:%s',time());
+								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['DESBLOQUEO'], $t);
 							}
 						}
-																									
+						//número de intentos fallidos
 						$num_intentos = $this->login_registro_model->obtiene_numero_intentos($id_cliente);	
 						
-						if($num_intentos<3){
-							$resultado = $this->login_registro_model->verifica_cliente($this->email, $this->password);							
-							if ($resultado->num_rows() > 0) {
+						if ($num_intentos < 3) {	//verificar que la cuenta no esté bloqueada
+							//verificar la contraseña y el correo del cliente, si lo encuentra trae :
+							/**
+							 * 	id_clienteIn as id_cliente, 
+							 * 	salutation as nombre, 
+							 * 	email, 
+							 * 	password
+							 * 
+							 * */
+							$resultado = $this->login_registro_model->verifica_cliente($this->email, $this->password);
+							
+							//si la información es válida...el cliente puede iniciar sesión
+							if ($resultado->num_rows() > 0) {	
 								//Reguardar la información de la promoción
 								
 								//destruir la sesión de PHP y mandar la información en la sesión de CI con un nuevo ID
 								$this->cambiar_session();
 								
-								//encryptar login y pass y guardarlo en session											
+								//encriptar login y password y guardarlos en sesión para el proceso de validación con IDC
 								$cliente = $resultado->row();
 								$dl = $this->api->encrypt($cliente->email."|".$this->password, $this->api->key);
 								$this->session->set_userdata('datos_login',$dl);
 								
-								//se crea la sessión con la información del cliente
-								$this->crear_sesion($cliente->id_cliente, $cliente->nombre, $this->email);	//crear sesion
+								//se pasa a la sessión la información del cliente como cliente "logueado" en el sistema de cobros
+								$this->crear_sesion($cliente->id_cliente, $cliente->nombre, $this->email);
 								
-								//por defaulr no se considera la dirección d facturación
+								//por default no se considera la dirección d facturación
 								$datars = array('requiere_factura' => 'no');
 								$this->session->set_userdata($datars);
 								
-								//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
-								$destino = $this->obtener_destino($cliente->id_cliente);						
+								#### TODO: Pendiente de modificar para lo de las direcciones.
+								//detecta a donde va el ususario a partir de la/las promoción/promociones que se tiene en sesión
+								$destino = $this->obtener_destino($cliente->id_cliente);		
 								
 								//colocar en sessión el destino
 								$data_destino = array('destino' => $destino);
 								$this->session->set_userdata($data_destino);
 								
-								//Flujo
+								//continuando con el flujo
 								redirect($destino);
-							} 
-							else{
-								$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";																			
-								$t= mdate('%Y/%m/%d %h:%i:%s',time());								
+								
+							} else {	//IF la información de inicio de sesión es correcta
+								//si la informción no es correcta
+								$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";
+								//registrar el intento fallido en la bitácora de actividad del cliente
+								$t = mdate('%Y/%m/%d %h:%i:%s',time());
 								$this->password_model->guarda_actividad_historico($id_cliente, $this->password, self::$TIPO_ACTIVIDAD['ACCESO_INCORRECTO'], $t);
-								$t= mdate('%Y/%m/%d %h:%i:%s',time());									
-								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
+								//actualiza en la BD el número de intentos fallidos para el cliente
+								$t = mdate('%Y/%m/%d %h:%i:%s',time());
+								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);
 							}
-						}
-						else{
-							if($num_intentos==3){
-								$t= mdate('%Y/%m/%d %h:%i:%s',time());	
-								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['BLOQUEO'], $t);
-								$t= mdate('%Y/%m/%d %h:%i:%s',time());		
-								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
-							}
-							$this->login_errores['user_login'] = "Ha excedido el número máximo de intentos permitidos para iniciar sesión.<br />
-							                                      Su cuenta permanecerá bloqueada por 30 minutos";
 							
-						}						
-					}					
-					else {						
-						$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br />Por favor intenta de nuevo.";																																					
+						} else {
+							if ($num_intentos == 3) {	//si ya tiene tres intentos fallidos
+								//registrar el bloqueo de la cuenta en la bitácora de actividad del cliente
+								$t = mdate('%Y/%m/%d %h:%i:%s',time());	
+								$this->password_model->guarda_actividad_historico($id_cliente, '', self::$TIPO_ACTIVIDAD['BLOQUEO'], $t);
+								//actualiza en la BD el número de intentos fallidos para el cliente
+								$t = mdate('%Y/%m/%d %h:%i:%s',time());		
+								$this->login_registro_model->suma_intento_fallido($id_cliente, $num_intentos, $t);	
+							}
+							//mensaje para mostrar al cliente en la pantalla de inicio de sesión
+							$this->login_errores['user_login'] = "Ha excedido el número máximo de intentos permitidos para iniciar sesión.<br/>".
+							                                      "Su cuenta permanecerá bloqueada por 30 minutos";
+						}
+						
+					} else { // IF si encontró al usuario registrado
+						$this->login_errores['user_login'] = "Hubo un error con la combinación ingresada de correo y contraseña.<br/>Por favor intenta de nuevo.";																																					
 						//$data['mensaje'] = "Correo o contrase&ntilde;a incorrectos" ;
 					}
 				}
 			}
-		}		
+		}
+		//cargar la vista de login
 		$data['login_errores'] = $this->login_errores;
 		$this->cargar_vista('', 'login', $data);
 	}
@@ -190,10 +210,10 @@ class Login extends CI_Controller {
 			$datars = array('requiere_factura' => 'no');
 			$this->session->set_userdata($datars);
 			
-			//detecta a donde va el ususario a partir de la promoción que se tiene en sesión
+			//detecta a dónde va el ususario a partir de la promoción que se tiene en sesión
 			$destino = $this->obtener_destino($cliente->id_cliente);						
 			
-			//colocar en sessión el destino
+			//colocar en sesión el destino
 			$data_destino = array('destino' => $destino);
 			$this->session->set_userdata($data_destino);
 			
@@ -318,8 +338,8 @@ class Login extends CI_Controller {
 	/**
 	 * regenerar el id de la sesión y re-asignarlo
 	 */
-	 private function cambiar_session() {
-		//regenerar el id de la sesión y asignarlo
+	private function cambiar_session() {
+		//regenerar el id de la sesión y asignar uno nuevo
 		session_regenerate_id();
 		
 		$new_id = session_id();
@@ -332,7 +352,7 @@ class Login extends CI_Controller {
 		
 		exit();
 		 * */		
-	 }
+	}
 	
 	private function crear_sesion($id_cliente, $nombre, $email)
 	{

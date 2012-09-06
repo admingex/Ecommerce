@@ -73,21 +73,21 @@ class Login_Registro_model extends CI_Model {
 		}
 	}
 	
-	function obtiene_numero_intentos($id_cliente){
-		$query="SELECT FailedPasswordAttemptCount FROM CMS_IntCliente WHERE id_clienteIn='".$id_cliente."'";
+	function obtiene_numero_intentos($id_cliente) {
+		$query = "SELECT FailedPasswordAttemptCount FROM CMS_IntCliente WHERE id_clienteIn='".$id_cliente."'";
 		$res = $this->db->query($query);
 		return $res->row()->FailedPasswordAttemptCount;
 	}
 	
-	function suma_intento_fallido($id_cliente, $num_intentos, $t){						
+	function suma_intento_fallido($id_cliente, $num_intentos, $t) {						
 		$numin = $num_intentos + 1;		
-		$query2 ="UPDATE  CMS_IntCliente SET FailedPasswordAttemptCount='".$numin."', LastLockoutDate='".$t."'  WHERE id_clienteIn='".$id_cliente."'";
+		$query2 = "UPDATE  CMS_IntCliente SET FailedPasswordAttemptCount='".$numin."', LastLockoutDate='".$t."'  WHERE id_clienteIn='".$id_cliente."'";
 		$res2 = $this->db->query($query2);
 		return $res2;				
 	}
 	
-	function desbloquear_cuenta($id_cliente){								
-		$query2 ="UPDATE  CMS_IntCliente SET FailedPasswordAttemptCount=NULL, LastLockoutDate=NULL  WHERE id_clienteIn='".$id_cliente."'";
+	function desbloquear_cuenta($id_cliente) {								
+		$query2 = "UPDATE  CMS_IntCliente SET FailedPasswordAttemptCount=NULL, LastLockoutDate=NULL  WHERE id_clienteIn='".$id_cliente."'";
 		$res2 = $this->db->query($query2);
 		return $res2;				
 	}
