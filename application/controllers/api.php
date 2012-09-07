@@ -29,15 +29,17 @@ class Api extends CI_Controller {
 		$data['listar'] = TRUE;
 		$data['detalle'] = FALSE;						
 		
-		$segm=$this->uri->total_segments();
-		if($segm==2){
-			$cad=$this->uri->segment(2);
-			if(($cad=="json")||($cad=="xml")||($cad=="html")){
+		//cuantos segmentos trae la url, después de: http://localhost/ecommerce/api/
+		$segm = $this->uri->total_segments();
+		
+		if ($segm == 2) {
+			$cad = $this->uri->segment(2);
+			if (($cad == "json") || ($cad == "xml") || ($cad == "html")) {
 				$sitio="";
 				$formato=$cad;
-			}								
-			//buscar los articulos con la clave enviada			
-			else if(((!is_numeric($cad))|| (strlen($cad)>2)) && ($_POST) ){				
+				
+			} else if (((!is_numeric($cad))|| (strlen($cad)>2)) && ($_POST) ) { //buscar los artículos con la clave enviada desde el portal de IDC
+				
 				//echo $cad;
 				//$file_path = '/var/www/html/pagos/application/controllers/log.txt';
 				/*
@@ -54,29 +56,31 @@ class Api extends CI_Controller {
 			
 		}
 		//atención al carrito de compras de la tienda
+		//la información viene de "detalle carrito" en la vista
 		if ($segm == 3) {	//es el token con la información de las promociónes y la sesión
+			//http://localhost/ecommerce/api(1)/carrito(2)/
 			if ($this->uri->segment(2) == 'carrito') {	//verifica que venga a procesar la información del carrito
 				$datos_decrypt_url = base64_decode(str_pad(strtr($this->uri->segment(3), '-_', '+/'), strlen($this->uri->segment(3)) % 4, '=', STR_PAD_RIGHT));
 				$datos_decrypt = $this->decrypt($datos_decrypt_url, $this->key);
 				$datos_decrypt = unserialize($datos_decrypt);
 				
 				if ($_POST) {
+					/*
 					echo "POST<pre>";
 						print_r($_POST);
 						print_r($datos_decrypt);
 					echo "</pre>";
-					exit;
-					
+					exit;*/
 					
 					if (!empty($_POST['guidx']) && !empty($_POST['guidz'])) {
-						//obtener el id del sitio por medio del guidx 						
+						//obtener el id del sitio por medio del guidx
 						$ressit = $this->api_model->obtener_sitio_guidx($_POST['guidx']);
 						$sitio = $ressit->row()->id_sitioSi;
 						
 						//obtengo la llave privada en la DB
 						$guidxdb = $this->api_model->obtener_sitio($sitio)->row();
-												
-						//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
+						
+						//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso
 						if ($guidxdb->private_KeyVc == $_POST['guidx']) {
 							$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
 													   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
@@ -95,7 +99,7 @@ class Api extends CI_Controller {
 							exit;
 							*/
 
-							// si vienen los datos de login de la tienda manda el formuario de acceso
+							// si vienen los datos de login de la tienda manda el formuario de acceso y verifica al cliente para dejarlo pasar a la plataforma
 							if (array_key_exists('datos_login', $_POST)) {
 								$dat_log = $this->decrypt($_POST['datos_login'], $this->key);
 								$mp = explode('|',$dat_log);
@@ -108,16 +112,17 @@ class Api extends CI_Controller {
 								echo "<script>document.inicio_sesion.submit();</script>";
 								
 							} else {
-								//si no hay datos de uauario redirije a la tienda a login
+								//si no hay datos de uauario redirije a la tienda a login para que inicie la sesión
 								redirect('login');	
 							}
-															 		 											
+						
 						} else {	// IF encuentra el sitio
+							//si no encuentra el sitio elimina la sesión y redirecciona al login
 							$this->session->unset_userdata();
 							redirect('login');	
 						}
-																			 	
-					} else { //IF empty(guidx && guidY)
+						
+					} else { //IF empty(guidx && guidY) 
 						$this->session->unset_userdata();
 						redirect('login');					
 					}
@@ -133,48 +138,65 @@ class Api extends CI_Controller {
 				$formato = $cad;
 			}
 		}
-		if($segm==4){
-			$cad=$this->uri->segment(4);
-			if(($cad=="json")||($cad=="xml")||($cad=="html")){
-				$promocion="";
-				$formato=$cad;
+		//http://localhost/ecommerce/api/3/21/500/pago
+		/**
+		 * 0=> api (controlador)
+		 * 1=> 3 (sitio)
+		 * 2=> 21(canal)
+		 * 3=>	500(promoción)
+		 * 4=>	formato/acción (pago)
+		 */
+		if ($segm == 4) {	///// pago exprés
+			$cad = $this->uri->segment(4);
+			if (($cad == "json") || ($cad == "xml") || ($cad == "html")) {
+				$promocion = "";
+				$formato = $cad;
 			}
-		}														
-		if($formato=="pago"){
-		    $formato="";
-		}				
+		}
 		
-		if((empty($sitio)) && (empty($canal)) && (empty($promocion))){			
-			$sitios=$this->api_model->obtener_sitios();
-			foreach($sitios->result_array() as $siti){
-				$res=$this->api_model->obtener_sitio($siti['id_sitioSi']);
-				$sit=$res->row();				
+		//echo "segm: ". $this->uri->segment(1);
+		//exit;
+		if ($formato == "pago") {
+		    $formato = "";
+		}
+		
+		//lógica del API para consulta directa en el navegador
+		
+		//primero listar sitios
+		if ((empty($sitio)) && (empty($canal)) && (empty($promocion))) {
+			$sitios = $this->api_model->obtener_sitios();
+			foreach ($sitios->result_array() as $siti) {
+				$res = $this->api_model->obtener_sitio($siti['id_sitioSi']);
+				$sit = $res->row();
 				$data['sitios'][]=array('urlVc'=>$sit->urlVc, 'id_sitioSi'=>$sit->id_sitioSi);
 			}								
-			$this->formato($formato, $data);			
-		}
-		
-		else if(($sitio) && (empty($canal)) && (empty($promocion))){			
-			$canales=$this->api_model->obtener_canales_sitio($sitio);
-			if($canales->num_rows()!=0){
-				foreach($canales->result_array() as $cana){
-					$res=$this->api_model->obtener_canal($cana['id_canalSi']);
-					$can=$res->row();
-					$data['canales'][]=array('id_canalSi'=>$can->id_canalSi , 'descripcionVc'=>$can->descripcionVc, 'addKeyVc'=>$can->addKeyVc);				
+			$this->formato($formato, $data);
+						
+		} else if (($sitio) && (empty($canal)) && (empty($promocion))) {
+			//si trae sitio, listar los canales del sitio solicitado
+			$canales = $this->api_model->obtener_canales_sitio($sitio);
+			
+			if ($canales->num_rows() != 0) {
+				foreach ($canales->result_array() as $cana) {
+					$res = $this->api_model->obtener_canal($cana['id_canalSi']);
+					$can = $res->row();
+					$data['canales'][] = array('id_canalSi'=>$can->id_canalSi , 'descripcionVc'=>$can->descripcionVc, 'addKeyVc'=>$can->addKeyVc);
 				}	
-			}		
-			else{
-				$data['error']['sitio']="no existe informacion del sitio";
-			}	
-			$this->formato($formato, $data);					
-		}
-		else if(($sitio) && ($canal) && (empty($promocion))){					
-			$promocion=$this->api_model->obtener_promociones_canales_sitio($sitio, $canal);
-			if($promocion->num_rows()!=0){
-				foreach($promocion->result_array() as $promo){
-					$res=$this->api_model->obtener_promocion($promo['id_promocionIn']);
-					$prom=$res->row();
-					$data['promocion'][]=array('id_promocionIn'=>$prom->id_promocionIn, 
+			} else{
+				$data['error']['sitio']="No existe información del sitio solicitado.";
+			}
+			
+			$this->formato($formato, $data);
+			
+		} else if (($sitio) && ($canal) && (empty($promocion))) {
+			//si trae sitio y canal, listar las promociones del sitio y canal solicitado
+			$promocion = $this->api_model->obtener_promociones_canales_sitio($sitio, $canal);
+			
+			if ($promocion->num_rows() != 0) {
+				foreach ($promocion->result_array() as $promo) {
+					$res = $this->api_model->obtener_promocion($promo['id_promocionIn']);
+					$prom = $res->row();
+					$data['promocion'][] = array('id_promocionIn'=>$prom->id_promocionIn,
 						                     'descripcionVc'=>$prom->descripcionVc, 
 						                     'inicio_promocionDt'=>$prom->inicio_promocionDt,
 						                     'fin_promocionDt'=>$prom->fin_promocionDt,
@@ -184,16 +206,17 @@ class Api extends CI_Controller {
 						                     'precioF'=>$prom->precioF
 											 );				
 				}				
-			}		
-			else{				
+			}  else {
 				$data['error']['canal']='no existe informacion de este canal';
-			}									
-			$this->formato($formato, $data);						
-		}		
-		else if(($sitio) && ($canal) && ($promocion)){
-			$ultimosegmento=$this->uri->segment($segm);									
+			}
+			
+			$this->formato($formato, $data);
+			
+		} else if (($sitio) && ($canal) && ($promocion)) {
+			//si trae sitio, canal y promoción, el detalle de la promoción solicitada
+			$ultimosegmento = $this->uri->segment($segm);	//especifica el formato en que se deplegará la información
 			$this->detalle($sitio, $canal, $promocion, $formato, $ultimosegmento);
-		}			
+		}
 	}
 	
 	public function detalle($sitio, $canal, $promocion, $formato, $ultimosegmento){
@@ -308,49 +331,47 @@ class Api extends CI_Controller {
 		}
 		 			  	    		  		
   }  
-		
-	public function obtener_detalle_promo($sitio, $canal, $promocion){
-		$data=array();
-		if(!empty($sitio)){	  
-	  		$rsitio= $this->api_model->obtener_sitio($sitio);	
-			if($rsitio->num_rows()!=0){
+	/**
+	 *	Devuelve el detalle decierta promoción a partir del sitio, el canal y la promoción misma
+	 */
+	public function obtener_detalle_promo($sitio, $canal, $promocion) {
+		$data = array();
+		if (!empty($sitio)) {
+	  		$rsitio = $this->api_model->obtener_sitio($sitio);	
+			if ($rsitio->num_rows()!=0) {
 				$data['sitio']=$rsitio->row();
-			}		 
-			else{
-				$data['error']['sitio']="no existe informacion de este sitio";
-			} 
+			} else {
+				$data['error']['sitio'] = "No existe informacién del sitio solicitado.";
+			}
     	}
 		
-		if(!empty($canal)){
-	  		$rcanal= $this->api_model->obtener_canal($canal);	
-			if($rcanal->num_rows()!=0){
-				$data['canal']=$rcanal->row();
-			}      
-			else{
-				$data['error']['canal']="no existe informacion de este canal";
-			}	  	
-    	}                    
-	  	
-    	if(!empty($promocion)){	  
-	  		$rpromocion= $this->api_model->obtener_promocion($promocion);	
-			if($rpromocion->num_rows()!=0){
-				$data['promocion']=$rpromocion->row();
-				$rarticulos= $this->api_model->obtener_articulos($promocion);
-				if($rarticulos->num_rows()!=0){
-					$data['articulos']=$rarticulos->result_array();																									
-				}
-				else{
-					$data['error']['articulos']="no existen articulos en esta promocion";
-				}				
-			}      		
-			else{
-				$data['error']['promocion']="no existe informacion de esta promocion";
+		if (!empty($canal)) {
+	  		$rcanal = $this->api_model->obtener_canal($canal);
+			if ($rcanal->num_rows() != 0) {
+				$data['canal'] = $rcanal->row();
+			} else {
+				$data['error']['canal'] = "No existe información del canal solicitado.";
 			}
-    	}	
+    	}
+	  	
+    	if (!empty($promocion)) {
+    		$rpromocion = $this->api_model->obtener_promocion($promocion);
+			if ($rpromocion->num_rows() != 0) {
+				$data['promocion'] = $rpromocion->row();
+				$rarticulos = $this->api_model->obtener_articulos($promocion);
+				if ($rarticulos->num_rows() != 0) {
+					$data['articulos'] = $rarticulos->result_array();
+				} else {
+					$data['error']['articulos']="No existen artículos en esta promoción.";
+				}
+			} else {
+				$data['error']['promocion'] = "No existe informacion de la promoción solicitada.";
+			}
+    	}
 		return $data;
-	}	
-			
-	private function formato($formato, $data){		
+	}
+
+	private function formato($formato, $data) {
 		if((empty($formato)) || ($formato=='json')){						
 			echo json_encode($data);					 																	
 		}
@@ -609,14 +630,16 @@ class Api extends CI_Controller {
 		}		
 	}		
 	
-	## funcion que devuelve los parametros sitio, canal, promocion en un JSON para IDC mediante la busqueda en el campo descripcionVc en la tabla IntIssue
+	## funcion que devuelve los parametros sitio, canal, promocion en un JSON para IDC mediante la búsqueda en el campo descripcionVc en la tabla IntIssue
 	public function obtener_url_promo($cad, $post) {
 		$url = FALSE;
 		$sitio = $this->api_model->obtener_sitio_guidx($post['guidx']);
 		if ($sitio) {
 			$id_sitio = $sitio->row()->id_sitioSi;
 		}
-		$promociones=$this->api_model->obtener_promocion_like($cad);
+		
+		$promociones = $this->api_model->obtener_promocion_like($cad);
+		
 		if ($promociones) {
 			foreach ($promociones->result_array() as $promocion) {
 				$canal=$this->api_model->obtener_canal_promocion($promocion['id_promocionIn'], $id_sitio);
@@ -625,81 +648,89 @@ class Api extends CI_Controller {
 				}
 			}
 		}
+		
 		return $url;
 	}
+	
 	/**
-	 * Regresa un allar con la información que se tiene sobre las promociones uy los artículos que se van a comprar
+	 * Regresa un array con la información que se tiene sobre las promociones y los artículos que se van a comprar
+	 * Para mostrar los detalles del último producto agregado y los demás no... 
 	 */
-	public function obtiene_articulos_y_promociones(){
+	public function obtiene_articulos_y_promociones() {
 		$datos = array();
-		$total = 0;
-		$det_promo = 0;
+		$total = 0;			//lo que se cobrará como total de la compra
+		$det_promo = 0;		//de la últoma promoción agregada
+		
 		$datos['numero_promociones'] = count($this->session->userdata('promociones'));
-		$datos['tipo_productoVc']=array();	
-		foreach($this->session->userdata('promociones') as $promocion){				
-			// obtiene las promociones y los articulos que contienen				 
+		$datos['tipo_productoVc'] = array();		//para la descripción de la primera promoción en el carrito
+			
+		foreach ($this->session->userdata('promociones') as $promocion) {
+			// obtiene las promociones y los artículos que contienen
 			$respromo = $this->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);
-			if($det_promo==0){
+			
+			if ($det_promo == 0) {	//sólo se obtiene la descripción de la primer promoción
 				/*
 				echo "<pre>";
-					print_r($respromo['promocion']);					
+					print_r($respromo['promocion']);		
 				echo "</pre>";
-				*/	
-				//obtiene 			
+				*/
+				
+				//obtiene descripción / si es un issue (PDFs IDC), se busca la descripción del issue
 				$datos['descripcion_promocion'] = $respromo['promocion']->descripcionVc;
-				foreach($respromo['articulos'] as $articulo){																	
-					if($articulo['issue_id']){
-						$issue = $this->api_model->obtener_issue($articulo['issue_id']);						
-						$datos['articulo_promocion'][] =  $issue->row()->descripcionVc;	
+				//obtener el tipo de producto de los artículos de la promoción, se queda con el último
+				foreach ($respromo['articulos'] as $articulo) {
+					if ($articulo['issue_id']) {
+						$issue = $this->api_model->obtener_issue($articulo['issue_id']);
+						$datos['articulo_promocion'][] = $issue->row()->descripcionVc;
+					} else {
+						$datos['articulo_promocion'][] = $articulo['tipo_productoVc'];
 					}
-					else{
-						$datos['articulo_promocion'][]= $articulo['tipo_productoVc'];	
-					}												
 				}
 				
-				//exit;
-				//if(){
-					
-				//}
-				//$datos['articulo_promocion'] = $respromo['articulos']; 	
-				$det_promo=1;								
-			}		
-			$datos['descripciones_promocion'][] =	$respromo;
-						
-			foreach($respromo['articulos'] as $articulo){
-				if($articulo['issue_id']){
+				$det_promo = 1;	//se desactiva la bandera pparabuscar el tipo de producto de los artículos de la promoción
+			}
+			
+			// se agrega la promoción con todos los detalles al arreglo que las contendrá, incluída la información del sitio y canal 
+			$datos['descripciones_promocion'][] = $respromo;
+			
+			//obtener el tipo de producto de los artículos de la promoción, se queda con el último artículo que está en la última promoción
+			foreach($respromo['articulos'] as $articulo) {
+				if ($articulo['issue_id']) {
 					$issue = $this->api_model->obtener_issue($articulo['issue_id']);
 					$datos['tipo_productoVc'][($articulo['issue_id'])] = $issue->row()->descripcionVc;
 				}
-				$total = $total + $articulo['tarifaDc']; 	
-				if($articulo['monedaVc']){
+
+				#### TODO Calcular considerando los descuentos y el IVA
+				//también se calcula el total que se cobrará por las promociones en el carrito...
+				$total = $total + $articulo['tarifaDc'];
+				
+				if ($articulo['monedaVc']) {
 					$datos['moneda'] = $articulo['monedaVc'];	
 				}
-							
-			}									
+			}
 		}
 				
-		$datos['total_pagar']=$total;
+		$datos['total_pagar'] = $total;
 		return $datos;
 	}	
 	
-	public function encrypt($str, $key){
-		$str=trim($str);
+	public function encrypt($str, $key) {
+		$str = trim($str);
     	$block = mcrypt_get_block_size('des', 'ecb');
     	$pad = $block - (strlen($str) % $block);
     	$str .= str_repeat(chr($pad), $pad);
     	return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB));
 	}
 	
-	public function decrypt($str, $key){
-		$str=base64_decode($str);
+	public function decrypt($str, $key) {
+		$str = base64_decode($str);
     	$str = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
     	$block = mcrypt_get_block_size('des', 'ecb');
     	$pad = ord($str[($len = strlen($str)) - 1]);
     	return substr($str, 0, strlen($str) - $pad);
 	}
 			
-	public function cargar_vista($folder, $page, $data){	
+	public function cargar_vista($folder, $page, $data) {	
 		//Para automatizar un poco el desplieguee
 		$this->load->view('templates/header', $data);
 		$this->load->view($folder.'/'.$page, $data);

@@ -7,7 +7,7 @@ class Api_model extends CI_Model {
 	
 		
 	
-	function obtener_sitio($id_sitio){		
+	function obtener_sitio($id_sitio) {		
 		$res = $this->db->get_where('CMS_CatSitio', array('id_sitioSi'=>$id_sitio));
 		return $res;
 	}		
@@ -17,7 +17,7 @@ class Api_model extends CI_Model {
 		return $res;
 	}
 	
-	function obtener_promocion($id_promocion){		
+	function obtener_promocion($id_promocion) {		
 		$res = $this->db->get_where('CMS_IntPromocion', array('id_promocionIn'=>$id_promocion));
 		return $res;
 	}
@@ -60,7 +60,7 @@ class Api_model extends CI_Model {
 		return $res;
 	}
 	
-	function obtener_promociones_canales_sitio($id_sitio, $id_canal){		
+	function obtener_promociones_canales_sitio($id_sitio, $id_canal) {		
 		$res = $this->db->get_where('CMS_RelPromocionSitioCanal', array('id_sitioSi'=>$id_sitio, 'id_canalSi'=>$id_canal));							
 		return $res;
 	}

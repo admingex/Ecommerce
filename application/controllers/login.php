@@ -89,6 +89,11 @@ class Login extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
 		
+		/*echo "session<pre>";
+		print_r($_POST);
+		print_r($this->session->all_userdata());
+		echo "</pre>";*/
+		
 		if ($_POST)
 		{
 			//si es usuario nuevo, se debe registrar
@@ -267,20 +272,21 @@ class Login extends CI_Controller {
 				
 				foreach ($this->session->userdata('promociones') as $promocion) {
 					
-					// obtiene los articulos de la promocion				 
+					// obtiene los artículos de la promocion				 
 					$respromo = $this->api->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);				
 					foreach($respromo['articulos'] as $articulo) {
 						if ($articulo['requiere_envioBi'] != FALSE) {
 							$requiere_envio = TRUE;
 							//echo "requiere envio";
 							break;
-						}					
-					}									
-				}																												
+						}
+					}
+				}
 				
-				//Requiere envío en sesión
+				//señalat que se requiere envío en la sesión
 				$this->session->set_userdata('requiere_envio', $requiere_envio);	
-				//el siguiente parametro es para indicar al controlador si es necesario cargar el archivo views/templates/promocion.html		
+				
+				//el siguiente parámetro es para indicar al controlador si es necesario cargar el archivo views/templates/promocion.html => hay alguna promoción
 				$this->session->set_userdata('promocion', TRUE);								
 				
 				//echo "<pre>";
@@ -294,7 +300,7 @@ class Login extends CI_Controller {
 				$dir_facturacion_express = $this->direccion_facturacion_model->get_pago_express($id_cliente);	//devolverá un obj
 				$razon_social_express = $this->direccion_facturacion_model->get_pago_express_rs($id_cliente);	//devolverá un obj
 				
-				//se crea el objeto con la informción del pago exprés, a través de los consecutivos
+				//se crea el objeto con la información del pago exprés, a través de los consecutivos
 				$pago_express = new Pago_Express($forma_pago_express->consecutivo, $dir_envio_express->consecutivo, $dir_facturacion_express->consecutivo, $razon_social_express->consecutivo);					
 					
 				//obtener el array de lo que se subirá a sesion
@@ -305,33 +311,28 @@ class Login extends CI_Controller {
 					//$this->session->set_userdata('tarjeta', $pago_express->get_forma_pago());
 					$this->session->set_userdata('tarjeta', $forma_pago_express->consecutivo);
 				}
+				
 				if (array_key_exists('dir_envio', $flujo_pago_express)) {
 					//$this->session->set_userdata('dir_envio', $pago_express->get_dir_envio());
 					$this->session->set_userdata('dir_envio', $dir_envio_express->consecutivo);
 				}
+				
 				if (array_key_exists('dir_facturacion', $flujo_pago_express) && array_key_exists('razon_social', $flujo_pago_express)) {
 					$this->session->set_userdata('direccion_f', $dir_facturacion_express->consecutivo);
 					$this->session->set_userdata('razon_social', $razon_social_express->consecutivo);
 					$this->session->set_userdata('requiere_factura', 'si');
-					
 				}
 				
-				
-				//**Obsoleto**//
-				//se coloca el objeto en sesión para ocuparlo en los demás controladores
-				//$this->session->set_userdata('pago_express', $pago_express);
-				//***//
-				
-				//Sólo se usará el objeto de Pago Exprés en este controlador por el momento.
-				return $pago_express->get_destino();	
+				//Sólo se usará el objeto de Pago Exprés en este controlador
+				return $pago_express->get_destino();
 			} else {
 				//enviar a página de mensaje "La promoción que solicitó ya no existe...etc."
 				return "mensaje/".md5(1);
 			}
-		}
-		else{
-				//enviar a página de mensaje "La promoción que solicitó ya no existe...etc."
-				return "mensaje/".md5(1);
+			
+		} else {	//IF trae promociones
+			//enviar a página de mensaje "La promoción que solicitó ya no existe...etc."
+			return "mensaje/".md5(1);
 		}
 	}
 	

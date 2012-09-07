@@ -6,44 +6,39 @@
 				<div class="titulo-promo-negro">
 					<?php
 						////**Muestra el detalle de la promocion**//// 
-						if( strstr($detalle_promociones['descripcion_promocion'], '|' )){
-							$mp=explode('|',$detalle_promociones['descripcion_promocion']);
-							$nmp=count($mp);
-							if($nmp==2){
-								$desc_promo = $mp[0];		
-							}	
-							else if($nmp==3){
+						if (strstr($detalle_promociones['descripcion_promocion'], '|' )) {
+							$mp = explode('|',$detalle_promociones['descripcion_promocion']);
+							$nmp = count($mp);
+							if ($nmp == 2) {
+								$desc_promo = $mp[0];
+							} else if ($nmp == 3) {
 								$desc_promo = $mp[1];
 							}
-						}				
-						else{
+						} else {
 							$desc_promo = $detalle_promociones['descripcion_promocion'];
 						}
 						echo $desc_promo;
 						////****////
 												
 						////**Muestra los articulos en la promocion**////
-						foreach($detalle_promociones['articulo_promocion'] as $articulo){
-							if( strstr($articulo, '|' )){
-								$mp=explode('|',$articulo);
-								$nmp=count($mp);
-								if($nmp==2){
-									$desc_art = $mp[0];		
-								}	
-								else if($nmp==3){
+						foreach ($detalle_promociones['articulo_promocion'] as $articulo) {
+							if (strstr($articulo, '|' )) {
+								$mp = explode('|', $articulo);
+								$nmp = count($mp);
+								if ($nmp == 2) {
+									$desc_art = $mp[0];
+								} else if ($nmp == 3) {
 									$desc_art = $mp[1];
 								}
-							}				
-							else{
+							} else {
 								$desc_art = $articulo;
-							}
-							
+							}							
 							echo "<br />".$desc_art;							
 						}
 						////****////	
-						if($detalle_promociones['numero_promociones']>1){
+						if ($detalle_promociones['numero_promociones']>1) {
 							echo "<br /><a href='#' id='mostrar_promo'>y ".($detalle_promociones['numero_promociones']-1)." artículos mas</a>";								
-						}					
+						}
 						/*
 						echo "<pre>";
 							print_r($detalle_promociones['descripciones_promocion']);
@@ -61,9 +56,11 @@
 				</div>									
 			</div>					
 		</div>
-																			
+			
 	<?php 
-		//} 
+		/*echo "<pre>";
+			print_r($this->session->all_userdata());
+		echo "</pre>";*/
 	?>
 </section>
 	<script type="text/javascript">

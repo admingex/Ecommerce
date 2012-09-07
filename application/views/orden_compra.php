@@ -49,8 +49,8 @@
 			</thead>
 			<tbody class="contenedor-gris"> 
 				<?php					
-					foreach($detalle_promociones['descripciones_promocion'] as $promociones){
-						if( strstr($promociones['promocion']->descripcionVc, '|' )){
+					foreach($detalle_promociones['descripciones_promocion'] as $promociones) {
+						if( strstr($promociones['promocion']->descripcionVc, '|' )) {
 							$mp=explode('|',$promociones['promocion']->descripcionVc);
 							$nmp=count($mp);
 							if($nmp==2){
