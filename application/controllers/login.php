@@ -417,6 +417,19 @@ class Login extends CI_Controller {
 		$value['mail']=$res->num_rows();
 		echo json_encode($value);			
 	}
+	
+	public function cliente_id($id_cliente = ""){
+		
+		$cliente = $this->login_registro_model->obtener_cliente_id($id_cliente);
+		if($cliente->num_rows() > 0){
+			$data['cliente'] = $cliente->row();			
+			echo json_encode($data);
+		} else{
+			echo "aqui";
+		}
+		
+		
+	}
 }
 
 /* End of file login.php */

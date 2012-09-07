@@ -92,4 +92,13 @@ class Login_Registro_model extends CI_Model {
 		return $res2;				
 	}
 	
+	function obtener_cliente_id($id_cliente){
+							
+		$qry = "SELECT id_clienteIn, salutation as nombre, fname as apellido_paterno, lname as apellido_materno, email, password  
+				FROM CMS_IntCliente
+				WHERE id_clienteIn = ".$id_cliente;
+		$res = $this->db->query($qry);		
+		return $res;
+					
+	}
 }
