@@ -48,58 +48,59 @@
 				<th>&nbsp;</th>				
 			</thead>
 			<tbody class="contenedor-gris"> 
-				<?php					
-					foreach($detalle_promociones['descripciones_promocion'] as $promociones) {
-						if( strstr($promociones['promocion']->descripcionVc, '|' )) {
-							$mp=explode('|',$promociones['promocion']->descripcionVc);
-							$nmp=count($mp);
-							if($nmp==2){
-								$desc_promo = $mp[0];		
-							}	
-							else if($nmp==3){
+				<?php
+					foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
+						if (strstr($promociones['promocion']->descripcionVc, '|' )) {
+							$mp = explode('|', $promociones['promocion']->descripcionVc);
+							$nmp = count($mp);
+							if ($nmp == 2) {
+								$desc_promo = $mp[0];
+							} else if($nmp==3) {
 								$desc_promo = $mp[1];
 							}
-						}				
-						else{
+						} else {
 							$desc_promo = $promociones['promocion']->descripcionVc;
-						}											
+						}
+						//indicador de que requiere envío
+						$promo_requiere_envio = $promociones['promocion']->requiere_envio;
 						
-						foreach($promociones['articulos'] as $articulo){
+						//sacar la descripción que se mostrará de la promoción
+						foreach ($promociones['articulos'] as $articulo) {
 							echo "<tr>
 								<td colspan='2' class='titulo-promo-negro2'>".$desc_promo;
-							if($articulo['issue_id']){
-								foreach($detalle_promociones['tipo_productoVc'] as $k => $v){
-									if($k==$articulo['issue_id']){
-										if( strstr($v, '|' )){
-											$mp=explode('|',$v);
-											$nmp=count($mp);
-											if($nmp==2){
-												$desc_art = $mp[0];		
-											}	
-											else if($nmp==3){
+							if ($articulo['issue_id']) {
+								foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
+									if ($k == $articulo['issue_id']) {
+										if (strstr($v, '|' )) {
+											$mp = explode('|',$v);
+											$nmp = count($mp);
+											if ($nmp == 2) {
+												$desc_art = $mp[0];
+											} else if ($nmp == 3) {
 												$desc_art = $mp[1];
 											}
-										}				
-										else{
+										} else {
 											$desc_art = $v;
 										}
-									}									 
-								}																								
+									}
+								}
+							} else {
+								$desc_art = $articulo['tipo_productoVc'];
 							}
-							else{
-								$desc_art=$articulo['tipo_productoVc'];
+							echo "<div>".$desc_art."</div>";
+							
+							//por si puede agregar una dirección de envío distinta
+							if ($promo_requiere_envio) {
+								echo "<span>&nbsp;<a href='" . site_url('direccion_envio/'.$promociones['promocion']->id_promocionIn) . "'>Otra dirección de envío</a></span>";
 							}
-							echo "<div>".$desc_art."</div>
-								</td>
-								<td class='titulo-promo-rojo2' align='right'>$
-								</td>
-								<td class='titulo-promo-rojo2' align='right'>".number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$detalle_promociones['moneda']."
-								</td>
-								</tr>";							
-						}								
-																																										
-					}					
-				?>				
+							echo 
+								"</td>
+								<td class='titulo-promo-rojo2' align='right'>$</td>
+								<td class='titulo-promo-rojo2' align='right'>".number_format($promociones['promocion']->total_promocion, 2, '.', ',')."&nbsp;".$detalle_promociones['moneda']."</td>".
+								"</tr>";
+						}
+					}
+				?>
 				<tr>					
 					<td class="titulo-promo-negro2" align="right" colspan="2">
 						IVA

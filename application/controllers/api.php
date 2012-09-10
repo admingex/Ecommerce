@@ -6,6 +6,9 @@ class Api extends CI_Controller {
 	var $subtitle = 'Iniciar Sesi&oacute;n Segura'; 	// Capitalize the first letter
 	var $login_errores = array();	
 	var $key="";		
+	
+	#### CONSTANTES
+	const IVA = 0.16;	//IVA
 			
 	function __construct(){
         // Call the Model constructor
@@ -654,7 +657,7 @@ class Api extends CI_Controller {
 	
 	/**
 	 * Regresa un array con la información que se tiene sobre las promociones y los artículos que se van a comprar
-	 * Para mostrar los detalles del último producto agregado y los demás no... 
+	 * Para mostrar los detalles del último producto agregado y los demás no ... 
 	 */
 	public function obtiene_articulos_y_promociones() {
 		$datos = array();
@@ -663,12 +666,18 @@ class Api extends CI_Controller {
 		
 		$datos['numero_promociones'] = count($this->session->userdata('promociones'));
 		$datos['tipo_productoVc'] = array();		//para la descripción de la primera promoción en el carrito
-			
+		$datos['ids_promociones'] = array();		//contendrá sólo los id de las promociones que se van a cobrar
+		
+		/**
+		 * En la sesión se trae la información de las promociones que se cobrarán: sitio, canal, promoción y cantidad
+		 */
 		foreach ($this->session->userdata('promociones') as $promocion) {
 			// obtiene las promociones y los artículos que contienen
 			$respromo = $this->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);
+			$datos['ids_promociones'][] = $promocion['id_promocion'];
 			
-			if ($det_promo == 0) {	//sólo se obtiene la descripción de la primer promoción
+			//sólo se obtiene la descripción de la primer promoción
+			if ($det_promo == 0) {
 				/*
 				echo "<pre>";
 					print_r($respromo['promocion']);		
@@ -690,24 +699,35 @@ class Api extends CI_Controller {
 				$det_promo = 1;	//se desactiva la bandera pparabuscar el tipo de producto de los artículos de la promoción
 			}
 			
-			// se agrega la promoción con todos los detalles al arreglo que las contendrá, incluída la información del sitio y canal 
+			// se agrega la promoción con todos los detalles al arreglo que las contendrá, incluída la información del sitio y canal
 			$datos['descripciones_promocion'][] = $respromo;
 			
+			//bandera para indicar si la promoción requiere envío
+			$respromo['promocion']->requiere_envio = FALSE;
+			
 			//obtener el tipo de producto de los artículos de la promoción, se queda con el último artículo que está en la última promoción
-			foreach($respromo['articulos'] as $articulo) {
+			$total_promocion = 0;
+			foreach ($respromo['articulos'] as $articulo) {
 				if ($articulo['issue_id']) {
 					$issue = $this->api_model->obtener_issue($articulo['issue_id']);
 					$datos['tipo_productoVc'][($articulo['issue_id'])] = $issue->row()->descripcionVc;
 				}
 
-				#### TODO Calcular considerando los descuentos y el IVA
-				//también se calcula el total que se cobrará por las promociones en el carrito...
-				$total = $total + $articulo['tarifaDc'];
+				if ($articulo['requiere_envioBi']) {
+					$respromo['promocion']->requiere_envio = TRUE;
+				}
+
+				//cálculo del total de la promoción
+				$total_promocion = ($articulo['taxableBi']) ? $total_promocion + ($articulo['tarifaDc'] * 1.16) : $total_promocion + $articulo['tarifaDc'];
 				
 				if ($articulo['monedaVc']) {
-					$datos['moneda'] = $articulo['monedaVc'];	
+					$datos['moneda'] = $articulo['monedaVc'];
 				}
 			}
+			
+			//guardar el total por promoción y sumar al total de la compra 
+			$respromo['promocion']->total_promocion = $total_promocion;
+			$total = $total + $total_promocion;
 		}
 				
 		$datos['total_pagar'] = $total;

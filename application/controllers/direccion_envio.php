@@ -40,6 +40,9 @@ class Direccion_Envio extends CI_Controller {
 		$this->api= new Api();
 		
 		//echo "requiere_envio: " . $this->session->userdata('requiere_envio');
+		/*echo "sesion<pre>";
+		print_r($this->session->all_userdata());
+		echo "</pre>";*/
     }
 
 	/**
