@@ -69,6 +69,7 @@ class Orden_Compra extends CI_Controller {
 		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
 			$this->detalle_promociones = $this->api->obtiene_articulos_y_promociones();
 		}
+		
 		/*echo "sesion<pre>";
 		print_r($this->session->all_userdata());
 		echo "</pre>";
@@ -251,6 +252,7 @@ class Orden_Compra extends CI_Controller {
 				$id_cliente = $this->id_cliente;
 				
 				//verificar que exista la información de los artículos y promociones de la compra
+				$detalle_promociones = NULL;
 				if ($this->detalle_promociones) {
 					$detalle_promociones = $this->detalle_promociones;
 				}
@@ -259,7 +261,7 @@ class Orden_Compra extends CI_Controller {
 				print_r($this->session->all_userdata());
 				echo "</pre>";
 				echo "detalle_promociones<pre>";
-				print_r($this->detalle_promociones);
+				print_r($detalle_promociones);
 				echo "</pre>";
 				exit;
 				
@@ -279,13 +281,16 @@ class Orden_Compra extends CI_Controller {
 				$informacion_orden->consecutivo_cmsSi = $consecutivo;		//consecutivo de la tarjeta
 				$informacion_orden->digito = $digito;						//dígito verificador
 				$informacion_orden->id_compraIn = 0;						//id de la compra, inicialmente 0
-												
+				$informacion_orden->id_promocionIn = 0;						//id de la promocion, inicialmente 0
+				$moneda = $detalle_promociones['moneda'];	//el identificador del tipo de moneda utilizado para el cobro
+				$informacion_orden->currency = $moneda;
+											
 				//recuperar el total de la compra con ayuda del API
 				$monto = $detalle_promociones['total_pagar'];
 				$informacion_orden->monto = $monto;						//monto total a que se cobrará a través de la plataforma
 				
 				//el hash se debe calcular y colocar en el objeto que se pasará a CCTC
-				$informacion_orden->clave_hash = md5($digito . $id_cliente . self::HASH_PAGOS . $monto);		//hash que se utiliza vara validar la información del lado de CCTC
+				$informacion_orden->hash = md5($digito . $id_cliente . self::HASH_PAGOS . $monto . $moneda);		//hash que se utiliza vara validar la información del lado de CCTC
 				
 				#### Comienza el proceso de cobro / pago
 				
@@ -555,19 +560,7 @@ class Orden_Compra extends CI_Controller {
 					
 					//consecutivo de la información del pago es 1 para que pase el cobro
 					$informacion_orden->consecutivo_cmsSi = $tc['id_TCSi'];		//Debe ser 0
-					/*
-					$tc_soap = new Tc(
-						$tc['id_clienteIn'],
-						$tc['id_TCSi'],
-						$tc['id_tipo_tarjetaSi'],
-						$tc['nombre_titularVc'],
-						$tc['apellidoP_titularVc'],
-						$tc['apellidoM_titularVc'],
-						$tc['terminacion_tarjetaVc'],
-						$tc['mes_expiracionVc'],
-						$tc['anio_expiracionVc']
-					);
-					*/
+					
 					//si es Visa o Master card
 					$tipo_pago = self::$TIPO_PAGO['Prosa'];	
 					
@@ -590,22 +583,6 @@ class Orden_Compra extends CI_Controller {
 							$amex_soap->estado = $amex['estado'];
 							$amex_soap->mail = $amex['mail'];
 							$amex_soap->telefono = $amex['telefono'];
-							/*
-							$amex_soap = new Amex(
-								$amex['id_clienteIn'],
-								$amex['id_TCSi'],
-								$amex['nombre_titularVc'],
-								$amex['apellidoP_titularVc'],
-								$amex['apellidoM_titularVc'],
-								$amex['pais'],
-								$amex['codigo_postal'],
-								$amex['calle'],
-								$amex['ciudad'],
-								$amex['estado'],
-								$amex['mail'],
-								$amex['telefono']
-							);
-							 * */
 						}
 						
 						//si es AMEX
@@ -619,7 +596,7 @@ class Orden_Compra extends CI_Controller {
 					var_dump($informacion_orden);
 					echo "</pre>";
 					exit();
-					*/								
+					*/
 										
 					//intentamos el Pago con pasando los objetos a CCTC //
 					try {
@@ -635,11 +612,21 @@ class Orden_Compra extends CI_Controller {
 						}
 						
 						//pasar el id de la compra para el pago
-						$informacion_orden->id_compra = $id_compra;
+						$informacion_orden->id_compraIn = $id_compra;
+						
+						##Test
+						/*echo "info_orden<pre>";
+						print_r($informacion_orden);
+						echo "</pre>";*/
 						
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_objetos($tc_soap, $amex_soap, $informacion_orden);
 						
+						## Test Result
+						/*echo "simple_result<pre>";
+						print_r($simple_result);
+						echo "</pre>";
+						exit;*/
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
 						
@@ -691,7 +678,7 @@ class Orden_Compra extends CI_Controller {
 											   	       <td valign='top' style='width: 300px;'>
 											   	           <b>Requiere factura:</b>&nbsp;".$this->session->userdata('requiere_factura')."<br /><br />";
 											   	       
-											   	       	   if($this->session->userdata('requiere_factura')=='si'){
+											   	       	   if ($this->session->userdata('requiere_factura')=='si') {
 											   	       	       $mensaje.="<b>Razón social:</b><br />";	
 											   	       	       $rs = $this->direccion_facturacion_model->obtener_rs($this->session->userdata('razon_social'));
 											   	       	       $mensaje.=$rs->company."<br />";	
@@ -729,7 +716,7 @@ class Orden_Compra extends CI_Controller {
 										   	       	   </td>
 										   	       </tr>";
 										   	       				
-													if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
+													if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
 														$articulos = $this->session->userdata('articulos');
 														$total = 0;
 														if (!empty($articulos)) {
@@ -737,61 +724,57 @@ class Orden_Compra extends CI_Controller {
 																$total += $a['tarifaDc'];
 														}
 												 
-														if ($this->session->userdata('promocion')) 																	 
-															if (!empty($articulos))
-																foreach($articulos as $articulo) {
-																	
+														if ($this->session->userdata('promocion')) {
+															if (!empty($articulos)) {
+																foreach ($articulos as $articulo) {
 																	$desc_promo = '';
-																	if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
-																		$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-																		$nmp=count($mp);
-																		if($nmp==2){
+																	if (strstr($this->session->userdata('promocion')->descripcionVc, '|' )) {
+																		$mp = explode('|',$this->session->userdata('promocion')->descripcionVc);
+																		$nmp = count($mp);
+																		if ($nmp == 2) {
 																			$desc_promo = $mp[0];		
-																		}	
-																		else if($nmp==3){
+																		} else if($nmp == 3) {
 																			$desc_promo = $mp[1];
 																		}
-																	}				
-																	else{
+																	} else {
 																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-																	}																																															
+																	}
 																																		
 												  				 	$mensaje.="<tr>
 																			    <td colspan='2' class='instrucciones'>".$desc_promo;
 																					
-																					if(!empty($articulo['descripcion_issue'])){
-																						if( strstr($articulo['descripcion_issue'], '|' )){
-																							$mp=explode('|',$articulo['descripcion_issue']);
-																							$nmp=count($mp);
-																							if($nmp==2){
-																								$desc_promo = $mp[0];		
-																							}	
-																							else if($nmp==3){
+																					if (!empty($articulo['descripcion_issue'])) {
+																						if (strstr($articulo['descripcion_issue'], '|' )) {
+																							$mp = explode('|',$articulo['descripcion_issue']);
+																							$nmp = count($mp);
+																							if ($nmp == 2) {
+																								$desc_promo = $mp[0];
+																							} else if ($nmp == 3) {
 																								$desc_promo = $mp[1];
 																							}
-																						}				
-																						else{
+																						} else {
 																							$desc_promo = $articulo['descripcion_issue'];
-																						}	
-																						$mensaje.="<br />".$desc_promo;												
-																					}
-																					else{
+																						}
+																						
+																						$mensaje.="<br />".$desc_promo;
+																																		
+																					} else {
 																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
-																						if(!empty($articulo['medio_entregaVc'])){
-																							$mensaje.=", " . $articulo['medio_entregaVc']; 
-																						} 
-																					}																												 
+																						if (!empty($articulo['medio_entregaVc'])) {
+																							$mensaje.=", " . $articulo['medio_entregaVc'];
+																						}
+																					}
 																		        	
-																	$mensaje.="      </td>	
-																				<td>&nbsp;</td>				
-																				<td align='right' class='instrucciones'>$".	
+																	$mensaje.="      </td>
+																				<td>&nbsp;</td>
+																				<td align='right' class='instrucciones'>$".
 																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
 																				</td>
-																			</tr>";	
-																	
-																														
-																}																																																																																	
-														}
+																			</tr>";
+																}
+															}
+														}																																																																																
+													}
 																										   	       										   	       
 				   	       $mensaje.= 			  "<tr>
 										   	           <td colspan='2'>&nbsp;
@@ -842,21 +825,21 @@ class Orden_Compra extends CI_Controller {
 							if (!($envio_correo && $estatus_correo)) {	//Error
 								redirect('mensaje/'.md5(4), 'refresh');
 							}
-						}						
-																	
-						//obtiene os datos que se van a regresar al sitio	(Teo)																						
+						}
+						
+						//obtiene los datos que se van a regresar al sitio	(Teo)																						
 						$data['url_back'] = $this->datos_urlback($simple_result->respuesta_banco, $id_compra);
-																		
-						$data['resultado'] = $simple_result;	
-																	
+															
+						$data['resultado'] = $simple_result;
+						
 						$this->cargar_vista('', 'orden_compra', $data);
 						
 						if ($data['url_back']['estatus'] != 0) {
-							$this->session->sess_destroy();	
-						}						
+							$this->session->sess_destroy();
+						}
 						
-					} catch (SoapFault $exception) { 
-						//echo $exception;  
+					} catch (SoapFault $exception) {
+						//echo $exception;
 						//echo '<br/>error: <br/>'.$exception->getMessage();
 						return NULL;
 					}
@@ -894,11 +877,22 @@ class Orden_Compra extends CI_Controller {
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
 						
+						
 						//pasar el id de la compra para el pago
-						$informacion_orden->id_compra = $id_compra;
+						$informacion_orden->id_compraIn = $id_compra;
+						/*
+						echo "dsa<pre>";
+						print_r($informacion_orden);
+						echo "</pre>";
+						*/
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_ids($informacion_orden);
-						
+						/*
+						echo "dsa<pre>";
+						print_r($simple_result);
+						echo "</pre>";
+						exit;
+						*/
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
 					
@@ -935,7 +929,7 @@ class Orden_Compra extends CI_Controller {
 											   	           <b>Fecha de autorización:</b>&nbsp;&nbsp;".mdate('%d-%m-%Y')."<br /><br />";
 													   
 											   	       $dir_envio = (int)$this->session->userdata('dir_envio');
-											   	       if(!empty($dir_envio)){
+											   	       if (!empty($dir_envio)) {
 											   	       	   $det_env = $this->direccion_envio_model->detalle_direccion($dir_envio, $id_cliente);
 											   	       	   $mensaje.="<b>Dirección de envío:</b><br />";
 											   	       	   $mensaje.=$det_env->address1. " " .$det_env->address2. " " . (isset($det_env->address4) ? ", Int. ".$det_env->address4 : "") . "<br/>".
@@ -943,9 +937,9 @@ class Orden_Compra extends CI_Controller {
 																 $det_env->city."<br/>".
 																 $det_env->state."<br/>".
 																 $det_env->codigo_paisVc."<br/>".
-																 $det_env->phone."&nbsp;";	
+																 $det_env->phone."&nbsp;";
 											   	       }
-											   	       										   	       													
+											   	       
 								$mensaje.=   	      "</td>
 											   	       <td valign='top' style='width: 300px;'>
 											   	           <b>Requiere factura:</b>&nbsp;".$this->session->userdata('requiere_factura')."<br /><br />";
@@ -992,13 +986,13 @@ class Orden_Compra extends CI_Controller {
 														$articulos = $this->session->userdata('articulos');
 														$total = 0;
 														if (!empty($articulos)) {
-															foreach ($articulos as $a) 
+															foreach ($articulos as $a)
 																$total += $a['tarifaDc'];
 														}
-												 
-														if ($this->session->userdata('promocion')) 																	 
-															if (!empty($articulos))
-																foreach($articulos as $articulo) {
+												 	
+														if ($this->session->userdata('promocion')) { 																	 
+															if (!empty($articulos)) {
+																foreach ($articulos as $articulo) {
 																	
 																	$desc_promo = '';
 																	if (strstr($this->session->userdata('promocion')->descripcionVc, '|' )) {
@@ -1016,40 +1010,39 @@ class Orden_Compra extends CI_Controller {
 												  					$mensaje.="<tr>
 																			    <td colspan='2' class='instrucciones'>".$desc_promo;
 																					
-																					if(!empty($articulo['descripcion_issue'])){
-																						if( strstr($articulo['descripcion_issue'], '|' )){
-																							$mp=explode('|',$articulo['descripcion_issue']);
-																							$nmp=count($mp);
-																							if($nmp==2){
+																					if (!empty($articulo['descripcion_issue'])) {
+																						if (strstr($articulo['descripcion_issue'], '|' )) {
+																							$mp = explode('|',$articulo['descripcion_issue']);
+																							$nmp = count($mp);
+																							if ($nmp == 2) {
 																								$desc_promo = $mp[0];		
-																							}	
-																							else if($nmp==3){
+																							} else if ($nmp == 3) {
 																								$desc_promo = $mp[1];
 																							}
-																						}				
-																						else{
+																						} else {
 																							$desc_promo = $articulo['descripcion_issue'];
-																						}	
-																						$mensaje.="<br />".$desc_promo;												
-																					}
-																					else{
+																						}
+																						
+																						$mensaje.="<br />".$desc_promo;
+																						
+																					} else {
 																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
-																						if(!empty($articulo['medio_entregaVc'])){
-																							$mensaje.=", " . $articulo['medio_entregaVc']; 
-																						} 
-																					}																												 
+																						if (!empty($articulo['medio_entregaVc'])) {
+																							$mensaje.=", " . $articulo['medio_entregaVc'];
+																						}
+																					}
 																		        	
 																	$mensaje.="      </td>	
 																				<td>&nbsp;</td>				
 																				<td align='right' class='instrucciones'>$".	
 																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
 																				</td>
-																			</tr>";		
-																	
-																																													  				   													
-																}																																																																																	
+																			</tr>";
+																}
+															}
 														}
-																										   	       										   	       
+													}
+														
 				   	       $mensaje.= 			  "<tr>
 										   	           <td colspan='2'>&nbsp;
 										   	           </td>
@@ -1098,7 +1091,6 @@ class Orden_Compra extends CI_Controller {
 								redirect('mensaje/'.md5(4), 'refresh');
 							}
 						}
-					
 						
 						//Para lo que se devolverá a Teo							
 						$data['url_back'] = $this->datos_urlback($simple_result->respuesta_banco, $id_compra);											
@@ -1129,7 +1121,7 @@ class Orden_Compra extends CI_Controller {
 	}
 	
 	/**
-	 * Función que realiza la petición a la interfase de cobro que enlaza con CCTC 
+	 * Método que realiza la petición de cobro a la interfase que intercomunica con el sistema de CCTC 
 	 */
 	private function solicitar_pago_CCTC_objetos($tc_soap = NULL, $amex_soap = NULL, $informacion_orden = NULL) {		
 		if (isset($tc_soap, $informacion_orden)) {
@@ -1420,8 +1412,8 @@ class Orden_Compra extends CI_Controller {
 			
 			///////////// registrar compra inicial en BD /////// 
 			$registro_orden = $this->orden_compra_model->registrar_compra_inicial($info_articulos, $info_pago, $info_direcciones, $info_estatus);
-			echo "compra: " . $id_compra;
-			exit();
+			/*echo "compra: " . $id_compra;
+			exit();*/
 			return $id_compra;
 		} else {
 			//Error en el registro de la compra

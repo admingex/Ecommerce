@@ -91,7 +91,7 @@
 							
 							//por si puede agregar una dirección de envío distinta
 							if ($promo_requiere_envio) {
-								echo "<span>&nbsp;<a href='" . site_url('direccion_envio/'.$promociones['promocion']->id_promocionIn) . "'>Otra dirección de envío</a></span>";
+								echo "<span>&nbsp;<a href='" . site_url('direccion_envio/direccion_adicional/'.$promociones['promocion']->id_promocionIn) . "'>Usar otra dirección de envío</a></span>";
 							}
 							echo 
 								"</td>

@@ -712,9 +712,10 @@ class Api extends CI_Controller {
 					$issue = $this->api_model->obtener_issue($articulo['issue_id']);
 					$datos['tipo_productoVc'][($articulo['issue_id'])] = $issue->row()->descripcionVc;
 				}
-
+				//si requiere dirección de envío:
 				if ($articulo['requiere_envioBi']) {
 					$respromo['promocion']->requiere_envio = TRUE;
+					
 				}
 
 				//cálculo del total de la promoción
