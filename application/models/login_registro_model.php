@@ -101,4 +101,14 @@ class Login_Registro_model extends CI_Model {
 		return $res;
 					
 	}
+	
+	function actualizar_cliente($datos){
+		if(array_key_exists('password', $datos)){
+			$datos['password'] = md5($datos['email']."|".$datos['password']);	
+		}
+		
+		$this->db->where(array(	'id_clienteIn' => $datos['id_clienteIn']));
+		$resultado = $this->db->update('CMS_IntCliente', $datos);
+		return $resultado;		
+	}
 }

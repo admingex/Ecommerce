@@ -20,7 +20,7 @@ function closedialog(newid){
 		
 	if(count($compras)>0){
 	echo "<div style='padding: 5px 0px 5px 0px; color: #E70030; font-size: 12px'>Se encontraron ".count($compras)." registros&nbsp;&nbsp;";	
-	echo anchor(site_url('reporte/compras/true'), "Exportar a excel")."</div>";	
+	echo anchor(site_url('reporte/compras/true'), "Exportar archivo")."</div>";	
 ?>			
 		<table cellpadding="0" cellspacing="0" >			
 			<thead>

@@ -148,16 +148,15 @@ class Reporte extends CI_Controller {
 					$id_rs = $facturacion->row()->id_razonSocialIn;
 					
 					$dir_facturacion = $this->reporte_model->obtener_dir_facturacion($consecutivo, $compra['id_clienteIn']);				
-					$data['compras'][$i]['dir_facturacion']  =  $dir_facturacion->row()->address1." ".
-																$dir_facturacion->row()->address2." ".
-																$dir_facturacion->row()->address4."<br />".
-																$dir_facturacion->row()->zip."<br />".
-																$dir_facturacion->row()->address3."<br />".
-																$dir_facturacion->row()->city."<br />".
+					$data['compras'][$i]['dir_facturacion']  =  $dir_facturacion->row()->address1." ".$dir_facturacion->row()->address2." ".
+																$dir_facturacion->row()->address4." ".
+																$dir_facturacion->row()->zip." ".
+																$dir_facturacion->row()->address3." ".
+																$dir_facturacion->row()->city." ".
 																$dir_facturacion->row()->state;
 					
 					$rs = $this->reporte_model->obtener_razon_social($id_rs);
-					$data['compras'][$i]['razon_social'] = $rs->row()->tax_id_number."<br />".$rs->row()->company;											
+					$data['compras'][$i]['razon_social'] = $rs->row()->tax_id_number." ".$rs->row()->company;											
 					
 				}						
 				else{
@@ -172,7 +171,7 @@ class Reporte extends CI_Controller {
 						$data['compras'][$i]['codigo_autorizacion'] = $ca->row()->codigo_autorizacionVc;
 					}
 					else{
-						$data['compras'][$i]['codigo_autorizacion'] = $ca->row()->codigo_autorizacionVc ."<br />". $ca->row()->respuesta_bancoVc ;
+						$data['compras'][$i]['codigo_autorizacion'] = $ca->row()->codigo_autorizacionVc ." ". $ca->row()->respuesta_bancoVc ;
 					}
 				}
 				else{
@@ -196,11 +195,11 @@ class Reporte extends CI_Controller {
 			 * */
 			if($export == "true" ){
 								
-				header("Content-Type: application/ms-excel");
+				header("Content-Type: text/plain");
 				header("Expires: 0");
 				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-				header('Content-type: text/html; charset=utf-8');
-				header("content-disposition: attachment;filename=Reporte_compras_".date("Y-m-d_H-i").".xls");			
+				header('Content-type: text/html; charset=UTF-8');
+				header("content-disposition: attachment;filename=Reporte_compras_".date("Y-m-d_H-i").".txt");			
 				$this->load->view('reportes/reporte_compras_excel',$data);
 			}	
 			else{							
