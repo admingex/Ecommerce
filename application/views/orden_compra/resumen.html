@@ -17,98 +17,95 @@
 	}				
 ?>	
 					
-		<div class="orden-compra-izquierda">
-			<div class="bloque-orden-compra-auto">
-				<b>Forma de Pago:</b><br />
-					<?php
-					if (!empty($deposito)) {
-						include("deposito_bancario.html");
-					} else if (isset($tc) && is_object($tc)) {
-						include("detalle_tarjeta.html");
-					} else { 						
-						echo anchor('forma_pago/registrar', '+ Agregar');
-					}
-					?>
-			</div>	
-		</div>		
-		<div class="orden-compra-derecha">
-			<div class="bloque-orden-compra-auto">
-				<b>Requiere factura:</b><br />	
-				<div class="radio_contenedor">
-					<input type="radio" name="requiere_factura" value="si" <?php echo $checksi; ?> />
-					<div <?php echo $classsi;?> onclick="location.href='<?php echo site_url("direccion_facturacion"); ?>'">&nbsp;					
-					</div>
-					<div class="label_radio">si</div>	
-				</div>												
-				<div class="radio_contenedor">
-					<input type="radio" name="requiere_factura" value="no" <?php echo $checkno; ?>/>
-					<div <?php echo $classno;?> onclick="location.href='<?php echo site_url("direccion_facturacion/requiere_factura"); ?>'">&nbsp;					
-					</div>
-					<div class="label_radio">no</div>
-				</div>																
-			</div>		
+<div class="orden-compra-izquierda">
+	<div class="bloque-orden-compra-auto">
+		<b>Forma de Pago:</b><br />
+		<?php
+			if (!empty($deposito)) {
+				include("deposito_bancario.html");
+			} else if (isset($tc) && is_object($tc)) {
+				include("detalle_tarjeta.html");
+			} else {
+				echo anchor('forma_pago/registrar', '+ Agregar');
+			}
+		?>
+	</div>	
+</div>		
+<div class="orden-compra-derecha">
+	<div class="bloque-orden-compra-auto">
+		<b>Requiere factura:</b><br />	
+		<div class="radio_contenedor">
+			<input type="radio" name="requiere_factura" value="si" <?php echo $checksi;?> />
+			<div <?php echo $classsi;?> onclick="location.href='<?php echo site_url("direccion_facturacion");?>'">&nbsp;</div>
+			<div class="label_radio">si</div>	
+		</div>												
+		<div class="radio_contenedor">
+			<input type="radio" name="requiere_factura" value="no" <?php echo $checkno; ?>/>
+			<div <?php echo $classno;?>onclick="location.href='<?php echo site_url("direccion_facturacion/requiere_factura");?>'">&nbsp;</div>
+			<div class="label_radio">no</div>
 		</div>
-		<div id="pleca-gris"></div>	
-		<div class="orden-compra-izquierda">
-			
-				<?php
-				if (isset($amex) && !empty($amex)) :
-				?>
-			<div class="bloque-orden-compra">
-				<b>Direccion AMEX:</b><br />	
-				<?php
-			    	include('direccion_amex.html');
-			    ?>
-			</div>			
-			<div id="pleca-gris"></div>			   
-			    <?php			    	
-			    endif
-				?>
-				
-			<?php if ($requiere_envio): ?>
-				<div class="bloque-orden-compra">
-					<b>Direcci&oacute;n de env&iacute;o:</b><br />
-					<?php 
-					if (isset($dir_envio))	//is_object($dir_envio)
-						include("detalle_envio.html");
-					else
-						//include("detalle_envio_temp.html");
-						echo anchor('direccion_envio/registrar', '+ Agregar');
-					?>				
-				</div>
-				<div id="pleca-gris"></div>
-			<?php else: ?>
-				<!--div class="bloque-orden-compra">
-					<b>No requiere env&iacute;o.</b>
-				</div-->
-			<?php endif ?>			
-						
-		</div>
-		<div class="orden-compra-derecha">			
-				<?php
-				if ($mdf) {
-					if (isset($dir_facturacion)){
-				?>
-				<div class="bloque-orden-compra">
-					<b>Raz&oacute;n social:</b><br />
-				<?php	
-						include("detalle_facturacion.html");
-					}	 																																
-				?>
-				</div>
-				<div id="pleca-gris"></div>				
-				<?php 
-					if (!empty($direccion_f)){
-				?>	
-				<div class="bloque-orden-compra">
-					<b>Direcci&oacute;n de facturaci&oacute;n:</b><br />
-				<?php	
-						include("detalle_direccion_facturacion.html"); 	
-					}																																
-				?>
-				</div>
-				<div id="pleca-gris"></div>
-				<?php		
-				}		 
-				?>										
-		</div>																											
+	</div>
+</div>
+<div id="pleca-gris"></div>
+<div class="orden-compra-izquierda">
+	<?php
+		if (isset($amex) && !empty($amex)) :
+	?>
+	<div class="bloque-orden-compra">
+		<b>Direccion AMEX:</b><br />	
+		<?php
+	    	include('direccion_amex.html');
+	    ?>
+	</div>			
+	<div id="pleca-gris"></div>			   
+	<?php			    	
+		endif
+	?>
+
+	<?php if ($requiere_envio): ?>
+	<div class="bloque-orden-compra">
+		<b>Direcci&oacute;n de env&iacute;o:</b><br />
+		<?php 
+			if (isset($dir_envio))	//is_object($dir_envio)
+				include("detalle_envio.html");
+			else
+				//include("detalle_envio_temp.html");
+				echo anchor('direccion_envio/registrar', '+ Agregar');
+		?>				
+	</div>
+	<div id="pleca-gris"></div>
+	<?php else: ?>
+		<!--div class="bloque-orden-compra">
+			<b>No requiere env&iacute;o.</b>
+		</div-->
+	<?php endif ?>
+
+</div>
+<div class="orden-compra-derecha">			
+	<?php
+		if ($mdf) {
+			if (isset($dir_facturacion)) {
+	?>
+	<div class="bloque-orden-compra">
+		<b>Raz&oacute;n social:</b><br />
+		<?php	
+				include("detalle_facturacion.html");
+			}	 																																
+		?>
+	</div>
+	<div id="pleca-gris"></div>				
+	<?php 
+			if (!empty($direccion_f)) {
+	?>	
+	<div class="bloque-orden-compra">
+		<b>Direcci&oacute;n de facturaci&oacute;n:</b><br />
+		<?php	
+				include("detalle_direccion_facturacion.html"); 	
+			}																																
+		?>
+	</div>
+	<div id="pleca-gris"></div>
+	<?php
+		}
+	?>
+</div>

@@ -40,13 +40,32 @@ class Direccion_Envio extends CI_Controller {
 		$this->api= new Api();
 		
 		//echo "requiere_envio: " . $this->session->userdata('requiere_envio');
+		/*echo "sesion<pre>";
+		print_r($this->session->all_userdata());
+		echo "</pre>";*/
     }
 
 	/**
 	 * Se encarga de listar las direcciones de envío
 	 */
-	public function index()
+	public function index($id_promocion = NULL)
 	{
+		$this->listar();
+	}
+	
+	/**
+	 * Se encarga de listar las direcciones de envío
+	 */
+	public function direccion_adicional($id_promocion = NULL)
+	{
+		//si se solicita agregar otra dirección a la promoción
+		echo "post<pre>";
+		print_r ($_GET);
+		echo "post</pre>";
+		echo "segmentos". $this->uri->total_segments();
+		echo " - ". $this->uri->segment(1);
+		echo " - ". $id_promocion;
+		//exit;
 		$this->listar();
 	}
 	
