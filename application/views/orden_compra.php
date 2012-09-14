@@ -91,7 +91,18 @@
 							
 							//por si puede agregar una dirección de envío distinta
 							if ($promo_requiere_envio) {
-								echo "<span>&nbsp;<a href='" . site_url('direccion_envio/direccion_adicional/'.$promociones['promocion']->id_promocionIn) . "'>Usar otra dirección de envío</a></span>";
+								//para ver si hay más de una dirección de envío en la compra
+								$des = $this->session->userdata('dse');
+								//id de la promoción que se quiere asociar con otra dirección
+								$id_promo = $promociones['promocion']->id_promocionIn;
+								## Test
+								//cero es que no tiene más de una dirección asociada 
+								$id_dir_envio = (!empty($des)) ? $des[$id_promo]: 0;
+								if ($des) {
+									//buscar $id_promo en la vista de la dirección
+									include("orden_compra/detalle_envio_adicional.html");
+								}
+								echo "<br/><span>&nbsp;<a href='" . site_url('direccion_envio/direccion_adicional/'.$id_promo) . "'>Usar otra dirección de envío</a></span>";
 							}
 							echo 
 								"</td>

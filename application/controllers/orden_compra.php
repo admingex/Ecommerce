@@ -69,8 +69,8 @@ class Orden_Compra extends CI_Controller {
 		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
 			$this->detalle_promociones = $this->api->obtiene_articulos_y_promociones();
 		}
-		
-		/*echo "sesion<pre>";
+		/*
+		echo "sesion<pre>";
 		print_r($this->session->all_userdata());
 		echo "</pre>";
 		echo "detalle_promociones<pre>";
@@ -193,8 +193,16 @@ class Orden_Compra extends CI_Controller {
 		
 		//dir_envío
 		$dir_envio = $this->session->userdata('dir_envio');
+		$mas_direcciones = $this->session->userdata('dse');	//"dse" => direcciones de envio
 		######### todas las direcciones de envío se guardan por defecto.
-		if (!empty($dir_envio)) {
+		if ($mas_direcciones) {
+			$direcciones = array();
+			foreach ($mas_direcciones as $promocion => $id_direccion_env) {
+				$direcciones[$promocion] = $this->direccion_envio_model->detalle_direccion($id_direccion_env, $id_cliente);
+			}
+			$data['direcciones'] = $direcciones;
+			
+		} else if (!empty($dir_envio)) {
 			//por si no se guarda en la BD, sólo está en la sesión...
 			if (is_array($dir_envio)) {
 				$data['dir_envio'] = (object)$dir_envio;
@@ -229,7 +237,7 @@ class Orden_Compra extends CI_Controller {
 			$data['reg_errores'] = $this->registro_errores;
 		}
 		
-		//cargar vista	
+		//cargar vista
 		$this->cargar_vista('', 'orden_compra', $data);
 	}
 

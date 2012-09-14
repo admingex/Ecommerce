@@ -1,0 +1,17 @@
+<br/>
+<?php
+	 if ($direcciones && array_key_exists($id_promo, $direcciones)) {
+	 	$d = $direcciones[$id_promo]; 
+	 	 
+	 	echo "Calle " . $d->address1 . " Número " .$d->address2. " " . (isset($d->address4) ? ", Interior ".$d->address4 : "") . "<br/>";
+		echo "C.P. " . $d->zip . " " .
+			$d->city." ".
+	 	$d->state." ".
+	 	$d->codigo_paisVc." ".
+	 	$d->phone."&nbsp;";
+	 }
+	
+?>
+<!--
+<span><a href="<?php echo site_url('direccion_envio');?>">Cambiar, pend-</a></span>
+-->	

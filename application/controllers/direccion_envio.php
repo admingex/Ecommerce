@@ -54,35 +54,155 @@ class Direccion_Envio extends CI_Controller {
 	}
 	
 	/**
-	 * Se encarga de listar las direcciones de envío
+	 * Se encarga de asosciar una promoción a la direcciones de envío
+	 * @param $id_promocion Si se quiere cambiar la dirección de una promoción cuando hay más de una dirección para la compra
 	 */
 	public function direccion_adicional($id_promocion = NULL)
 	{
+		##Test
+		//$this->session->unset_userdata('dse');
+		//$this->session->unset_userdata('promo_por_asociar');
+		//si viene el número de la promoción
+		if ($id_promocion) {
+			//se necesitará el detalle de las promociones...en teoría no debería estar vacias
+			if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
+				$detalle_promociones = $this->api->obtiene_articulos_y_promociones();
+			}
+			
+			//si ya había una dirección de envío para la promoción 
+			if ($this->session->userdata('dir_envio')) {
+				
+				
+				//revisar si ya existe el arreglo de promociones y que no esté vacío "dese" => direcciones envio
+				$direcciones = $this->session->userdata('dse');
+				//se desmarca la promoción por asociar antes de marcar otra
+				$this->session->unset_userdata('ppa');
+				
+				//si aún no existe en arreglo para las direcciones 
+				if (!$direcciones) {
+					//la dirección de envío que tiene inicialmente la promoción
+					$dir_general = $this->session->userdata('dir_envio');
+					
+					$direcciones = array();
+					//colocar en el arreglo de promociones todas las promociones que puedan tener envío
+					foreach ($detalle_promociones['descripciones_promocion'] as $p) {
+						//si requiere dirección de envío se mete al arreglo
+						if ($p['promocion']->requiere_envio) {
+							$direcciones[$p['promocion']->id_promocionIn] = $dir_general;
+							#### Puede no ir... :
+							//se pone sin dirección para identificar que esta promoción quiere asociarse con una dirección diferente
+							/*if ($p['promocion']->id_promocionIn == $id_promocion) {
+								$direcciones[$p['promocion']->id_promocionIn] = 0;
+							}*/
+						}
+					}
+					
+					//colocar en el arreglo de direcciones el id de la promoción que se quiere asociar con alguna dirección antes de ponerlo en sesión
+					$this->session->set_userdata('dse', $direcciones);
+					
+					//bandera de estatus de asociación	ppa => promocion por asociar
+					$this->session->set_userdata('ppa', $id_promocion);
+					
+				} else if ($direcciones) {	//si ya se asoció alguna otra dirección o se intentó... ya existe el arreglo, sólo se marca a nueva dirección
+					/*
+					//revisar en la lista de direcciones
+					foreach ($detalle_promociones['descripciones_promocion'] as $p) {
+						//si requiere dirección de envío se mete al arreglo
+						if ($p['promocion']->requiere_envio) {
+							//si hay alguna promoción que sea la que está marcada por asociar, se le coloca la general antes de colocarle una nueva, si no se queda tal cual
+							$direcciones[$p['promocion']->id_promocionIn] = ($direcciones[$p['promocion']->id_promocionIn] == $promo_por_asociar) ? $dir_general : $direcciones[$p['promocion']->id_promocionIn];
+							
+							#### Puede no ir... :
+							//se pone sin dirección para identificar que esta promoción quiere asociarse con una dirección diferente
+							//if ($p['promocion']->id_promocionIn == $id_promocion) {
+							//	$direcciones[$p['promocion']->id_promocionIn] = 0;
+							//}
+						}
+					}
+					*/
+					//colocar en el arreglo de direcciones el id de la promoción que se quiere asociar con alguna dirección antes de ponerlo en sesión
+					//$this->session->set_userdata('dse', $direcciones);
+					
+					//bandera de estatus de asociación	ppa => promocion por asociar se desactiva por que ya se asoció con alguna dirección
+					$this->session->set_userdata('ppa', $id_promocion);
+				}
+				
+				//$direcciones[$id_promocion] = $dir_general;
+				/*echo "detalle_promos<pre>";
+				print_r($detalle_promociones);
+				echo "</pre>";
+				
+				echo "direcciones<pre>";
+				print_r($direcciones);
+				echo "</pre>";
+				
+				echo "sesion<pre>";
+				print_r($this->session->all_userdata());
+				echo "</pre>";*/
+				//exit;
+			} else if ($this->session->userdata('requiere_envio')) {	//si no trae una promoción válida y requiere envío
+				//ir al listado
+				redirect("direccion_envio/", "refresh");
+				$this->session->unset_userdata('ppa');
+				exit;
+			}
+		} //Si no  no 
 		//si se solicita agregar otra dirección a la promoción
-		echo "post<pre>";
-		print_r ($_GET);
-		echo "post</pre>";
-		echo "segmentos". $this->uri->total_segments();
-		echo " - ". $this->uri->segment(1);
-		echo " - ". $id_promocion;
-		//exit;
-		$this->listar();
+		//ir al listado para que el proceso continúe...
+		redirect("direccion_envio/", "refresh");
+		exit;
+		
+		//$this->listar();
 	}
 	
 	/**
 	 * Coloca la dirección seleccionada del listado en session
+	 * 
 	 */
 	public function seleccionar() {
+		## Test
+		//$this->session->unset_userdata('ppa');
 		if ($_POST) {
-			if (array_key_exists('direccion_selecionada', $_POST))
-				$this->session->set_userdata('dir_envio', $_POST['direccion_selecionada']);
+			if (array_key_exists('direccion_selecionada', $_POST)) {
+				$dir_seleccionada = $_POST['direccion_selecionada'];
+				
+				#### Para varias direciones
+								
+				//revisar si ya existe el arreglo de promociones y que no esté vacío "dse"
+				$direcciones = $this->session->userdata('dse');
+				
+				//revisar si la promoción por asociar también está en sesión "ppa"
+				$promo_por_asociar = $this->session->userdata('ppa');
+				
+				//si hay una promoción en espera de la asociación de dirección está en "ppa"
+				if ($direcciones  && $promo_por_asociar) {
+					//buscar la promoción que esté en "promoción por asociar"
+					foreach ($direcciones as $id_promo => $id_dir_envio) {
+						if ($id_promo == $promo_por_asociar) {
+							$direcciones[$id_promo] = $dir_seleccionada; 
+						}
+					}
+					//colocar de nuevo las asociaciones de dirección en sesión
+					$this->session->set_userdata('dse', $direcciones);
+					
+					//y se desmarca la promoción por asociar
+					$this->session->unset_userdata('ppa');
+					//echo "se puso el arreglo en sesión";
+				} else {	//si es la primera vez que se selecciona la dirección de envío, se coloca en la variable global
+					$this->session->set_userdata('dir_envio', $dir_seleccionada);
+					//echo "se puso el dir_envio en sesión";
+				}
+			}
+			/*echo "sesion<pre>";
+			print_r($this->session->all_userdata());
+			echo "</pre>";
+			exit;*/
 			
 			//Para calcular destino siguiente y actualizxarlo en sesión
 			$destino = $this->obtener_destino();
 			
 			redirect($destino, "refresh");
-		}
-		else {
+		} else {
 			//ir al listado
 			redirect("forma_pago/listar", "refresh");
 		}		
@@ -93,7 +213,7 @@ class Direccion_Envio extends CI_Controller {
 	 * si debe haber redirección la aplica. 
 	 */
 	public function listar($msg = '', $redirect = TRUE) 
-	{		
+	{	
 		/*
 		echo 'cliente: '.$this->session->userdata('id_cliente').'<br/>';
 		echo 'Session: '.$this->session->userdata('session_id').'<br/>';
@@ -101,6 +221,8 @@ class Direccion_Envio extends CI_Controller {
 		$ano = date('m.d')	;
 		echo "date: ". $ano;	//mes año
 		*/
+		##tesy
+		##echo "pe " . $this->session->userdata('promo_por_asociar');
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;		
@@ -117,6 +239,7 @@ class Direccion_Envio extends CI_Controller {
 			$data['lista_direcciones'] = $this->direccion_envio_model->listar_direcciones($this->id_cliente);
 			//cargar vista	
 			$this->cargar_vista('', 'direccion_envio', $data);
+			
 			//se puede editar
 			$this->session->set_userdata('ed', hash("sha256", "editar_direccion".$this->session->userdata('email')));
 			//.strlen($this->session->userdata('ed')) //son 64
@@ -125,7 +248,7 @@ class Direccion_Envio extends CI_Controller {
 	}
 	
 	public function registrar() 
-	{	
+	{
 		$id_cliente = $this->id_cliente;
 		/*agregar el script para este formulario*/
 		$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'></script>";
@@ -164,31 +287,60 @@ class Direccion_Envio extends CI_Controller {
 				if (isset($form_values['direccion']['id_estatusSi'])) {	//Ya no se revisa isset($form_values['guardar']) , siempre se guarda
 					//verificar que no exista la direccion activa en la BD
 					if($this->direccion_envio_model->existe_direccion($form_values['direccion'])) {	
-						//Redirect al listado por que ya existe
+						//redirect al listado por que ya existe
 						$this->listar("La dirección ingresada ya existe en tu cuenta. Para usarla, por favor selecciónala arriba en la lista de direcciones guardadas.", FALSE);
 						//echo "La direcci&oacute;n ya está registrada.";
 					} else {
 						//verifica si hay o no dirección activa predeterminada
 						$existe_predeterminada = $this->existe_predetereminada($id_cliente);
 						
-						//sólo la primera tarjeta activa que se registra se predetermina
+						//sólo la primera dirección activa que se registra se predetermina
 						if (isset($form_values['predeterminar']) || $consecutivo == 0 || !$existe_predeterminada) {
 							$this->direccion_envio_model->quitar_predeterminado($id_cliente);
 							$form_values['direccion']['id_estatusSi'] = 3;
 						}
-						//si no hay predeterminada activa, la actual lo será.
-						//echo "estatus: " .$form_values['direccion']['id_estatusSi'];
+						//si no hay predeterminada activa, la actual lo será
 						
-						//Registrar en BD
+						//registrar en BD
 						if ($this->direccion_envio_model->insertar_direccion($form_values['direccion'])) {
-							//cargar en sesion
-							$this->cargar_en_session($form_values['direccion']['id_consecutivoSi']);
+							
+							#### cargar en sesion la asociación de la nueva dirección registrada
+							
+							//revisar si ya existe el arreglo de promociones y que no esté vacío "dse"
+							$direcciones = $this->session->userdata('dse');
+							//revisar si la promoción por asociar también está en sesión "ppa"
+							$promo_por_asociar = $this->session->userdata('ppa');
+							
+							//sólo si existen ambos en sesión
+							if ($direcciones && $promo_por_asociar) {
+								//colocar en la promoción que espera asociación "ppa"
+								foreach ($direcciones as $id_promo => $id_dir_envio) {
+									if ($id_promo == $promo_por_asociar) {
+										$direcciones[$id_promo] = $consecutivo + 1;		//Es el id de la dirección que se acaba de registrar 
+									}
+								}
+								//colocar de nuevo las asociaciones de dirección en sesión
+								$this->session->set_userdata('dse', $direcciones);
+								
+								//y se desmarca la promoción por asociar
+								$this->session->unset_userdata('ppa');
+								
+							} else { //si no existe el arreglo, sólo se registra en sesión la nueva dirección 
+								//$nueva_direccion = 
+								$this->cargar_en_session($form_values['direccion']['id_consecutivoSi']);
+							}
+							
+							/*echo "sesion<pre>";
+								print_r($this->session->all_userdata());
+								echo "</pre>".$this->obtener_destino();
+								exit;*/
 							
 							//Para calcular destino siguiente y actualizxarlo en sesión
 							$destino = $this->obtener_destino();
 							
-							//cargar la vista de las tarjetas
+							//cargar la vista de las direcciones
 							$this->listar("Tu dirección ha sido guardada exitosamente");
+							
 						} else {
 							$this->listar("Hubo un error al guardar tu dirección. Por favor intenta de nuevo.", FALSE);
 							//echo "<br/>Hubo un error en el registro en CMS";
@@ -210,20 +362,20 @@ class Direccion_Envio extends CI_Controller {
 				if (!empty($_POST['sel_ciudades']))
 				{
 					//catálogo de ciudades
-					$lista_ciudades = $this->consulta_ciudades($_POST['sel_estados']);		
+					$lista_ciudades = $this->consulta_ciudades($_POST['sel_estados']);
 					$data['lista_ciudades_sepomex'] = $lista_ciudades['ciudades'];
 				}
 				
 				if (!empty($_POST['sel_estados']) && !empty($_POST['sel_ciudades']))
 				{
 					//catálogo de colonias
-					$lista_colonias = $this->consulta_colonias($_POST['sel_estados'], $_POST['sel_ciudades']);		
+					$lista_colonias = $this->consulta_colonias($_POST['sel_estados'], $_POST['sel_ciudades']);
 					$data['lista_colonias_sepomex'] = $lista_colonias['colonias'];
 				}
 				
-				//vuelve a mostrar la información en el formulario 
+				//vuelve a mostrar la información en el formulario
 				$data['reg_errores'] = $this->reg_errores;
-				$this->cargar_vista('', 'direccion_envio' , $data);	
+				$this->cargar_vista('', 'direccion_envio' , $data);
 			}
 		} else {
 			//muestra la lista de direcciones sólamente
@@ -250,7 +402,6 @@ class Direccion_Envio extends CI_Controller {
 		$data['title'] = $this->title;
 		$data['subtitle'] = "Edita los campos que quieras modificar";
 		
-		//$this->output->nocache();
 		//recuperar la información de la dirección
 		if (!$consecutivo && $this->session->userdata("dir_envio")) {
 			$envio_en_sesion = $this->session->userdata("dir_envio");
@@ -402,8 +553,8 @@ class Direccion_Envio extends CI_Controller {
 		if ($this->session->userdata('tarjeta') || $this->session->userdata('deposito')) {	//tiene forma de pago
 			//actualizar valores en sesión
 			if ($this->session->userdata('requiere_envio')) {
-				//Si hay dirección de envío seleccionada
-				if ($this->session->userdata('dir_envio')) {
+				//Si hay dirección de envío seleccionada y no hay alguna por asociar
+				if ($this->session->userdata('dir_envio') && !$this->session->userdata('ppa')) {
 					//Si hay dirección de facturación Y razón social
 					if ($this->session->userdata('direccion_f') && $this->session->userdata('razon_social')) {
 						$destino = "orden_compra";

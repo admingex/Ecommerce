@@ -283,6 +283,7 @@ $(document).ready(function() {
 });
 
 function actualizar_ciudades(clave_estado) {
+	var url_base = "http://localhost/ecommerce/";
 	$.post( url_base + 'direccion_envio/get_ciudades',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado},
@@ -310,6 +311,7 @@ function actualizar_ciudades(clave_estado) {
 }
 
 function actualizar_colonias(clave_estado, ciudad) {
+	var url_base = "http://localhost/ecommerce/";
 	$.post( url_base + 'direccion_envio/get_colonias',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado, 'ciudad': ciudad },
@@ -330,6 +332,7 @@ function actualizar_colonias(clave_estado, ciudad) {
 }
 
 function actualizar_cp(clave_estado, ciudad, colonia) {
+	var url_base = "http://localhost/ecommerce/";
 	$.post( url_base + 'direccion_envio/get_colonias',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado, 'ciudad': ciudad},
