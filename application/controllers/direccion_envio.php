@@ -84,7 +84,7 @@ class Direccion_Envio extends CI_Controller {
 					$dir_general = $this->session->userdata('dir_envio');
 					
 					$direcciones = array();
-					//colocar en el arreglo de promociones todas las promociones que puedan tener envío
+					//colocar en el arreglo de direcciones todas las promociones que puedan tener envío
 					foreach ($detalle_promociones['descripciones_promocion'] as $p) {
 						//si requiere dirección de envío se mete al arreglo
 						if ($p['promocion']->requiere_envio) {

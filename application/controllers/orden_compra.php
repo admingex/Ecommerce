@@ -193,26 +193,71 @@ class Orden_Compra extends CI_Controller {
 		
 		//dir_envío
 		$dir_envio = $this->session->userdata('dir_envio');
-		$mas_direcciones = $this->session->userdata('dse');	//"dse" => direcciones de envio
-		######### todas las direcciones de envío se guardan por defecto.
+		$mas_direcciones = $this->session->userdata('dse');		//"dse" => direcciones de envio
+		
+		/**
+		 * Ajuste de direcciones múltiples:
+		 * 	todas las promociones tendrán asociadas una dirección antes de pasar a mostrar el resumen de la orden, sin importar que sólo sea la misma para todas. 
+		 * 	Si existe en sesión "dse" ("dse" => direcciones de envio), se recupera la información de las direcciones asociadas.
+		 * 	Si no existe en sesión "dse" ("dse" => direcciones de envio), se crea aquí.
+		 */
+		
+		//existe "dse", se recupera la información de las direcciones
 		if ($mas_direcciones) {
-			$direcciones = array();
+			$direcciones = array();		//Información de las direcciones que se mostrará
 			foreach ($mas_direcciones as $promocion => $id_direccion_env) {
 				$direcciones[$promocion] = $this->direccion_envio_model->detalle_direccion($id_direccion_env, $id_cliente);
 			}
+			//se pasa el arreglo con el detalle de las direcciones a la vista
 			$data['direcciones'] = $direcciones;
 			
-		} else if (!empty($dir_envio)) {
-			//por si no se guarda en la BD, sólo está en la sesión...
+		} else if (!empty($dir_envio)) {	//si no existe, se crea "dse" y se recupera la información de la dirección general para todas las promociones
+			//recuperar las promociones para saber cuál requiere envío
+			$detalle_promociones = NULL;
+			if ($this->detalle_promociones) {
+				$detalle_promociones = $this->detalle_promociones;
+			}
+			
+			//lo que se pasará a la vista para las direcciones
+			$direcciones = array();					//arreglo (idpromocion => id_direccion)
+			
+			/*//por si no se guarda en la BD, sólo está en la sesión...
 			if (is_array($dir_envio)) {
 				$data['dir_envio'] = (object)$dir_envio;
 				
-			} else if (is_integer((int)$dir_envio)) {
-				//recupera info de la BD
-				$consecutivo = (int)$dir_envio;		//consecutivo de la dirección de envío del cliente
+			} else */
+			
+			//si existe una dirección de envío inicial y la información detallada de las promociones... 
+			if (is_integer((int)$dir_envio) && $detalle_promociones) {				
+				//se crea "dse" ("dse" => direcciones de envio)
+				$dir_general = $dir_envio;
+				
+				$detalles_direcciones = array();		//información de las direcciones que se mostrará
+				$detalle_dir_gral = $this->direccion_envio_model->detalle_direccion($dir_general, $id_cliente);	//detalle de la información para todas las promociones
+				
+				//colocar en el arreglo de direcciones todas las promociones que puedan tener envío
+				foreach ($detalle_promociones['descripciones_promocion'] as $p) {
+					//si requiere dirección de envío se mete al arreglo
+					if ($p['promocion']->requiere_envio) {
+						$id_promo = $p['promocion']->id_promocionIn;
+						$direcciones[$id_promo] = $dir_general;
+						$detalles_direcciones[$id_promo] = $detalle_dir_gral;
+					}
+				}
+				//colocar en el arreglo de direcciones el id de la promoción que se quiere asociar con alguna dirección antes de ponerlo en sesión
+				$this->session->set_userdata('dse', $direcciones);
+				
+				
+				///// legacy /////
+				/////recupera info de la BD, sólo una dirección
+				/*$consecutivo = (int)$dir_envio;		//consecutivo de la dirección de envío del cliente
 				$detalle_envio = $this->direccion_envio_model->detalle_direccion($consecutivo, $id_cliente);
-				$data['dir_envio'] = $detalle_envio;
+				$data['dir_envio'] = $detalle_envio;*/
 			}
+			
+			//se pasa el arreglo con el detalle de las direcciones a la vista
+			$data['direcciones'] = $direcciones;
+			
 		}
 		
 		//razón social para la dirección de facturación "rs_facturación"
@@ -264,7 +309,7 @@ class Orden_Compra extends CI_Controller {
 				if ($this->detalle_promociones) {
 					$detalle_promociones = $this->detalle_promociones;
 				}
-				
+				/*
 				echo "sesion<pre>";
 				print_r($this->session->all_userdata());
 				echo "</pre>";
@@ -272,7 +317,7 @@ class Orden_Compra extends CI_Controller {
 				print_r($detalle_promociones);
 				echo "</pre>";
 				exit;
-				
+				*/
 				//forma pago
 				$consecutivo 	= $this->session->userdata('tarjeta') ? $this->session->userdata('tarjeta') : $this->session->userdata('deposito');
 				//promociones que se van a comprar, vienen en el detalle de la promoción en un array llamado "ids_promociones"

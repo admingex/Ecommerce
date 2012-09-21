@@ -98,6 +98,7 @@
 								## Test
 								//cero es que no tiene más de una dirección asociada 
 								$id_dir_envio = (!empty($des)) ? $des[$id_promo]: 0;
+								
 								if ($des) {
 									//buscar $id_promo en la vista de la dirección
 									include("orden_compra/detalle_envio_adicional.html");

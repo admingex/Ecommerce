@@ -260,9 +260,10 @@ class Login extends CI_Controller {
 		//Procesar la promoción
 		/*
 		echo "<pre>";
-			print_r($this->session->all_userdata());
+		//print_r($this->session->all_userdata());
+		//print_r($this->session->all_userdata());
 		echo "</pre>";
-		*/	
+		*/
 		//revisamos que por lo menos tengamos una promocion
 		if (($this->session->userdata('promociones')) != "") {
 			if (count($this->session->userdata('promociones')) > 0) {
@@ -271,9 +272,12 @@ class Login extends CI_Controller {
 				$requiere_envio = FALSE;
 				
 				foreach ($this->session->userdata('promociones') as $promocion) {
-					
 					// obtiene los artículos de la promocion				 
-					$respromo = $this->api->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);				
+					$respromo = $this->api->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);
+					/*echo "<pre>";
+					print_r($promocion);
+					print_r($respromo);
+					echo "</pre>";*/
 					foreach($respromo['articulos'] as $articulo) {
 						if ($articulo['requiere_envioBi'] != FALSE) {
 							$requiere_envio = TRUE;
