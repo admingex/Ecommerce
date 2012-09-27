@@ -56,7 +56,7 @@
 								//if ($this->session->userdata("redirect_to_order")) {
 								if ($this->session->userdata("destino")) {
 									//$url_redirect = site_url($this->session->userdata("redirect_to_order"));
-									$url_redirect = site_url($this->session->userdata("destino"));
+									$url_redirect = isset($destino) ? site_url($destino): site_url($this->session->userdata("destino"));
 								} else {
 									$url_redirect = site_url('direccion_facturacion');
 								}
@@ -65,6 +65,7 @@
 							$( this ).dialog( "close" );
 							window.location.href = "<?php echo $url_redirect; ?>";
 							//window.location.replace("<?php echo $url_redirect; ?>");
+							/*<?php if(isset($redirect)) echo $redirect." ". $this->session->userdata("destino")."\n"; ?>*/
 						}
 					}
 				});

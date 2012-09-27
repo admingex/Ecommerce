@@ -7,7 +7,7 @@
 </section>
 <div id="pleca-punteada"></div>
 <div class="contenedor-blanco">
-	<?php if(!isset($deposito) && empty($resultado)){ ?>			
+	<?php if (!isset($deposito) && empty($resultado)) { ?>			
 	<div class="instrucciones">Por favor verifica la informaci&oacute;n que aparece abajo. Si tu pago es con tarjeta, escribe el c&oacute;digo de seguridad que aparece en tu tarjeta. Cuando est&eacute;s listo, da click en finalizar compra para continuar.</div>
 	<?php }?>	
 </div>
@@ -49,7 +49,12 @@
 			</thead>
 			<tbody class="contenedor-gris"> 
 				<?php
+				/*echo "<pre>";
+						print_r($this->session->all_userdata());
+						echo "</pre>";*/
 					foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
+						
+						//exit;
 						if (strstr($promociones['promocion']->descripcionVc, '|' )) {
 							$mp = explode('|', $promociones['promocion']->descripcionVc);
 							$nmp = count($mp);
@@ -66,7 +71,8 @@
 						
 						//sacar la descripción que se mostrará de la promoción
 						foreach ($promociones['articulos'] as $articulo) {
-							echo "<tr>
+							echo 
+							"<tr>
 								<td colspan='2' class='titulo-promo-negro2'>".$desc_promo;
 							if ($articulo['issue_id']) {
 								foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
@@ -91,37 +97,51 @@
 							
 							//por si puede agregar una dirección de envío distinta
 							if ($promo_requiere_envio) {
+									
+								//debería haber:
+								$direcciones_envio = array();	//arreglo (id_promocion => id_direccion)
+								
 								//para ver si hay más de una dirección de envío en la compra
-								$des = $this->session->userdata('dse');
+								if ($this->session->userdata('dse')) {
+									$direcciones_envio = $this->session->userdata('dse'); 
+								} else if (isset($dse)) {	//se pasa en el data del controller de la orden en ek resumen.
+									$direcciones_envio = $dse;
+								}
+								
 								//id de la promoción que se quiere asociar con otra dirección
 								$id_promo = $promociones['promocion']->id_promocionIn;
-								## Test
-								//cero es que no tiene más de una dirección asociada 
-								$id_dir_envio = (!empty($des)) ? $des[$id_promo]: 0;
 								
-								if ($des) {
+								//para mostrar las direcciones de envío en caso de ser requerido
+								if (!empty($direcciones_envio)) {
+									
 									//buscar $id_promo en la vista de la dirección
 									include("orden_compra/detalle_envio_adicional.html");
 								}
-								echo "<br/><span>&nbsp;<a href='" . site_url('direccion_envio/direccion_adicional/'.$id_promo) . "'>Usar otra dirección de envío</a></span>";
+								echo "<br/><span>&nbsp;<a href='" . site_url('direccion_envio/direccion_adicional/'.$id_promo) . "'>Cambiar</a></span>";
+								//var_dump($direcciones);
 							}
+							//precio de la promoción
 							echo 
 								"</td>
-								<td class='titulo-promo-rojo2' align='right'>$</td>
-								<td class='titulo-promo-rojo2' align='right'>".number_format($promociones['promocion']->total_promocion, 2, '.', ',')."&nbsp;".$detalle_promociones['moneda']."</td>".
+									<td class='titulo-promo-rojo2' align='right'>$</td>
+									<td class='titulo-promo-rojo2' align='right'>" . number_format($promociones['promocion']->total_promocion, 2, '.', ',') . "&nbsp;" . $detalle_promociones['moneda'] . "</td>" .
 								"</tr>";
 						}
 					}
 				?>
 				<tr>					
-					<td class="titulo-promo-negro2" align="right" colspan="2">
-						IVA
-					</td>
+					<td class="titulo-promo-negro2" align="right" colspan="2">IVA</td>
+					<td class="titulo-promo-rojo2" align="right">$</td>
 					<td class="titulo-promo-rojo2" align="right">
-						$						
-					</td>
-					<td class="titulo-promo-rojo2" align="right">
-						0.00 <?php echo $detalle_promociones['moneda'];?>
+						<?php
+							$iva = 0.00;
+							if (isset($detalle_promociones['taxable'])) {
+								$iva = 1.16;
+							}
+							//echo 
+							
+							echo number_format($iva, 2, '.', ',')." ".$detalle_promociones['moneda'];
+						?>
 					</td>
 				</tr>
 				
