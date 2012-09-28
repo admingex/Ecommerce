@@ -214,6 +214,15 @@ body
 	border-bottom: solid 1px #CCC;		
 }
 
+.label-promo-rojo {
+	color: #C90002;
+	font-size: 12px;
+	font-weight: bold;
+	padding-top: 8px;
+	padding-right: 10px;
+	text-align: right;
+}
+
 .titulo-promo-negro2{
 	color: #000000;
 	font-size: 15px;

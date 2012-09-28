@@ -49,18 +49,31 @@
 			</thead>
 			<tbody class="contenedor-gris"> 
 				<?php
-				/*echo "<pre>";
-						print_r($this->session->all_userdata());
-						echo "</pre>";*/
+					/*echo "<pre>";
+					//print_r($this->session->all_userdata());
+					print_r($detalle_promociones);
+					echo "</pre>";*/
+					//IVA inicial de la compra
+					$iva_compra = 0.0;
+					$iva_message = "";
+					
 					foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
 						
 						//exit;
+						//para los artículos de las promos que lleven IVA
+						
+						$iva_message  = "";		//en principio no lleva para la promocion
+						//revisar si se cobra IVA
+						if ($promociones['promocion']->iva_promocion > 0) { //($articulo['taxableBi']) {
+							$iva_compra += $promociones['promocion']->iva_promocion;	//ya se calcula desde el API para el la promoción
+							$iva_message  = "costo m&aacute;s IVA";	//en principio no lleva para la promocion
+						}
 						if (strstr($promociones['promocion']->descripcionVc, '|' )) {
 							$mp = explode('|', $promociones['promocion']->descripcionVc);
 							$nmp = count($mp);
 							if ($nmp == 2) {
 								$desc_promo = $mp[0];
-							} else if($nmp==3) {
+							} else if ($nmp == 3) {
 								$desc_promo = $mp[1];
 							}
 						} else {
@@ -93,7 +106,7 @@
 							} else {
 								$desc_art = $articulo['tipo_productoVc'];
 							}
-							echo "<div>".$desc_art."</div>";
+							echo "<div>".$desc_art."<div class='label-promo-rojo'>$iva_message</div></div>";
 							
 							//por si puede agregar una dirección de envío distinta
 							if ($promo_requiere_envio) {
@@ -121,11 +134,11 @@
 								//var_dump($direcciones);
 							}
 							//precio de la promoción
-							echo 
+							echo
 								"</td>
-									<td class='titulo-promo-rojo2' align='right'>$</td>
-									<td class='titulo-promo-rojo2' align='right'>" . number_format($promociones['promocion']->total_promocion, 2, '.', ',') . "&nbsp;" . $detalle_promociones['moneda'] . "</td>" .
-								"</tr>";
+								<td class='titulo-promo-rojo2' align='right'>$</td>
+								<td class='titulo-promo-rojo2' align='right'>" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $detalle_promociones['moneda'] . "</td>" .
+							"</tr>";
 						}
 					}
 				?>
@@ -134,13 +147,8 @@
 					<td class="titulo-promo-rojo2" align="right">$</td>
 					<td class="titulo-promo-rojo2" align="right">
 						<?php
-							$iva = 0.00;
-							if (isset($detalle_promociones['taxable'])) {
-								$iva = 1.16;
-							}
-							//echo 
-							
-							echo number_format($iva, 2, '.', ',')." ".$detalle_promociones['moneda'];
+							//el iva de la compra calculado arriba
+							echo number_format($iva_compra, 2, '.', ',')." ".$detalle_promociones['moneda'];
 						?>
 					</td>
 				</tr>
@@ -153,19 +161,18 @@
 						$						
 					</td>
 					<td class="titulo-promo-rojo2" style="width: 150px" align="right">
-						<?php echo number_format(($detalle_promociones['total_pagar']),2,'.',',')."&nbsp;".$detalle_promociones['moneda']; ?>
+						<?php echo number_format(($detalle_promociones['total_pagar'] + $iva_compra), 2, '.', ',')."&nbsp;".$detalle_promociones['moneda']; ?>
 					</td>
 				</tr>																																																																											
 				<tr>
 					<td colspan="4" class="titulo-promo-negro2" align="right">						
 						<input type="submit" id="enviar" name="enviar" value="&nbsp;" class="finalizar_compra"/>						
 					</td>
-					
 				</tr>
 			</tbody>
 		</table>
 	</div>
-	</form>	
+	</form>
 	<?php
 	} else {	//Se muestra el resultado de la petición de cobro
 		include ('orden_compra/respuesta_cobro.html');
@@ -174,7 +181,7 @@
 	<?php
 		if (!empty($mensaje)) {
 	?>
-	<div id="dialog" title="Resultado" >
+	<div id="dialog" title="Resultado">
 		<p><?php echo $mensaje?></p>
 	</div>
 	<?php
@@ -199,5 +206,5 @@
 				});
 			});
 		</script>
-	</div>	
+	</div>
 </section>

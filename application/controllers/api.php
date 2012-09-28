@@ -706,7 +706,8 @@ class Api extends CI_Controller {
 			$respromo['promocion']->requiere_envio = FALSE;
 			
 			//obtener el tipo de producto de los artículos de la promoción, se queda con el último artículo que está en la última promoción
-			$total_promocion = 0;
+			$subtotal_promocion = 0;
+			$iva_promocion = 0;
 			foreach ($respromo['articulos'] as $articulo) {
 				if ($articulo['issue_id']) {
 					$issue = $this->api_model->obtener_issue($articulo['issue_id']);
@@ -718,8 +719,9 @@ class Api extends CI_Controller {
 					
 				}
 
-				//cálculo del total de la promoción
-				$total_promocion = ($articulo['taxableBi']) ? $total_promocion + ($articulo['tarifaDc'] * 1.16) : $total_promocion + $articulo['tarifaDc'];
+				//cálculo del subtotal de la promoción
+				$subtotal_promocion = $subtotal_promocion + $articulo['tarifaDc'];
+				$iva_promocion = ($articulo['taxableBi']) ? $iva_promocion + ($articulo['tarifaDc'] * 0.16) : $iva_promocion + $articulo['tarifaDc'] * 0;
 				
 				if ($articulo['monedaVc']) {
 					$datos['moneda'] = $articulo['monedaVc'];
@@ -727,8 +729,10 @@ class Api extends CI_Controller {
 			}
 			
 			//guardar el total por promoción y sumar al total de la compra 
-			$respromo['promocion']->total_promocion = $total_promocion;
-			$total = $total + $total_promocion;
+			$respromo['promocion']->subtotal_promocion = $subtotal_promocion;
+			$respromo['promocion']->iva_promocion = $iva_promocion;
+			
+			$total = $total + $subtotal_promocion;
 		}
 				
 		$datos['total_pagar'] = $total;
