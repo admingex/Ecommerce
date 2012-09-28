@@ -662,6 +662,7 @@ class Api extends CI_Controller {
 	public function obtiene_articulos_y_promociones() {
 		$datos = array();
 		$total = 0;			//lo que se cobrará como total de la compra
+		$iva_total = 0;		//el iva total de la compra
 		$det_promo = 0;		//de la últoma promoción agregada
 		
 		$datos['numero_promociones'] = count($this->session->userdata('promociones'));
@@ -733,9 +734,11 @@ class Api extends CI_Controller {
 			$respromo['promocion']->iva_promocion = $iva_promocion;
 			
 			$total = $total + $subtotal_promocion;
+			$iva_total += $iva_promocion;
 		}
-				
+
 		$datos['total_pagar'] = $total;
+		$datos['total_iva'] = $iva_total;
 		return $datos;
 	}	
 	

@@ -5,10 +5,6 @@
 	 	$d = $direcciones[$id_promo];
 	 	
 	 	echo "Calle " . $d->address1 . ", Número " .$d->address2. " " . (isset($d->address4) ? ", Interior ".$d->address4 : "") . "<br/>";
-		echo "C.P. " . $d->zip . " " .
-			$d->city . ", ".
-		 	$d->state . " ".
-		 	$d->codigo_paisVc . ", Tel. ".
-		 	$d->phone . "&nbsp;";
+		echo "C.P. " . $d->zip . " " . $d->city . ", ". $d->state . " ". $d->codigo_paisVc . ", Tel. " . $d->phone . "&nbsp;";
 	 }
 ?>

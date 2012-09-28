@@ -326,6 +326,18 @@ class Orden_Compra extends CI_Controller {
 				$ids_promociones = $detalle_promociones['ids_promociones'];
 				//$ids_promociones = $this->session->userdata('promocion')->id_promocionIn;
 				
+				//direcciones de envío que utilizaremos para la compra
+				$ids_direcciones_envio = array();
+				$ids_direcciones_envio = $this->session->userdata('dse');
+				//detalles para las direcciones asociadas
+				$detalles_direcciones = array();
+				if ($ids_direcciones_envio) {
+					foreach ($ids_direcciones_envio as $id_promocion => $id_direccion_env) {
+						$detalles_direcciones[$id_promocion] = $this->direccion_envio_model->detalle_direccion($id_direccion_env, $id_cliente);
+					}
+				}
+				
+				
 				$digito 		= (!empty($orden_info)) ? $orden_info['cvv'] : 0;
 				//$digito 		= (isset($_POST['txt_codigo'])) ? $_POST['txt_codigo'] : 0;
 				
@@ -341,7 +353,7 @@ class Orden_Compra extends CI_Controller {
 				$informacion_orden->currency = $moneda;
 											
 				//recuperar el total de la compra con ayuda del API
-				$monto = $detalle_promociones['total_pagar'];
+				$monto = $detalle_promociones['total_pagar'] + $detalle_promociones['total_iva'];
 				$informacion_orden->monto = $monto;						//monto total a que se cobrará a través de la plataforma
 				
 				//el hash se debe calcular y colocar en el objeto que se pasará a CCTC
@@ -365,14 +377,20 @@ class Orden_Compra extends CI_Controller {
 					//$id_forma_pago = 0;
 										
 					//echo " tipo pago depósito: " . $tipo_pago;
-					
+					/*
 					///////si ya está registrada la compra de algún intento anterioir...
 					if ($this->session->userdata('id_compra')) {	
 						$id_compra = $this->session->userdata('id_compra');
 					} else {	///////registrar la orden de compra y el detalle del pago con depósito
-						$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $tipo_pago);	
+						$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);	
 					}
+					*/
 					
+					## para la prueba del correo
+					$id_compra = 1;	//para el test
+					$simple_result = NULL;
+					$simple_result->codigo_autorizacion = 12321;
+					## end pruebas
 					
 					if ($id_compra) {
 						$mensaje = "<html>
@@ -401,94 +419,117 @@ class Orden_Compra extends CI_Controller {
 										   	       	       <b>Productos en la orden:</b>	   
 										   	       	   </td>
 										   	       </tr>";
-										   	       				
-													if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
-														$articulos = $this->session->userdata('articulos');
-														$total = 0;
-														if (!empty($articulos)) {
-															foreach ($articulos as $a) 
-																$total += $a['tarifaDc'];
-														}
-												 
-														if ($this->session->userdata('promocion')) 																	 
-															if (!empty($articulos))
-																foreach($articulos as $articulo) {
-																	$desc_promo = '';
-																	if (strstr($this->session->userdata('promocion')->descripcionVc, '|' )) {
-																		$mp = explode('|',$this->session->userdata('promocion')->descripcionVc);
-																		$nmp = count($mp);
-																		if ($nmp == 2) {
-																			$desc_promo = $mp[0];		
-																		}	
-																		else if($nmp==3){
-																			$desc_promo = $mp[1];
-																		}
-																	}				
-																	else{
-																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-																	}																																															
-																																		
-												  				 	$mensaje.="<tr>
-																			    <td colspan='2' class='instrucciones'>".$desc_promo;
-																					
-																					if(!empty($articulo['descripcion_issue'])){
-																						if( strstr($articulo['descripcion_issue'], '|' )){
-																							$mp=explode('|',$articulo['descripcion_issue']);
-																							$nmp=count($mp);
-																							if($nmp==2){
-																								$desc_promo = $mp[0];		
-																							}	
-																							else if($nmp==3){
-																								$desc_promo = $mp[1];
-																							}
-																						}				
-																						else{
-																							$desc_promo = $articulo['descripcion_issue'];
-																						}	
-																						$mensaje.="<br />".$desc_promo;												
-																					}
-																					else{
-																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
-																						if(!empty($articulo['medio_entregaVc'])){
-																							$mensaje.=", " . $articulo['medio_entregaVc']; 
-																						} 
-																					}																												 
-																		        	
-																	$mensaje.="      </td>	
-																				<td>&nbsp;</td>				
-																				<td align='right' class='instrucciones'>$".	
-																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				</td>
-																			</tr>";														
-																}																																																																																	
-														}
-																										   	       										   	       
-				   	       $mensaje.= 			  "<tr>
-										   	           <td colspan='2'>&nbsp;
-										   	           </td>
-										   	           <td align='right'>Sub-total:
-										   	           </td>
-										   	           <td align='right'>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."
-										   	           </td>
-										   	       </tr>
-										   	       <tr>
-										   	           <td colspan='2'>&nbsp;
-										   	           </td>
-										   	           <td align='right'>I.V.A
-										   	           </td>
-										   	           <td align='right'>$0.00&nbsp;".$articulo['monedaVc']."
-										   	           </td>
-										   	       </tr>
-										   	       <tr>
-										   	           <td colspan='2' width='325px'>&nbsp;
-										   	           </td>
-										   	           <td align='right' width='180px'><b>Total de la orden</b>
-										   	           </td>
-										   	           <td align='right' width='95px'><b>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."</b>
-										   	           </td>
-										   	       </tr>										   	       												   
-										   	   </tbody>
-										   </table>";
+										   	      ### se usará "$detalle_promociones", para mostrar la información de los artículos de la orden
+						//IVA inicial de la compra
+						$iva_compra = 0.0;
+						$iva_message = "";
+						$subtotal = 0;
+						foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
+					
+							//para los artículos de las promos que lleven IVA
+							$iva_message  = "";		//en principio no lleva para la promocion
+							
+							//revisar si se cobra IVA
+							if ($promociones['promocion']->iva_promocion > 0) { //($articulo['taxableBi']) {
+								$iva_compra += $promociones['promocion']->iva_promocion;	//ya se calcula desde el API para el la promoción
+								$iva_message  = "<b>costo m&aacute;s IVA</b>";	//en principio no lleva para la promocion
+							}
+							
+							if (strstr($promociones['promocion']->descripcionVc, '|' )) {
+								$mp = explode('|', $promociones['promocion']->descripcionVc);
+								$nmp = count($mp);
+								if ($nmp == 2) {
+									$desc_promo = $mp[0];
+								} else if ($nmp == 3) {
+									$desc_promo = $mp[1];
+								}
+							} else {
+								$desc_promo = $promociones['promocion']->descripcionVc;
+							}
+							
+							//indicador de que requiere envío
+							$promo_requiere_envio = $promociones['promocion']->requiere_envio;
+							
+							//sacar la descripción que se mostrará de la promoción
+							foreach ($promociones['articulos'] as $articulo) {
+								$mensaje .= 
+								"<tr>
+									<td colspan='2' class='instrucciones'>".$desc_promo;
+								if ($articulo['issue_id']) {
+									foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
+										if ($k == $articulo['issue_id']) {
+											if (strstr($v, '|' )) {
+												$mp = explode('|',$v);
+												$nmp = count($mp);
+												if ($nmp == 2) {
+													$desc_art = $mp[0];
+												} else if ($nmp == 3) {
+													$desc_art = $mp[1];
+												}
+											} else {
+												$desc_art = $v;
+											}
+										}
+									}
+								} else {
+									$desc_art = $articulo['tipo_productoVc'];
+								}
+								//medio de entrega del artículo
+								$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
+																
+								$mensaje .= "<div>".$desc_art. "&nbsp;<div class='label-promo-rojo'>$iva_message</div></div><br/>";
+								
+								//direcciones de envío asociadas
+								if ($promo_requiere_envio) {
+									//id de la promoción que se quiere asociar con otra dirección
+									$id_promo = $promociones['promocion']->id_promocionIn;
+									
+									//detalles de las direcciones
+									if (!empty($detalles_direcciones) && array_key_exists($id_promo, $detalles_direcciones)) {
+									 	$d = $detalles_direcciones[$id_promo];
+									 	
+									 	$mensaje .= "Calle " . $d->address1 . ", Número " .$d->address2. " " . (isset($d->address4) ? ", Interior ".$d->address4 : "") . "<br/>";
+										$mensaje .= "C.P. " . $d->zip . " " . $d->city . ", ". $d->state . " ". $d->codigo_paisVc . ", Tel. " . $d->phone . "&nbsp;";
+									 }
+								}
+								//sumar al subtotal de la compra
+								$subtotal += $promociones['promocion']->subtotal_promocion;
+								//precio de la promoción
+								$mensaje .=
+									"</td>
+									<td>&nbsp;</td>
+									<td class='instrucciones' align='right'>$" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+								"</tr>";
+							}
+						}
+													
+	   	       			$mensaje.= "<tr>
+						   	           <td colspan='2'>&nbsp;
+						   	           </td>
+						   	           <td align='right'>Sub-total:
+						   	           </td>
+						   	           <td align='right'>$".number_format($subtotal, 2, '.', ',')."&nbsp;".$moneda."
+						   	           </td>
+						   	       </tr>
+						   	       <tr>
+						   	           <td colspan='2'>&nbsp;
+						   	           </td>
+						   	           <td align='right'>I.V.A
+						   	           </td>
+						   	           <td align='right'>$".number_format($detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;".$moneda."
+						   	           </td>
+						   	       </tr>
+						   	       <tr>
+						   	           <td colspan='2' width='325px'>&nbsp;
+						   	           </td>
+						   	           <td align='right' width='180px'><b>Total de la orden</b>
+						   	           </td>
+						   	           <td align='right' width='95px'><b>$".number_format($detalle_promociones['total_pagar'] + $detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;" . $moneda ."</b>
+						   	           </td>
+						   	       </tr>										   	       												   
+						   	   </tbody>
+						   </table>";
+						   
 							$mensaje.=	   "<table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030; width: 600px'>
 										       <thead style='background-color: #E70030; color: #FFF'>
 										           <tr>
@@ -498,21 +539,7 @@ class Orden_Compra extends CI_Controller {
 										       </thead>
 										       <tbody>
 											   	   <tr>
-											   	       <td valign='top' style='width: 300px;'>";
-											   	       $dir_envio = (int)$this->session->userdata('dir_envio');
-											   	       if (!empty($dir_envio)) {
-											   	       	   $det_env = $this->direccion_envio_model->detalle_direccion($dir_envio, $id_cliente);
-											   	       	   $mensaje.="<b>Dirección de envío:</b><br />";
-											   	       	   $mensaje.=$det_env->address1. " " .$det_env->address2. " " . (isset($det_env->address4) ? ", Int. ".$det_env->address4 : "") . "<br/>".
-											   	       	         $det_env->zip."<br/>".
-																 $det_env->city."<br/>".
-																 $det_env->state."<br/>".
-																 $det_env->codigo_paisVc."<br/>".
-																 $det_env->phone."&nbsp;";	
-											   	       }
-											   	       										   	       													
-								$mensaje.=   	      "</td>
-											   	       <td valign='top' style='width: 300px;'>
+											   	       <td valign='top' colspan='2'>
 											   	           <b>Requiere factura:</b>&nbsp;".$this->session->userdata('requiere_factura')."<br /><br />";
 											   	       
 											   	       	   if ($this->session->userdata('requiere_factura') == 'si') {
@@ -560,7 +587,8 @@ class Orden_Compra extends CI_Controller {
 									  	   </div>
 									  </body>
 									  </html>";
-						
+						echo $mensaje;
+						exit;
 						//mandar correo al cliente con el formato de arlette para notificarle lo que debe hacer
 						$envio_correo = $this->enviar_correo("Notificación de compra con depósito bancario", $mensaje);
 						
@@ -655,11 +683,12 @@ class Orden_Compra extends CI_Controller {
 										
 					//intentamos el Pago con pasando los objetos a CCTC //
 					try {
+						/*
 						//si la compra no se ha generado y guardado en sesión en algún intento previo de pago
 						if ($this->session->userdata('id_compra')) {
 							$id_compra = $this->session->userdata('id_compra');
 						} else {	//////registrar la orden de compra y el detalle del pago con Tc "no guardada"
-							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $tipo_pago);	
+							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);	
 						}
 						
 						if (!$id_compra) {			//Si falla el registro inicial de la compra en CCTC
@@ -670,18 +699,18 @@ class Orden_Compra extends CI_Controller {
 						$informacion_orden->id_compraIn = $id_compra;
 						
 						##Test
-						/*echo "info_orden<pre>";
-						print_r($informacion_orden);
-						echo "</pre>";*/
+						//echo "info_orden<pre>";
+						//print_r($informacion_orden);
+						//echo "</pre>";
 						
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_objetos($tc_soap, $amex_soap, $informacion_orden);
 						
 						## Test Result
-						/*echo "simple_result<pre>";
-						print_r($simple_result);
-						echo "</pre>";
-						exit;*/
+						//echo "simple_result<pre>";
+						//print_r($simple_result);
+						//echo "</pre>";
+						//exit;
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
 						
@@ -693,6 +722,12 @@ class Orden_Compra extends CI_Controller {
 						//Registro de la respuesta del pago en ecommerce
 						$this->registrar_detalle_pago_tc($info_detalle_pago_tc);
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
+						*/
+						## para la prueba del correo
+						$id_compra = 0;	//para el test
+						$simple_result = NULL;
+						$simple_result->codigo_autorizacion = 12321;
+						## end pruebas
 						
 						//Envío del correo
 						$mensaje = "<html>
@@ -715,19 +750,6 @@ class Orden_Compra extends CI_Controller {
 											   	         <b>Método de pago:</b><br />".$detalle_tarjeta['tc']['descripcionVc']." con terminación ".substr($detalle_tarjeta['tc']['terminacion_tarjetaVc'], -4)."<br />
 											   	         <b>Código de autorización:</b>&nbsp;&nbsp;".$simple_result->codigo_autorizacion."<br />
 											   	         <b>Fecha de autorización:</b>&nbsp;&nbsp;".mdate('%d-%m-%Y')."<br /><br />";
-													   
-											   	      
-											   	       $dir_envio = (int)$this->session->userdata('dir_envio');
-											   	       if (!empty($dir_envio)) {
-											   	       	   $det_env = $this->direccion_envio_model->detalle_direccion($dir_envio, $id_cliente);
-											   	       	   $mensaje.="<b>Dirección de envío:</b><br />";
-											   	       	   $mensaje.=$det_env->address1. " " .$det_env->address2. " " . (isset($det_env->address4) ? ", Int. ".$det_env->address4 : "") . "<br/>".
-											   	       	         $det_env->zip."<br/>".
-																 $det_env->city."<br/>".
-																 $det_env->state."<br/>".
-																 $det_env->codigo_paisVc."<br/>".
-																 $det_env->phone."&nbsp;";	
-											   	       }
 											   	       										   	       													
 								$mensaje.=   	      "</td>
 											   	       <td valign='top' style='width: 300px;'>
@@ -770,106 +792,131 @@ class Orden_Compra extends CI_Controller {
 										   	       	       <b>Productos en la orden:</b>	   
 										   	       	   </td>
 										   	       </tr>";
-										   	       				
-													if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
-														$articulos = $this->session->userdata('articulos');
-														$total = 0;
-														if (!empty($articulos)) {
-															foreach ($articulos as $a) 
-																$total += $a['tarifaDc'];
-														}
-												 
-														if ($this->session->userdata('promocion')) {
-															if (!empty($articulos)) {
-																foreach ($articulos as $articulo) {
-																	$desc_promo = '';
-																	if (strstr($this->session->userdata('promocion')->descripcionVc, '|' )) {
-																		$mp = explode('|',$this->session->userdata('promocion')->descripcionVc);
-																		$nmp = count($mp);
-																		if ($nmp == 2) {
-																			$desc_promo = $mp[0];		
-																		} else if($nmp == 3) {
-																			$desc_promo = $mp[1];
-																		}
-																	} else {
-																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-																	}
-																																		
-												  				 	$mensaje.="<tr>
-																			    <td colspan='2' class='instrucciones'>".$desc_promo;
-																					
-																					if (!empty($articulo['descripcion_issue'])) {
-																						if (strstr($articulo['descripcion_issue'], '|' )) {
-																							$mp = explode('|',$articulo['descripcion_issue']);
-																							$nmp = count($mp);
-																							if ($nmp == 2) {
-																								$desc_promo = $mp[0];
-																							} else if ($nmp == 3) {
-																								$desc_promo = $mp[1];
-																							}
-																						} else {
-																							$desc_promo = $articulo['descripcion_issue'];
-																						}
-																						
-																						$mensaje.="<br />".$desc_promo;
-																																		
-																					} else {
-																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
-																						if (!empty($articulo['medio_entregaVc'])) {
-																							$mensaje.=", " . $articulo['medio_entregaVc'];
-																						}
-																					}
-																		        	
-																	$mensaje.="      </td>
-																				<td>&nbsp;</td>
-																				<td align='right' class='instrucciones'>$".
-																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				</td>
-																			</tr>";
-																}
-															}
-														}																																																																																
+							### se usará "$detalle_promociones", para mostrar la información de los artículos de la orden
+							//IVA inicial de la compra
+							$iva_compra = 0.0;
+							$iva_message = "";
+							$subtotal = 0;
+							foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
+						
+								//para los artículos de las promos que lleven IVA
+								$iva_message  = "";		//en principio no lleva para la promocion
+								
+								//revisar si se cobra IVA
+								if ($promociones['promocion']->iva_promocion > 0) { //($articulo['taxableBi']) {
+									$iva_compra += $promociones['promocion']->iva_promocion;	//ya se calcula desde el API para el la promoción
+									$iva_message  = "<b>costo m&aacute;s IVA</b>";	//en principio no lleva para la promocion
+								}
+								
+								if (strstr($promociones['promocion']->descripcionVc, '|' )) {
+									$mp = explode('|', $promociones['promocion']->descripcionVc);
+									$nmp = count($mp);
+									if ($nmp == 2) {
+										$desc_promo = $mp[0];
+									} else if ($nmp == 3) {
+										$desc_promo = $mp[1];
+									}
+								} else {
+									$desc_promo = $promociones['promocion']->descripcionVc;
+								}
+								
+								//indicador de que requiere envío
+								$promo_requiere_envio = $promociones['promocion']->requiere_envio;
+								
+								//sacar la descripción que se mostrará de la promoción
+								foreach ($promociones['articulos'] as $articulo) {
+									$mensaje .= 
+									"<tr>
+										<td colspan='2' class='instrucciones'>".$desc_promo;
+									if ($articulo['issue_id']) {
+										foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
+											if ($k == $articulo['issue_id']) {
+												if (strstr($v, '|' )) {
+													$mp = explode('|',$v);
+													$nmp = count($mp);
+													if ($nmp == 2) {
+														$desc_art = $mp[0];
+													} else if ($nmp == 3) {
+														$desc_art = $mp[1];
 													}
-																										   	       										   	       
-				   	       $mensaje.= 			  "<tr>
-										   	           <td colspan='2'>&nbsp;
-										   	           </td>
-										   	           <td align='right'>Sub-total:
-										   	           </td>
-										   	           <td align='right'>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."
-										   	           </td>
-										   	       </tr>
-										   	       <tr>
-										   	           <td colspan='2'>&nbsp;
-										   	           </td>
-										   	           <td align='right'>I.V.A
-										   	           </td>
-										   	           <td align='right'>$0.00&nbsp;".$articulo['monedaVc']."
-										   	           </td>
-										   	       </tr>
-										   	       <tr>
-										   	           <td colspan='2' width='325px'>&nbsp;
-										   	           </td>
-										   	           <td align='right' width='180px'><b>Total de la orden</b>
-										   	           </td>
-										   	           <td align='right' width='95px'><b>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."</b>
-										   	           </td>
-										   	       </tr>										   	       												   
-										   	   </tbody>
-										   </table>
-										   <br />
-										   <br />
-										   <b>¿Solicitaste factura?</b>
-										   <br />
-										   <br />
-										   Si solicitaste factura, recibirás un correo con la liga para descargarla en un periodo máximo de 24 horas.
-										   <br />
-										   <br />
-										   Gracias por comprar en Grupo Expansión.									  	   																																																										  	
-									  	   </div>
-									  </body>
-									  </html>";
-
+												} else {
+													$desc_art = $v;
+												}
+											}
+										}
+									} else {
+										$desc_art = $articulo['tipo_productoVc'];
+									}
+									//medio de entrega del artículo
+									$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
+																	
+									$mensaje .= "<div>".$desc_art. "&nbsp;<div class='label-promo-rojo'>$iva_message</div></div><br/>";
+									
+									//direcciones de envío asociadas
+									if ($promo_requiere_envio) {
+										//id de la promoción que se quiere asociar con otra dirección
+										$id_promo = $promociones['promocion']->id_promocionIn;
+										
+										//detalles de las direcciones
+										if (!empty($detalles_direcciones) && array_key_exists($id_promo, $detalles_direcciones)) {
+										 	$d = $detalles_direcciones[$id_promo];
+										 	
+										 	$mensaje .= "Calle " . $d->address1 . ", Número " .$d->address2. " " . (isset($d->address4) ? ", Interior ".$d->address4 : "") . "<br/>";
+											$mensaje .= "C.P. " . $d->zip . " " . $d->city . ", ". $d->state . " ". $d->codigo_paisVc . ", Tel. " . $d->phone . "&nbsp;";
+										 }
+									}
+									//sumar al subtotal de la compra
+									$subtotal += $promociones['promocion']->subtotal_promocion;
+									//precio de la promoción
+									$mensaje .=
+										"</td>
+										<td>&nbsp;</td>
+										<td class='instrucciones' align='right'>$" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+									"</tr>";
+								}
+							}
+														
+		   	       			$mensaje.= "<tr>
+							   	           <td colspan='2'>&nbsp;
+							   	           </td>
+							   	           <td align='right'>Sub-total:
+							   	           </td>
+							   	           <td align='right'>$".number_format($subtotal, 2, '.', ',')."&nbsp;".$moneda."
+							   	           </td>
+							   	       </tr>
+							   	       <tr>
+							   	           <td colspan='2'>&nbsp;
+							   	           </td>
+							   	           <td align='right'>I.V.A
+							   	           </td>
+							   	           <td align='right'>$".number_format($detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;".$moneda."
+							   	           </td>
+							   	       </tr>
+							   	       <tr>
+							   	           <td colspan='2' width='325px'>&nbsp;
+							   	           </td>
+							   	           <td align='right' width='180px'><b>Total de la orden</b>
+							   	           </td>
+							   	           <td align='right' width='95px'><b>$".number_format($detalle_promociones['total_pagar'] + $detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;" . $moneda ."</b>
+							   	           </td>
+							   	       </tr>										   	       												   
+							   	   </tbody>
+							   </table>
+							   <br />
+							   <br />
+							   <b>¿Solicitaste factura?</b>
+							   <br />
+							   <br />
+							   Si solicitaste factura, recibirás un correo con la liga para descargarla en un periodo máximo de 24 horas.
+							   <br />
+							   <br />
+							   Gracias por comprar en Grupo Expansión.									  	   																																																										  	
+					  	  	</div>
+						</body>
+						</html>";
+						echo $mensaje;
+						exit;
+						
 						$envio_correo = FALSE;
 						///Envío de correo sólo en caso de que el cobro haya sido exitoso
 						if (strtolower($simple_result->respuesta_banco) == "approved") {
@@ -913,18 +960,23 @@ class Orden_Compra extends CI_Controller {
 					//echo " tipo pago de la DB: " . $tipo_pago;
 					/*echo "<pre>";
 					print_r($informacion_orden);
-					echo "</pre>";*/
+					print_r($ids_direcciones_envio);
+					echo "</pre>";
+					//$id_compre= $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);
+					//echo "id_compra ". $id_compre;
+					exit;*/
 					
 					
 					//$this->session->unset_userdata('id_compra');		//pruebas
 					//exit;
 					// Intentamos el Pago con los Id's en  CCTC //
 					try {
+						/*
 						//si la compra no se ha generado y guardado en sesión en algún intento previo de pago
 						if ($this->session->userdata('id_compra')) {
 							$id_compra = $this->session->userdata('id_compra');
 						} else {
-							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $tipo_pago);	
+							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);	
 						}
 						
 						
@@ -935,19 +987,19 @@ class Orden_Compra extends CI_Controller {
 						
 						//pasar el id de la compra para el pago
 						$informacion_orden->id_compraIn = $id_compra;
-						/*
-						echo "dsa<pre>";
-						print_r($informacion_orden);
-						echo "</pre>";
-						*/
+						
+						//echo "dsa<pre>";
+						//print_r($informacion_orden);
+						//echo "</pre>";
+						
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_ids($informacion_orden);
-						/*
-						echo "dsa<pre>";
-						print_r($simple_result);
-						echo "</pre>";
-						exit;
-						*/
+						
+						//echo "dsa<pre>";
+						//print_r($simple_result);
+						//echo "</pre>";
+						//exit;
+						
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
 					
@@ -960,6 +1012,17 @@ class Orden_Compra extends CI_Controller {
 						//Registro de la respuesta del pago en ecommerce
 						$this->registrar_detalle_pago_tc($info_detalle_pago_tc);
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
+						*/
+						## para la prueba del correo
+						$id_compra = 0;	//para el test
+						$simple_result = NULL;
+						$simple_result->codigo_autorizacion = 12321;
+						## end pruebas
+						
+						##direcciones de envío
+					   //direcciones de envío ya se tienen recuperadas al principio del proceso de cobro
+			   	       //$ids_direcciones_envio;
+			   	       //$detalles_direcciones	//los detalles de las anteriores direcciones
 						
 						//Envío del correo
 						$mensaje = "<html>
@@ -972,9 +1035,8 @@ class Orden_Compra extends CI_Controller {
 										   <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #E70030; width: 600px'>
 										       <thead style='background-color: #E70030; color: #FFF'>
 										           <tr>
-										               <th colspan='2' align='left'>Pago, envío y facturación
-										               </th>
-										           </tr>    
+										               <th colspan='2' align='left'>Pago, envío y facturación</th>
+										           </tr>
 										       </thead>
 										       <tbody>
 											   	   <tr>
@@ -982,33 +1044,23 @@ class Orden_Compra extends CI_Controller {
 											   	           <b>Método de pago:</b><br />".$detalle_tarjeta->descripcionVc." con terminación ".$detalle_tarjeta->terminacion_tarjetaVc."<br />
 											   	           <b>Código de autorización:</b>&nbsp;&nbsp;".$simple_result->codigo_autorizacion."<br />
 											   	           <b>Fecha de autorización:</b>&nbsp;&nbsp;".mdate('%d-%m-%Y')."<br /><br />";
-													   
-											   	       $dir_envio = (int)$this->session->userdata('dir_envio');
-											   	       if (!empty($dir_envio)) {
-											   	       	   $det_env = $this->direccion_envio_model->detalle_direccion($dir_envio, $id_cliente);
-											   	       	   $mensaje.="<b>Dirección de envío:</b><br />";
-											   	       	   $mensaje.=$det_env->address1. " " .$det_env->address2. " " . (isset($det_env->address4) ? ", Int. ".$det_env->address4 : "") . "<br/>".
-											   	       	         $det_env->zip."<br/>".
-																 $det_env->city."<br/>".
-																 $det_env->state."<br/>".
-																 $det_env->codigo_paisVc."<br/>".
-																 $det_env->phone."&nbsp;";
-											   	       }
 											   	       
 								$mensaje.=   	      "</td>
 											   	       <td valign='top' style='width: 300px;'>
 											   	           <b>Requiere factura:</b>&nbsp;".$this->session->userdata('requiere_factura')."<br /><br />";
 											   	       
 											   	       	   if ($this->session->userdata('requiere_factura') == 'si') {
-											   	       	       $mensaje.="<b>Razón social:</b><br />";	
+											   	       	       $mensaje .= "<b>Razón social:</b><br />";	
 											   	       	       $rs = $this->direccion_facturacion_model->obtener_rs($this->session->userdata('razon_social'));
-											   	       	       $mensaje.=$rs->company."<br />";	
-											   	       	       $mensaje.=$rs->tax_id_number."<br /><br />";
+											   	       	       
+											   	       	       $mensaje .= $rs->company."<br />";	
+											   	       	       $mensaje .= $rs->tax_id_number."<br /><br />";
 											   	       	       										   	       	       
-											   	       	       $mensaje.="<b>Dirección de facturación:</b><br />";
-											   	       	       $df = $this->direccion_facturacion_model->obtener_direccion($id_cliente, $this->session->userdata('direccion_f'));	  										   	       	       
-											   	       	       $mensaje.= $df->calle."&nbsp;".$df->num_ext."&nbsp;".(!empty($df->num_int) ? ", Int. ".$df->num_int : "") . "<br/>";
-															   $mensaje.= $df->cp."<br/>".
+											   	       	       $mensaje .= "<b>Dirección de facturación:</b><br />";
+											   	       	       $df = $this->direccion_facturacion_model->obtener_direccion($id_cliente, $this->session->userdata('direccion_f'));
+															   	  										   	       	       
+											   	       	       $mensaje .= $df->calle."&nbsp;".$df->num_ext."&nbsp;".(!empty($df->num_int) ? ", Int. ".$df->num_int : "") . "<br/>";
+															   $mensaje .= "C.P. ".$df->cp."<br/>".
 																 		  $df->ciudad."<br/>".
 														 		          $df->estado."<br/>".
 															 	 		  $df->pais."&nbsp;";
@@ -1036,106 +1088,131 @@ class Orden_Compra extends CI_Controller {
 										   	       	       <b>Productos en la orden:</b>	   
 										   	       	   </td>
 										   	       </tr>";
-										   	       				
-													if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {			
-														$articulos = $this->session->userdata('articulos');
-														$total = 0;
-														if (!empty($articulos)) {
-															foreach ($articulos as $a)
-																$total += $a['tarifaDc'];
-														}
-												 	
-														if ($this->session->userdata('promocion')) { 																	 
-															if (!empty($articulos)) {
-																foreach ($articulos as $articulo) {
-																	
-																	$desc_promo = '';
-																	if (strstr($this->session->userdata('promocion')->descripcionVc, '|' )) {
-																		$mp = explode('|',$this->session->userdata('promocion')->descripcionVc);
-																		$nmp = count($mp);
-																		if ($nmp == 2) {
-																			$desc_promo = $mp[0];		
-																		} else if($nmp==3) {
-																			$desc_promo = $mp[1];
-																		}
-																	} else {
-																		$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-																	}																																															
-																																		
-												  					$mensaje.="<tr>
-																			    <td colspan='2' class='instrucciones'>".$desc_promo;
-																					
-																					if (!empty($articulo['descripcion_issue'])) {
-																						if (strstr($articulo['descripcion_issue'], '|' )) {
-																							$mp = explode('|',$articulo['descripcion_issue']);
-																							$nmp = count($mp);
-																							if ($nmp == 2) {
-																								$desc_promo = $mp[0];		
-																							} else if ($nmp == 3) {
-																								$desc_promo = $mp[1];
-																							}
-																						} else {
-																							$desc_promo = $articulo['descripcion_issue'];
-																						}
-																						
-																						$mensaje.="<br />".$desc_promo;
-																						
-																					} else {
-																						$mensaje.="<br />" . $articulo['tipo_productoVc'];
-																						if (!empty($articulo['medio_entregaVc'])) {
-																							$mensaje.=", " . $articulo['medio_entregaVc'];
-																						}
-																					}
-																		        	
-																	$mensaje.="      </td>	
-																				<td>&nbsp;</td>				
-																				<td align='right' class='instrucciones'>$".	
-																					number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-																				</td>
-																			</tr>";
-																}
-															}
-														}
-													}
-														
-				   	       $mensaje.= 			  "<tr>
-										   	           <td colspan='2'>&nbsp;
-										   	           </td>
-										   	           <td align='right'>Sub-total:
-										   	           </td>
-										   	           <td align='right'>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."
-										   	           </td>
-										   	       </tr>
-										   	       <tr>
-										   	           <td colspan='2'>&nbsp;
-										   	           </td>
-										   	           <td align='right'>I.V.A
-										   	           </td>
-										   	           <td align='right'>$0.00&nbsp;".$articulo['monedaVc']."
-										   	           </td>
-										   	       </tr>
-										   	       <tr>
-										   	           <td colspan='2' width='325px'>&nbsp;
-										   	           </td>
-										   	           <td align='right' width='180px'><b>Total de la orden</b>
-										   	           </td>
-										   	           <td align='right' width='95px'><b>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."</b>
-										   	           </td>
-										   	       </tr>										   	       												   
-										   	   </tbody>
-										   </table>
-										   <br />
-										   <br />
-										   <b>¿Solicitaste factura?</b>
-										   <br />
-										   <br />
-										   Si solicitaste factura, recibirás un correo con la liga para descargarla en un periodo máximo de 24 horas.
-										   <br />
-										   <br />
-										   Gracias por comprar en Grupo Expansión.									  	   																																																										  	
-									  	   </div>
-									  </body>
-									  </html>";
+						
+						### se usará "$detalle_promociones", para mostrar la información de los artículos de la orden
+						//IVA inicial de la compra
+						$iva_compra = 0.0;
+						$iva_message = "";
+						$subtotal = 0;
+						foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
+					
+							//para los artículos de las promos que lleven IVA
+							$iva_message  = "";		//en principio no lleva para la promocion
+							
+							//revisar si se cobra IVA
+							if ($promociones['promocion']->iva_promocion > 0) { //($articulo['taxableBi']) {
+								$iva_compra += $promociones['promocion']->iva_promocion;	//ya se calcula desde el API para el la promoción
+								$iva_message  = "<b>costo m&aacute;s IVA</b>";	//en principio no lleva para la promocion
+							}
+							
+							if (strstr($promociones['promocion']->descripcionVc, '|' )) {
+								$mp = explode('|', $promociones['promocion']->descripcionVc);
+								$nmp = count($mp);
+								if ($nmp == 2) {
+									$desc_promo = $mp[0];
+								} else if ($nmp == 3) {
+									$desc_promo = $mp[1];
+								}
+							} else {
+								$desc_promo = $promociones['promocion']->descripcionVc;
+							}
+							
+							//indicador de que requiere envío
+							$promo_requiere_envio = $promociones['promocion']->requiere_envio;
+							
+							//sacar la descripción que se mostrará de la promoción
+							foreach ($promociones['articulos'] as $articulo) {
+								$mensaje .= 
+								"<tr>
+									<td colspan='2' class='instrucciones'>".$desc_promo;
+								if ($articulo['issue_id']) {
+									foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
+										if ($k == $articulo['issue_id']) {
+											if (strstr($v, '|' )) {
+												$mp = explode('|',$v);
+												$nmp = count($mp);
+												if ($nmp == 2) {
+													$desc_art = $mp[0];
+												} else if ($nmp == 3) {
+													$desc_art = $mp[1];
+												}
+											} else {
+												$desc_art = $v;
+											}
+										}
+									}
+								} else {
+									$desc_art = $articulo['tipo_productoVc'];
+								}
+								//medio de entrega del artículo
+								$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
+																
+								$mensaje .= "<div>".$desc_art. "&nbsp;<div class='label-promo-rojo'>$iva_message</div></div><br/>";
+								
+								//direcciones de envío asociadas
+								if ($promo_requiere_envio) {
+									//id de la promoción que se quiere asociar con otra dirección
+									$id_promo = $promociones['promocion']->id_promocionIn;
+									
+									//detalles de las direcciones
+									if (!empty($detalles_direcciones) && array_key_exists($id_promo, $detalles_direcciones)) {
+									 	$d = $detalles_direcciones[$id_promo];
+									 	
+									 	$mensaje .= "Calle " . $d->address1 . ", Número " .$d->address2. " " . (isset($d->address4) ? ", Interior ".$d->address4 : "") . "<br/>";
+										$mensaje .= "C.P. " . $d->zip . " " . $d->city . ", ". $d->state . " ". $d->codigo_paisVc . ", Tel. " . $d->phone . "&nbsp;";
+									 }
+								}
+								//sumar al subtotal de la compra
+								$subtotal += $promociones['promocion']->subtotal_promocion;
+								//precio de la promoción
+								$mensaje .=
+									"</td>
+									<td>&nbsp;</td>
+									<td class='instrucciones' align='right'>$" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+								"</tr>";
+							}
+						}
+													
+	   	       			$mensaje.= "<tr>
+						   	           <td colspan='2'>&nbsp;
+						   	           </td>
+						   	           <td align='right'>Sub-total:
+						   	           </td>
+						   	           <td align='right'>$".number_format($subtotal, 2, '.', ',')."&nbsp;".$moneda."
+						   	           </td>
+						   	       </tr>
+						   	       <tr>
+						   	           <td colspan='2'>&nbsp;
+						   	           </td>
+						   	           <td align='right'>I.V.A
+						   	           </td>
+						   	           <td align='right'>$".number_format($detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;".$moneda."
+						   	           </td>
+						   	       </tr>
+						   	       <tr>
+						   	           <td colspan='2' width='325px'>&nbsp;
+						   	           </td>
+						   	           <td align='right' width='180px'><b>Total de la orden</b>
+						   	           </td>
+						   	           <td align='right' width='95px'><b>$".number_format($detalle_promociones['total_pagar'] + $detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;" . $moneda ."</b>
+						   	           </td>
+						   	       </tr>										   	       												   
+						   	   </tbody>
+						   </table>
+						   <br />
+						   <br />
+						   <b>¿Solicitaste factura?</b>
+						   <br />
+						   <br />
+						   Si solicitaste factura, recibirás un correo con la liga para descargarla en un periodo máximo de 24 horas.
+						   <br />
+						   <br />
+						   Gracias por comprar en Grupo Expansión.									  	   																																																										  	
+				  	  	</div>
+					</body>
+					</html>";
+						echo $mensaje;
+						exit;
 												
 						if (strtolower($simple_result->respuesta_banco) == "approved") {
 							$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
@@ -1161,11 +1238,11 @@ class Orden_Compra extends CI_Controller {
 						//return $simple_result;
 					} catch (SoapFault $exception) {
 						//errores en desarrollo
-						//echo $exception;  
+						//echo $exception;
 						//echo '<br/>error: <br/>'.$exception->getMessage();
 						return NULL;
 					}
-				}				
+				}
 			} else {	//If Errores
 				//redirect('orden_compra', 'refresh');
 				$this->resumen("El formato del código es incorrecto", TRUE);
@@ -1376,9 +1453,10 @@ class Orden_Compra extends CI_Controller {
 	 * Se registra la orden de compra para las promociones solicitadas
 	 * @param $id_cliente Quien solicita comprar
 	 * @param $ids_promociones array con los ids de las promociones que se quieren comprar
+	 * @param $ids_direcciones_envio array con los ids de las promociones y la direccion de envío asociada a la promocion
 	 * @param $tipo_pago La forma de pago que se usará
 	 */
-	private function registrar_orden_compra($id_cliente, $ids_promociones, $tipo_pago)
+	private function registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago)
 	{
 		//Registrar eb la tabla de órdenes
 		$id_compra = 0;
@@ -1421,25 +1499,28 @@ class Orden_Compra extends CI_Controller {
 			
 			$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => $id_TCSi);
 			
-			#### TODO Ajustar con más de una dirección por compra
 			/////// direccion(es) de envío///////
 			$info_direcciones = array();
-			
-			if ($this->session->userdata('requiere_envio')) {
+			//las direcciones de envío vienene como argumento en la llamada
+			if ($this->session->userdata('requiere_envio') && !empty($ids_direcciones_envio)) {
 				//echo "Sí requiere_envio: Si<br/>";
-				if ($dir_envio = $this->session->userdata('dir_envio')) {
+				### Ajustado para múltiples direcciones
+				###if ($dir_envio = $this->session->userdata('dir_envio')) {
+				foreach ($ids_direcciones_envio as $id_promo => $id_direccion) {
+					
 					//echo "direccion_envio: " . $dir_envio;
 					
-					$info_direcciones['envio'] = 
-						array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => (int)$dir_envio, 'address_type' => self::$TIPO_DIR['RESIDENCE']);
-				} else {
-					//No se efectúa la petición por que falta el dato de envío
-					echo "Error: requiere dirección de envío";
-					return FALSE;
-				}
+					$info_direcciones['envio'][] = 
+						array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_promocionIn' => $id_promo, 'id_consecutivoSi' => (int)$id_direccion, 'address_type' => self::$TIPO_DIR['RESIDENCE']);
+						//array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => (int)$dir_envio, 'address_type' => self::$TIPO_DIR['RESIDENCE']);
+				} 
 				
+			} else if (empty($ids_direcciones_envio)) {
+					//No se efectúa la petición por que falta el dato de envío
+					echo "Error: la compra requiere dirección de envío.";
+					return FALSE;
 			} else {
-				//si no requiere se vacía
+				//si no requiere se vacía el arreglo
 				$info_direcciones['envio'] = array();
 			}
 			
@@ -1449,9 +1530,15 @@ class Orden_Compra extends CI_Controller {
 				$dir_facturacion = $this->session->userdata('direccion_f');
 				$razon_social = $this->session->userdata('razon_social');
 				
+				### Ajuste de múltiples direcciones, requiere asociar todas las promociones de la compra con la misma dirección de facturación
 				if ($dir_facturacion && $razon_social) {
-					$info_direcciones['facturacion'] = 
-						array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => (int)$dir_facturacion, 'id_razonSocialIn' => (int)$razon_social , 'address_type' => self::$TIPO_DIR['BUSINESS']);
+					//se registrará la dirección de facturación para todas las promociones si es que se requiere
+					foreach ($ids_promociones as $key => $id_promo) {
+						$info_direcciones['facturacion'][] = 
+							array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_promocionIn' => $id_promo, 'id_consecutivoSi' => (int)$dir_facturacion, 'id_razonSocialIn' => (int)$razon_social , 'address_type' => self::$TIPO_DIR['BUSINESS']);
+					}
+					
+						//array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => (int)$dir_facturacion, 'id_razonSocialIn' => (int)$razon_social , 'address_type' => self::$TIPO_DIR['BUSINESS']);
 				} else {
 					echo "Error: falta la dirección de facturación";
 					return FALSE;
@@ -1461,6 +1548,10 @@ class Orden_Compra extends CI_Controller {
 				$info_direcciones['facturacion'] = array();
 			}
 			
+			/*echo "<pre>";
+			print_r($info_direcciones);
+			echo "</pre>";
+			exit;*/
 			///////estatus de registro de la compra///////
 			$estatus = ($tipo_pago == self::$TIPO_PAGO['Deposito_Bancario']) ? self::$ESTATUS_COMPRA['PAGO_DEPOSITO_BANCARIO'] : self::$ESTATUS_COMPRA['SOLICITUD_CCTC'];
 			$info_estatus = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_estatusCompraSi' => $estatus);

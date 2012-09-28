@@ -64,11 +64,21 @@ class Orden_Compra_model extends CI_Model {
 		$res_pago = $this->db->insert('CMS_RelCompraPago', $forma_pago);
 		
 		//echo "<br/>direcciones: " ;
-		foreach ($direcciones as $direccion) {
-			if (!empty($direccion)) {
+		//primero las de envío
+		$dirs_envio = $direcciones['envio'];
+		foreach ($dirs_envio as $direccion) {
+			//if (!empty($direccion)) {
 				//echo var_dump($direccion).", <br/>";
 				$res_dir = $this->db->insert('CMS_RelCompraDireccion', $direccion);
-			}
+			//}
+		}
+		//ahora las de facturación	-por el momento sólo será una por compra y para todas las promociones- 
+		$dirs_facturacion = $direcciones['facturacion'];
+		foreach ($dirs_facturacion as $direccion) {
+			//if (!empty($direccion)) {
+				//echo var_dump($direccion).", <br/>";
+				$res_dir = $this->db->insert('CMS_RelCompraDireccion', $direccion);
+			//}
 		}
 		
 		//echo "<br/>estatus: " ;
