@@ -32,6 +32,7 @@ class Direccion_Envio extends CI_Controller {
 		
 		//cargar el modelo en el constructor
 		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
+		$this->load->model('forma_pago_model', 'forma_pago_model', true);
 		//la sesion se carga automáticamente
 		
 		//toma el valor del id cliente de la sesión creada en el login/registro
