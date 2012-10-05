@@ -342,7 +342,7 @@ class Api extends CI_Controller {
 		if (!empty($sitio)) {
 	  		$rsitio = $this->api_model->obtener_sitio($sitio);	
 			if ($rsitio->num_rows()!=0) {
-				$data['sitio']=$rsitio->row();
+				$data['sitio'] = $rsitio->row();
 			} else {
 				$data['error']['sitio'] = "No existe informacién del sitio solicitado.";
 			}
@@ -664,6 +664,7 @@ class Api extends CI_Controller {
 		$total = 0;			//lo que se cobrará como total de la compra
 		$iva_total = 0;		//el iva total de la compra
 		$det_promo = 0;		//de la últoma promoción agregada
+		$lleva_ra = 0;	//para saber si alguna promoción de la compre requiere RA 
 		
 		$datos['numero_promociones'] = count($this->session->userdata('promociones'));
 		$datos['tipo_productoVc'] = array();		//para la descripción de la primera promoción en el carrito
@@ -717,7 +718,11 @@ class Api extends CI_Controller {
 				//si requiere dirección de envío:
 				if ($articulo['requiere_envioBi']) {
 					$respromo['promocion']->requiere_envio = TRUE;
-					
+				}
+				
+				//si requiere renovación automática:
+				if ($articulo['renovacion_automaticaBi']) {
+					$lleva_ra = 1;
 				}
 
 				//cálculo del subtotal de la promoción
@@ -736,7 +741,7 @@ class Api extends CI_Controller {
 			$total = $total + $subtotal_promocion;
 			$iva_total += $iva_promocion;
 		}
-
+		$datos['lleva_ra'] = $lleva_ra;
 		$datos['total_pagar'] = $total;
 		$datos['total_iva'] = $iva_total;
 		return $datos;

@@ -964,7 +964,7 @@ class Direccion_Envio extends CI_Controller {
 				}
 			}
 			
-			if(array_key_exists('txt_referencia', $_POST)) {
+			if (array_key_exists('txt_referencia', $_POST)) {
 				$datos['direccion']['referenciaVc'] = trim($_POST['txt_referencia']);
 			}
 			

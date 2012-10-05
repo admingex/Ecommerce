@@ -9,9 +9,9 @@ $(document).ready(function() {
 	
 	var reg_cp = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
-	var reg_nombres = /^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i;
+	var reg_nombres = /^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{1,30}$/i;
 	var reg_numeros = /^[A-Z0-9 -.#\/]{1,50}$/i;
-	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,50}$/i;
+	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{1,50}$/i;
 	var reg_telefono = /^[0-9 ()+-]{10,20}$/
 	
 	var calle	= $("#txt_calle");

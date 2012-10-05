@@ -70,16 +70,17 @@ class Login extends CI_Controller {
 	public function index()
 	{
 		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo correspondiente
-		
 		if ($this->session->userdata('promociones')) {	//si trae varias promociones
 			$promociones = $this->session->userdata('promociones');
-			foreach ($promociones as $promocion){				
+			foreach ($promociones as $promocion) {
 				$id_sit = $promocion['id_sitio'];
-			}																
+			}
+			
 			$this->session->unset_userdata('sitio');
-			$datsit = $this->api_model->obtener_sitio($id_sit);		
+			$datsit = $this->api_model->obtener_sitio($id_sit);
+					
 			$this->session->set_userdata('sitio', $datsit->row());
-			$data['url_imageVc']=$datsit->row()->url_imageVc;
+			$data['url_imageVc'] = $datsit->row()->url_imageVc;
 		}																								
 				
 		//inclusión de Scripts
@@ -264,6 +265,9 @@ class Login extends CI_Controller {
 		//print_r($this->session->all_userdata());
 		echo "</pre>";
 		*/
+		//para revisar renovación automática desde el principio
+		$lleva_ra = FALSE;
+		
 		//revisamos que por lo menos tengamos una promocion
 		if (($this->session->userdata('promociones')) != "") {
 			if (count($this->session->userdata('promociones')) > 0) {
@@ -274,18 +278,25 @@ class Login extends CI_Controller {
 				foreach ($this->session->userdata('promociones') as $promocion) {
 					// obtiene los artículos de la promocion				 
 					$respromo = $this->api->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);
-					/*echo "<pre>";
-					print_r($promocion);
-					print_r($respromo);
-					echo "</pre>";*/
+					
 					foreach($respromo['articulos'] as $articulo) {
+						//requiere envío
 						if ($articulo['requiere_envioBi'] != FALSE) {
 							$requiere_envio = TRUE;
 							//echo "requiere envio";
-							break;
+							//break;		//ya no se usa para que revise tabíen RA
+						}
+						
+						//si requiere renovación automática:
+						if ($articulo['renovacion_automaticaBi']) {
+							$lleva_ra = TRUE;
+							if ($requiere_envio) break;	//ya no tiene caso seguir revisando los demás artículos
 						}
 					}
 				}
+				
+				//señalat que se requiere envío en la sesión
+				$this->session->set_userdata('lleva_ra', $lleva_ra);
 				
 				//señalat que se requiere envío en la sesión
 				$this->session->set_userdata('requiere_envio', $requiere_envio);	
@@ -293,9 +304,10 @@ class Login extends CI_Controller {
 				//el siguiente parámetro es para indicar al controlador si es necesario cargar el archivo views/templates/promocion.html => hay alguna promoción
 				$this->session->set_userdata('promocion', TRUE);								
 				
-				//echo "<pre>";
-				//var_dump($this->session->all_userdata());
-				//echo "</pre>";
+				/*echo "<pre>";
+				var_dump($this->session->all_userdata());
+				echo "</pre>";
+				exit;*/
 				
 				$forma_pago_express = $this->forma_pago_model->get_pago_express($id_cliente);		//devolverá un obj
 				$dir_envio_express = $this->direccion_envio_model->get_pago_express($id_cliente);		//devolverá un obj

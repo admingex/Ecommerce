@@ -142,7 +142,13 @@
 					<span class="error_mensaje"><?php if(isset($reg_errores['fecha_error'])) echo ($reg_errores['fecha_error']);?></span>
 				</td>
 			</tr>
-			<tr>
+			<?php
+				$style_guardar = '';
+				if (isset($lleva_ra) && !empty($lleva_ra)) {
+					$style_guardar = 'style="display:none;"';
+				}
+			?>
+			<tr <?php echo $style_guardar;?>>
 				<td>&nbsp;</td>
 				<td class="label_izq">					
 					<input type="checkbox" id="chk_guardar" name="chk_guardar" checked="checked"/>					

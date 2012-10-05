@@ -5,7 +5,7 @@
 		//Si se solicitó pago con TC
 		if (isset($resultado)) {	
 						
-			echo "  <table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #C90002;'>
+			echo 	"<table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #C90002;'>
 					    <tr style='background-color: #C90002;'>
 					    	<td colspan='4' align='left' height='25px'>
 								<b style='color: #FFF;'>Resumen de orden:</b>
@@ -21,92 +21,116 @@
 			   	       	   	</td>
 			   	       </tr>";
 				   	       				
-						if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {									
-							$articulos = $this->session->userdata('articulos');
-							$total = 0;
-							if (!empty($articulos)) {
-								foreach ($articulos as $a) 
-									$total += $a['tarifaDc'];
+						### se usará "$detalle_promociones", para mostrar la información de los artículos de la orden
+						//IVA inicial de la compra
+						$iva_compra = 0.0;
+						$iva_message = "";
+						$subtotal = 0;
+						
+						foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
+					
+							//para los artículos de las promos que lleven IVA
+							$iva_message  = "";		//en principio no lleva para la promocion
+							
+							//revisar si se cobra IVA
+							if ($promociones['promocion']->iva_promocion > 0) { //($articulo['taxableBi']) {
+								$iva_compra += $promociones['promocion']->iva_promocion;	//ya se calcula desde el API para el la promoción
+								$iva_message  = "<b>costo m&aacute;s IVA</b>";	//en principio no lleva para la promocion
 							}
-					 
-							if ($this->session->userdata('promocion')) 																	 
-								if (!empty($articulos))
-									foreach($articulos as $articulo) {
-										
-										$desc_promo = '';
-										if( strstr($this->session->userdata('promocion')->descripcionVc, '|' )){
-											$mp=explode('|',$this->session->userdata('promocion')->descripcionVc);
-											$nmp=count($mp);
-											if($nmp==2){
-												$desc_promo = $mp[0];		
-											}	
-											else if($nmp==3){
-												$desc_promo = $mp[1];
+							
+							if (strstr($promociones['promocion']->descripcionVc, '|' )) {
+								$mp = explode('|', $promociones['promocion']->descripcionVc);
+								$nmp = count($mp);
+								if ($nmp == 2) {
+									$desc_promo = $mp[0];
+								} else if ($nmp == 3) {
+									$desc_promo = $mp[1];
+								}
+							} else {
+								$desc_promo = $promociones['promocion']->descripcionVc;
+							}
+							
+							//indicador de que requiere envío
+							$promo_requiere_envio = $promociones['promocion']->requiere_envio;
+							
+							//sacar la descripción que se mostrará de la promoción
+							foreach ($promociones['articulos'] as $articulo) {
+								echo 
+								"<tr>
+									<td colspan='2' class='instrucciones'><br/>".$desc_promo;
+								if ($articulo['issue_id']) {
+									foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
+										if ($k == $articulo['issue_id']) {
+											if (strstr($v, '|' )) {
+												$mp = explode('|',$v);
+												$nmp = count($mp);
+												if ($nmp == 2) {
+													$desc_art = $mp[0];
+												} else if ($nmp == 3) {
+													$desc_art = $mp[1];
+												}
+											} else {
+												$desc_art = $v;
 											}
-										}				
-										else{
-											$desc_promo = $this->session->userdata('promocion')->descripcionVc;
-										}																																															
-																											
-					  				    echo "	<tr>
-													<td colspan='2' class='instrucciones'>".$desc_promo;
-														
-														if(!empty($articulo['descripcion_issue'])){
-															if( strstr($articulo['descripcion_issue'], '|' )){
-																$mp=explode('|',$articulo['descripcion_issue']);
-																$nmp=count($mp);
-																if($nmp==2){
-																	$desc_promo = $mp[0];		
-																}	
-																else if($nmp==3){
-																	$desc_promo = $mp[1];
-																}
-															}				
-															else{
-																$desc_promo = $articulo['descripcion_issue'];
-															}	
-															echo "<br />".$desc_promo;												
-														}
-														else{
-															echo "<br />" . $articulo['tipo_productoVc'];
-															if(!empty($articulo['medio_entregaVc'])){
-																echo ", " . $articulo['medio_entregaVc']; 
-															} 
-														}																												 
-											        	
-										echo "      </td>	
-													<td>&nbsp;</td>				
-													<td align='right' class='instrucciones'>$".	
-														number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$articulo['monedaVc']."
-													</td>
-												</tr>";														
-									}																																																																																	
+										}
+									}
+								} else {
+									$desc_art = $articulo['tipo_productoVc'];
+								}
+								//medio de entrega del artículo
+								$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
+																
+								echo "<div>".$desc_art. "&nbsp;<div class='label-promo-rojo'>$iva_message</div></div><br/>";
+								
+								//direcciones de envío asociadas
+								if ($promo_requiere_envio) {
+									//id de la promoción que se quiere asociar con otra dirección
+									$id_promo = $promociones['promocion']->id_promocionIn;
+									
+									//detalles de las direcciones
+									if (!empty($detalles_direcciones) && array_key_exists($id_promo, $detalles_direcciones)) {
+									 	$d = $detalles_direcciones[$id_promo];
+									 	
+									 	echo "Calle " . $d->address1 . ", Número " .$d->address2. " " . (isset($d->address4) ? ", Interior ".$d->address4 : "") . "<br/>";
+										echo "C.P. " . $d->zip . " " . $d->city . ", ". $d->state . " ". $d->codigo_paisVc . ", Tel. " . $d->phone . "&nbsp;";
+									 }
+								}
+								//sumar al subtotal de la compra
+								$subtotal += $promociones['promocion']->subtotal_promocion;
+								//precio de la promoción
+								echo
+									"</td>
+									<td>&nbsp;</td>
+									<td class='instrucciones' align='right'>$" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+								"</tr>";
 							}
-																										   	       										   	       
-			echo "		<tr>
-		   	           		<td colspan='2'>&nbsp;
-		   	           		</td>
-		   	           		<td align='right' class='label'>Sub-total:
-		   	           		</td>
-		   	           		<td align='right' class='instrucciones'>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."
-		   	           		</td>
-		   	       		</tr>
-		   	       		<tr>
-		   	           		<td colspan='2'>&nbsp;
-		   	           		</td>
-		   	           		<td align='right' class='label'>I.V.A
-		   	           		</td>
-		   	           		<td align='right' class='instrucciones'>$0.00&nbsp;".$articulo['monedaVc']."
-		   	           		</td>
-		   	       		</tr>
-		   	       		<tr>
-		   	           		<td colspan='2' width='325px'>&nbsp;
-		   	           		</td>
-		   	           		<td align='right' width='180px' class='label'><b>Total de la orden</b>
-		   	           		</td>
-		   	           		<td align='right' width='95px'><b>$".number_format($total,2,'.',',')."&nbsp;".$articulo['monedaVc']."</b>
-		   	           		</td>
-		   	       		</tr>	
+						}
+													
+	   	       			echo 
+	   	       					"<tr>
+					   	           <td colspan='2'>&nbsp;
+					   	           </td>
+					   	           <td align='right'>Sub-total:
+					   	           </td>
+					   	           <td align='right'>$".number_format($subtotal, 2, '.', ',')."&nbsp;".$moneda."
+					   	           </td>
+					   	       </tr>
+					   	       <tr>
+					   	           <td colspan='2'>&nbsp;
+					   	           </td>
+					   	           <td align='right'>I.V.A
+					   	           </td>
+					   	           <td align='right'>$".number_format($detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;".$moneda."
+					   	           </td>
+					   	       </tr>
+					   	       <tr>
+					   	           <td colspan='2' width='325px'>&nbsp;
+					   	           </td>
+					   	           <td align='right' width='180px'><b>Total de la orden</b>
+					   	           </td>
+					   	           <td align='right' width='95px'><b>$".number_format($detalle_promociones['total_pagar'] + $detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;" . $moneda ."</b>
+					   	           </td>
+					   	       </tr>
 		   	       		<tr>
 		   	       			<td colspan='4'> 
 		   	       				<b>Método de pago:</b>
@@ -124,35 +148,27 @@
 		   	       		<tr>
 		   	       			<td colspan='4'>
 		   	       				<b>Respuesta del Banco:&nbsp;&nbsp;</b><span class='instrucciones'>";
-		   	       				if($resultado->respuesta_banco!="approved"){
+		   	       				
+		   	       				if ($resultado->respuesta_banco != "approved") {
 									echo "<b style='color: #E60000'>Pago Declinado</b>";
-								}
-								else{
+								} else {
 									echo "<b style='color: #E60000'>Pago Aprobado</b>";
 								}
-		   	       	echo "  </span>
+		   	       	echo 
+		   	       			"</span>
 		   	       			</td>	
 		   	       		</tr>
 		   	       		<tr>
 		   	       			<td colspan='4'>
 		   	       				<b>Fecha de autorización:&nbsp;&nbsp;</b>";		   	       				
-		   	       				$this->load->helper('date');	
-		   	       				echo "<span class='instrucciones'>".mdate('%d-%m-%Y', time())."</span>";	
-		   	       					       			
-		   	       	echo "	</td>
+					$this->load->helper('date');
+					echo "<span class='instrucciones'>".mdate('%d-%m-%Y', time())."</span>";
+	   	       
+		   	       	echo 
+		   	       			"</td>
 		   	       		</tr>								   	       												   										   	   
 		   			</table>";
-		
-		/*	
-			echo "<p>Número de Transacción: " . $resultado->id_transaccionNu . "</p>";
-			echo "<p>Respuesta del Banco: " . $resultado->respuesta_banco . "</p>";
-			if($resultado->respuesta_banco!="approved"){
-				echo "Declined";
-			}
-			//echo "<p>Código de Autorización: " . $resultado->codigo_autorizacion . "</p>";
-			echo "<p>Mensaje: " . $resultado->mensaje . "</p>";
-		*/	
-		?>	
+		?>
 		
 						
 		<?php
@@ -167,32 +183,31 @@
 				Cuenta CLABE:  012180004465210022<br />
 				Cuenta:  0446521002<br />
 				Sucursal: 1820<br />
-				Plaza: 001<br /><br /> 
+				Plaza: 001<br /><br />
 				Una vez realizado el depósito por favor confirma tu pago llamando al teléfono (55) 5061 2413 o escribiendo al correo pagosmercadotecnia@expansion.com.mx . Si confirmas por correo, no olvides indicar tu nombre y el producto que adquieres, y enviar escaneada tu ficha de depósito.<br /><br /> 
 				Recibirás un correo electrónico confirmando que tu compra ha sido completada.
-			</div>							
-		
-		<?php
+			</div>
+	<?php
+	
 		}
-		?>
-		<?php
-			if($url_back['estatus']!=0){
-		?>
+
+		if ($url_back['estatus']!=0) {
+	?>
 		<p>
-		<form name="envio_result" action="<?php echo $url_back['urlback'];?>" method="POST" accept-charset="UTF8">
-			<input type="hidden" name="cadena_comprobacion" value="<?php echo $url_back['cadena_comprobacion']; ?>" />
-			<textarea name="datos_login" style="display: none"><?php echo $url_back['datos_login']; ?></textarea>							
-			<input type="submit" name="Continuar" value="Continuar"/>
-		</form>
+			<form name="envio_result" action="<?php echo $url_back['urlback'];?>" method="POST" accept-charset="UTF8">
+				<input type="hidden" name="cadena_comprobacion" value="<?php echo $url_back['cadena_comprobacion']; ?>" />
+				<textarea name="datos_login" style="display: none"><?php echo $url_back['datos_login']; ?></textarea>							
+				<input type="submit" name="Continuar" value="Continuar"/>
+			</form>
 		</p>
 		<script type="text/javascript">
 			//setTimeout('document.envio_result.submit();', 3000);
 		</script>
-		<?php
-			} 
-			else{
-				echo "<p>".anchor('orden_compra', 'intentar Nuevamente')."</p>";
-			}
-		?>
+	<?php
+		} 
+		else{
+			echo "<p>".anchor('orden_compra', 'intentar Nuevamente')."</p>";
+		}
+	?>
 	</div>
 </div>

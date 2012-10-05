@@ -101,6 +101,7 @@ class Forma_Pago extends CI_Controller {
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
+		$data['lleva_ra'] = $this->session->userdata('lleva_ra');	//para la renovación automática
 		
 		//catálogo que se obtendrá del CCTC
 		if ($tipo == "tc") {
@@ -1386,10 +1387,20 @@ class Forma_Pago extends CI_Controller {
 			if (array_key_exists('sel_anio_expira', $_POST)) { 
 				$datos['tc']['anio_expiracionVc'] = $_POST['sel_anio_expira'];  
 			}
+			
 			if (array_key_exists('chk_guardar', $_POST)) {
 				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
 				$datos['tc']['id_estatusSi'] = 1;
 			}
+			
+			//tomando en cuenta la renovación automática
+			$ra = $this->session->userdata('lleva_ra');
+			//si lleva rs, se guarda la tarjeta
+			if ($ra) {
+				$datos['guardar'] = $_POST['chk_guardar'];
+				$datos['tc']['id_estatusSi'] = 1;
+			}
+			
 			if (array_key_exists('chk_default', $_POST)) {
 				$datos['tc']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada
 				$datos['predeterminar'] = true;	
