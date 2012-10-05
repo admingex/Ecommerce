@@ -450,19 +450,110 @@ class Administrador_usuario extends CI_Controller {
 	}
 
 	// Funcion para actualizar los datops de TC
-	public function editar_tc($id_tc, $id_tipo, $id_cliente){
+	public function editar_tc($id_tc = "", $id_tipo = "", $id_cliente = ""){
+		//echo "tc: ".$id_tc." tipo: ".$id_tipo." cliente".$id_cliente."<br />";
+		//el detalle de la tarjeta en BD antes de actualizar			
+		$detalle_tarjeta = array();	
 		
+		$detalle_tarjeta = $this->forma_pago_model->detalle_tarjeta($id_tc, $id_cliente);	
+		$data['tarjeta_tc'] = $detalle_tarjeta; 
+		$data['id_cliente'] = $id_cliente;
+		$data['id_tc'] = $id_tc;				
+			
 		if($_POST){
-			echo "post";
+			//echo "tcPOST: ".$id_tc." tipoPOST: ".$id_tipo." clientePOST".$id_cliente."<br />";
+			/*
+			echo $id_tc."--".$id_tipo."--".$id_cliente;
+			echo "<pre>";			
+				print_r($_POST);
+			echo "</pre>";
+			*/
+			
+			
+			//detalle de la nueva info de la tarjeta 					
+			$nueva_info = array();
+			$nueva_info = $this->get_datos_tarjeta();	//datos generales
+														
+			//errores
+			$data['reg_errores'] = $this->reg_errores;			
+			
+			if (empty($data['reg_errores'])) {	//si no hubo errores
+				//preparar la petición al WS, campos comunes
+				$nueva_info['tc']['id_clienteIn'] = $id_cliente;
+				$nueva_info['tc']['id_TCSi'] = $id_tc;
+				$nueva_info['tc']['terminacion_tarjetaVc'] = $detalle_tarjeta->terminacion_tarjetaVc;
+				//$nueva_info['tc']['descripcionVc'] = $detalle_tarjeta->descripcionVc;
+				$nueva_info['tc']['id_tipo_tarjetaSi'] = $detalle_tarjeta->id_tipo_tarjetaSi;
+				
+				/*
+				if ($detalle_tarjeta->id_tipo_tarjetaSi == 1 ) {	//es AMEX y hay información
+					//var_dump($detalle_amex);
+					
+					$nueva_info['amex']['id_clienteIn'] = $id_cliente;
+					$nueva_info['amex']['id_TCSi'] = $detalle_tarjeta->id_TCSi;
+					$nueva_info['amex']['nombre_titularVc'] = $nueva_info['tc']['nombre_titularVc'];
+					$nueva_info['amex']['apellidoP_titularVc'] = $nueva_info['tc']['apellidoP_titularVc'];
+					$nueva_info['amex']['apellidoM_titularVc'] = $nueva_info['tc']['apellidoM_titularVc'];
+					//var_dump($detalle_amex);	//$detalle_amex trae al menos: consecutivo_cmsSi y id_clienteIn
+					
+					$nueva_info['amex']['pais'] = isset($detalle_amex->pais) ? $detalle_amex->pais : NULL;
+					$nueva_info['amex']['codigo_postal'] = isset($detalle_amex->codigo_postal) ? $detalle_amex->codigo_postal : NULL;
+					$nueva_info['amex']['calle'] = isset($detalle_amex->calle) ? $detalle_amex->calle : NULL;
+					$nueva_info['amex']['ciudad'] = isset($detalle_amex->ciudad) ? $detalle_amex->ciudad : NULL;
+					$nueva_info['amex']['estado'] = isset($detalle_amex->estado) ? $detalle_amex->estado : NULL;
+					$nueva_info['amex']['mail'] = isset($detalle_amex->mail) ? $detalle_amex->mail : $this->session->userdata('email');
+					$nueva_info['amex']['telefono'] = isset($detalle_amex->telefono) ? $detalle_amex->telefono : NULL;
+				} else {
+				 */ 
+					$nueva_info['amex'] = NULL;
+				//}
+				/*
+				echo "<br />";
+				echo "<pre>";
+					print_r($nueva_info);
+				echo "</pre>";
+				 */ 		
+				//actualizar en CCTC, si el consecutivo es distinto de 0				
+				//if ($this->editar_tarjeta_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+				
+				if ($this->editar_tarjeta_interfase_CCTC($nueva_info['tc'], $nueva_info['amex'])) {
+					//actualizar predeterminado
+					if (isset($nueva_info['predeterminar'])) {
+						$this->forma_pago_model->quitar_predeterminado($id_cliente);
+					} else {
+						$nueva_info['tc']['id_estatusSi'] = 1;
+					}
+					
+					//ahora para registrar cambios localmente, siempre se manda la info de $nueva_info['tc']					
+					if(!stristr($this->forma_pago_model->actualiza_tarjeta($id_tc, $id_cliente, $nueva_info['tc']), "error")){
+						echo "<label id='actualizar_tarjeta'>1</label>";
+					}																			
+				} 				
+							
+			} else {	//sí hubo errores				
+				$this->load->view('administrador_usuario/editar_tc', $data);				
+			}					
 		}
-		else{
-			echo "TC: ".$id_tc . " ->TIPO:" . $id_tipo . "->CLIENTE:" . $id_cliente;	
+		else{									
+				
+			/*
+			echo "<pre>";			
+				print_r($detalle_tarjeta);
+			echo "</pre>";
+			*/
+			  			
+			/*
+			 * para amex revisar
+			if ($detalle_tarjeta->id_tipo_tarjetaSi == 1 ) 
+				//$detalle_amex = $this->detalle_tarjeta_CCTC($id_cliente, $consecutivo);
+				$detalle_amex = $this->obtener_detalle_interfase_CCTC($id_cliente, $id_tc);
+			 */ 														
+			$this->load->view('administrador_usuario/editar_tc', $data);	
 		}
 	}	
 	
 	//Funcion para eliminar direccion de envio		
-	public function eliminar_dir_envio($id_dir_envio = "", $id_cliente){
-		echo $id_dir_envio ."Cliente: " .$id_cliente;	
+	public function eliminar_dir_envio($id_dir_envio = "", $id_cliente){		
 		if(!stristr($this->direccion_envio_model->eliminar_direccion($id_cliente, $id_dir_envio), "error")){
 			echo "<label id='eliminar_direccion'>1</label>";	
 		}						
@@ -508,6 +599,282 @@ class Administrador_usuario extends CI_Controller {
 			return json_decode($resultado);
 		}
 	}
+
+	private function obtener_detalle_interfase_CCTC($id_cliente = 0, $consecutivo = 0) {
+		if (isset($id_cliente, $consecutivo)) {
+			// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+			$parametros = new stdClass;
+			$parametros->id_cliente = $id_cliente;
+			$parametros->consecutivo = $consecutivo;
+			
+			// Hacemos un encode de los objetos para poderlos pasar por POST ...
+			$param = json_encode($parametros);
+			
+			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+			$c = curl_init();
+			// CURL de la URL donde se haran las peticiones //
+			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+			// Se enviaran los datos por POST //
+			curl_setopt($c, CURLOPT_POST, true);
+			// Que nos envie el resultado del JSON //
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+			// Enviamos los parametros POST //
+			curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=ObtenerDetalleAmex&token=123456&parametros='.$param);
+			// Ejecutamos y recibimos el JSON //
+			$resultado = curl_exec($c);
+			// Cerramos el CURL //
+			curl_close($c);
+			/*
+			echo "Resultado<pre>";
+			print_r(json_decode($resultado));
+			echo "</pre>";
+			exit;
+			*/
+			return json_decode($resultado);
+		}
+	}
+	
+	private function editar_tarjeta_interfase_CCTC($tc, $amex = null)
+	{
+		//mapeo de la tc
+		$tc_soap = new stdClass;
+		$tc_soap->id_clienteIn = $tc['id_clienteIn'];
+		$tc_soap->consecutivo_cmsSi = $tc['id_TCSi'];
+		$tc_soap->id_tipo_tarjeta = $tc['id_tipo_tarjetaSi'];
+		$tc_soap->nombre_titular = $tc['nombre_titularVc'];
+		$tc_soap->apellidoP_titular = $tc['apellidoP_titularVc'];
+		$tc_soap->apellidoM_titular = $tc['apellidoM_titularVc'];
+		$tc_soap->numero = $tc['terminacion_tarjetaVc'];
+		$tc_soap->mes_expiracion = $tc['mes_expiracionVc'];
+		$tc_soap->anio_expiracion = $tc['anio_expiracionVc'];
+		$tc_soap->renovacion_automatica = 1;
+		
+		//mapeo Amex
+		if (isset($amex)) {
+			$amex_soap = new stdClass;
+			$amex_soap->id_clienteIn = $amex['id_clienteIn'];
+			$amex_soap->consecutivo_cmsSi = $amex['id_TCSi'];
+			$amex_soap->nombre =$amex['nombre_titularVc'];
+			$amex_soap->apellido_paterno = $amex['apellidoP_titularVc'];
+			$amex_soap->apellido_materno = $amex['apellidoM_titularVc'];
+			$amex_soap->pais = $amex['pais'];
+			$amex_soap->codigo_postal = $amex['codigo_postal'];
+			$amex_soap->calle = $amex['calle'];
+			$amex_soap->ciudad = $amex['ciudad'];
+			$amex_soap->estado = $amex['estado'];
+			$amex_soap->mail = $amex['mail'];
+			$amex_soap->telefono = $amex['telefono'];
+			
+		} else {
+			$amex_soap = null;
+		}
+		
+		########## petición a la Interfase
+		// Metemos todos los parametros (Objetos) necesarios a una clase dinámica llamada paramátros //
+		$parametros = new stdClass;
+		$parametros->tc_soap = $tc_soap;
+		$parametros->amex_soap = $amex_soap;
+		
+		// Hacemos un encode de los objetos para poderlos pasar por POST ...
+		$param = json_encode($parametros);
+		
+		/*
+		echo "<pre>";
+		print_r($parametros);
+		echo "</pre>". "ecoded:" ;
+		echo $param."<br/>";
+		exit;
+		
+		$p = json_decode($param);
+		$objetos = $this->ArrayToObject($p);
+		echo "<pre>";
+		print_r($objetos);
+		echo "</pre>";
+		*/
+				
+		// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
+		$c = curl_init();
+		// CURL de la URL donde se haran las peticiones //
+		curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+		//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+		// Se enviaran los datos por POST //
+		curl_setopt($c, CURLOPT_POST, true);
+		// Que nos envie el resultado del JSON //
+		curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+		// Enviamos los parametros POST //
+		curl_setopt($c, CURLOPT_POSTFIELDS, 'accion=ActualizarAmex&token=123456&parametros='.$param);
+		// Ejecutamos y recibimos el JSON //
+		$resultado = curl_exec($c);
+		// Cerramos el CURL //
+		curl_close($c);
+		/*
+		echo "Resultado<pre>";
+		print_r(json_decode($resultado));
+		echo "</pre>";
+		exit;
+		*/
+		return json_decode($resultado);
+	}
+
+private function get_datos_tarjeta()
+	{
+		$datos = array();
+		$tipo = '';
+		//echo "tipo : ". $tipo;
+		//no se usa la funcion de escape '$this->db->escape()', por que en la inserción ya se incluye 
+		if($_POST) {
+			if (array_key_exists('sel_tipo_tarjeta', $_POST)) {
+				$datos['tc']['id_tipo_tarjetaSi'] = $_POST['sel_tipo_tarjeta'];
+				$tipo = $_POST['sel_tipo_tarjeta'];
+			}
+			
+			if (array_key_exists('txt_numeroTarjeta', $_POST)) {
+				if ($this->validar_tarjeta($datos['tc']['id_tipo_tarjetaSi'], trim($_POST['txt_numeroTarjeta']))) { 
+					$datos['tc']['terminacion_tarjetaVc'] = trim($_POST['txt_numeroTarjeta']);	//substr($_POST['txt_numeroTarjeta'], strlen($_POST['txt_numeroTarjeta']) - 4);
+				} else {
+					$this->reg_errores['txt_numeroTarjeta'] = 'Por favor ingrese un numero de tarjeta v&aacute;lido';
+				}
+			}
+			if (array_key_exists('txt_nombre', $_POST)) {
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{1,30}$/i', $_POST['txt_nombre'])) { 
+					$datos['tc']['nombre_titularVc'] = $_POST['txt_nombre'];
+					if ($tipo == 1) {
+						$datos['amex']['nombre_titularVc'] = $_POST['txt_nombre'];
+					}
+				} else {
+					$this->reg_errores['txt_nombre'] = 'Ingresa tu nombre correctamente';
+				}
+			}
+			if (array_key_exists('txt_apellidoPaterno', $_POST)) {
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{1,30}$/i', $_POST['txt_apellidoPaterno'])) { 
+					$datos['tc']['apellidoP_titularVc'] = $_POST['txt_apellidoPaterno'];
+					if ($tipo == 1) {
+						$datos['amex']['apellidoP_titularVc'] = $_POST['txt_apellidoPaterno'];
+					}
+				} else {
+					$this->reg_errores['txt_apellidoPaterno'] = 'Ingresa tu apellido correctamente';
+				}
+			}
+			if (array_key_exists('txt_apellidoMaterno', $_POST) && !empty($_POST['txt_apellidoMaterno'])) {
+				if(preg_match('/^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{1,30}$/i', $_POST['txt_apellidoMaterno'])) {
+					$datos['tc']['apellidoM_titularVc'] = $_POST['txt_apellidoMaterno'];
+					if ($tipo == 1) {	//Amex
+						$datos['amex']['apellidoM_titularVc'] = $_POST['txt_apellidoMaterno'];
+					}
+				} else {
+					$this->reg_errores['txt_apellidoMaterno'] = 'Ingresa tu apellido correctamente';
+				}
+			} else {
+				$datos['tc']['apellidoM_titularVc'] = "";
+					if ($tipo == 1) {
+						$datos['amex']['apellidoM_titularVc'] = "";
+					}
+			}
+			/*
+			if(array_key_exists('txt_codigoSeguridad', $_POST)) {
+				//este código sólo se almaccena para solicitar el pago 
+				$datos['codigo_seguridad'] = $_POST['txt_codigoSeguridad']; 
+			}
+			*/
+			if (array_key_exists('sel_mes_expira', $_POST)) {
+				$datos['tc']['mes_expiracionVc'] = $_POST['sel_mes_expira']; 
+			}
+			if (array_key_exists('sel_anio_expira', $_POST)) { 
+				$datos['tc']['anio_expiracionVc'] = $_POST['sel_anio_expira'];  
+			}
+			if (array_key_exists('chk_guardar', $_POST)) {
+				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
+				$datos['tc']['id_estatusSi'] = 1;
+			}
+			if (array_key_exists('chk_default', $_POST)) {
+				$datos['tc']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada
+				$datos['predeterminar'] = true;	
+			}
+			
+			//AMEX
+			if (array_key_exists('txt_calle', $_POST)) {
+				if(preg_match('/^[A-Z0-9 \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_calle'])) {
+					$datos['amex']['calle'] = $_POST['txt_calle'];
+				} else {
+					$this->reg_errores['txt_calle'] = 'Ingresa tu calle y n&uacute;mero correctamente';
+				}
+			} /*else {
+				$datos['amex']['calle'] = '';
+			}*/
+			if (array_key_exists('txt_cp', $_POST)) {
+				//regex usada en js
+				if(preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['txt_cp'])) {
+					$datos['amex']['codigo_postal'] = $_POST['txt_cp'];
+				} else {
+					$this->reg_errores['txt_cp'] = 'Ingresa tu c&oacute;digo postal correctamente';
+				}
+			} /*else {
+				$datos['amex']['codigo_postal'] = '';
+			}*/
+			if (array_key_exists('txt_ciudad', $_POST)) {
+				if(preg_match('/^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_ciudad'])) {
+					$datos['amex']['ciudad'] = $_POST['txt_ciudad'];
+				} else {
+					$this->reg_errores['txt_ciudad'] = 'Ingresa tu ciudad correctamente';
+				}
+			} /*else {
+				$datos['amex']['ciudad'] = '';
+			}*/
+			if (array_key_exists('txt_estado', $_POST)) {
+				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_estado'])) {
+					$datos['amex']['estado'] = $_POST['txt_estado'];
+				} else {
+					$this->reg_errores['txt_estado'] = 'Ingresa tu estado correctamente';
+				}
+			} /*else {
+				$datos['amex']['estado'] = '';
+			}*/
+			if (array_key_exists('txt_pais', $_POST)) {
+				if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,40}$/i', $_POST['txt_pais'])) {
+					$datos['amex']['pais'] = $_POST['txt_pais'];
+				} else {
+					$this->reg_errores['txt_pais'] = 'Ingresa tu pa&iacute;s correctamente';
+				}
+			} /*else {
+				$datos['amex']['pais'] = '';
+			}*/
+			if (array_key_exists('sel_pais', $_POST)) {
+				if ($_POST['sel_pais'] != "") {
+					$datos['amex']['pais'] = $_POST['sel_pais'];
+				} else {
+					$this->reg_errores['sel_pais'] = 'Selecciona tu pa&iacute;s';
+				}
+			} /*else {
+				$datos['amex']['pais'] = '';
+			}*/
+			if (array_key_exists('txt_email', $_POST) && trim($_POST['txt_email']) != "") {
+				if(filter_var($_POST['txt_email'], FILTER_VALIDATE_EMAIL)) {
+					$datos['amex']['mail'] = $_POST['txt_email'];
+				} else {
+					$this->reg_errores['txt_email'] = 'Ingresa tu email correctamente (opcional)';
+				}
+			} else {
+				$datos['amex']['mail'] = '';
+			}
+			
+			if (array_key_exists('txt_telefono', $_POST)) {
+				if(preg_match('/^[0-9 -]{8,20}$/i', $_POST['txt_telefono'])) {
+					$datos['amex']['telefono'] = $_POST['txt_telefono'];
+				} else {
+					$this->reg_errores['txt_telefono'] = 'Ingresa tu tel&eacute;fono correctamente';
+				}
+			} /*else {
+				$datos['amex']['telefono'] = '';
+			}*/
+
+			
+		} 
+		
+		//echo 'si no hay errores, $reg_errores esta vacio? '.empty($this->reg_errores).'<br/>';
+		return $datos;
+	}
+	
 }
 
 /* End of file administrador_usuario.php */
