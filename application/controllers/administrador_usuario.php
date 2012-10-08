@@ -11,6 +11,8 @@ class Administrador_usuario extends CI_Controller {
 		3 =>	"Deposito Bancario",
 		4 =>	"Otro"
 	);
+	
+	const CODIGO_MEXICO = "MX";		//constante para verificar el código del país en el efecto del JS.
 		
 	function __construct()
     {
@@ -333,6 +335,12 @@ class Administrador_usuario extends CI_Controller {
 		echo json_encode($data);
 	}
 	
+	// se obtiene un listado JSON con las Direcciones de Facturacion que tenga guardadas el cliente
+	public function listar_direccion_facturacion($id_cliente = ""){		
+		$data['direccion_facturacion'] = $this->direccion_facturacion_model->listar_direcciones($id_cliente)->result_array();							
+		echo json_encode($data);
+	}
+	
 	// se obtiene un listado JSON con las Direcciones de Envio que tenga guardadas el cliente
 	public function listar_direccion_envio($id_cliente = ""){
 		$data['direccion_envio'] = $this->direccion_envio_model->listar_direcciones($id_cliente)->result_array();							
@@ -391,6 +399,46 @@ class Administrador_usuario extends CI_Controller {
 		}
 								
 	}
+
+	public function editar_direccion_facturacion($id_dir, $id_cliente){
+				
+			$datos_direccion = $this->direccion_facturacion_model->obtener_direccion($id_cliente, $id_dir);			
+			
+			$data['datos_direccion'] = $datos_direccion;				
+		
+			$lista_paises_think = $this->direccion_facturacion_model->listar_paises_think();
+			$data['lista_paises_think'] = $lista_paises_think;
+																								
+			if($_POST){					
+				
+				$form_values = array();	//alojará los datos previos a la inserción	
+				$form_values = $this->get_datos_direccion();
+				
+				if (empty($this->reg_errores)) {
+					
+					$form_values['direccion']['id_ConsecutivoSi'] = $id_dir;
+																																							
+					if($this->direccion_facturacion_model->actualizar_direccion($id_cliente,$id_dir, $form_values['direccion'])){
+						if ($_POST['chk_default'] == 1) {
+							$this->direccion_facturacion_model->establecer_predeterminado($id_cliente, $id_dir);	
+							$form_values['direccion']['id_estatusSi'] = 3;
+						}
+						echo "<label id='update_correcto'>1</label>";
+					}		
+																																		
+				}
+				else{								
+					$data['reg_errores'] = $this->reg_errores;				
+					$this->load->view('administrador_usuario/editar_direccion_facturacion', $data);
+				}		
+																					
+			}	
+			else{
+		 
+				$this->load->view('administrador_usuario/editar_direccion_facturacion', $data);	
+			}											
+			 		
+	}
 	
 	// funcion que revisa que los datos enviados para actualizar la razon social sean correctos
 	private function get_datos_rs(){
@@ -442,10 +490,80 @@ class Administrador_usuario extends CI_Controller {
 		return $datos;								
 	}
 	
+	//funcion que valida los datos de direccion de facturacion para realizar el update
+	private function get_datos_direccion(){
+		
+		if(!empty($_POST['txt_calle'])){
+			$datos['direccion']['address1'] = $_POST['txt_calle'];
+		}
+		else{
+			$this->reg_errores['txt_calle'] = '<span class="error">Por favor ingresa una calle</span>';
+		}
+		if(!empty($_POST['txt_numero'])){
+			$datos['direccion']['address2'] = $_POST['txt_numero'];
+		}
+		else{
+			$this->reg_errores['txt_numero'] = '<span class="error">Por favor ingresa el número exterior</span>';
+		}		
+		if(!empty($_POST['txt_cp'])){
+			if(preg_match('/^[0-9]{5,5}([- ]?[0-9]{4,4})?$/', $_POST['txt_cp'])){
+			    $datos['direccion']['zip'] = $_POST['txt_cp'];	
+			}			
+			else{
+			    $this->reg_errores['txt_cp'] = '<span class="error2">Por favor ingresa un código postal de 5 dígitos</span>';	
+			}
+		}
+		else{
+			$this->reg_errores['txt_cp'] = '<span class="error2">Por favor ingresa un código postal de 5 dígitos</span>';
+		}
+		if(!empty($_POST['txt_colonia'])){
+			$datos['direccion']['address3'] = $_POST['txt_colonia'];
+		}
+		else{
+			$this->reg_errores['txt_colonia'] = '<span class="error">Por favor ingresa la colonia</span>';
+		}
+		if(!empty($_POST['txt_ciudad'])){
+			$datos['direccion']['city'] = $_POST['txt_ciudad'];
+		}
+		else{
+			$this->reg_errores['txt_ciudad'] = '<span class="error">Por favor ingresa la ciudad</span>';
+		}
+		if(!empty($_POST['txt_estado'])){
+			$datos['direccion']['state'] = $_POST['txt_estado'];
+		}
+		else{
+			$this->reg_errores['txt_estado'] = '<span class="error">Por favor ingresa el estado</span>';
+		}													
+		
+		if(array_key_exists('txt_num_int', $_POST)){
+		    $datos['direccion']['address4'] = $_POST['txt_num_int'];	
+		}
+		
+		if(array_key_exists('sel_pais', $_POST)){
+			$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];
+		}			
+																
+		if ($_POST['chk_default'] == 1) {
+			$datos['direccion']['id_estatusSi'] = 3;	//indica que será la direccion de facturacion predeterminada			
+		}
+		else{
+			$datos['direccion']['id_estatusSi'] = 1;	//indica que será la direccion de facturacion predeterminada
+		}
+									 	
+		return $datos;
+	}
+	
 	// funcion para eliminar una razon social por id, el label id es para comprobar que se elimino correctamente en el AJAX
 	public function eliminar_rs($id_rs = ''){		
 		if($this->direccion_facturacion_model->eliminar_rs($id_rs)){
 			echo "<label id='eliminar_correcto'>1</label>";	
+		}				
+	}
+
+	// funcion para eliminar una direccion de facturacion por id, el label id es para comprobar que se elimino correctamente en el AJAX
+	public function eliminar_direccion_facturacion($id_dir, $id_cliente){		
+		if($this->direccion_facturacion_model->eliminar_direccion($id_cliente, $id_dir)){
+			echo "<label id='eliminar_direccion'>1</label>";	
 		}				
 	}
 
@@ -559,6 +677,66 @@ class Administrador_usuario extends CI_Controller {
 		}						
 		//$msg_eliminacion = ;
 						
+	}
+	
+	// Funcio para editar direccion envio
+	public function editar_dir_envio($consecutivo, $id_cliente){
+			
+		//inclusión de Scripts
+		//$script_file = "<script type='text/javascript' src='". base_url() ."js/dir_envio.js'></script>";
+						
+		//recuperar la información de la dirección
+		$detalle_direccion = $this->direccion_envio_model->detalle_direccion($consecutivo, $id_cliente);
+		
+		
+		//se pasa la información de la dirección a la vista
+		$data['direccion'] = $detalle_direccion;
+		
+		//catálogo de países de think
+		$lista_paises_think = $this->direccion_envio_model->listar_paises_think();
+		$data['lista_paises_think'] = $lista_paises_think;
+		
+		/*muestra lo de sepomex*/
+		//catálogo de estados
+		$lista_estados = $this->consulta_estados();		
+		$data['lista_estados_sepomex'] = $lista_estados['estados'];
+		//ciudades		
+		$lista_ciudades = $this->consulta_ciudades($detalle_direccion->state);		
+		$data['lista_ciudades_sepomex'] = $lista_ciudades['ciudades'];
+		//colonias
+		$lista_colonias = $this->consulta_colonias($detalle_direccion->state, $detalle_direccion->city);		
+		$data['lista_colonias_sepomex'] = $lista_colonias['colonias'];
+		
+		//Se intentará actualizar la información
+		if ($_POST) {
+						
+			//array para la nueva información
+			$nueva_info = array();
+			//trae datos del formulario para actualizar
+			$nueva_info = $this->get_datos_direccion_envio();
+			
+			if (empty($this->reg_errores)) {	//si no hubo errores
+				$nueva_info['direccion']['id_consecutivoSi'] = $consecutivo;
+			
+				if (isset($nueva_info['predeterminar'])) {
+					$this->direccion_envio_model->quitar_predeterminado($id_cliente);
+				} else {	//si no es predeterminado se quda sólo como "activa"habilitado"
+					$nueva_info['direccion']['id_estatusSi'] = 1;
+				}
+				
+				//actualizar la información en BD
+				if(!stristr($this->direccion_envio_model->actualizar_direccion($consecutivo, $id_cliente, $nueva_info['direccion']), "error")){
+						echo "<label id='update_correcto'>1</label>";
+				}
+																		 												
+			} else {	//ERRORES FORMULARIO				
+				$data['reg_errores'] = $this->reg_errores;
+				$this->load->view('administrador_usuario/editar_direccion_envio', $data);
+			}	//ERRORES FORMULARIO
+		} else {	//If POST
+		 
+			$this->load->view('administrador_usuario/editar_direccion_envio', $data);
+		}
 	}
 	
 	//Funcion para eliminar una tarjeta
@@ -874,6 +1052,238 @@ private function get_datos_tarjeta()
 		//echo 'si no hay errores, $reg_errores esta vacio? '.empty($this->reg_errores).'<br/>';
 		return $datos;
 	}
+
+	private function consulta_estados()
+	{
+		$resultado = array();
+		
+		try
+		{
+			$resultado['estados'] = $this->direccion_envio_model->listar_estados_sepomex()->result();
+			$resultado['success'] = true;
+			$resultado['msg'] = "Ok";
+			return $resultado;
+		}
+		catch (Exception $e)
+		{
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			return $resultado;	
+		}
+	}
+	
+	private function consulta_ciudades($estado)
+	{
+		$resultado = array();			
+		try {
+			$resultado['ciudades'] = $this->direccion_envio_model->listar_ciudades_sepomex($estado)->result();
+			$resultado['success'] = true;
+			$resultado['msg'] = "Ciudades Resultados";
+			return $resultado;
+		} catch (Exception $e) {
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			return $resultado;
+		}		
+	}
+	
+	private function consulta_colonias($estado, $ciudad)
+	{
+		$resultado = array();
+		try {
+			$resultado['colonias'] = $this->direccion_envio_model->listar_colonias_sepomex($estado, $ciudad)->result();
+			$resultado['success'] = true;
+			$resultado['msg'] = "Colonias Resultados";
+			return $resultado;
+		} catch (Exception $e) {
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			return $resultado;
+		}
+		
+	}
+	
+	//obtiene los datos de direccion de envio para hacer el update
+	private function get_datos_direccion_envio()
+	{
+		$datos = array();
+		//no se usa la funcion de escape '$this->db->escape()', por que en la inserción ya se incluye 
+		if($_POST) {
+			if (array_key_exists('txt_calle', $_POST)) {
+				if(preg_match('/^[A-Z0-9áéíóúÁÉÍÓÚÑñ \'.-]{1,50}$/i', $_POST['txt_calle'])) {
+					$datos['direccion']['address1'] = $_POST['txt_calle'];
+				} else {
+					$this->reg_errores['txt_calle'] = '<span class="error">Por favor ingresa una calle</span>';
+				}
+			}
+			if (array_key_exists('txt_numero', $_POST)) {
+				if(preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['txt_numero'])) {
+					$datos['direccion']['address2'] = $_POST['txt_numero'];
+				} else {
+					$this->reg_errores['txt_numero'] = '<span class="error">Por favor ingresa el número exterior</span>';
+				}
+			}
+			if (!empty($_POST['txt_num_int'])) {
+				if(preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['txt_num_int'])) {
+					$datos['direccion']['address4'] = $_POST['txt_num_int'];
+				} else {
+					$this->reg_errores['txt_numero'] = '<span class="error">Por favor ingresa el número interior</span>';
+				}
+			} else {
+				$datos['direccion']['address4'] = NULL;
+			}
+			if (array_key_exists('txt_cp', $_POST)) {
+				//regex usada en js
+				if (preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['txt_cp'])) {
+					$datos['direccion']['zip'] = $_POST['txt_cp'];
+				} else {
+					$this->reg_errores['txt_cp'] = '<span class="error2">Por favor ingresa un código postal de 5 dígitos</span>';
+				}
+			}
+						
+			if (!empty($_POST['sel_pais'])) {
+			//if(preg_match('/^[A-Z]{2}$/i', $_POST['sel_pais'])) {
+				$datos['direccion']['codigo_paisVc'] = $_POST['sel_pais'];
+			} else {
+				$this->reg_errores['sel_pais'] = '<span class="error">Por favor selecciona el pa&iacute;s</span>';
+			}
+			
+			/*Mexico*/
+			if (!empty($_POST['sel_pais']) && $_POST['sel_pais'] == self::CODIGO_MEXICO)
+			{
+				if (!empty($_POST['sel_estados'])) {
+					$datos['direccion']['state'] = $_POST['sel_estados'];
+				} else {
+					$this->reg_errores['sel_estados'] = '<span class="error">Por favor selecciona el estado</span>';
+				}
+				if (!empty($_POST['sel_ciudades'])) {
+				//if(preg_match('/^[A-Z ()\'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_ciudades'])) {
+					$datos['direccion']['city'] = $_POST['sel_ciudades'];
+				} else {
+					$this->reg_errores['sel_ciudades'] = '<span class="error">Por favor selecciona la ciudad</span>';
+				}
+				if (!empty($_POST['sel_colonias'])) {
+				//if(preg_match('/^[A-Z0-9  \'.-áéíóúÁÉÍÓÚÑñ]{2, 30}$/i', $_POST['sel_colonias'])) {
+					$datos['direccion']['address3'] = $_POST['sel_colonias'];
+				} else {
+					$this->reg_errores['sel_colonias'] = '<span class="error">Por favor selecciona la colonia</span>';
+				}
+			} else {
+			/*otros países*/
+				if (array_key_exists('txt_colonia', $_POST) && trim($_POST['txt_colonia']) != ""){
+					$datos['direccion']['address3'] = $_POST['txt_colonia'];
+				}
+				else {
+					$this->reg_errores['txt_colonia'] = '<span class="error">Por favor ingresa la colonia</span>';
+				}
+				if (array_key_exists('txt_ciudad', $_POST) && !empty($_POST['txt_ciudad'])) {
+					$datos['direccion']['city'] = $_POST['txt_ciudad'];
+				}
+				else {
+					$this->reg_errores['txt_ciudad'] = '<span class="error">Por favor ingresa la ciudad</span>';
+				}
+				if (array_key_exists('txt_estado', $_POST) && !empty($_POST['txt_estado'])) {
+					$datos['direccion']['state'] = $_POST['txt_estado'];
+				}
+				else {
+					$this->reg_errores['txt_estado'] = '<span class="error">Por favor ingresa el estado</span>';
+				}	
+			}
+			
+			if (array_key_exists('txt_telefono', $_POST)) {
+				if(preg_match('/^[0-9 ()+-]{10,20}$/i', $_POST['txt_telefono'])) {
+					$datos['direccion']['phone'] = $_POST['txt_telefono'];
+				} else {
+					$this->reg_errores['txt_telefono'] = '<span class="error">Por favor ingresa un tel&eacute;fono</span>';
+				}
+			}
+			
+			if (array_key_exists('txt_referencia', $_POST)) {
+				$datos['direccion']['referenciaVc'] = trim($_POST['txt_referencia']);
+			}
+				
+			if ($_POST['chk_default'] == 1) {
+				$datos['direccion']['id_estatusSi'] = 3;	//dirección predeterminada?
+				$datos['predeterminar'] = true;				
+			} else {
+				//siempre se guarda la dirección
+				$datos['direccion']['id_estatusSi'] = 1;
+			}						
+			
+		} 
+		//var_dump($datos);
+		//var_dump($this->reg_errores);
+		//exit();
+		return $datos;
+	}
+
+	public function consulta_mail(){
+		//$value['mail']=$_GET['mail'];
+		$res=$this->login_registro_model->verifica_registro_email($_GET['mail']);
+		$value['mail']=$res->num_rows();
+		echo json_encode($value);			
+	}
+	
+	####->-> para documentacion de las siguientes funciones revisar controllers/direccion envio 
+	public function es_mexico($codigo_pais="") {
+		//$codigo_pais = ['codigo_pais'];
+		$r = ($codigo_pais == self::CODIGO_MEXICO) ? TRUE : FALSE;
+		$es_mexico = array('result' => $r, 'param' => $codigo_pais);
+		
+		header('Content-Type: application/json',true);
+		echo json_encode($es_mexico);
+	}
+
+	public function get_info_sepomex($cp = 0) {		
+		if (!$cp)
+			$cp = $this->input->post('codigo_postal');	
+			$resultado = $this->consulta_sepomex($cp);		
+		header('Content-Type: application/json',true);
+		echo json_encode($resultado);
+	}
+
+	private function consulta_sepomex($codigo_postal){
+		$resultado = array();
+		
+		try{
+			$resultado['sepomex'] = $this->direccion_envio_model->obtener_direccion_sepomex($codigo_postal)->result();
+			$resultado['success'] = true;
+			$resultado['msg'] = "Ok";
+			
+			return $resultado;
+		}
+		catch (Exception $e){
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			return $resultado;	
+		}				
+	}
+	
+	public function get_ciudades($estado = "") {
+		$estado = $this->input->post('estado');
+		$resultado = array();
+		$resultado['ciudades'] = $this->direccion_envio_model->listar_ciudades_sepomex($estado)->result_array();
+		header('Content-Type: application/json',true);
+		echo json_encode($resultado);		
+	}
+	
+	public function get_colonias($estado = "", $ciudad = "") {
+		$estado = $this->input->post('estado');
+		$ciudad = $this->input->post('ciudad');
+
+		$resultado = array();
+		$resultado['colonias'] = $this->direccion_envio_model->listar_colonias_sepomex($estado, $ciudad)->result_array();
+		
+		header('Content-Type: application/json',true);
+		echo json_encode($resultado);		
+	}
+
+	####->->
+	
 	
 }
 
