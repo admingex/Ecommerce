@@ -1219,6 +1219,71 @@ private function get_datos_tarjeta()
 		//exit();
 		return $datos;
 	}
+
+	public function consulta_mail(){
+		//$value['mail']=$_GET['mail'];
+		$res=$this->login_registro_model->verifica_registro_email($_GET['mail']);
+		$value['mail']=$res->num_rows();
+		echo json_encode($value);			
+	}
+	
+	####->-> para documentacion de las siguientes funciones revisar controllers/direccion envio 
+	public function es_mexico($codigo_pais="") {
+		//$codigo_pais = ['codigo_pais'];
+		$r = ($codigo_pais == self::CODIGO_MEXICO) ? TRUE : FALSE;
+		$es_mexico = array('result' => $r, 'param' => $codigo_pais);
+		
+		header('Content-Type: application/json',true);
+		echo json_encode($es_mexico);
+	}
+
+	public function get_info_sepomex($cp = 0) {		
+		if (!$cp)
+			$cp = $this->input->post('codigo_postal');	
+			$resultado = $this->consulta_sepomex($cp);		
+		header('Content-Type: application/json',true);
+		echo json_encode($resultado);
+	}
+
+	private function consulta_sepomex($codigo_postal){
+		$resultado = array();
+		
+		try{
+			$resultado['sepomex'] = $this->direccion_envio_model->obtener_direccion_sepomex($codigo_postal)->result();
+			$resultado['success'] = true;
+			$resultado['msg'] = "Ok";
+			
+			return $resultado;
+		}
+		catch (Exception $e){
+			$resultado['exception'] =  $exception;
+			$resultado['msg'] = $exception->getMessage();
+			$resultado['error'] = true;
+			return $resultado;	
+		}				
+	}
+	
+	public function get_ciudades($estado = "") {
+		$estado = $this->input->post('estado');
+		$resultado = array();
+		$resultado['ciudades'] = $this->direccion_envio_model->listar_ciudades_sepomex($estado)->result_array();
+		header('Content-Type: application/json',true);
+		echo json_encode($resultado);		
+	}
+	
+	public function get_colonias($estado = "", $ciudad = "") {
+		$estado = $this->input->post('estado');
+		$ciudad = $this->input->post('ciudad');
+
+		$resultado = array();
+		$resultado['colonias'] = $this->direccion_envio_model->listar_colonias_sepomex($estado, $ciudad)->result_array();
+		
+		header('Content-Type: application/json',true);
+		echo json_encode($resultado);		
+	}
+
+	####->->
+	
 	
 }
 

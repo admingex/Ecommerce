@@ -3,11 +3,11 @@
 class Pago extends CI_Controller {
 		
 	function __construct(){
-        parent::__construct();
+        parent::__construct();						
 					
-		if (array_key_exists('user', $this->session->all_userdata()) || array_key_exists('pass', $this->session->all_userdata()) || array_key_exists('user', $_POST) || array_key_exists('pass', $_POST)) {
-			if (($this->session->userdata('user')=='aespinosa') || ($_POST['user']=='aespinosa')) {
-				if(($this->session->userdata('pass')=='Aesp1n0_20120618') || ($_POST['pass']=='Aesp1n0_20120618')) {
+		if(array_key_exists('user', $this->session->all_userdata()) || array_key_exists('pass', $this->session->all_userdata()) || array_key_exists('user', $_POST) || array_key_exists('pass', $_POST)){
+			if(($this->session->userdata('user')=='aespinosa') || ($_POST['user']=='aespinosa') || ($_POST['user']=='mercadotecnia')){
+				if(($this->session->userdata('pass')=='Aesp1n0_20120618') || ($_POST['pass']=='Aesp1n0_20120618') || ($_POST['pass']=='m3rc4d0t3cn14')){
 					$this->session->set_userdata('user', 'aespinosa');
 					$this->session->set_userdata('pass', 'Aesp1n0_20120618');
 					$this->pago();				
