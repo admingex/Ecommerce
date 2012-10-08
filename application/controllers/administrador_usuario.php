@@ -333,6 +333,12 @@ class Administrador_usuario extends CI_Controller {
 		echo json_encode($data);
 	}
 	
+	// se obtiene un listado JSON con las Direcciones de Facturacion que tenga guardadas el cliente
+	public function listar_direccion_facturacion($id_cliente = ""){		
+		$data['direccion_facturacion'] = $this->direccion_facturacion_model->listar_direcciones($id_cliente)->result_array();							
+		echo json_encode($data);
+	}
+	
 	// se obtiene un listado JSON con las Direcciones de Envio que tenga guardadas el cliente
 	public function listar_direccion_envio($id_cliente = ""){
 		$data['direccion_envio'] = $this->direccion_envio_model->listar_direcciones($id_cliente)->result_array();							
