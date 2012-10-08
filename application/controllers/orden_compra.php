@@ -1369,14 +1369,6 @@ class Orden_Compra extends CI_Controller {
 			print_r($parametros);
 			echo "</pre>Param: ";
 			echo $param."<br/>";
-			
-			$p = json_decode($param);
-			$objetos = $this->ArrayToObject($p);
-			echo "<pre>";
-			print_r($objetos);
-			echo "</pre>";
-		    //return $obj;
-			//exit;
 			*/
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();

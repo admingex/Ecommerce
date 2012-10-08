@@ -3,9 +3,7 @@
 class Api_model extends CI_Model {	
     function __construct(){        
         parent::__construct();
-    }    	
-	
-		
+    }
 	
 	function obtener_sitio($id_sitio) {		
 		$res = $this->db->get_where('CMS_CatSitio', array('id_sitioSi'=>$id_sitio));
