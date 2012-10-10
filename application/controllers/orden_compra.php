@@ -5,13 +5,15 @@ include('util/Pago_Express.php');
 include('api.php');
 
 class Orden_Compra extends CI_Controller {
+	#Miembros públicos
 	var $title = 'Verifica tu orden';
 	var $subtitle = 'Verifica tu orden';
 	var $registro_errores = array();				//validación para los errores
 	
+	#Miembros privados
 	private $id_cliente;
 	private $api;
-	private $detalle_promociones;	//contendrá la información de las promociones que se van a cobrar
+	private $detalle_promociones;	//contendrá la información de las promociones que se van a cobrar, a través del API
 	
 	##CONSTANTES
 	const Tipo_AMEX = 1;
@@ -46,7 +48,7 @@ class Orden_Compra extends CI_Controller {
 		$this->output->nocache();
 		
 		//si no hay sesión
-		//manda al usuario a la... pagina de login
+		//manda al usuario a la... página de login
 		$this->redirect_cliente_invalido('id_cliente', 'login');
 		
 		//cargar el modelo en el constructor
@@ -70,15 +72,6 @@ class Orden_Compra extends CI_Controller {
 			$this->detalle_promociones = $this->api->obtiene_articulos_y_promociones();
 		}
 		
-		
-		/*
-		echo "sesion<pre>";
-		print_r($this->session->all_userdata());
-		echo "</pre>";
-		echo "detalle_promociones<pre>";
-		print_r($this->detalle_promociones);
-		echo "</pre>";
-		exit;*/
     }
 
 	public function index() {
@@ -197,10 +190,6 @@ class Orden_Compra extends CI_Controller {
 		$dir_envio = $this->session->userdata('dir_envio');
 		$mas_direcciones = $this->session->userdata('dse');		//"dse" => direcciones de envio
 		
-		/*echo "<pre>";
-		print_r($this->session->all_userdata());
-		echo "</pre>";*/
-		//exit;
 		/**
 		 * Ajuste de direcciones múltiples:
 		 * 	todas las promociones tendrán asociadas una dirección antes de pasar a mostrar el resumen de la orden, sin importar que sólo sea la misma para todas. 
@@ -232,7 +221,7 @@ class Orden_Compra extends CI_Controller {
 				$promos_dirs = array();					//arreglo (id_promocion => id_direccion)
 				
 				//se crea "dse" ("dse" => direcciones de envio)
-				$dir_general = $dir_envio; //echo "dir_gral. " . $dir_general . "<br/>";
+				$dir_general = $dir_envio;	//echo "dir_gral. " . $dir_general . "<br/>";
 				
 				//$detalles_direcciones = array();		//información de las direcciones que se mostrará, se pasará a la vista en el data
 				$detalle_dir_gral = $this->direccion_envio_model->detalle_direccion($dir_general, $id_cliente);	//detalle de la información para todas las promociones
@@ -275,11 +264,6 @@ class Orden_Compra extends CI_Controller {
 		if ($_POST && $this->registro_errores) {
 			$data['reg_errores'] = $this->registro_errores;
 		}
-		/*echo "<pre>";
-		//print_r($this->session->all_userdata());
-		print_r($data);
-		echo "</pre>";
-		exit;*/
 		
 		//colocar en sesión que ya pasó por el resumen de la orden de compra
 		$this->id_cliente = $this->session->set_userdata('paso_orden_compra', TRUE);
@@ -311,14 +295,6 @@ class Orden_Compra extends CI_Controller {
 				if ($this->detalle_promociones) {
 					$detalle_promociones = $this->detalle_promociones;
 				}
-				
-				//echo "sesion<pre>";
-				//print_r($this->session->all_userdata());
-				//echo "</pre>";
-				//echo "detalle_promociones<pre>";
-				//print_r($detalle_promociones);
-				//echo "</pre>";
-				//exit;
 				
 				//forma pago
 				$consecutivo 	= $this->session->userdata('tarjeta') ? $this->session->userdata('tarjeta') : $this->session->userdata('deposito');
@@ -435,7 +411,7 @@ class Orden_Compra extends CI_Controller {
 										   	       	       <b>Productos en la orden:</b>	   
 										   	       	   </td>
 										   	       </tr>";
-										   	      ### se usará "$detalle_promociones", para mostrar la información de los artículos de la orden
+						### se usará "$detalle_promociones", para mostrar la información de los artículos de la orden
 						//IVA inicial de la compra
 						$iva_compra = 0.0;
 						$iva_message = "";
@@ -710,6 +686,7 @@ class Orden_Compra extends CI_Controller {
 						echo "</pre>";
 						exit();
 						*/
+						
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_objetos($tc_soap, $amex_soap, $informacion_orden);
 						
@@ -718,6 +695,7 @@ class Orden_Compra extends CI_Controller {
 						//print_r($simple_result);
 						//echo "</pre>";
 						//exit;
+						
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
 						
@@ -732,16 +710,12 @@ class Orden_Compra extends CI_Controller {
 						
 						/*
 						## para la prueba del correo
-						echo "info_orden<pre>";
-						print_r($informacion_orden);
-						echo "</pre>"; 
-						 
 						$id_compra = 0;	//para el test
 						$simple_result = NULL;
 						$simple_result->codigo_autorizacion = 12321;
-						## end pruebas
-						*/
-						//Envío del correo
+						## end pruebas*/
+						
+						//envío del correo
 						$mensaje = "<html>
 									  <body>
 									  	   <div>
@@ -973,10 +947,7 @@ class Orden_Compra extends CI_Controller {
 					//echo " tipo pago de la DB: " . $tipo_pago;
 					//echo "<pre>";
 					//print_r($informacion_orden);
-					
 					//echo "</pre>";
-					//$id_compre= $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);
-					//echo "id_compra ". $id_compre;
 					//exit;
 					
 					
@@ -990,7 +961,6 @@ class Orden_Compra extends CI_Controller {
 							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);	
 						}
 						
-						
 						if (!$id_compra) {	//Si falla el registro inicial de la compra en CCTC
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
@@ -1002,6 +972,7 @@ class Orden_Compra extends CI_Controller {
 						//print_r($informacion_orden);
 						//echo "</pre>";
 						//exit;
+						
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_ids($informacion_orden);
 						
@@ -1013,17 +984,12 @@ class Orden_Compra extends CI_Controller {
 														'id_transaccionBi' => $simple_result->id_transaccionNu, 'respuesta_bancoVc' => $simple_result->respuesta_banco,
 														'codigo_autorizacionVc' => $simple_result->codigo_autorizacion, 'mensaje' => $simple_result->mensaje);
 
-																				
 						//Registro de la respuesta del pago en ecommerce
 						$this->registrar_detalle_pago_tc($info_detalle_pago_tc);
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
 						
 						## para la prueba del correo
-						/*echo "info_orden<pre>";
-						print_r($informacion_orden);
-						echo "</pre>";
-						
-						$id_compra = 4;	//para el test
+						/*$id_compra = 4;	//para el test
 						$simple_result = NULL;
 						$simple_result->codigo_autorizacion = 12321;
 						## end pruebas*/
@@ -1449,7 +1415,8 @@ class Orden_Compra extends CI_Controller {
 		exit();*/
 		
 		return $datos;			
-	} 
+	}
+	 
 	/**
 	 * Se registra la orden de compra para las promociones solicitadas
 	 * @param $id_cliente Quien solicita comprar
@@ -1624,12 +1591,7 @@ class Orden_Compra extends CI_Controller {
 				$this->registro_errores['txt_codigo'] = 'Ingresa un código de seguridad válido';
 			}
 		}
-		/*
-		echo "cvv ok: " . preg_match('/^[0-9]{3,4}$/', $_POST['txt_codigo']);
-		var_dump($datos);
-		var_dump($this->registro_errores);
-		exit();
-		*/
+		
 		return $datos;
 	}
 	

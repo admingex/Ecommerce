@@ -26,17 +26,12 @@ class Login extends CI_Controller {
     {
         // Call the Model constructor
         parent::__construct();
-		$this->load->model('password_model', 'password_model', true);		
-		$this->load->helper('date');		
+		$this->load->model('password_model', 'password_model', true);
+		$this->load->helper('date');
+		
 		//para utilizar la sesión de PHP
 		session_start();
 		
-		/*		
-		$this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
-		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-		$this->output->set_header('Pragma: no-cache');
-		$this->output->set_header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-		*/
 		$this->output->nocache();
 		
 		if ($this->session->userdata('destino')) {
@@ -44,15 +39,6 @@ class Login extends CI_Controller {
 			redirect($this->session->userdata('destino'), 'location', 303);
 			exit();
 		}		
-			//header("Location: $destino");
-		
-		
-		/*
-		$this->load->driver('cache');
-		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-		$this->cache->clean();*/
-		//echo "exito clean cache: " . $this->cache->clean();
 		
 		//cargar el modelo en el constructor
 		$this->load->model('login_registro_model', 'login_registro_model', true);
@@ -89,11 +75,6 @@ class Login extends CI_Controller {
 		
 		$data['title'] = $this->title;
 		$data['subtitle'] = $this->subtitle;
-		
-		/*echo "session<pre>";
-		print_r($_POST);
-		print_r($this->session->all_userdata());
-		echo "</pre>";*/
 		
 		if ($_POST)
 		{
@@ -136,7 +117,6 @@ class Login extends CI_Controller {
 							 * 	salutation as nombre, 
 							 * 	email, 
 							 * 	password
-							 * 
 							 * */
 							$resultado = $this->login_registro_model->verifica_cliente($this->email, $this->password);
 							
@@ -149,7 +129,7 @@ class Login extends CI_Controller {
 								
 								//encriptar login y password y guardarlos en sesión para el proceso de validación con IDC
 								$cliente = $resultado->row();
-								$dl = $this->api->encrypt($cliente->email."|".$this->password, $this->api->key);
+								$dl = $this->api->encrypt($cliente->email."|".$this->password."|", $this->api->key);
 								$this->session->set_userdata('datos_login',$dl);
 								
 								//se pasa a la sessión la información del cliente como cliente "logueado" en el sistema de cobros
@@ -159,7 +139,6 @@ class Login extends CI_Controller {
 								$datars = array('requiere_factura' => 'no');
 								$this->session->set_userdata($datars);
 								
-								#### TODO: Pendiente de modificar para lo de las direcciones.
 								//detecta a donde va el ususario a partir de la/las promoción/promociones que se tiene en sesión
 								$destino = $this->obtener_destino($cliente->id_cliente);		
 								
@@ -259,12 +238,7 @@ class Login extends CI_Controller {
 	private function obtener_destino($id_cliente)
 	{
 		//Procesar la promoción
-		/*
-		echo "<pre>";
-		//print_r($this->session->all_userdata());
-		//print_r($this->session->all_userdata());
-		echo "</pre>";
-		*/
+		
 		//para revisar renovación automática desde el principio
 		$lleva_ra = FALSE;
 		
@@ -362,13 +336,10 @@ class Login extends CI_Controller {
 		$new_id = session_id();
 		
 		$this->session->set_userdata('session_id', $new_id);
-		/*
-		echo "<pre>";
+		/*echo "<pre>";
 		print_r($this->session->all_userdata());
 		echo "<pre>";
-		
-		exit();
-		 * */		
+		exit();*/
 	}
 	
 	private function crear_sesion($id_cliente, $nombre, $email)
@@ -414,27 +385,25 @@ class Login extends CI_Controller {
 		$mes = substr($fecha_lock,5,2);
 		$ano = substr($fecha_lock,0,4);
 		
-		//                   Horas Minutos Segundos mes dia ano
+		//                   Horas Minutos Segundos mes dia año
 		$fecha_lock_unix = mktime($hor,$min,$seg,$mes,$dia,$ano);
 		$hora_unix = mktime(mdate('%h'), mdate('%i'), mdate('%s'), mdate('%m'), mdate('%d'), mdate('%Y'));
 		// Se suman 30 minutos a la hora y fecha actual		
 		$str=strtotime('+30 minutes',$fecha_lock_unix);
 												
-		if($str<=$hora_unix){
+		if ($str <= $hora_unix) {
 			return TRUE;
-		}
-		else{
+		} else {
 			return FALSE;
 		}	
 	}
 	
-	public function consulta_mail(){
-		//$value['mail']=$_GET['mail'];
-		$res=$this->login_registro_model->verifica_registro_email($_GET['mail']);
-		$value['mail']=$res->num_rows();
-		echo json_encode($value);			
+	public function consulta_mail() {
+		$res = $this->login_registro_model->verifica_registro_email($_GET['mail']);
+		$value['mail'] = $res->num_rows();
+		echo json_encode($value);
 	}
-			
+	
 }
 
 /* End of file login.php */
