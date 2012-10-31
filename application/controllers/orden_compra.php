@@ -66,10 +66,13 @@ class Orden_Compra extends CI_Controller {
 		//carga el helper para la funcion mdate() para obtener la fecha
 		$this->load->helper('date');
 		
-		//recuperar las promociones 
-		//si hay promociones, al menos una... 
+		//recuperar las promociones
+		//si hay promociones, al menos una...
 		if ($this->session->userdata('promociones') && $this->session->userdata('promocion')) {
 			$this->detalle_promociones = $this->api->obtiene_articulos_y_promociones();
+			/*echo "<pre>";
+			print_r($this->detalle_promociones);
+			echo "</pre>";*/
 		}
 		
     }
@@ -178,6 +181,7 @@ class Orden_Compra extends CI_Controller {
 					$data['amex'] = $this->obtener_detalle_interfase_CCTC($id_cliente, $consecutivo);	//cambio de interfase con CCTC
 					//en este caso se consultará la info del WS
 				}
+				
 			}
 			
 		} else if (empty($tarjeta)) {	// no hay forma de pago con TC
@@ -314,8 +318,8 @@ class Orden_Compra extends CI_Controller {
 					}
 				}
 				
-				//$digito 		= (isset($_POST['txt_codigo'])) ? $_POST['txt_codigo'] : 0;
-				$digito 		= (!empty($orden_info)) ? $orden_info['cvv'] : 0;
+				//$digito = (isset($_POST['txt_codigo'])) ? $_POST['txt_codigo'] : 0;
+				$digito = (!empty($orden_info)) ? $orden_info['cvv'] : 0;
 				
 				//encriptación del dígito verificador...
 				$digito_rsa = $this->encriptar_rsa_texto($digito);
@@ -328,6 +332,11 @@ class Orden_Compra extends CI_Controller {
 					//la otra es que se quede en el resumen de la compra y el cliente lo intente nuevamente
 					redirect('orden_compra/resumen', 'refresh');
 				}
+				### Ajuste para saber qué tipo de tarjeta se utiliza en base al primer dígito del número de la tarjeta 
+				/**
+				 * Sólo hay que insertar el campo en la tabla "CMS_RelCompraPago" al momento de solicitar el cobro en el registro de la compra.
+				 */
+				$primer_digito = 0;	//depósito bancario en principio
 				
 				
 				// informaciòn de la Orden para pedir que se cobre en CCTC
@@ -632,6 +641,9 @@ class Orden_Compra extends CI_Controller {
 					$tc_soap->anio_expiracion = $tc['anio_expiracionVc'];
 					$tc_soap->renovacion_automatica = 1;
 					
+					//para saber  qué tipo de tarjeta es
+					$primer_digito = substr($tc_soap->numero, 0, 1);	//sólo el primero
+					
 					//consecutivo de la información del pago es 1 para que pase el cobro
 					$informacion_orden->consecutivo_cmsSi = $tc['id_TCSi'];		//Debe ser 0
 					
@@ -670,7 +682,7 @@ class Orden_Compra extends CI_Controller {
 						if ($this->session->userdata('id_compra')) {
 							$id_compra = $this->session->userdata('id_compra');
 						} else {	//////registrar la orden de compra y el detalle del pago con Tc "no guardada"
-							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);	
+							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago, $primer_digito);	
 						}
 						
 						if (!$id_compra) {			//Si falla el registro inicial de la compra en CCTC
@@ -942,6 +954,7 @@ class Orden_Compra extends CI_Controller {
 					
 					$tipo_pago = ($tc->id_tipo_tarjetaSi == self::Tipo_AMEX) ? self::$TIPO_PAGO['American_Express'] : self::$TIPO_PAGO['Prosa'];
 					
+					$primer_digito = $this->obtener_primer_digito_tc($id_cliente, $consecutivo);
 					
 					//echo " tipo pago: " . $tipo_pago;
 					//echo " tipo pago de la DB: " . $tipo_pago;
@@ -958,10 +971,11 @@ class Orden_Compra extends CI_Controller {
 						if ($this->session->userdata('id_compra')) {
 							$id_compra = $this->session->userdata('id_compra');
 						} else {
-							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);	
+							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago, $primer_digito);
 						}
 						
 						if (!$id_compra) {	//Si falla el registro inicial de la compra en CCTC
+							echo "compra registrada!!!!";exit;
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
 						
@@ -987,7 +1001,7 @@ class Orden_Compra extends CI_Controller {
 						//Registro de la respuesta del pago en ecommerce
 						$this->registrar_detalle_pago_tc($info_detalle_pago_tc);
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
-						
+						#echo "compra registrada final";exit;
 						## para la prueba del correo
 						/*$id_compra = 4;	//para el test
 						$simple_result = NULL;
@@ -1423,8 +1437,9 @@ class Orden_Compra extends CI_Controller {
 	 * @param $ids_promociones array con los ids de las promociones que se quieren comprar
 	 * @param $ids_direcciones_envio array con los ids de las promociones y la direccion de envío asociada a la promocion
 	 * @param $tipo_pago La forma de pago que se usará
+	 * @param $primer_digito El primer dígito del número de la tarjeta para porder saber de qué tipo es (AMEX, VISA, MasterCard) 
 	 */
-	private function registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago)
+	private function registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago, $primer_digito = NULL)
 	{
 		//Registrar eb la tabla de órdenes
 		$id_compra = 0;
@@ -1432,7 +1447,7 @@ class Orden_Compra extends CI_Controller {
 		
 		if ($id_compra) {
 			$this->session->set_userdata('id_compra', $id_compra);
-						
+			
 			//los artículos que se registrarán para la compra 
 			$info_articulos = array();
 			
@@ -1465,7 +1480,7 @@ class Orden_Compra extends CI_Controller {
 				//$tipo_pago = 3;	//Depósito Bancario
 			}
 			
-			$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => $id_TCSi);
+			$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => $id_TCSi, 'primer_digitoTi' => $primer_digito);
 			
 			/////// direccion(es) de envío///////
 			$info_direcciones = array();
@@ -1483,7 +1498,7 @@ class Orden_Compra extends CI_Controller {
 						//array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => (int)$dir_envio, 'address_type' => self::$TIPO_DIR['RESIDENCE']);
 				} 
 				
-			} else if (empty($ids_direcciones_envio)) {
+			} else if ($this->session->userdata('requiere_envio') && empty($ids_direcciones_envio)) {
 					//No se efectúa la petición por que falta el dato de envío
 					echo "Error: la compra requiere dirección de envío.";
 					return FALSE;
@@ -1526,8 +1541,8 @@ class Orden_Compra extends CI_Controller {
 			
 			///////////// registrar compra inicial en BD /////// 
 			$registro_orden = $this->orden_compra_model->registrar_compra_inicial($info_articulos, $info_pago, $info_direcciones, $info_estatus);
-			/*echo "compra: " . $id_compra;
-			exit();*/
+			echo "compra: " . $id_compra;
+			exit();
 			return $id_compra;
 		} else {
 			//Error en el registro de la compra
@@ -1566,16 +1581,29 @@ class Orden_Compra extends CI_Controller {
 	}
 	
 	/**
+	 * Recuperar el primer dígito de la tarjeta guardada que se utilizará para la compra.
+	 * Se recuperará de la tabla 'CMS_IntTC', ya que se guardará cada vez que se registre una tarjeta.
+	 */
+	private function obtener_primer_digito_tc($id_cliente, $id_tc) {
+		$res = $this->orden_compra_model->obtener_primer_digito_tc($id_cliente, $id_tc)->row()->primer_digitoTi;
+		$digito =  ($res) ? $res : 0;
+		//echo "digito: " . $digito ."-<br/>";
+		//exit;
+		
+		return $res;
+		
+	}
+	/**
 	 * Registro del detalle del pago en ecommerce 
 	 */
-	 private function registrar_detalle_pago_tc($info_detalle_pago_tc) {
-	 	try {
+	private function registrar_detalle_pago_tc($info_detalle_pago_tc) {
+		try {
 			return $this->orden_compra_model->insertar_detalle_pago_tc($info_detalle_pago_tc);
 		} catch (Exception $ex ) {
 			echo "Error en el registro detalle del pago en ecomerce: " .$ex->getMessage();
 			return FALSE;
 		}
-	 }
+	}
 	 
 	
 	/**

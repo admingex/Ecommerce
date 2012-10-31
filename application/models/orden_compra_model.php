@@ -118,6 +118,20 @@ class Orden_Compra_model extends CI_Model {
 	}
 	
 	/**
+	 * 
+	 */
+	function obtener_primer_digito_tc($id_cliente, $id_tc)
+	{
+		$this->db->select('primer_digitoTi');
+		$res = $this->db->get_where('CMS_IntTC', array("id_clienteIn" => $id_cliente, "id_TCSi" => $id_tc));
+		
+		//echo "res". print_r($res) ;
+		//exit;
+		
+		return $res;
+	}
+	
+	/**
 	 * Devuelve el consecutivo del pago para tarjetas no guardadas ó para el depósito bancario
 	 * con el usuario de ecommerce cliente _id : 0
 	 * "ecommerce_tc"	=> tarjetas

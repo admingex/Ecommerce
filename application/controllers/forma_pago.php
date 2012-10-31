@@ -175,6 +175,7 @@ class Forma_Pago extends CI_Controller {
 				//verificar que no exista la tarjeta activa en la BD
 				$num_completo = $form_values['tc']['terminacion_tarjetaVc'];
 				$num_temp = substr($num_completo, strlen($num_completo) - 4);
+				$primer_digito = substr($num_completo, 0, 1);	// primer dígito de la tarjeta
 				$form_values['tc']['terminacion_tarjetaVc'] = $num_temp;
 				
 				if ($this->forma_pago_model->existe_tc($form_values['tc'])) {	
@@ -195,10 +196,10 @@ class Forma_Pago extends CI_Controller {
 					//se manda insertar en CCTC
 					//if ($this->registrar_tarjeta_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
 					if ($this->registrar_tarjeta_interfase_CCTC($form_values['tc'], $form_values['amex'])) {	//Se registró exitosamente! en CCTC";
-						//Sólo registrar los últimos 4 dígitos de la TC
+						//sólo registrar los últimos 4 dígitos de la TC, pra el registro en la bd de ecommerce
 						$form_values['tc']['terminacion_tarjetaVc'] = $num_temp;
-						
-						//Registrar Localmente
+						$form_values['tc']['primer_digitoTi'] = $primer_digito;
+						//registrar localmente
 						if ($this->forma_pago_model->insertar_tc($form_values['tc'])) {
 							$this->consecutivo_tc = $form_values['tc']['id_TCSi'];	//cual  es el que se registra
 							//Verificar el flujo() => cargar o no en session y redireccionar
