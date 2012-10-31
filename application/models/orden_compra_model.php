@@ -118,7 +118,21 @@ class Orden_Compra_model extends CI_Model {
 	}
 	
 	/**
-	 * 
+	 * Actualiza la información de la TC en la tabla "CMS_RelCompraPago", al momento que se solicita un pago con una TC
+	 * que no se guarda en la DB. 
+	 */
+	function actualizar_info_compra_tc($id_cliente, $id_compra, $new_data)
+	{
+		$condiciones = array("id_clienteIn" => $id_cliente, "id_compraIn" => $id_compra);
+		$this->db->where($condiciones);
+		$res = $this->db->update('CMS_RelCompraPago', $new_data);
+		
+		return $res;
+	}
+	
+	/**
+	 * Recupewra el primer dígito de la tarjeta de un cliente, de la tabla  "CMS_IntTC". Esto se utilizará para solicitar el cobro a CCTC y registrar 
+	 * esta información en la tabla "CMS_RelCompraPago".
 	 */
 	function obtener_primer_digito_tc($id_cliente, $id_tc)
 	{
@@ -140,7 +154,7 @@ class Orden_Compra_model extends CI_Model {
 	function obtener_consecutivo_forma_pago($nombre_cliente)
 	{
 		$this->db->select('id_TCSi as consecutivo');
-		$res = $this->db->get_where('CMS_IntTC', array("nombre_titularVc", $nombre_cliente));
+		$res = $this->db->get_where('CMS_IntTC', array("nombre_titularVc" => $nombre_cliente));
 		
 		return $res->row();
 	}

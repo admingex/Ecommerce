@@ -384,7 +384,7 @@ class Orden_Compra extends CI_Controller {
 					if ($this->session->userdata('id_compra')) {	
 						$id_compra = $this->session->userdata('id_compra');
 					} else {	///////registrar la orden de compra y el detalle del pago con depósito
-						$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago);	
+						$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago, $primer_digito);	
 					}
 					
 					## para la prueba del correo
@@ -718,6 +718,9 @@ class Orden_Compra extends CI_Controller {
 														
 						//Registro de la respuesta del pago en ecommerce
 						$this->registrar_detalle_pago_tc($info_detalle_pago_tc);
+						//actualizar el id de la tarjeta, el primer_digito y el tipo_pago en "CMS_RelCompraPago", es como un trigger
+						$this->actualizar_info_compra_tc($id_cliente, $id_compra, NULL, $primer_digito, $tipo_pago);
+						
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['REGISTRO_PAGO_ECOMMERCE']);
 						
 						/*
@@ -1541,8 +1544,8 @@ class Orden_Compra extends CI_Controller {
 			
 			///////////// registrar compra inicial en BD /////// 
 			$registro_orden = $this->orden_compra_model->registrar_compra_inicial($info_articulos, $info_pago, $info_direcciones, $info_estatus);
-			echo "compra: " . $id_compra;
-			exit();
+			//echo "compra: " . $id_compra;
+			//exit();
 			return $id_compra;
 		} else {
 			//Error en el registro de la compra
@@ -1561,6 +1564,30 @@ class Orden_Compra extends CI_Controller {
 			return $this->orden_compra_model->insertar_compra($id_cliente);
 		} catch (Exception $ex ) {
 			echo "Error en el registro del la compra: " .$ex->getMessage();
+			return FALSE;
+		}
+	}
+	
+	/**
+	 * Actualizar el id_td de la tarjeta y el primer dígito en la tabla "CMS_RelCompraPago" cuando se solicita un cobro con una TC no guardada en DB.
+	 * La información es la que se utilizó para solicitar el cobro en CCTC.
+	 * Debido a que pudo ser un intento posterior al inicial, se debe hacer esta actualización,
+	 * tal como el trigger en la tabla "CMS_RelCompraPagoDetalleTC".
+	 * Si es el intento iniical, la información permanecerá idéntica.
+	 * 
+	 * @param $id_cliente El id del cliente que compra
+	 * @param $id_compra el id de la compra actual
+	 * @param $id_tc el id de la tarjeta que se actualizará en la solicitud de pago
+	 * @param $primer_digito es el primer dígito de la nueva TC que se quiere utilizar
+	 * @param $tipo_pago es el id del catálogo de tipos de pago (1->PROSA, 2->AMEX) que se pueden utilizar 
+	 */
+	private function actualizar_info_compra_tc($id_cliente, $id_compra, $id_tc, $primer_digito, $tipo_pago) 
+	{
+		$new_data = array('id_TCSi' => $id_tc, 'primer_digitoTi' => $primer_digito, 'id_tipoPagoSi' => $tipo_pago);
+		try {
+			return $this->orden_compra_model->actualizar_info_compra_tc($id_cliente, $id_compra, $new_data);
+		} catch (Exception $ex ) {
+			echo "Error en la actualización de la forma de pago: " .$ex->getMessage();
 			return FALSE;
 		}
 	}
