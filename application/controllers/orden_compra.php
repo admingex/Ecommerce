@@ -1656,7 +1656,7 @@ class Orden_Compra extends CI_Controller {
 	private function enviar_correo($asunto, $mensaje) {
 		$headers = "Content-type: text/html; charset=UTF-8\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-	    $headers .= "From: Pagos Grupo Expansión<soporte@expansion.com.mx>\r\n";
+	    $headers .= "From: Pagos Grupo Expansión<pagosmercadotecnia@expansion.com.mx>\r\n";
 		
 		$email = $this->session->userdata('email');
 					
