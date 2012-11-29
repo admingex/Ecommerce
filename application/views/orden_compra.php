@@ -58,6 +58,11 @@
 					$iva_message = "";
 					
 					foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
+						/*	
+						echo "<pre>";
+							print_r($promociones);
+						echo "<pre>";
+						*/
 						
 						//exit;
 						//para los artículos de las promos que lleven IVA
@@ -81,12 +86,12 @@
 						}
 						//indicador de que requiere envío
 						$promo_requiere_envio = $promociones['promocion']->requiere_envio;
-						
+						echo "<tr><td colspan='4' class='titulo-promo-rojo2'>".$desc_promo."</td></tr>";
 						//sacar la descripción que se mostrará de la promoción
 						foreach ($promociones['articulos'] as $articulo) {
 							echo 
 							"<tr>
-								<td colspan='2' class='titulo-promo-negro2'>".$desc_promo;
+								<td colspan='2' class='titulo-promo-negro2'>";
 							if ($articulo['issue_id']) {
 								foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
 									if ($k == $articulo['issue_id']) {
@@ -104,7 +109,14 @@
 									}
 								}
 							} else {
-								$desc_art = $articulo['tipo_productoVc'];
+															
+								$desc_art = $articulo['tipo_productoVc']."&nbsp;";								
+								foreach($detalle_promociones['articulo_oc'] as $i => $oc){
+									if($i == $articulo['oc_id'] ){
+										$desc_art.= $oc;	
+									}																	
+								}																									
+																							
 							}
 							echo "<div>".$desc_art."<div class='label-promo-rojo'>$iva_message</div></div>";
 							
@@ -137,7 +149,7 @@
 							echo
 								"</td>
 								<td class='titulo-promo-rojo2' align='right'>$</td>
-								<td class='titulo-promo-rojo2' align='right'>" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $detalle_promociones['moneda'] . "</td>" .
+								<td class='titulo-promo-rojo2' align='right'>" . number_format($articulo['tarifaDc'], 2, '.', ',') . "&nbsp;" . $detalle_promociones['moneda'] . "</td>" .
 							"</tr>";
 						}
 					}

@@ -89,7 +89,12 @@
 	<div>
 		<div id="dialog-modal" title="Estás comprando:">
 			<div style='font-size: 12px'>
-				<?php					
+				<?php	
+				/*
+				echo "<pre>";
+								print_r($detalle_promociones);
+				echo "</pre>";
+				*/							
 					foreach($detalle_promociones['descripciones_promocion'] as $promociones){
 						if( strstr($promociones['promocion']->descripcionVc, '|' )){
 							$mp=explode('|',$promociones['promocion']->descripcionVc);
@@ -104,9 +109,9 @@
 						else{
 							$desc_promo = $promociones['promocion']->descripcionVc;
 						}												
-						
-						foreach($promociones['articulos'] as $articulo){
-							echo "<div style='clear: both'>".$desc_promo."</div>";
+						echo "<div style='clear: both'>".$desc_promo."</div>";
+						foreach($promociones['articulos'] as $articulo){										
+							echo "<div style='clear: both; height: 1px;'>&nbsp;</div>";
 							if($articulo['issue_id']){
 								foreach($detalle_promociones['tipo_productoVc'] as $k => $v){
 									if($k==$articulo['issue_id']){
@@ -127,7 +132,13 @@
 								}																								
 							}
 							else{
-								$desc_art=$articulo['tipo_productoVc'];
+								$desc_art=$articulo['tipo_productoVc']."&nbsp;";								
+								foreach($detalle_promociones['articulo_oc'] as $i => $oc){
+									if($i == $articulo['oc_id'] ){
+										$desc_art.= $oc;	
+									}																	
+								}																									
+															
 							}
 							echo "<div style='float: left; margin-bottom: 5px; font-weight: bold'>".$desc_art."</div><div style='float: right'>".number_format($articulo['tarifaDc'],2,'.',',')."&nbsp;".$detalle_promociones['moneda']."</div>";							
 						}																																							

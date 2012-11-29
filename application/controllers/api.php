@@ -694,7 +694,13 @@ class Api extends CI_Controller {
 						$issue = $this->api_model->obtener_issue($articulo['issue_id']);
 						$datos['articulo_promocion'][] = $issue->row()->descripcionVc;
 					} else {
-						$datos['articulo_promocion'][] = $articulo['tipo_productoVc'];
+						$oc = $this->api_model->obtener_ocid($articulo['oc_id']);
+						if($oc){
+							$datos['articulo_promocion'][] = $articulo['tipo_productoVc']."&nbsp;".$oc->row()->nombreVc;
+						}
+						else{
+							$datos['articulo_promocion'][] = $articulo['tipo_productoVc'];	
+						}												
 					}
 				}
 				
@@ -714,6 +720,15 @@ class Api extends CI_Controller {
 				if ($articulo['issue_id']) {
 					$issue = $this->api_model->obtener_issue($articulo['issue_id']);
 					$datos['tipo_productoVc'][($articulo['issue_id'])] = $issue->row()->descripcionVc;
+				}
+				else{
+						$oc = $this->api_model->obtener_ocid($articulo['oc_id']);
+						if($oc){
+							$datos['articulo_oc'][($articulo['oc_id'])] = $oc->row()->nombreVc;
+						}
+						else{
+							$datos['articulo_oc'][($articulo['oc_id'])] = $articulo['tipo_productoVc'];	
+						}	
 				}
 				//si requiere dirección de envío:
 				if ($articulo['requiere_envioBi']) {

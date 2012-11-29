@@ -83,4 +83,14 @@ class Api_model extends CI_Model {
 		$res = $this->db->get_where('CMS_IntIssue', array('issue_id'=>$issue_id));
 		return $res;
 	}		
+	
+	function obtener_ocid($ocid){
+		$res = $this->db->get_where('TND_CatOCThink', array('oc_id'=>$ocid));
+		if($res->num_rows()!=0){
+			return $res;
+		}
+		else{
+			return FALSE;
+		}
+	}
 }
