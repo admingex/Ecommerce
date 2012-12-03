@@ -57,7 +57,12 @@
 							foreach ($promociones['articulos'] as $articulo) {
 								echo 
 								"<tr>
-									<td colspan='2' class='instrucciones'><br/>".$desc_promo;
+								     <td colspan="4">
+								     	&nbsp;<br/>".$desc_promo;
+								     </td>	
+								 </tr>
+								 <tr>
+									<td colspan='2' class='instrucciones'>";
 								if ($articulo['issue_id']) {
 									foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
 										if ($k == $articulo['issue_id']) {
@@ -75,7 +80,12 @@
 										}
 									}
 								} else {
-									$desc_art = $articulo['tipo_productoVc'];
+									$desc_art=$articulo['tipo_productoVc']."&nbsp;";								
+									foreach($detalle_promociones['articulo_oc'] as $i => $oc){
+										if($i == $articulo['oc_id'] ){
+											$desc_art.= $oc;	
+										}																	
+									}
 								}
 								//medio de entrega del artículo
 								$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
@@ -101,7 +111,7 @@
 								echo
 									"</td>
 									<td>&nbsp;</td>
-									<td class='instrucciones' align='right'>$" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+									<td class='instrucciones' align='right'>$" . number_format($articulo['tarifaDc'], 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
 								"</tr>";
 							}
 						}
@@ -110,17 +120,17 @@
 	   	       					"<tr>
 					   	           <td colspan='2'>&nbsp;
 					   	           </td>
-					   	           <td align='right'>Sub-total:
+					   	           <td align='right'><b>Sub-total:</b>
 					   	           </td>
-					   	           <td align='right'>$".number_format($subtotal, 2, '.', ',')."&nbsp;".$moneda."
+					   	           <td align='right'><b>$".number_format($detalle_promociones['total_pagar'], 2, '.', ',')."&nbsp;".$moneda."</b>
 					   	           </td>
 					   	       </tr>
 					   	       <tr>
 					   	           <td colspan='2'>&nbsp;
 					   	           </td>
-					   	           <td align='right'>I.V.A
+					   	           <td align='right'><b>I.V.A</b>
 					   	           </td>
-					   	           <td align='right'>$".number_format($detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;".$moneda."
+					   	           <td align='right'><b>$".number_format($detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;".$moneda."</b>
 					   	           </td>
 					   	       </tr>
 					   	       <tr>
