@@ -117,9 +117,17 @@ class Reporte extends CI_Controller {
 				$data['compras'][$i]['cliente'] = $cliente->row();
 				
 				//se obtiene la direccion de envio si es que existe			
-				$dir_envio = $this->reporte_model->obtener_dir_envio($compra['id_compraIn'], $compra['id_clienteIn']);
-				if($dir_envio->num_rows() > 0){
-						$data['compras'][$i]['dir_envio'] = $dir_envio->row();	
+				$rel_dir_envio = $this->reporte_model->obtener_rel_dir_envio($compra['id_compraIn'], $compra['id_clienteIn']);				
+				
+				if($rel_dir_envio->num_rows() > 0){
+						/////obtener_dir_facturacion ocupo esta funcion para obteer la direccion de envio ya que recibe los mismos parametros
+						$dir_envio = $this->reporte_model->obtener_dir_facturacion($rel_dir_envio->row()->id_consecutivoSi, $compra['id_clienteIn']);																
+						$data['compras'][$i]['dir_envio'] = 	 $dir_envio->row()->address1." ".$dir_envio->row()->address2." ".
+																 $dir_envio->row()->address4." ".
+																 $dir_envio->row()->zip." ".
+																 $dir_envio->row()->address3." ".
+																 $dir_envio->row()->city." ".
+																 $dir_envio->row()->state;	
 				}
 				else{
 					$data['compras'][$i]['dir_envio']= "No requiere";
@@ -127,11 +135,25 @@ class Reporte extends CI_Controller {
 				
 				//se obtiene el medio de pago
 				$forma_pago = $this->reporte_model->obtener_medio_pago($compra['id_compraIn'], $compra['id_clienteIn']);
-				$data['compras'][$i]['medio_pago'] = self::$FORMA_PAGO[($forma_pago->row()->id_tipoPagoSi)];	
-				$data['compras'][$i]['fecha_compra'] = 	$forma_pago->row()->fecha_registroTs;
+				/*
+				echo "<pre>";
+					print_r($forma_pago);
+				echo "</pre>";
+				*/
+				$data['compras'][$i]['medio_pago']='';
+				$data['compras'][$i]['fecha_compra']='';
+				if($forma_pago->num_rows()> 0){
+					$data['compras'][$i]['medio_pago'] = self::$FORMA_PAGO[($forma_pago->row()->id_tipoPagoSi)];	
+					$data['compras'][$i]['fecha_compra'] = 	$forma_pago->row()->fecha_registroTs;
+				}
 					
 				// se obtiene la promocion adquirida			
 				$id_promo = $this->reporte_model->obtener_promo_compra($compra['id_compraIn'], $compra['id_clienteIn']);
+				/*
+				echo "<pre>";
+					print_r($id_promo);
+				echo "</pre>";
+				 */ 
 				
 				//se obtiene la suma de los costos de los articulos para obtener el monto a pagado
 				$articulos = $this->reporte_model->obtener_articulos($id_promo);			 

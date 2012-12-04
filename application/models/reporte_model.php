@@ -41,7 +41,7 @@ class Reporte_model extends CI_Model {
 		return $res;	
 	}
 	
-	function obtener_dir_envio($id_compra, $id_cliente){		
+	function obtener_rel_dir_envio($id_compra, $id_cliente){		
 		$qry = "SELECT * FROM CMS_RelCompraDireccion 
 		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra." AND address_type=0";
 		$res = $this->db->query($qry);			
