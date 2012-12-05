@@ -74,8 +74,18 @@ class Api extends CI_Controller {
 						print_r($datos_decrypt);
 					echo "</pre>";
 					exit;*/
-					
-					if (!empty($_POST['guidx']) && !empty($_POST['guidz'])) {
+					if(preg_match('/^[A-Z0-9-}{]{1,38}$/i', $_POST['guidx']))
+						$guidx = $_POST['guidx'];
+					else
+						$guidx = '';
+						
+					if(preg_match('/^[A-Z0-9-}{]{1,38}$/i', $_POST['guidz']))
+						$guidz = $_POST['guidz'];
+					else
+						$guidz = '';
+						
+					if (!empty($guidx) && !empty($guidz)) {
+																		
 						//obtener el id del sitio por medio del guidx
 						$ressit = $this->api_model->obtener_sitio_guidx($_POST['guidx']);
 						$sitio = $ressit->row()->id_sitioSi;
@@ -85,9 +95,9 @@ class Api extends CI_Controller {
 						
 						//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso
 						if ($guidxdb->private_KeyVc == $_POST['guidx']) {
-							$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
+							$this->session->set_userdata(array( 'guidx'=>$guidx,
 													   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
-													   			'guidz'=>$_POST['guidz'],
+													   			'guidz'=>$guidz,
 													   			'promociones'=>$datos_decrypt
 															   )
 														 );
@@ -281,15 +291,27 @@ class Api extends CI_Controller {
 					echo "</pre>";
 					exit;	
 					*/
+				if(preg_match('/^[A-Z0-9-}{]{1,38}$/i', $_POST['guidx']))
+					$guidx = $_POST['guidx'];
+				else
+					$guidx = '';
+					
+				if(preg_match('/^[A-Z0-9-}{]{1,38}$/i', $_POST['guidz']))
+					$guidz = $_POST['guidz'];
+				else
+					$guidz = '';			
 									
-				if(!empty($_POST['guidx']) && !empty($_POST['guidz'])){
+				if(!empty($guidx) && !empty($guidz)){
+					
+					
+						
 					//obtengo la llave privada en la DB
 					$guidxdb=$this->api_model->obtener_sitio($sitio)->row();
 					//compara si es igual a la que se recibe en post si es igual se guardan los datos en session de lo contrario se niega el acceso									
 					if($guidxdb->private_KeyVc==$_POST['guidx']){
-						$this->session->set_userdata(array( 'guidx'=>$_POST['guidx'],
+						$this->session->set_userdata(array( 'guidx'=>$guidx,
 												   			'guidy'=>'{CE5480FD-AC35-4564-AE4D-0B881031F295}',
-												   			'guidz'=>$_POST['guidz'],
+												   			'guidz'=>$guidz,
 												   			'promociones'=>
 												   			array(array('id_sitio'=>$sitio, 
 												   				  'id_canal'=>$canal, 
