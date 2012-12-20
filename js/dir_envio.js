@@ -3,6 +3,7 @@
  */
 var url_base = "http://localhost/ecommerce/";
 $(document).ready(function() {
+	
 	var forms = $("form[id*='registro']");
 	
 	//var url_base = "http://10.177.78.54/ecommerce/";
@@ -35,6 +36,13 @@ $(document).ready(function() {
 	//alert('hola mundo ecommerce GEx!');
 	$("#btn_cp").ajaxError(function() {
 		//alert('Error Handler invoked when an error ocurs on CP field!');		//Ok
+	});
+	
+	cp.keyup(function (e){		
+		
+		if(cp.val().length==5){
+			$("#btn_cp").click();	
+		}			
 	});
 
 	/*validacion_registro*/
@@ -89,7 +97,7 @@ $(document).ready(function() {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
-	cp.change(function() {
+	cp.change(function() {		
 		if ( reg_cp.test($.trim(cp.val())) ) {
 			$(this).siblings(".error").fadeOut();
 		}
@@ -138,7 +146,7 @@ $(document).ready(function() {
 	
 	/*Ocultar campos abiertos de estado, ciudad, colonia*/
 	$('tr.div_otro_pais').hide();
-	
+		
 	//onChange:
 	$('#sel_pais').change(function() {
 		/*hacer un toggle si es necesario*/
@@ -279,7 +287,11 @@ $(document).ready(function() {
 			cache: false
 		});
 	});
-
+	
+	if($("#txt_cp").val().length==5){
+		$("#btn_cp").click();	
+	}
+	
 });
 
 function actualizar_ciudades(clave_estado) {
