@@ -67,6 +67,7 @@ class Login extends CI_Controller {
 					
 			$this->session->set_userdata('sitio', $datsit->row());
 			$data['url_imageVc'] = $datsit->row()->url_imageVc;
+			$data['url_sitio'] = $datsit->row()->urlVc;
 		}																								
 				
 		//inclusión de Scripts
