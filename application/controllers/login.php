@@ -58,8 +58,20 @@ class Login extends CI_Controller {
 		//obtiene el detalle del sitio del cual viene el pago para mostrar el logo correspondiente
 		if ($this->session->userdata('promociones')) {	//si trae varias promociones
 			$promociones = $this->session->userdata('promociones');
+				    
 			foreach ($promociones as $promocion) {
 				$id_sit = $promocion['id_sitio'];
+				
+				// obtiene los artículos de la promocion para revisar si viene algun oc_id para revisar si se deben incluir las tags de google				 
+				$respromo = $this->api->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);
+				foreach( $respromo['articulos'] as $articulo){
+					## todo robustecer esta validacion para que el oc_id pueda ser de cualquier publicacion					
+					if($articulo['oc_id'] == 94){
+						$data['tags_google'] = 1;
+						$this->session->set_userdata('tags_google', 1);
+						break;
+					}											
+				}				
 			}
 			
 			$this->session->unset_userdata('sitio');
