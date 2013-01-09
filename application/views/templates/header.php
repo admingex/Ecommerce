@@ -24,6 +24,11 @@
 		
 </head>
 <body>
+<!-- ClickTale Top part -->
+<script type="text/javascript">
+var WRInitTime=(new Date()).getTime();
+</script>
+<!-- ClickTale end of Top part -->
 	
 <?php 
 	
@@ -49,6 +54,30 @@ if($band == 1){
 <!-- End Google Tag Manager -->
 <?php
 }
+if(isset($url_back['estatus']))
+	if($url_back['estatus'] != 0){
+?>
+<!-- Google Code for Suscripci&oacute;n Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 989875443;
+var google_conversion_language = "es";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "zhSiCIXwhwQQ85mB2AM";
+var google_conversion_value = 0;
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/989875443/?value=0&amp;label=zhSiCIXwhwQQ85mB2AM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+
+<?php
+	}
 ?>
 
     <div id="header-container">
