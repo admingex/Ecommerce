@@ -236,7 +236,50 @@ class Reporte extends CI_Controller {
 			$this->load->view('reportes/formulario_fecha',$data);	
 		}		
 				
-	}			
+	}	
+
+	public function compras_cliente(){
+		$data['error']='';	
+		$data['title']=$this->title;
+		
+		$data['fecha_inicio']='';
+		$data['fecha_fin']='';
+		
+		if($_POST){
+			
+			/*
+			echo "<pre>";
+				print_r($_POST);
+			echo "</pre>";	
+			*/
+			
+			if(is_numeric($_POST['id_cliente'])){
+				$id_cliente = $_POST['id_cliente'];
+				$data['id_cliente']= $id_cliente;
+				
+				$consulta = $this->reporte_model->compras_cliente_id($id_cliente);				
+				if($consulta->num_rows()>0){
+					$data['consulta_compras'] = $this->reporte_model->compras_cliente_id($id_cliente)->result_array();					
+				}
+				
+								
+				$this->load->view('templates/header', $data);
+				$this->load->view('reportes/formulario_fecha', $data);
+				$this->load->view('reportes/compras_cliente', $data);		
+				
+			}			
+			else{
+				$data['error']="ingrese un ID de cliente valido, este solo puede ser numerico";
+				$this->load->view('templates/header', $data);
+				$this->load->view('reportes/formulario_fecha', $data);							
+			}						
+		}
+		else{
+			$this->load->view('templates/header', $data);
+			$this->load->view('reportes/formulario_fecha', $data);						
+		}			
+				
+	}		
 	
 	public function is_date($date){
          if (preg_match ("/^([0-9]{4})\/([0-9]{2})\/([0-9]{2})$/", $date, $parts)){
