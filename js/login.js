@@ -1,12 +1,13 @@
 /**
  * @author harteaga956
  */
+var url_base = "http://localhost/ecommerce/";
 $(document).ready(function() {
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
 	var email = $("#email");
 	var passwd = $("#password");
 	var registro = false;
-	var url_base = "http://localhost/ecommerce/";
+	//var url_base = "http://localhost/ecommerce/";
 	//var url_base = "http://10.177.78.54/ecommerce/";
 	
 	$('input').bind("click keypress", function() {

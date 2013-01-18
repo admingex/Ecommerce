@@ -36,7 +36,7 @@ class Login extends CI_Controller {
 		
 		if ($this->session->userdata('destino')) {
 			//$this->session->userdata('destino');
-			redirect($this->session->userdata('destino'), 'location', 303);
+			//redirect($this->session->userdata('destino'), 'location', 303);
 			exit();
 		}		
 		
@@ -412,9 +412,15 @@ class Login extends CI_Controller {
 	}
 	
 	public function consulta_mail() {
-		$res = $this->login_registro_model->verifica_registro_email($_GET['mail']);
-		$value['mail'] = $res->num_rows();
-		echo json_encode($value);
+		if (filter_var($_GET['mail'], FILTER_VALIDATE_EMAIL)) {
+			$res = $this->login_registro_model->verifica_registro_email($_GET['mail']);
+			$value['mail'] = $res->num_rows();
+			echo json_encode($value);
+		}
+		else{
+			$value['mail'] = 69;
+			echo json_encode($value);
+		}	
 	}
 	
 }
