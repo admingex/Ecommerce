@@ -76,7 +76,9 @@ class Reporte extends CI_Controller {
 			$this->load->view('reportes/formulario_fecha',$data);		
 			$this->load->view('reportes/reporte_usuarios',$data);		
 		}
-		else{
+		else{			
+			$data['fecha_inicio']=mdate('%Y/%m/%d',time());
+			$data['fecha_fin']=mdate('%Y/%m/%d',time());
 			$data['error']="ingrese un intervalo valido con el formato (aaaa/mm/dd) para fecha de inicio y fecha fin";
 			$this->load->view('templates/header',$data);
 			$this->load->view('reportes/formulario_fecha',$data);											
@@ -230,7 +232,10 @@ class Reporte extends CI_Controller {
 				$this->load->view('reportes/reporte_compras',$data);
 			}	
 		}
-		else{
+		else{			
+			$data['fecha_inicio']=mdate('%Y/%m/%d',time());
+			$data['fecha_fin']=mdate('%Y/%m/%d',time());
+			
 			$data['error']="ingrese un intervalo valido con el formato (aaaa/mm/dd) para fecha de inicio y fecha fin";
 			$this->load->view('templates/header',$data);
 			$this->load->view('reportes/formulario_fecha',$data);	
@@ -241,18 +246,9 @@ class Reporte extends CI_Controller {
 	public function compras_cliente(){
 		$data['error']='';	
 		$data['title']=$this->title;
+				
 		
-		$data['fecha_inicio']='';
-		$data['fecha_fin']='';
-		
-		if($_POST){
-			
-			/*
-			echo "<pre>";
-				print_r($_POST);
-			echo "</pre>";	
-			*/
-			
+		if($_POST){			
 			if(is_numeric($_POST['id_cliente'])){
 				$id_cliente = $_POST['id_cliente'];
 				$data['id_cliente']= $id_cliente;

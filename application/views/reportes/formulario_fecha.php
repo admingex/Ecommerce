@@ -4,12 +4,12 @@
     $("#fecha_inicio").datepicker({changeMonth: true, changeYear: true, autoSize: true });
     $("#fecha_inicio").datepicker( "option", "dateFormat", "yy/mm/dd");
     $("#fecha_inicio").datepicker( "option", "showAnim", "slideDown");
-    $("#fecha_inicio").datepicker( "setDate" , "<?php echo $fecha_inicio?>");
+    $("#fecha_inicio").datepicker( "setDate" , "<?php if(isset($fecha_inicio))echo $fecha_inicio?>");
 
     $("#fecha_fin").datepicker({changeMonth: true, changeYear: true, autoSize: true });
     $("#fecha_fin").datepicker( "option", "dateFormat", "yy/mm/dd");
     $("#fecha_fin").datepicker( "option", "showAnim", "slideDown");
-    $("#fecha_fin").datepicker( "setDate" , "<?php echo $fecha_fin?>");
+    $("#fecha_fin").datepicker( "setDate" , "<?php if(isset($fecha_fin)) echo $fecha_fin?>");
 });
 </script>
 
@@ -34,6 +34,7 @@
 </div>
 <div id="pleca-gris"></div>
 <?php
+if(isset($fecha_inicio))
 	if(!empty($fecha_inicio)){
 ?>
 <form name="selecciona_intervalo" action="" method="POST">
@@ -50,7 +51,7 @@
 </form>
 <?php
 } 
-else{
+if(!isset($fecha_inicio)){
 ?>
 <form name="cliente" action="" method="POST">
 	<table>

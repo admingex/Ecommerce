@@ -418,7 +418,7 @@ class Login extends CI_Controller {
 			echo json_encode($value);
 		}
 		else{
-			$value['mail'] = 69;
+			$value['mail'] = 0;
 			echo json_encode($value);
 		}	
 	}
