@@ -1,6 +1,11 @@
+<?php
+	echo "<pre>";
+		print_r($promo);
+	echo "</pre>";
+?>
 <div class="contenedor-gris">
 <table width="100%">	
-	<form id="form_registro_usuario" action="<?php echo site_url('pago_express'); ?>" method="POST">	
+	<form id="form_registro_usuario" action="<?php echo site_url('suscripcion_express/pago'); ?>" method="POST">	
 	<tr>
 		<td class="label"> 
 			Nombre
@@ -157,7 +162,7 @@ function checa_cp(cp){
 			$.ajax({
 				type: "POST",
 				data: {'codigo_postal' : cp},
-				url: url_base + "pago_express/info_sepomex",
+				url: url_base + "suscripcion_express/get_info_sepomex",
 				dataType: "json",				
 				async: false,
 				success: function(data) {
