@@ -33,7 +33,8 @@ class Suscripcion_Express extends CI_Controller {
 			$lista_paises_think = $this->direccion_facturacion_model->listar_paises_think();
 			$data['lista_paises_think'] = $lista_paises_think;
 			
-			$data['promo'] = $this->api->obtener_detalle_promo($sitio, $canal, $promocion );
+			$data['promo'] = $this->api->obtener_detalle_promo($sitio, $canal, $promocion );			
+			$this->session->set_userdata('promo', $data['promo']);
 			
 			$this->load->view('templates/header', $data);							
 			$this->load->view('suscripcion_express/registro_cliente');
@@ -48,7 +49,9 @@ class Suscripcion_Express extends CI_Controller {
 	}
 	
 	public function pago(){
-		$data['title']='';			
+		$data['title']='Suscripción express';			
+		
+		
 		
 		$this->load->view('templates/header', $data);					
 		$this->load->view('suscripcion_express/pago');

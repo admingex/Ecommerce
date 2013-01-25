@@ -2,6 +2,10 @@
 echo "<pre>";
 			print_r($_POST);
 		echo "</pre>";
+		
+echo "aqui<pre>";
+			print_r($this->session->userdata('promo'));
+		echo "</pre>";		
 ?>
 
 <div class="contenedor-gris">
