@@ -50,9 +50,7 @@ class Suscripcion_Express extends CI_Controller {
 	
 	public function pago(){
 		$data['title']='Suscripción express';			
-		
-		
-		
+						
 		$this->load->view('templates/header', $data);					
 		$this->load->view('suscripcion_express/pago');
 	}

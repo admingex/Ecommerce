@@ -1,7 +1,10 @@
 <?php
+/*
 	echo "<pre>";
 		print_r($promo);
 	echo "</pre>";
+
+ */
 ?>
 <div class="contenedor-gris">
 <table width="100%">	
