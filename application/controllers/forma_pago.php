@@ -775,7 +775,7 @@ class Forma_Pago extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
@@ -840,7 +840,7 @@ class Forma_Pago extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
@@ -954,7 +954,7 @@ class Forma_Pago extends CI_Controller {
 		// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 		$c = curl_init();
 		// CURL de la URL donde se haran las peticiones //
-		curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+		curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 		//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
 		// Se enviaran los datos por POST //
 		curl_setopt($c, CURLOPT_POST, true);
@@ -1109,7 +1109,7 @@ class Forma_Pago extends CI_Controller {
 		// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 		$c = curl_init();
 		// CURL de la URL donde se haran las peticiones //
-		curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+		curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 		//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
 		// Se enviaran los datos por POST //
 		curl_setopt($c, CURLOPT_POST, true);

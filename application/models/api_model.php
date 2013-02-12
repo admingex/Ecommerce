@@ -93,4 +93,12 @@ class Api_model extends CI_Model {
 			return FALSE;
 		}
 	}
+	
+	function obtener_sitio_promo($id_promocion){
+		$qry = "SELECT * 
+				FROM CMS_RelPromocionSitioCanal WHERE id_promocionIn=".$id_promocion." AND id_sitioSi!=3 LIMIT 1";
+		$res = $this->db->query($qry);
+		
+		return $res;		
+	}
 }

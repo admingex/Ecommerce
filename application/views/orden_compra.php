@@ -15,7 +15,7 @@
 	<?php
 		if (empty($resultado) && empty($pago_deposito)) {	//Se muestra el resumen de la orden de compra si no viene del checkout
 	?>
-	<form id="form_orden_compra" action="<?php echo site_url("orden_compra/checkout"); ?>" method="POST">
+	<form id="form_orden_compra" action="<?php echo site_url("orden_compra/checkout"); ?>" method="POST" >
 	<div class="contenedor-blanco">				
 	<table width="100%" cellpadding="0" cellspacing="0">		
 		<thead>
@@ -188,7 +188,8 @@
 	<?php
 	} else {	//Se muestra el resultado de la petición de cobro
 		include ('orden_compra/respuesta_cobro.html');
-	}
+	}		
+	
 	?>
 	<?php
 		if (!empty($mensaje)) {

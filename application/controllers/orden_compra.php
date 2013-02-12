@@ -1293,9 +1293,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1337,9 +1337,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1382,9 +1382,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1443,15 +1443,25 @@ class Orden_Compra extends CI_Controller {
 		} else {
 			//este caso puede ser denied o Incorrect information, o Duplicated Informaion
 			$estatus_pago = 0;
-		}
-		
-		$datos = array();
-		
-		$datos['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
-		$datos['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
-		$datos['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
+		}					
+
+		$datos = array();		
+		$datos['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);		
 		$datos['estatus']=$estatus_pago;
 		$datos['id_compra']=$id_compra;
+		
+		if(array_key_exists('issues_idc', $this->detalle_promociones)){				
+				$datos['datos_login_idc'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key).json_encode($this->detalle_promociones['issues_idc']['clave'])."|", $this->api->key);				
+				$datos['urlback_idc'] = $this->detalle_promociones['issues_idc']['url_back'];
+		}	
+		if(array_key_exists('issues_cnn', $this->detalle_promociones)){				
+				$datos['datos_login_cnn'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key).json_encode($this->detalle_promociones['issues_idc']['clave'])."|", $this->api->key);				;				
+				$datos['urlback_cnn'] = $this->detalle_promociones['issues_cnn']['url_back'];
+		}	
+		
+		$datos['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
+		$datos['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;				
+		
 		/*echo "<pre>";
 		print_r($datos);
 		echo "</pre>";

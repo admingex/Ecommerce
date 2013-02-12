@@ -1,7 +1,7 @@
 /**
  * @author harteaga956
  */
-var url_base = "http://localhost/ecommerce/";
+var url_base = "http://ecommerce/";
 $(document).ready(function() {
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
 	var email = $("#email");

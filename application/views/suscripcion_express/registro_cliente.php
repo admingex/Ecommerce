@@ -3,12 +3,11 @@
 	echo "<pre>";
 		print_r($promo);
 	echo "</pre>";
-
- */
+*/
 ?>
 <div class="contenedor-gris">
 <table width="100%">	
-	<form id="form_registro_usuario" action="<?php echo site_url('suscripcion_express/pago'); ?>" method="POST">	
+	<form id="form_registro_usuario" action="" method="POST">	
 	<tr>
 		<td class="label"> 
 			Nombre
@@ -108,7 +107,7 @@
 		</td>
 		<td>
 			<input type="text" name="cp" id="cp"  
-				value="<?php if(isset($_POST['cp'])) echo htmlspecialchars($_POST['cp']);?>" size="7" onkeyup="checa_cp(this.value)"/>
+				value="<?php if(isset($_POST['cp'])) echo htmlspecialchars($_POST['cp']);?>" size="7" onkeyup="checa_cp(this.value)" autocomplete="off"/>
 			<?php if(isset($registro_errores['cp'])) echo $registro_errores['cp'];?>
 		</td>
 	</tr>	
