@@ -1393,7 +1393,7 @@ class Forma_Pago extends CI_Controller {
 				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
 				$datos['tc']['id_estatusSi'] = 1;
 			}
-			
+			/*
 			//tomando en cuenta la renovación automática
 			$ra = $this->session->userdata('lleva_ra');
 			//si lleva rs, se guarda la tarjeta
@@ -1401,7 +1401,8 @@ class Forma_Pago extends CI_Controller {
 				$datos['guardar'] = $_POST['chk_guardar'];
 				$datos['tc']['id_estatusSi'] = 1;
 			}
-			
+			*/			
+
 			if (array_key_exists('chk_default', $_POST)) {
 				$datos['tc']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada
 				$datos['predeterminar'] = true;	
