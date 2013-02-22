@@ -82,7 +82,7 @@ $(document).ready(function() {
 });
 
 function checa_cp(cp){
-	url_base='http://localhost/ecommerce/'			
+	url_base='http://ecommerce/'			
 	if(cp.length==5){	
 		$.ajax({
 			type: "POST",

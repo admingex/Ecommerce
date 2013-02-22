@@ -766,7 +766,7 @@ class Api extends CI_Controller {
 							$datos['issues_cnn']['sitio']=$datos_sit->id_sitioSi;						
 							$datos['issues_cnn']['url_back']=$this->api_model->obtener_sitio($datos_sit->id_sitioSi)->row()->url_PostbackVc;
 							$mp = explode('|',$issue->row()->descripcionVc);
-							$datos['issues_cnn'][]['clave']=end($mp);													
+							$datos['issues_cnn']['clave'][]=end($mp);													
 								
 						}						
 					}	

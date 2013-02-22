@@ -1,5 +1,6 @@
 <section id='encabezado'>
 	<header>
+
 		<?php					    			
 			if(isset($this->session->userdata('sitio')->url_imageVc) &&  $this->session->userdata('sitio')->url_imageVc!= ""){				
 				echo "<a href='".$this->session->userdata('sitio')->urlVc."'><img src='".base_url() . $this->session->userdata('sitio')->url_imageVc . "' alt='Grupo Expansión' border=0 /></a>";	

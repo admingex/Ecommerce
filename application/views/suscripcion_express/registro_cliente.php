@@ -159,7 +159,7 @@
 <script>
 function checa_cp(cp){
 	
-		url_base='http://ecommerce/'			
+		url_base='http://dev.pagos.grupoexpansion.mx/'			
 		if(cp.length==5){			
 			$.ajax({
 				type: "POST",

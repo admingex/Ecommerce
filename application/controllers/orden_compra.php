@@ -364,6 +364,7 @@ class Orden_Compra extends CI_Controller {
 				#### Comienza el proceso de cobro / pago
 				
 				$tipo_pago = self::$TIPO_PAGO['Otro'];	//ninguno válido al inicio
+
 								
 				#### Configuración de la forma de pago y solicitud de cobro a CCTC
 				
@@ -1010,11 +1011,13 @@ class Orden_Compra extends CI_Controller {
 
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
-					
-						//echo "simple_result<pre> gettype->";//.gettype($simple_result);
-						//print_r($simple_result);
-						//echo "</pre>";
-						//exit;
+						
+						/*
+						echo "simple_result<pre> gettype->";//.gettype($simple_result);
+						print_r($simple_result);
+						echo "</pre>";
+						exit;
+						*/
 						//Registro de la respuesta de CCTC de la compra en ecommerce
 						$info_detalle_pago_tc = array('id_compraIn'=> $id_compra, 'id_clienteIn' => $id_cliente, 'id_TCSi' => $consecutivo, 
 														'id_transaccionBi' => $simple_result->id_transaccionNu, 'respuesta_bancoVc' => $simple_result->respuesta_banco,
@@ -1293,8 +1296,8 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
@@ -1337,8 +1340,8 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
@@ -1382,8 +1385,8 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
@@ -1455,7 +1458,7 @@ class Orden_Compra extends CI_Controller {
 				$datos['urlback_idc'] = $this->detalle_promociones['issues_idc']['url_back'];
 		}	
 		if(array_key_exists('issues_cnn', $this->detalle_promociones)){				
-				$datos['datos_login_cnn'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key).json_encode($this->detalle_promociones['issues_idc']['clave'])."|", $this->api->key);				;				
+				$datos['datos_login_cnn'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key).json_encode($this->detalle_promociones['issues_cnn']['clave'])."|", $this->api->key);				;				
 				$datos['urlback_cnn'] = $this->detalle_promociones['issues_cnn']['url_back'];
 		}	
 		

@@ -1,10 +1,10 @@
 
 <?php
-
+/*
 echo "<pre>";
 	print_r($this->session->all_userdata());
 echo "</pre>";		
-
+*/
 		
 ?>
 
@@ -55,7 +55,25 @@ echo "</pre>";
 						<input type="text" name="txt_numeroTarjeta" id="txt_numeroTarjeta" maxlength="16" autocomplete="off" value="<?php if(isset($_POST['txt_numeroTarjeta'])) echo htmlspecialchars($_POST['txt_numeroTarjeta']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_numeroTarjeta'])) echo ($reg_errores['txt_numeroTarjeta']);?></span>
+					<?php if(isset($reg_errores['txt_numeroTarjeta'])) echo "<span class='error2'>".($reg_errores['txt_numeroTarjeta'])."</span>";?>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">
+					<div id="tarjeta">C&oacute;digo de seguridad:								
+					</div>		
+				</td>
+				<td>						
+					
+						<input type="text" name="txt_codigo" id="txt_codigo" maxlength="4" size="5" autocomplete="off"
+							value="<?php if(isset($_POST['txt_codigo'])) echo htmlspecialchars($_POST['txt_codigo']);?>"/>													
+						<a href="#" class="tip_trigger">
+							<div class="interrogacion" style="display: inline-block"></div>			
+							<span class="tip">
+								<div style="margin-left: auto; margin-right: auto; text-align: center"><img src="<?php echo base_url();?>images/cvv2_code.jpg" /></div>
+							</span>			
+						</a>	
+						<?php if(isset($reg_errores['txt_codigo'])) echo ("<div class='error'>".$reg_errores['txt_codigo']."</div>");?>						
 				</td>
 			</tr>
 			<tr>
@@ -75,7 +93,7 @@ echo "</pre>";
 						<input type="text" name="txt_nombre" id="txt_nombre" autocomplete="off" value="<?php if(isset($_POST['txt_nombre'])) echo htmlspecialchars($_POST['txt_nombre']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_nombre'])) echo ($reg_errores['txt_nombre']);?></span>
+					<?php if(isset($reg_errores['txt_nombre'])) echo "<span class='error'>".($reg_errores['txt_nombre'])."</span>";?>
 				</td>
 			</tr>
 			<tr>
@@ -87,7 +105,7 @@ echo "</pre>";
 						<input type="text" name="txt_apellidoPaterno" id="txt_apellidoPaterno" autocomplete="off" value="<?php if(isset($_POST['txt_apellidoPaterno'])) echo htmlspecialchars($_POST['txt_apellidoPaterno']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_apellidoPaterno'])) echo ($reg_errores['txt_apellidoPaterno']);?></span>
+					<?php if(isset($reg_errores['txt_apellidoPaterno'])) echo "<span class='error'>".($reg_errores['txt_apellidoPaterno'])."</span>";?>
 				</td>
 			</tr>
 			<tr>
@@ -98,7 +116,7 @@ echo "</pre>";
 					<span class="alinear_izquierda">
 						<input type="text" name="txt_apellidoMaterno" id="txt_apellidoMaterno" autocomplete="off" value="<?php if(isset($_POST['txt_apellidoMaterno'])) echo htmlspecialchars($_POST['txt_apellidoMaterno']);?>"/>
 					</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_apellidoMaterno'])) echo ($reg_errores['txt_apellidoMaterno']);?></span>
+					<?php if(isset($reg_errores['txt_apellidoMaterno'])) echo "<span class='error'>".($reg_errores['txt_apellidoMaterno'])."</span>";?>
 				</td>
 			</tr>
 			<tr>
@@ -152,7 +170,7 @@ echo "</pre>";
 						<input type="text" name="txt_calle" id="txt_calle" size="40" autocomplete="off" value="<?php if(isset($_POST['txt_calle'])) echo htmlspecialchars($_POST['txt_calle']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_calle'])) echo ($reg_errores['txt_calle']);?></span>
+					<?php if(isset($reg_errores['txt_calle'])) echo "<span class='error'>".($reg_errores['txt_calle'])."</span>";?>
 				</td>
 			</tr>	
 			<tr>
@@ -164,7 +182,7 @@ echo "</pre>";
 						<input type="text" name="txt_cp" id="txt_cp" maxlength="5" size="5" autocomplete="off" value="<?php if(isset($_POST['txt_cp'])) echo htmlspecialchars($_POST['txt_cp']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_cp'])) echo ($reg_errores['txt_cp']);?></span>
+					<?php if(isset($reg_errores['txt_cp'])) echo "<span class='error'>".($reg_errores['txt_cp'])."</span>";?>
 				</td>
 			</tr>
 			<tr>
@@ -209,7 +227,7 @@ echo "</pre>";
 						<input type="text" name="txt_estado" id="txt_estado" size="30" autocomplete="off" value="<?php if(isset($_POST['txt_estado'])) echo htmlspecialchars($_POST['txt_estado']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_estado'])) echo ($reg_errores['txt_estado']);?></span>
+					<?php if(isset($reg_errores['txt_estado'])) echo "<span class='error'>".($reg_errores['txt_estado'])."</span>";?>
 				</td>
 			</tr>
 			<tr>
@@ -221,7 +239,7 @@ echo "</pre>";
 						<input type="text" name="txt_ciudad" id="txt_ciudad" size="30" autocomplete="off" value="<?php if(isset($_POST['txt_ciudad'])) echo htmlspecialchars($_POST['txt_ciudad']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_ciudad'])) echo ($reg_errores['txt_ciudad']);?></span>
+					<?php if(isset($reg_errores['txt_ciudad'])) echo "<span class='error'>".($reg_errores['txt_ciudad'])."</span>";?>
 				</td>
 			</tr>
 			<tr>
@@ -233,7 +251,7 @@ echo "</pre>";
 						<input type="text" name="txt_email" id="txt_email" size="30" autocomplete="off" value="<?php if(isset($_POST['txt_email'])) echo htmlspecialchars($_POST['txt_email']);  else echo $this->session->userdata('email');?>"/>
 					</span>
 					
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_email'])) echo ($reg_errores['txt_email']);?></span>
+					<?php if(isset($reg_errores['txt_email'])) echo "<span class='error'>".($reg_errores['txt_email'])."</span>";?>
 				</td>
 			</tr>
 			<tr>
@@ -245,7 +263,7 @@ echo "</pre>";
 						<input type="text" name="txt_telefono" id="txt_telefono" size="30" autocomplete="off" value="<?php if(isset($_POST['txt_telefono'])) echo htmlspecialchars($_POST['txt_telefono']);?>"/>
 					</span>
 					<span class="asterisco">&nbsp;</span>
-					<span class="error_mensaje"><?php if(isset($reg_errores['txt_telefono'])) echo ($reg_errores['txt_telefono']);?></span>
+					<?php if(isset($reg_errores['txt_telefono'])) echo "<span class='error'>".($reg_errores['txt_telefono'])."</span>";?>
 				</td>
 			</tr>
 			<tr>
@@ -272,7 +290,7 @@ echo "</pre>";
 <script type="text/javascript">
 	function revisa_amex(id){
 		if(id==1){
-			$('.ammex').css('display', 'block');
+			$('.ammex').css('display', 'table-cell');
 			//alert ('AMEX');
 		}	
 		else{
@@ -284,6 +302,6 @@ echo "</pre>";
 <?php
 	if(isset($_POST['sel_tipo_tarjeta']))
 		if($_POST['sel_tipo_tarjeta']==1)
-			echo "<script>$('.ammex').css('display', 'block');</script>";
+			echo "<script>$('.ammex').css('display', 'table-cell');</script>";
 		
 ?>

@@ -7,8 +7,6 @@ $(document).ready(function() {
 	var email = $("#email");
 	var passwd = $("#password");
 	var registro = false;
-	//var url_base = "http://localhost/ecommerce/";
-	//var url_base = "http://10.177.78.54/ecommerce/";
 	
 	$('input').bind("click keypress", function() {
 		$(".error").remove();

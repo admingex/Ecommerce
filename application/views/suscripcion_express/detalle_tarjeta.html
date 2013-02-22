@@ -1,0 +1,18 @@
+<div id="forma_pago">	
+	<?php
+		echo $tc->descripcionVc. " con terminación " .substr($tc->terminacion_tarjetaVc, strlen($tc->terminacion_tarjetaVc) - 4);			
+	?>
+	<div id="tarjeta" class="float_izq">C&oacute;digo de seguridad:
+		<input type="text" name="txt_codigo" id="txt_codigo" maxlength="4" size="5" autocomplete="off"
+				value="<?php if(isset($_POST['txt_codigo'])) echo htmlspecialchars($_POST['txt_codigo']);?>"/>				
+	</div>		
+	<div class="float_izq">
+		<?php if(isset($reg_errores['txt_codigo'])) echo ("<div class='error'>".$reg_errores['txt_codigo']."</div>");?>							
+		<a href="#" class="tip_trigger">
+			<div class="interrogacion" style="margin-top: 6px"></div>			
+			<span class="tip">
+				<div style="margin-left: auto; margin-right: auto; text-align: center"><img src="<?php echo base_url();?>images/cvv2_code.jpg" /></div>
+			</span>			
+		</a>		
+	</div>
+</div>
