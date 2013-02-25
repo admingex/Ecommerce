@@ -122,7 +122,7 @@
 								  </td>
 							  </tr>
 							  <tr>
-								  <td class='titulo'>fecha aprovacion
+								  <td class='titulo'>fecha aprobacion
 								  </td>
 								  <td>".$compra['fecha2']."
 								  </td>

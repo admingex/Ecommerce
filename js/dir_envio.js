@@ -1,18 +1,20 @@
 /**
  * @author harteaga956
  */
-var url_base = "http://localhost/ecommerce/";
+var url_base = "https://pagos.grupoexpansion.mx/";
+
 $(document).ready(function() {
-	
 	var forms = $("form[id*='registro']");
-	
+	//var url_base = "http://localhost/ecommerce/";
 	//var url_base = "http://10.177.78.54/ecommerce/";
+ 	  
+
 	
 	var reg_cp = /^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/;
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
-	var reg_nombres = /^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{1,30}$/i;
+	var reg_nombres = /^[A-ZáéíóúÁÉÍÓÚÑñ \'.-]{2,30}$/i;
 	var reg_numeros = /^[A-Z0-9 -.#\/]{1,50}$/i;
-	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{1,50}$/i;
+	var reg_direccion = /^[A-Z0-9 \'.,-áéíóúÁÉÍÓÚÑñ]{2,50}$/i;
 	var reg_telefono = /^[0-9 ()+-]{10,20}$/
 	
 	var calle	= $("#txt_calle");
@@ -37,14 +39,12 @@ $(document).ready(function() {
 	$("#btn_cp").ajaxError(function() {
 		//alert('Error Handler invoked when an error ocurs on CP field!');		//Ok
 	});
-	
-	cp.keyup(function (e){		
-		
-		if(cp.val().length==5){
-			$("#btn_cp").click();	
-		}			
-	});
 
+        cp.keyup(function (e){
+	    if(cp.val().length==5){
+		$("#btn_cp").click();
+	    }
+	});
 	/*validacion_registro*/
 	//$("input[name^='guardar_']").click(function(e) {
 	$("form[id*='direccion_envio']").submit(function(e) {
@@ -97,7 +97,7 @@ $(document).ready(function() {
 			$(this).siblings(".error").fadeOut();
 		}
 	});
-	cp.change(function() {		
+	cp.change(function() {
 		if ( reg_cp.test($.trim(cp.val())) ) {
 			$(this).siblings(".error").fadeOut();
 		}
@@ -146,7 +146,7 @@ $(document).ready(function() {
 	
 	/*Ocultar campos abiertos de estado, ciudad, colonia*/
 	$('tr.div_otro_pais').hide();
-		
+	
 	//onChange:
 	$('#sel_pais').change(function() {
 		/*hacer un toggle si es necesario*/
@@ -289,13 +289,11 @@ $(document).ready(function() {
 	});
 	
 	if($("#txt_cp").val().length==5){
-		$("#btn_cp").click();	
-	}
+	    $("#btn_cp").click();
 	
 });
 
 function actualizar_ciudades(clave_estado) {
-	// var url_base = "http://localhost/ecommerce/";
 	$.post( url_base + 'direccion_envio/get_ciudades',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado},
@@ -323,7 +321,6 @@ function actualizar_ciudades(clave_estado) {
 }
 
 function actualizar_colonias(clave_estado, ciudad) {
-	//var url_base = "http://localhost/ecommerce/";
 	$.post( url_base + 'direccion_envio/get_colonias',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado, 'ciudad': ciudad },
@@ -344,7 +341,6 @@ function actualizar_colonias(clave_estado, ciudad) {
 }
 
 function actualizar_cp(clave_estado, ciudad, colonia) {
-	//var url_base = "http://localhost/ecommerce/";
 	$.post( url_base + 'direccion_envio/get_colonias',
 		// when the Web server responds to the request
 		{ 'estado': clave_estado, 'ciudad': ciudad},

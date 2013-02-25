@@ -1765,7 +1765,9 @@ class Suscripcion_Express extends CI_Controller {
 		$c = curl_init();
 		// CURL de la URL donde se haran las peticiones //
 		curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
-		//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
+		curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+		//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+		
 		// Se enviaran los datos por POST //
 		curl_setopt($c, CURLOPT_POST, true);
 		// Que nos envie el resultado del JSON //
@@ -1979,8 +1981,8 @@ class Suscripcion_Express extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			//curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
-			curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
@@ -2025,7 +2027,7 @@ class Suscripcion_Express extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			//curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 			curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
