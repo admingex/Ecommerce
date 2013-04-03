@@ -101,4 +101,20 @@ class Suscripcion_Express_Model extends CI_Model {
 		
 		return $resultado;		
 	}
+	
+	function insertar_rs($datos_fact){		
+		$qry = "INSERT INTO CMS_IntRazonSocial (tax_id_number, company, email, id_estatusSi, id_clienteIn )
+				VALUES ('".$datos_fact['tax_id_number']."', '".$datos_fact['company']."', '".$datos_fact['email']."', '3', '".$datos_fact['id_clienteIn']."')";
+		$res = $this->db->query($qry);
+		
+		return (int)$res;	
+	}
+	
+	function obtener_img_back($oc){
+		$qry = "SELECT nombreVc as nombre, url_imagen_vistaVc  as url_imagen, descripcion_largaVc as descripcion_larga, descripcion_cortaVc as descripcion_corta
+				FROM TND_CatOCThink WHERE oc_id='".$oc."'";
+		$res = $this->db->query($qry);
+		
+		return $res;						
+	}
 }

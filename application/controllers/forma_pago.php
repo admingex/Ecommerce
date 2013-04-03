@@ -52,9 +52,14 @@ class Forma_Pago extends CI_Controller {
 		
 		//listar por default las tarjetas del cliente
 		$data['lista_tarjetas'] = $this->forma_pago_model->listar_tarjetas($this->id_cliente);
-				
-		//cargar vista	
-		$this->cargar_vista('', 'forma_pago', $data);
+			
+		//cargar vista
+		if($data['lista_tarjetas']->num_rows()>0){	
+			$this->cargar_vista('', 'forma_pago', $data);
+		}
+		else{
+			$this->registrar('tc');
+		}		
 		
 		//Se elimina de session por seguridad
 		if ($this->session->userdata('tarjeta'))
@@ -1242,7 +1247,13 @@ class Forma_Pago extends CI_Controller {
 						if ($this->forma_pago_model->existe_compra($this->id_cliente)) {	//compra
 							$destino = "orden_compra";
 						} else {
-							$destino = "direccion_facturacion";
+							if($this->session->userdata('requiere_factura')=='no'){
+								$destino = "orden_compra";	
+							}
+							else{
+								$destino = "direccion_facturacion";
+							}
+							
 						}						
 					}
 				} else {
@@ -1256,7 +1267,12 @@ class Forma_Pago extends CI_Controller {
 					if ($this->forma_pago_model->existe_compra($this->id_cliente)) {	//compra
 						$destino = "orden_compra";
 					} else {
-						$destino = "direccion_facturacion";
+						if($this->session->userdata('requiere_factura')=='no'){
+							$destino = "orden_compra";	
+						}
+						else{
+							$destino = "direccion_facturacion";
+						}
 					}						
 				} 
 			}

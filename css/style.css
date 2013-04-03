@@ -197,13 +197,15 @@ body
 
 .titulo-promo-rojo{
 	color: #C90002;
-	font-size: 15px;		
+	font-size: 15px;	
+	font-weight: bolder;	
 }
 
 .titulo-promo-negro{
 	color: #292929;
-	font-size: 17px;	
-	line-height: 20px;	
+	font-size: 14px;	
+	line-height: 20px;
+	font-weight: bolder;	
 }
 
 .titulo-promo-rojo2{
@@ -240,7 +242,7 @@ body
 	position: relative;		
 	display: block;
 	margin: 40px 56px 0px 59px;	
-	clear: both;		
+	#clear: both;		
 }
 
 .titulo-proceso-img{	

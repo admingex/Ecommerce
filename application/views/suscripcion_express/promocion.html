@@ -5,6 +5,7 @@
 				<div class="titulo-promo-rojo">Est&aacute;s comprando:</div>
 				<div class="titulo-promo-negro">
 					<?php
+						$desc=0;
 						////**Muestra el detalle de la promocion**//// 
 						if (strstr($detalle_promociones['descripcion_promocion'], '|' )) {
 							$mp = explode('|',$detalle_promociones['descripcion_promocion']);
@@ -17,11 +18,11 @@
 						} else {
 							$desc_promo = $detalle_promociones['descripcion_promocion'];
 						}
-						echo $desc_promo;
+						//echo $desc_promo;
 						////****////
 												
 						////**Muestra los articulos en la promocion**////
-						foreach ($detalle_promociones['articulo_promocion'] as $articulo) {
+						foreach ($detalle_promociones['articulo_promocion'] as $key => $articulo) {
 							if (strstr($articulo, '|' )) {
 								$mp = explode('|', $articulo);
 								$nmp = count($mp);
@@ -32,8 +33,26 @@
 								}
 							} else {
 								$desc_art = $articulo;
-							}							
-							echo "<br />".$desc_art;							
+							}
+							
+							echo $desc_art;
+							
+							$promoend = end($detalle_promociones['descripciones_promocion']);
+								if($promoend['promocion']->descuentoIn)
+									if($desc == 0){
+										echo "<br />".$promoend['promocion']->descuentoIn."% de descuento sobre precio de portada";
+										$desc = 1;		
+									}	
+								
+									
+								if($promoend['articulos'][$key]['numero_ejemplares'])			
+									echo "<br />".$promoend['articulos'][$key]['numero_ejemplares']."&nbsp;EJEMPLARES";																				
+							
+							echo "<br />";
+							
+							
+							//print_r($promoend['articulos']);
+								
 						}
 						////****////	
 						if ($detalle_promociones['numero_promociones']>1) {
@@ -58,9 +77,10 @@
 		</div>
 			
 	<?php 
-		/*echo "<pre>";
-			print_r($this->session->all_userdata());
-		echo "</pre>";*/
+		//echo "<pre>";
+			//print_r($this->session->all_userdata());
+			//print_r($detalle_promociones);			
+		//echo "</pre>";
 	?>
 </section>
 	<script type="text/javascript">

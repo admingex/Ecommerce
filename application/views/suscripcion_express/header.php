@@ -1,3 +1,22 @@
+<?php
+	$imgback = '';
+	if(isset($imagen_back)){		
+		$imgback = $imagen_back;
+	}
+	else if(($this->session->userdata('imagen_back'))){		
+		$imgback = $this->session->userdata('imagen_back');
+	}						
+	
+	//echo "<pre>";
+		//print_r($detalle_promociones);
+		//print_r($detalle_promociones['ids_promociones']);
+		$images_b = array('elle1.jpg', 'elle2.jpg');
+		if (in_array('1405', $detalle_promociones['ids_promociones'])){
+			$imgback = $images_b[1];			
+		}
+	//echo "</pre>";
+	
+?>	
 <html> 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -8,9 +27,11 @@
     <meta http-equiv='Expires' content='Sat, 26 Jul 1997 05:00:00 GMT' />
     
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title><?php echo $title ?> - Pagos Grupo Expansión</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <title><?php echo "Suscríbete a ".$metatags['nombre']." de Grupo Expansión, ".$metatags['descripcion_corta'];?></title>
+    <meta name="description" content="<?php echo "Suscríbete a ".$metatags['nombre']." de Grupo Expansión, ".$metatags['descripcion_larga'].". ".$metatags['nombre']." al igual que Expansión, Quién, Quo, Chilango, IDC y MedioTiempo es una publicación de Grupo Expansión, una empresa de Time Inc localizada en México, Distrito Federal."; ?>">    
+    <meta name="author" content="Grupo Expansión A Time Inc. Company, creamos experiencias mediáticas apasionantes para enriquecer tu vida">
+    <meta name="keywords" content="suscripcion, descuento, publicaciones, expansión, grupo, time, méxico, distrito federal, expansión, quien, quo, chilango, idc, mediotiempo, celebridades, noticias">
+    <link rel="shortcut icon" href="<?php echo site_url(); ?>images/<?php echo str_replace('png', 'ico', $imgback);?>"/>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="<?php echo base_url();?>css/style.css">
     <!--[if IE]><script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->		
@@ -19,17 +40,24 @@
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-1.7.1.min.js"> </script>
 	<script type="text/javascript" src="<?php echo base_url();?>js/tools.js"> </script>
 	<script type="text/javascript" src="<?php echo base_url();?>js/jquery-ui-1.8.18.custom.min.js"> </script>
-		
+	
 	<?php if (isset($script)) echo $script; ?>	
 	<style type="text/css">
-		body{
-			background-color: #000; 
-			background-image: url('<?php echo site_url(); ?>images/especiales_esposcarskiin.jpg'); 
+		body{			
+			background-repeat: no-repeat;			
+			background-image: url('<?php echo site_url(); ?>images/<?php echo $imgback;?>'); 
 			width: 790px; 
-			background-position: center -235px;		
-			margin-top: 180px;
-			#visibility: collapse;
+			background-position: center 0px;		
+			margin-top: 180px;			
 		}
+		.btn_finalizar_compra{
+			background-color: #8dc63f;
+			color: #FFF;
+			font-weight: bold;
+			border: none;
+			height: 30px;
+			cursor: pointer;
+		}		
 	</style>
 		
 </head>
@@ -59,19 +87,6 @@ var WRInitTime=(new Date()).getTime();
 </script>
 <!-- ClickTale end of Top part -->
 	
-<?php 
-	
-##para agregar las tags de google
-$band=0;
-if(array_key_exists('tags_google', $this->session->all_userdata()))
-	$band = 1;
-	//echo "sesion tags_google ses->".$this->session->userdata('tags_google');
-if(isset($tags_google))
-	$band = 1;
-	//echo "sesion tags_google var->".$tags_google;
-	
-if($band == 1){			
-	?>
 <!-- Google Tag Manager -->
 	<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-F8GW"
 	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -82,7 +97,6 @@ if($band == 1){
 	})(window,document,'script','dataLayer','GTM-F8GW');</script>
 <!-- End Google Tag Manager -->
 <?php
-}
 if(isset($url_back['estatus']))
 	if($url_back['estatus'] != 0){
 ?>

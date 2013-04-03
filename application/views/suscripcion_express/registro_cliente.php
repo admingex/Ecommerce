@@ -150,7 +150,7 @@
 		
 	<tr>
 		<td>&nbsp;</td>
-		<td><input type="submit" id="enviar" value="&nbsp;" class="finalizar_compra"/></td>
+		<td><input type="submit" id="enviar" value="Finalizar compra" class="btn_finalizar_compra"/></td>
 	</tr>			
 	</form>
 </table>
@@ -211,8 +211,3 @@ function checa_cp(cp){
 }
 
 </script>
-<style type="text/css">
-	.comprar{
-		
-	}
-</style>

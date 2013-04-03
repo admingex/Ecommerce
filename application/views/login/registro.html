@@ -1,3 +1,119 @@
+<script type="text/javascript">		
+  
+function cambia_radio(id){
+	if(id=="divsi"){
+		$('#divsi').addClass('radio_selected');
+		$('#divno').removeClass('radio_selected');
+		$('.factura').css('display', 'table-cell');
+		$('.dirf').css('display', 'table-cell');
+		document.getElementById('requiere_facturasi').checked='checked';
+		document.getElementById('requiere_facturano').checked='';		
+		cambia_radio2('diviotra');		
+		
+	}
+	else{
+		$('#divno').addClass('radio_selected');
+		$('#divsi').removeClass('radio_selected');
+		$('.factura').css('display', 'none');		
+		document.getElementById('requiere_facturano').checked='checked';
+		document.getElementById('requiere_facturasi').checked='';	
+		$('.dirf').css('display', 'none');	
+		
+	}		
+}	
+
+function cambia_radio2(id){
+	if(id=="divigual"){
+		$('#divigual').addClass('radio_selected');
+		$('#divotra').removeClass('radio_selected');
+		document.getElementById('direccion_igual').checked='checked';
+		document.getElementById('direccion_otra').checked='';
+		llena_campos();		
+	}
+	else{
+		$('#divotra').addClass('radio_selected');
+		$('#divigual').removeClass('radio_selected');
+		document.getElementById('direccion_otra').checked='checked';
+		document.getElementById('direccion_igual').checked='';
+		vacia_campos();
+				
+	}		
+}	
+
+function llena_campos(){	
+	$('#callef').val($('#calle').val());
+	$('#num_extf').val($('#num_ext').val());
+	$('#num_intf').val($('#num_int').val());
+	$('#cpf').val($('#cp').val());
+	$('#estadof').val($('#estado').val());
+	$('#ciudadf').val($('#ciudad').val());
+	$('#coloniaf').val($('#colonia').val());	
+}
+
+function vacia_campos(){
+	$('#callef').val('');
+	$('#num_extf').val('');
+	$('#num_intf').val('');
+	$('#cpf').val('');
+	$('#estadof').val('');
+	$('#ciudadf').val('');
+	$('#coloniaf').val('');
+}
+
+function checa_cp(cp, text){	
+	
+		url_base='https://pagos.grupoexpansion.mx/'			
+		if(cp.length==5){			
+			$.ajax({
+				type: "POST",
+				data: {'codigo_postal' : cp},
+				url: url_base + "suscripcion_express/get_info_sepomex",
+				dataType: "json",				
+				async: false,
+				success: function(data) {
+								
+					if (typeof data.sepomex != null && data.sepomex.length != 0)	{	//regresa un array con las colonias
+									
+						var sepomex = data.sepomex;			//colonias
+						var codigo_postal = sepomex[0].codigo_postal;
+						var clave_estado = sepomex[0].clave_estado;						
+						var estado = sepomex[0].estado;
+						var ciudad = sepomex[0].ciudad;
+																																	
+						$('#estado'+text).val(estado);
+						$('#ciudad'+text).val(ciudad);												
+						var colonias= new Array();												
+						if (sepomex.length > 0){							
+							$.each(sepomex, function(indice, colonia) {
+								if (colonia.colonia != '') {
+									colonias[indice] = colonia.colonia;																								
+								}
+							});	
+							$('#colonia'+text).val('');																				
+							$( "#colonia" +text).autocomplete({
+								source: colonias
+							});																
+						}										
+					} 	
+					else{																						
+						$('#estado'+text).val('');
+						$('#ciudad'+text).val('');
+						$('#colonia'+text).val('');
+					}								
+			},
+			error: function(data) {				
+				alert("error: " + data.error);
+			},
+			complete: function(data) {								
+			},
+			//async: false,
+			cache: false
+		});
+	  }	
+	
+}
+	
+</script>
 <table width="100%">	
 	<form id="form_registro_usuario" action="<?php echo site_url('registro/usuario'); ?>" method="POST">	
 	<tr>
@@ -70,10 +186,276 @@
 		<td colspan="2" class="label_izq">			
 			<?php if(isset($registro_errores['user_reg'])) echo "<span class='validation_message'>".$registro_errores['user_reg']."</span>";?>			
 		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td class="titulo-promo-rojo">
+			<strong>Dirección de Envío</strong> 							
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			Calle
+		</td>
+		<td>
+			<input type="text" name="calle" id="calle"  
+				value="<?php if(isset($_POST['calle'])) echo htmlspecialchars($_POST['calle']);?>" size="35"/>
+			<?php if(isset($registro_errores['calle'])) echo $registro_errores['calle'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			Número Exterior
+		</td>
+		<td>
+			<input type="text" name="num_ext" id="num_ext"  
+				value="<?php if(isset($_POST['num_ext'])) echo htmlspecialchars($_POST['num_ext']);?>" size="7"/>
+			<?php if(isset($registro_errores['num_ext'])) echo $registro_errores['num_ext'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			Número Interior
+		</td>
+		<td>
+			<input type="text" name="num_int" id="num_int"  
+				value="<?php if(isset($_POST['num_int'])) echo htmlspecialchars($_POST['num_int']);?>" size="7"/>
+			<?php if(isset($registro_errores['num_int'])) echo $registro_errores['num_int'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			País
+		</td>
+		<td>			
+			<select name='pais'>
+			<?php 
+				$id_pais = "MX";				//Mexico por default
+				if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
+					$id_pais = $_POST['sel_pais'];
+				
+				foreach($lista_paises_think->result_object() as $pais){
+					if ($id_pais == $pais->id_pais) {
+						echo "<option value='".$pais->id_pais."' selected='true'>".$pais->pais."</option>";
+					} 
+					else {
+						echo "<option value='".$pais->id_pais."'>".$pais->pais."</option>";
+					}				
+				}																	
+			?>									
+			</select>			
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			Código Postal
+		</td>
+		<td>
+			<input type="text" name="cp" id="cp"  
+				value="<?php if(isset($_POST['cp'])) echo htmlspecialchars($_POST['cp']);?>" size="7" onkeyup="checa_cp(this.value, '')" autocomplete="off"/>
+			<?php if(isset($registro_errores['cp'])) echo $registro_errores['cp'];?>
+		</td>
 	</tr>	
+	<tr>
+		<td class="label">
+			Estado
+		</td>
+		<td>
+			<input type="text" name="estado" id="estado"  
+				value="<?php if(isset($_POST['estado'])) echo htmlspecialchars($_POST['estado']);?>" size="35"/>
+			<?php if(isset($registro_errores['estado'])) echo $registro_errores['estado'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			Ciudad
+		</td>
+		<td>
+			<input type="text" name="ciudad" id="ciudad"  
+				value="<?php if(isset($_POST['ciudad'])) echo htmlspecialchars($_POST['ciudad']);?>" size="35"/>
+			<?php if(isset($registro_errores['ciudad'])) echo $registro_errores['ciudad'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			Colonia
+		</td>
+		<td>
+			<input type="text" name="colonia" id="colonia"  
+				value="<?php if(isset($_POST['colonia'])) echo htmlspecialchars($_POST['colonia']);?>" size="35"/>
+			<?php if(isset($registro_errores['colonia'])) echo $registro_errores['colonia'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label_izq" height="40">
+			¿Requiere factura?
+		</td>
+		<td class="label_izq">
+			<div style="display: inline-block">	
+				<input type="radio" id="requiere_facturasi" name="requiere_factura" value="si">
+				<div id="divsi" class="radio_no_selected" onclick="cambia_radio(this.id)">&nbsp;					
+				</div>Si
+			</div>	
+			<div style="margin-left:10px; display: inline-block">
+				<input type="radio" id="requiere_facturano" name="requiere_factura" value="no">
+				<div id="divno" class="radio_no_selected" onclick="cambia_radio(this.id)">&nbsp;					
+				</div>No
+			</div>		
+		</td>			
+	</tr>
+	<tr>
+		<td class="label factura">Nombre o Raz&oacute;n Social</td>
+		<td class="factura">
+			<span class="alinear_izquierda">
+				<input type="text" name="txt_razon_social" id="txt_razon_social" size="30" value="<?php if(isset($_POST['txt_razon_social'])) echo htmlspecialchars($_POST['txt_razon_social']);?>"/>
+			</span>			
+			<?php if(isset($registro_errores['txt_razon_social'])) echo ($registro_errores['txt_razon_social']);?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label factura">RFC</td>
+		<td class="factura">
+			<span class="alinear_izquierda">
+				<input type="text" name="txt_rfc" id="txt_rfc" size="30" value="<?php if(isset($_POST['txt_rfc'])) echo htmlspecialchars($_POST['txt_rfc']);?>"/>
+			</span>			
+			<?php if(isset($registro_errores['txt_rfc'])) echo ($registro_errores['txt_rfc']);?>
+		</td>
+	</tr>
+	<tr>
+		<td class="dirf">&nbsp;</td>
+		<td class="titulo-promo-rojo dirf">
+			<strong>Dirección de Facturación</strong> 							
+		</td>
+	</tr>
+	<tr>
+		<td class="dirf">&nbsp;</td>
+		<td class="label_izq dirf">
+			<div style="display: inline-block">	
+				<input type="radio" id="direccion_igual" name="direccion_facturacion" value="misma">
+				<div id="divigual" class="radio_no_selected" onclick="cambia_radio2(this.id)">&nbsp;					
+				</div>Misma de envio
+			</div>	
+			<div style="margin-left:10px; display: inline-block">
+				<input type="radio" id="direccion_otra" name="direccion_facturacion" value="otra">
+				<div id="divotra" class="radio_no_selected" onclick="cambia_radio2(this.id)">&nbsp;					
+				</div>Otra
+			</div>		
+		</td>
+	</tr>
+	<tr>
+		<td class="label dirf">
+			Calle
+		</td>
+		<td class="dirf">
+			<input type="text" name="callef" id="callef"  
+				value="<?php if(isset($_POST['callef'])) echo htmlspecialchars($_POST['callef']);?>" size="35"/>
+			<?php if(isset($registro_errores['callef'])) echo $registro_errores['callef'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label dirf">
+			Número Exterior
+		</td>
+		<td class="dirf">
+			<input type="text" name="num_extf" id="num_extf"  
+				value="<?php if(isset($_POST['num_extf'])) echo htmlspecialchars($_POST['num_extf']);?>" size="7"/>
+			<?php if(isset($registro_errores['num_extf'])) echo $registro_errores['num_extf'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label dirf">
+			Número Interior
+		</td>
+		<td class="dirf">
+			<input type="text" name="num_intf" id="num_intf"  
+				value="<?php if(isset($_POST['num_intf'])) echo htmlspecialchars($_POST['num_intf']);?>" size="7"/>
+			<?php if(isset($registro_errores['num_intf'])) echo $registro_errores['num_intf'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label dirf">
+			País
+		</td>
+		<td class="dirf">		
+			<select name='paisf'>
+			<?php 
+				$id_pais = "MX";				//Mexico por default
+				if (isset($_POST['sel_paisf']))	//pais seleccionado para la captura
+					$id_pais = $_POST['sel_paisf'];
+				
+				foreach($lista_paises_think->result_object() as $pais){
+					if ($id_pais == $pais->id_pais) {
+						echo "<option value='".$pais->id_pais."' selected='true'>".$pais->pais."</option>";
+					} 
+					else {
+						echo "<option value='".$pais->id_pais."'>".$pais->pais."</option>";
+					}				
+				}																	
+			?>									
+			</select>			
+		</td>
+	</tr>
+	<tr>
+		<td class="label dirf">
+			Código Postal
+		</td>
+		<td class="dirf">
+			<input type="text" name="cpf" id="cpf"  
+				value="<?php if(isset($_POST['cpf'])) echo htmlspecialchars($_POST['cpf']);?>" size="7" onkeyup="checa_cp(this.value, 'f')" autocomplete="off"/>
+			<?php if(isset($registro_errores['cpf'])) echo $registro_errores['cpf'];?>
+		</td>
+	</tr>	
+	<tr>
+		<td class="label dirf">
+			Estado
+		</td>
+		<td class="dirf">
+			<input type="text" name="estadof" id="estadof"  
+				value="<?php if(isset($_POST['estadof'])) echo htmlspecialchars($_POST['estadof']);?>" size="35"/>
+			<?php if(isset($registro_errores['estadof'])) echo $registro_errores['estadof'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label dirf">
+			Ciudad
+		</td>
+		<td class="dirf">
+			<input type="text" name="ciudadf" id="ciudadf"  
+				value="<?php if(isset($_POST['ciudadf'])) echo htmlspecialchars($_POST['ciudadf']);?>" size="35"/>
+			<?php if(isset($registro_errores['ciudadf'])) echo $registro_errores['ciudadf'];?>
+		</td>
+	</tr>
+	<tr>
+		<td class="label dirf">
+			Colonia
+		</td>
+		<td class="dirf">
+			<input type="text" name="coloniaf" id="coloniaf"  
+				value="<?php if(isset($_POST['coloniaf'])) echo htmlspecialchars($_POST['coloniaf']);?>" size="35"/>
+			<?php if(isset($registro_errores['coloniaf'])) echo $registro_errores['coloniaf'];?>
+		</td>
+	</tr>
+
 	<tr>
 		<td>&nbsp;</td>
 		<td><input type="submit" id="enviar" value="&nbsp;" class="crear_cuenta"/></td>
 	</tr>			
 	</form>
 </table>
+<?php
+	if(isset($_POST['requiere_factura']) && $_POST['requiere_factura']=='si'){
+?>
+	<script>
+		cambia_radio('divsi');
+		cambia_radio2('diviotra');		
+	</script>	
+<?php
+	}
+	else{
+?>
+	<script>
+		cambia_radio('divno');				
+	</script>
+<?php
+	}
+?>	

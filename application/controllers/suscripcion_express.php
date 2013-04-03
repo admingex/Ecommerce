@@ -56,12 +56,13 @@ class Suscripcion_Express extends CI_Controller {
 		$this->api = New Api();										
     }
 	
-	public function index(){
+	public function index(){		
 		$this->datos();									
 	}	
 	
-	public function datos($sitio = "", $canal = "", $promocion = ""){
+	public function datos($sitio = "", $canal = "", $promocion = ""){			
 		$data['title']='Suscripción Express';
+		
 		
 		if(is_numeric($sitio) && is_numeric($canal) && is_numeric($promocion)){
 			
@@ -74,7 +75,14 @@ class Suscripcion_Express extends CI_Controller {
 			$this->session->set_userdata('id_promocion', $promocion);
 			$this->session->set_userdata('promociones', array(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion)));
 			$promoexp= array(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));					
-			$data['detalle_promociones']=$this->api->obtiene_articulos_y_promociones($promoexp);						
+			$data['detalle_promociones']=$this->api->obtiene_articulos_y_promociones($promoexp);									
+			$oc_id =  key($data['detalle_promociones']['articulo_oc']);		
+			$data['imagen_back'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->url_imagen;
+			$this->session->set_userdata('imagen_back', $data['imagen_back']);
+				
+			$data['metatags'] = $this->img_obtiene($oc_id);			
+			$this->session->set_userdata('oc_id_img', $oc_id);
+			
 			
 			if($_POST){
 				
@@ -97,7 +105,7 @@ class Suscripcion_Express extends CI_Controller {
 						if($dirreg->num_rows() > 0){
 							$dir=end($dirreg->result_object());							
 							$this->session->set_userdata('consecutivo', $dir->id_consecutivoSi);
-							$pago = site_url('suscripcion_express/pago');
+							$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
 							header("Location: $pago");
 								
 						}
@@ -110,7 +118,7 @@ class Suscripcion_Express extends CI_Controller {
 							$regdir = $this->suscripcion_express_model->insertar_direccion($datos['direccion']);
 							if($regdir === 1){
 								$this->session->set_userdata('consecutivo', $consecutivo);	
-								$pago = site_url('suscripcion_express/pago');
+								$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
 								header("Location: $pago");
 							}	
 							else{
@@ -172,7 +180,7 @@ class Suscripcion_Express extends CI_Controller {
 									$regdir = $this->suscripcion_express_model->insertar_direccion($datos['direccion']);
 									if($regdir === 1){
 										$this->session->set_userdata('consecutivo', $consecutivo);	
-										$pago = site_url('suscripcion_express/pago');
+										$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
 										header("Location: $pago");
 									}	
 									else{
@@ -211,7 +219,7 @@ class Suscripcion_Express extends CI_Controller {
 		
 	}
 	
-	public function pago(){
+	public function pago($sitio='', $canal='', $promocion =''){
 		$data['title']='Suscripción express';			
 		
 		$sitio = $this->session->userdata('id_sitio');
@@ -230,6 +238,7 @@ class Suscripcion_Express extends CI_Controller {
 		
 		$data['promo'] = $this->api->obtener_detalle_promo($sitio, $canal, $promocion );
 		$data['lista_tipo_tarjeta'] = $this->forma_pago_model->listar_tipos_tarjeta();													
+		$data['metatags'] = $this->img_obtiene($this->session->userdata('oc_id_img'));	
 													
 		if($_POST){
 			
@@ -262,7 +271,13 @@ class Suscripcion_Express extends CI_Controller {
 				//funcion para registrar la tarjeta											
 				$this->registrar_tc($id_cliente);								
 				
-				$this->checkout();
+				echo "  <form id='form_pago' name='form_pago' action ='".site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion)."' method='POST'>
+							<input type='text' name='txt_codigo' value='".$_POST['txt_codigo']."' style='display: none' />
+							<input type='submit' name='enviar' value = '' style='display: none'/>
+						</form>";
+				echo " <script>document.getElementById('form_pago').submit()</script>";
+				
+				//$this->checkout();
 				//$pago = site_url('suscripcion_express/resumen');
 				//header("Location: $pago");									
 				 				
@@ -1555,7 +1570,7 @@ class Suscripcion_Express extends CI_Controller {
 			$this->load->view('suscripcion_express/promocion.html', $data);
 		}																						
 		$this->load->view($folder.'/'.$page, $data);
-		//$this->load->view('s/footer', $data);
+		$this->load->view('suscripcion_express/footer', $data);
 	}
 	
 	private function genera_pass(){
@@ -2136,6 +2151,14 @@ class Suscripcion_Express extends CI_Controller {
 					
 		//return ($email && mail($email, $asunto, $mensaje));
 		return mail($email, "=?UTF-8?B?".base64_encode($asunto)."?=", $mensaje, $headers);
+	}
+	
+	private function img_obtiene($oc_id){
+		$datos = array();			
+			$datos['descripcion_larga'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->descripcion_larga;
+			$datos['descripcion_corta'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->descripcion_corta;
+			$datos['nombre'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->nombre;
+		return $datos;	
 	}
 	
 }

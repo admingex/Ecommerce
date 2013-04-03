@@ -276,7 +276,7 @@ echo "</pre>";
 		
 			<tr>
 				<td>&nbsp;</td>
-				<td><input type="submit" id="enviar" value="&nbsp;" class="finalizar_compra"/></td>
+				<td><input type="submit" id="enviar" value="Finalizar compra" class="btn_finalizar_compra"/></td>
 			</tr>	
 	</form>
 </table>

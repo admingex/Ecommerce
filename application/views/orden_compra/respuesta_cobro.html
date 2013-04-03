@@ -82,7 +82,7 @@
 											$desc_art.= $oc;
 									}
 								}
-								}
+								
 								//medio de entrega del artículo
 								$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
 																
@@ -156,7 +156,11 @@
 		   	       				<b>Respuesta del Banco:&nbsp;&nbsp;</b><span class='instrucciones'>";
 		   	       				
 		   	       				if ($resultado->respuesta_banco != "approved") {
-									echo "<b style='color: #E60000'>Pago Declinado</b>";
+									echo "<b style='color: #E60000'>Pago Declinado</b>";	
+									if(stristr($tc->descripcionVc, 'AMERICAN')){
+		   	       						echo "<br /><b style='color: #E60000'>Apreciable cliente,<br />
+										Su pago fue declinado por American Express, le pedimos por favor no realizar ningún intento más de pago y validar con American Express si se realizó algún cargo a su tarjeta.</b>";
+		   	       					}		   	       										
 								} else {
 									echo "<b style='color: #E60000'>Pago Aprobado</b>";
 								}

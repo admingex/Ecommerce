@@ -36,6 +36,15 @@ class Login_Registro_model extends CI_Model {
 		return $res;
 	}
 	
+	function registro_cliente($datos_cliente='') {		
+		
+		$qry = "INSERT INTO CMS_IntCliente (id_clienteIn, salutation, fname, lname, email, password)
+				VALUES (".$datos_cliente['id_clienteIn'].", '".$datos_cliente['salutation']."', '".$datos_cliente['fname']."', '".$datos_cliente['lname']."', '".$datos_cliente['email']."', '".$datos_cliente['password']."')";
+		$res = $this->db->query($qry);
+		
+		return (int)$res;
+	}
+	
 	function registrar_cliente($cliente = array())
     {
     	$nuevo_res='';
