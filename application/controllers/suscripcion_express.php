@@ -239,6 +239,7 @@ class Suscripcion_Express extends CI_Controller {
 		$data['promo'] = $this->api->obtener_detalle_promo($sitio, $canal, $promocion );
 		$data['lista_tipo_tarjeta'] = $this->forma_pago_model->listar_tipos_tarjeta();													
 		$data['metatags'] = $this->img_obtiene($this->session->userdata('oc_id_img'));	
+		$this->load->view('suscripcion_express/header', $data);	
 													
 		if($_POST){
 			
@@ -269,17 +270,18 @@ class Suscripcion_Express extends CI_Controller {
 				$id_cliente = $this->session->userdata('id_cliente');																	
 																																										
 				//funcion para registrar la tarjeta											
-				$this->registrar_tc($id_cliente);								
-				
-				echo "  <form id='form_pago' name='form_pago' action ='".site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion)."' method='POST'>
+				$this->registrar_tc($id_cliente);																
+								
+				echo "  <form id='form_pago' name='form_pago' action ='".site_url('suscripcion_express/checkout/'.$sitio.'/'.$canal.'/'.$promocion)."' method='POST'>
 							<input type='text' name='txt_codigo' value='".$_POST['txt_codigo']."' style='display: none' />
+							<input type='text' name='sel_tipo_tarjeta' value='".$_POST['sel_tipo_tarjeta']."' style='display: none' />							
 							<input type='submit' name='enviar' value = '' style='display: none'/>
 						</form>";
 				echo " <script>document.getElementById('form_pago').submit()</script>";
 				
 				//$this->checkout();
 				//$pago = site_url('suscripcion_express/resumen');
-				//header("Location: $pago");									
+				//header("Location: $pago");													
 				 				
 			}
 			else{
@@ -420,20 +422,26 @@ class Suscripcion_Express extends CI_Controller {
 		//$this->cargar_vista('', 'orden_compra', $data);
 	}
 	
-	public function checkout(){
+	public function checkout($sitio='', $canal = '', $promocion = ''){
+		
+		
+				
 		$data['title'] = "Resultado de la petición de cobro";
 		$data['subtitle'] = "Resultado de la petición de cobro";	
 		$data['datos_login'] = '';
+		$data['metatags'] = $this->img_obtiene($this->session->userdata('oc_id_img'));	
 		$id_cliente=$this->session->userdata('id_cliente');
 		
 		###se calculan nuevamente los datos para mostar el resumen si el codigo de verificacionno es correcto
 		$this->detalle_promociones =$this->api->obtiene_articulos_y_promociones($this->session->userdata('promociones'));
-		$data['detalle_promociones']= $this->detalle_promociones;
-		
+		$data['detalle_promociones']= $this->detalle_promociones;			
+		$this->load->view('suscripcion_express/header', $data);	
+				
 		$data['requiere_envio'] = $this->session->userdata('consecutivo');
 		$dir_envio = $this->session->userdata('consecutivo');
 		
 		$detalles_direcciones = array();		//Información de las direcciones que se mostrará
+				
 
 		if (!empty($dir_envio)) {	//si no existe, se crea "dse" y se recupera la información de la dirección general para todas las promociones
 			//recuperar las promociones para saber cuál requiere envío
@@ -1385,6 +1393,13 @@ class Suscripcion_Express extends CI_Controller {
 				$datos['tc']['id_tipo_tarjetaSi'] = $_POST['sel_tipo_tarjeta'];
 				$tipo = $_POST['sel_tipo_tarjeta'];
 			}
+			/*
+			echo "<pre>";
+				print_r($_POST);
+			echo "</pre>";
+			echo $_POST['sel_tipo_tarjeta'];
+			exit;
+			*/
 			
 			if (array_key_exists('txt_numeroTarjeta', $_POST)) {
 				if ($this->validar_tarjeta($datos['tc']['id_tipo_tarjetaSi'], trim($_POST['txt_numeroTarjeta']))) {					 
@@ -1684,7 +1699,7 @@ class Suscripcion_Express extends CI_Controller {
 			
 			//Verificar el flujo() => cargar o no en session y redireccionar
 			$this->cargar_en_session($tarjeta);
-			echo "no guardar";			
+			//echo "no guardar";			
 		}
 		 
 		
@@ -1779,7 +1794,7 @@ class Suscripcion_Express extends CI_Controller {
 		// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 		$c = curl_init();
 		// CURL de la URL donde se haran las peticiones //
-		curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
+		//curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 		curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
 		//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 		

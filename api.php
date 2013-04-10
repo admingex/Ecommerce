@@ -733,7 +733,7 @@ class Api extends CI_Controller {
 						}												
 					}
 				}
-				exit;
+				
 				$det_promo = 1;	//se desactiva la bandera pparabuscar el tipo de producto de los artículos de la promoción
 			}
 			

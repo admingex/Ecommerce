@@ -9,7 +9,7 @@
 	
 	//echo "<pre>";
 		//print_r($detalle_promociones);
-		//print_r($detalle_promociones['ids_promociones']);
+		//print_r($detalle_promociones['ids_promociones']);	
 		$images_b = array('elle1.jpg', 'elle2.jpg');
 		if (in_array('1405', $detalle_promociones['ids_promociones'])){
 			$imgback = $images_b[1];			
