@@ -978,7 +978,7 @@ class Orden_Compra extends CI_Controller {
 						}
 						
 						if (!$id_compra) {	//Si falla el registro inicial de la compra en CCTC
-							echo "compra registrada!!!!";exit;
+							//echo "compra registrada!!!!";exit;
 							redirect('mensaje/'.md5(3), 'refresh');
 						}
 						
