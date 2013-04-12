@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /ecommerce/
+    RewriteBase /
 	
 	#Enforce SSL https://www. 
 	#RewriteCond %{HTTPS} !=on

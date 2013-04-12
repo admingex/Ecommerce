@@ -26,7 +26,7 @@ echo "	    IDC Online
           <td class='label'>Nueva ley de ayuda alimentaría
           </td>
           <td>";
-echo "<form name='realizar_pago' action='".site_url('/api/1//1189/pago')."' method='POST'>
+echo "<form name='realizar_pago' action='".site_url('/api/1/7/131/pago')."' method='POST'>
       	  <input type='hidden' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>
           <input type='hidden' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
           <input type='submit' name='enviar' value='Comprar' class='boton' />	aa		          
@@ -35,11 +35,11 @@ echo "<form name='realizar_pago' action='".site_url('/api/1//1189/pago')."' meth
         </tr>
         <tr>
           <td class='label'>
-            Factura digital 2011
+            eXP
           </td>
           <td>";      		
-echo "<form name='realizar_pago' action='".site_url('/api/1/7/116/pago')."' method='POST'>
-      	  <input type='hidden' name='guidx' value='{2A629162-9A1B-11E1-A5B0-5DF26188709B}' size='70'/>
+echo "<form name='realizar_pago' action='".site_url('/api/2/8/278/pago')."' method='POST'>
+      	  <input type='hidden' name='guidx' value='{119FFA5C-9A1B-11E1-B947-3CF26188709B}' size='70'/>
           <input type='hidden' name='guidz' value='".$this->session->userdata('guidz')."' size='70'/>
           <input type='submit' name='enviar' value='Comprar' class='boton' />		          
       </form>

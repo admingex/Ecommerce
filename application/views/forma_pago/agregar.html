@@ -31,18 +31,21 @@
 									$tipo_tarjeta_id = $_POST['sel_tipo_tarjeta'];
 								foreach($lista_tipo_tarjeta as $tipo_banco)
 								{
-									if ($tipo_tarjeta_id == $tipo_banco->id_tipo_tarjeta) {
-										echo "<option value='".$tipo_banco->id_tipo_tarjeta."' selected='true'>".
-											$tipo_banco->descripcion.
-											"</option>";
-									} else {
-										echo "<option value='".$tipo_banco->id_tipo_tarjeta."'>".
-											$tipo_banco->descripcion.
-											"</option>";
-									}
+									if($tipo_banco->id_tipo_tarjeta != '17'){
+										if ($tipo_tarjeta_id == $tipo_banco->id_tipo_tarjeta) {
+											echo "<option value='".$tipo_banco->id_tipo_tarjeta."' selected='true'>".
+												$tipo_banco->descripcion.
+												"</option>";
+										} else {
+											echo "<option value='".$tipo_banco->id_tipo_tarjeta."'>".
+												$tipo_banco->descripcion.
+												"</option>";
+										}
+									}	
 								}
 							}
 							?>
+							<option value='17'>OTRO</option>
 						</select>
 					</span>
 					<span class="asterisco">&nbsp;</span>

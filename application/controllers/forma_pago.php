@@ -52,9 +52,14 @@ class Forma_Pago extends CI_Controller {
 		
 		//listar por default las tarjetas del cliente
 		$data['lista_tarjetas'] = $this->forma_pago_model->listar_tarjetas($this->id_cliente);
-				
-		//cargar vista	
-		$this->cargar_vista('', 'forma_pago', $data);
+			
+		//cargar vista
+		if($data['lista_tarjetas']->num_rows()>0){	
+			$this->cargar_vista('', 'forma_pago', $data);
+		}
+		else{
+			$this->registrar('tc');
+		}		
 		
 		//Se elimina de session por seguridad
 		if ($this->session->userdata('tarjeta'))
@@ -775,7 +780,7 @@ class Forma_Pago extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
@@ -840,7 +845,7 @@ class Forma_Pago extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
@@ -954,7 +959,7 @@ class Forma_Pago extends CI_Controller {
 		// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 		$c = curl_init();
 		// CURL de la URL donde se haran las peticiones //
-		curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+		curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 		//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
 		// Se enviaran los datos por POST //
 		curl_setopt($c, CURLOPT_POST, true);
@@ -1109,7 +1114,7 @@ class Forma_Pago extends CI_Controller {
 		// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 		$c = curl_init();
 		// CURL de la URL donde se haran las peticiones //
-		curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+		curl_setopt($c, CURLOPT_URL, 'http://dev.interfase.mx/interfase.php');
 		//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interface_cctc/solicitar_post.php');
 		// Se enviaran los datos por POST //
 		curl_setopt($c, CURLOPT_POST, true);
@@ -1242,7 +1247,13 @@ class Forma_Pago extends CI_Controller {
 						if ($this->forma_pago_model->existe_compra($this->id_cliente)) {	//compra
 							$destino = "orden_compra";
 						} else {
-							$destino = "direccion_facturacion";
+							if($this->session->userdata('requiere_factura')=='no'){
+								$destino = "orden_compra";	
+							}
+							else{
+								$destino = "direccion_facturacion";
+							}
+							
 						}						
 					}
 				} else {
@@ -1256,7 +1267,12 @@ class Forma_Pago extends CI_Controller {
 					if ($this->forma_pago_model->existe_compra($this->id_cliente)) {	//compra
 						$destino = "orden_compra";
 					} else {
-						$destino = "direccion_facturacion";
+						if($this->session->userdata('requiere_factura')=='no'){
+							$destino = "orden_compra";	
+						}
+						else{
+							$destino = "direccion_facturacion";
+						}
 					}						
 				} 
 			}
@@ -1393,7 +1409,7 @@ class Forma_Pago extends CI_Controller {
 				$datos['guardar'] = $_POST['chk_guardar'];		//indicador para saber si se guarda o no la tarjeta
 				$datos['tc']['id_estatusSi'] = 1;
 			}
-			
+			/*
 			//tomando en cuenta la renovación automática
 			$ra = $this->session->userdata('lleva_ra');
 			//si lleva rs, se guarda la tarjeta
@@ -1401,7 +1417,8 @@ class Forma_Pago extends CI_Controller {
 				$datos['guardar'] = $_POST['chk_guardar'];
 				$datos['tc']['id_estatusSi'] = 1;
 			}
-			
+			*/			
+
 			if (array_key_exists('chk_default', $_POST)) {
 				$datos['tc']['id_estatusSi'] = 3;	//indica que será la tarjeta predeterminada
 				$datos['predeterminar'] = true;	

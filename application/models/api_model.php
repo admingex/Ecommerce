@@ -83,4 +83,22 @@ class Api_model extends CI_Model {
 		$res = $this->db->get_where('CMS_IntIssue', array('issue_id'=>$issue_id));
 		return $res;
 	}		
+	
+	function obtener_ocid($ocid){
+		$res = $this->db->get_where('TND_CatOCThink', array('oc_id'=>$ocid));
+		if($res->num_rows()!=0){
+			return $res;
+		}
+		else{
+			return FALSE;
+		}
+	}
+	
+	function obtener_sitio_promo($id_promocion){
+		$qry = "SELECT * 
+				FROM CMS_RelPromocionSitioCanal WHERE id_promocionIn=".$id_promocion." AND id_sitioSi!=3 LIMIT 1";
+		$res = $this->db->query($qry);
+		
+		return $res;		
+	}
 }

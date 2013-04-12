@@ -41,7 +41,7 @@ class Reporte_model extends CI_Model {
 		return $res;	
 	}
 	
-	function obtener_dir_envio($id_compra, $id_cliente){		
+	function obtener_rel_dir_envio($id_compra, $id_cliente){		
 		$qry = "SELECT * FROM CMS_RelCompraDireccion 
 		        WHERE id_clienteIn=".$id_cliente." AND id_compraIn=".$id_compra." AND address_type=0";
 		$res = $this->db->query($qry);			
@@ -133,6 +133,27 @@ class Reporte_model extends CI_Model {
 		else{
 			return FALSE;
 		}			
+	}
+	
+	public function compras_cliente_id($id_cliente){
+		$qry = "select CA.id_clienteIn, CD.id_transaccionBi, CA.id_compraIn,CA.id_articuloIn, CA.id_promocionIn , OT.orderhdr_id, OT.order_item_seq, OT.customer_id, -- CP.id_TCSi,
+ A.oc_id,OC.nombreVc, A.order_code_id, A.source_code_id, A.tarifaDC, A.monedaVc, CA.fecha_registroTs, 
+ CD.codigo_autorizacionVc, CD.fecha_registroTs as fecha2, A.taxableBi
+from cms0mxdb.CMS_RelCompraArticulo CA
+left outer join cms0mxdb.CMS_RelOrdenThink OT on CA.id_clienteIn = OT.id_clienteIn and CA.id_compraIn = OT.id_compraIn
+and CA.id_promocionIn=OT.id_promocionIn
+ ,cms0mxdb.CMS_IntArticulo A, cms0mxdb.CMS_RelCompraPagoDetalleTC CD, cms0mxdb.TND_CatOCThink OC
+where CA.id_articuloIn=A.id_articuloIn
+ and CA.id_promocionIn=A.id_promocionIn
+ and CA.id_compraIn = CD.id_compraIn
+ and CA.id_clienteIn = CD.id_clienteIn
+ -- and CD.respuesta_bancoVc='approved'
+ and A.oc_id = OC.oc_id
+ -- and OT.customer_id=5227712 
+ and CA.id_clienteIn=".$id_cliente."
+ order by OT.customer_id, CA.id_compraIn,CA.id_articuloIn, OT.orderhdr_id;";
+		$res = $this->db->query($qry);	
+		return $res;
 	}
 	
 	public function fecha_fin($fecha_fin){

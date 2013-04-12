@@ -1,11 +1,12 @@
 <section id='encabezado'>
 	<header>
-		<?php		    			
+
+		<?php					    			
 			if(isset($this->session->userdata('sitio')->url_imageVc) &&  $this->session->userdata('sitio')->url_imageVc!= ""){				
-				echo "<img src='".base_url() . $this->session->userdata('sitio')->url_imageVc . "' alt='Grupo Expansión' />";	
+				echo "<a href='".$this->session->userdata('sitio')->urlVc."'><img src='".base_url() . $this->session->userdata('sitio')->url_imageVc . "' alt='Grupo Expansión' border=0 /></a>";	
 			}	
-			else if (!empty($url_imageVc)){
-				echo "<img src='".base_url() . $url_imageVc . "' alt='Grupo Expansión' />";
+			else if (!empty($url_imageVc)){								
+				echo "<a href='$url_sitio'><img src='".base_url() . $url_imageVc . "' alt='Grupo Expansión' border=0/></a>";
 			}
 			else{
 				echo "<div style='width: 300px; height: 30px;'></div>";		

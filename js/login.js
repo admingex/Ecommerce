@@ -1,13 +1,12 @@
 /**
  * @author harteaga956
  */
+var url_base = "https://pagos.grupoexpansion.mx/";
 $(document).ready(function() {
 	var reg_email = /^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/;
 	var email = $("#email");
 	var passwd = $("#password");
-	var registro = false;
-	var url_base = "http://localhost/ecommerce/";
-	//var url_base = "http://10.177.78.54/ecommerce/";
+	var registro = false;	
 	
 	$('input').bind("click keypress", function() {
 		$(".error").remove();
@@ -105,7 +104,7 @@ function consulta_mail(mail) {
 				if(data.mail){
 					cte_reg=document.getElementById('tipo_inicio2').checked;							
 					if(!cte_reg && data.mail==1){										
-						$('#email').focus().after("<div class='error2'>Esta dirección de correo ya se encuentra registrada</div>");
+						$('#email').focus().after("<div class='error2'>ya tenemos registrado tu correo, por favor <a href='"+url_base+"password' id='olvido_contrasena' style='color: #FFF'>recupera aquí tu contraseña</a></div>");
 					}	
 				}
 																		  				  									  										

@@ -15,7 +15,7 @@
 |
 */
 
-$config['base_url']	= 'http://localhost/ecommerce/';
+$config['base_url']	= 'http://ecommerce/';
 /*
 |--------------------------------------------------------------------------
 | Index File

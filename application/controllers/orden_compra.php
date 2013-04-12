@@ -364,6 +364,7 @@ class Orden_Compra extends CI_Controller {
 				#### Comienza el proceso de cobro / pago
 				
 				$tipo_pago = self::$TIPO_PAGO['Otro'];	//ninguno válido al inicio
+
 								
 				#### Configuración de la forma de pago y solicitud de cobro a CCTC
 				
@@ -386,6 +387,7 @@ class Orden_Compra extends CI_Controller {
 					} else {	///////registrar la orden de compra y el detalle del pago con depósito
 						$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago, $primer_digito);	
 					}
+					
 					
 					## para la prueba del correo
 					/*$id_compra = 1;	//para el test
@@ -452,10 +454,13 @@ class Orden_Compra extends CI_Controller {
 							$promo_requiere_envio = $promociones['promocion']->requiere_envio;
 							
 							//sacar la descripción que se mostrará de la promoción
+							
+							$mensaje.= "<tr><td colspan='4'>".$desc_promo."</td></tr>";
+							
 							foreach ($promociones['articulos'] as $articulo) {
 								$mensaje .= 
 								"<tr>
-									<td colspan='2' class='instrucciones'>".$desc_promo;
+									<td colspan='2' class='instrucciones'>";
 								if ($articulo['issue_id']) {
 									foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
 										if ($k == $articulo['issue_id']) {
@@ -472,8 +477,13 @@ class Orden_Compra extends CI_Controller {
 											}
 										}
 									}
-								} else {
-									$desc_art = $articulo['tipo_productoVc'];
+								} else {									
+									$desc_art=$articulo['tipo_productoVc']."&nbsp;";								
+									foreach($detalle_promociones['articulo_oc'] as $i => $oc){
+										if($i == $articulo['oc_id'] ){
+											$desc_art.= $oc;	
+										}																	
+									}
 								}
 								//medio de entrega del artículo
 								$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
@@ -499,7 +509,7 @@ class Orden_Compra extends CI_Controller {
 								$mensaje .=
 									"</td>
 									<td>&nbsp;</td>
-									<td class='instrucciones' align='right'>$" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+									<td class='instrucciones' align='right'>$" . number_format($articulo['tarifaDc'], 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
 								"</tr>";
 							}
 						}
@@ -509,7 +519,7 @@ class Orden_Compra extends CI_Controller {
 						   	           </td>
 						   	           <td align='right'>Sub-total:
 						   	           </td>
-						   	           <td align='right'>$".number_format($subtotal, 2, '.', ',')."&nbsp;".$moneda."
+						   	           <td align='right'>$".number_format($detalle_promociones['total_pagar'], 2, '.', ',')."&nbsp;".$moneda."
 						   	           </td>
 						   	       </tr>
 						   	       <tr>
@@ -824,11 +834,12 @@ class Orden_Compra extends CI_Controller {
 								//indicador de que requiere envío
 								$promo_requiere_envio = $promociones['promocion']->requiere_envio;
 								
+								$mensaje.= "<tr><td colspan='4'>".$desc_promo."</td></tr>";
 								//sacar la descripción que se mostrará de la promoción
 								foreach ($promociones['articulos'] as $articulo) {
 									$mensaje .= 
 									"<tr>
-										<td colspan='2' class='instrucciones'>".$desc_promo;
+										<td colspan='2' class='instrucciones'>";
 									if ($articulo['issue_id']) {
 										foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
 											if ($k == $articulo['issue_id']) {
@@ -845,8 +856,13 @@ class Orden_Compra extends CI_Controller {
 												}
 											}
 										}
-									} else {
-										$desc_art = $articulo['tipo_productoVc'];
+									} else {										
+										$desc_art=$articulo['tipo_productoVc']."&nbsp;";								
+										foreach($detalle_promociones['articulo_oc'] as $i => $oc){
+											if($i == $articulo['oc_id'] ){
+												$desc_art.= $oc;	
+											}																	
+										}
 									}
 									//medio de entrega del artículo
 									$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
@@ -872,7 +888,7 @@ class Orden_Compra extends CI_Controller {
 									$mensaje .=
 										"</td>
 										<td>&nbsp;</td>
-										<td class='instrucciones' align='right'>$" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+										<td class='instrucciones' align='right'>$" . number_format($articulo['tarifaDc'], 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
 									"</tr>";
 								}
 							}
@@ -882,7 +898,7 @@ class Orden_Compra extends CI_Controller {
 							   	           </td>
 							   	           <td align='right'>Sub-total:
 							   	           </td>
-							   	           <td align='right'>$".number_format($subtotal, 2, '.', ',')."&nbsp;".$moneda."
+							   	           <td align='right'>$".number_format($detalle_promociones['total_pagar'], 2, '.', ',')."&nbsp;".$moneda."
 							   	           </td>
 							   	       </tr>
 							   	       <tr>
@@ -987,15 +1003,21 @@ class Orden_Compra extends CI_Controller {
 						
 						//echo "info orden<pre>";
 						//print_r($informacion_orden);
-						//echo "</pre>";
+						//echo "</pre><br/>";
 						//exit;
 						
 						//petición de pago a través de la interfase, el resultado ya es un objeto
 						$simple_result = $this->solicitar_pago_CCTC_ids($informacion_orden);
-						
+
 						//Registro del estatus de la respuesta de CCTC
 						$this->registrar_estatus_compra($id_compra, (int)$id_cliente, self::$ESTATUS_COMPRA['RESPUESTA_CCTC']);
-					
+						
+						/*
+						echo "simple_result<pre> gettype->";//.gettype($simple_result);
+						print_r($simple_result);
+						echo "</pre>";
+						exit;
+						*/
 						//Registro de la respuesta de CCTC de la compra en ecommerce
 						$info_detalle_pago_tc = array('id_compraIn'=> $id_compra, 'id_clienteIn' => $id_cliente, 'id_TCSi' => $consecutivo, 
 														'id_transaccionBi' => $simple_result->id_transaccionNu, 'respuesta_bancoVc' => $simple_result->respuesta_banco,
@@ -1112,11 +1134,13 @@ class Orden_Compra extends CI_Controller {
 								//indicador de que requiere envío
 								$promo_requiere_envio = $promociones['promocion']->requiere_envio;
 								
+								$mensaje.= "<tr><td colspan='4'>".$desc_promo."</td></tr>";
+								
 								//sacar la descripción que se mostrará de la promoción
 								foreach ($promociones['articulos'] as $articulo) {
 									$mensaje .= 
 									"<tr>
-										<td colspan='2' class='instrucciones'>".$desc_promo;
+										<td colspan='2' class='instrucciones'>";
 									if ($articulo['issue_id']) {
 										foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
 											if ($k == $articulo['issue_id']) {
@@ -1133,8 +1157,13 @@ class Orden_Compra extends CI_Controller {
 												}
 											}
 										}
-									} else {
-										$desc_art = $articulo['tipo_productoVc'];
+									} else {										
+										$desc_art=$articulo['tipo_productoVc']."&nbsp;";								
+										foreach($detalle_promociones['articulo_oc'] as $i => $oc){
+											if($i == $articulo['oc_id'] ){
+												$desc_art.= $oc;	
+											}																	
+										}
 									}
 									//medio de entrega del artículo
 									$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
@@ -1160,7 +1189,7 @@ class Orden_Compra extends CI_Controller {
 									$mensaje .=
 										"</td>
 										<td>&nbsp;</td>
-										<td class='instrucciones' align='right'>$" . number_format($promociones['promocion']->subtotal_promocion, 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+										<td class='instrucciones' align='right'>$" . number_format($articulo['tarifaDc'], 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
 									"</tr>";
 								}
 							}
@@ -1170,7 +1199,7 @@ class Orden_Compra extends CI_Controller {
 							   	           </td>
 							   	           <td align='right'>Sub-total:
 							   	           </td>
-							   	           <td align='right'>$".number_format($subtotal, 2, '.', ',')."&nbsp;".$moneda."
+							   	           <td align='right'>$".number_format($detalle_promociones['total_pagar'], 2, '.', ',')."&nbsp;".$moneda."
 							   	           </td>
 							   	       </tr>
 							   	       <tr>
@@ -1267,9 +1296,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1311,9 +1340,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1325,10 +1354,10 @@ class Orden_Compra extends CI_Controller {
 			// Cerramos el CURL //
 			curl_close($c);
 			
-			/*echo "<pre>";
-			print_r(json_decode($resultado));
-			echo "</pre>";
-			exit;*/
+			//echo "<pre>";
+			//print_r(json_decode($resultado));
+			//echo "</pre>";
+			//exit;
 			
 			return json_decode($resultado);
 		}
@@ -1356,9 +1385,9 @@ class Orden_Compra extends CI_Controller {
 			// Inicializamos el CURL / SI no funciona se puede habilitar en el php.ini //
 			$c = curl_init();
 			// CURL de la URL donde se haran las peticiones //
-			//curl_setopt($c, CURLOPT_URL, 'http://10.177.78.54/interfase_cctc/interfase.php');
-			//curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
-			curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'dev.interfase.mx/interfase.php');
+			curl_setopt($c, CURLOPT_URL, 'http://10.43.29.196/interfase_cctc/interfase.php');
+			//curl_setopt($c, CURLOPT_URL, 'http://localhost/interfase_cctc/interfase.php');
 			// Se enviaran los datos por POST //
 			curl_setopt($c, CURLOPT_POST, true);
 			// Que nos envie el resultado del JSON //
@@ -1417,15 +1446,25 @@ class Orden_Compra extends CI_Controller {
 		} else {
 			//este caso puede ser denied o Incorrect information, o Duplicated Informaion
 			$estatus_pago = 0;
-		}
-		
-		$datos = array();
-		
-		$datos['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);
-		$datos['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
-		$datos['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;	
+		}					
+
+		$datos = array();		
+		$datos['cadena_comprobacion'] = md5($this->session->userdata('guidx').$this->session->userdata('guidy').$this->session->userdata('guidz').$estatus_pago);		
 		$datos['estatus']=$estatus_pago;
 		$datos['id_compra']=$id_compra;
+		
+		if(array_key_exists('issues_idc', $this->detalle_promociones)){				
+				$datos['datos_login_idc'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key).json_encode($this->detalle_promociones['issues_idc']['clave'])."|", $this->api->key);				
+				$datos['urlback_idc'] = $this->detalle_promociones['issues_idc']['url_back'];
+		}	
+		if(array_key_exists('issues_cnn', $this->detalle_promociones)){				
+				$datos['datos_login_cnn'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key).json_encode($this->detalle_promociones['issues_cnn']['clave'])."|", $this->api->key);				;				
+				$datos['urlback_cnn'] = $this->detalle_promociones['issues_cnn']['url_back'];
+		}	
+		
+		$datos['datos_login'] = $this->api->encrypt($id_compra."|".$this->api->decrypt($this->session->userdata('datos_login'),$this->api->key), $this->api->key);
+		$datos['urlback'] = $this->session->userdata('sitio')->url_PostbackVc;				
+		
 		/*echo "<pre>";
 		print_r($datos);
 		echo "</pre>";
@@ -1468,8 +1507,8 @@ class Orden_Compra extends CI_Controller {
 			/*
 			echo "<pre>";
 			print_r($info_articulos);
-			echo "</pre>";
-			exit;*/
+			echo "</pre>";*/
+			//exit;
 			
 			/////// forma pago ///////
 			$id_TCSi = 0;
@@ -1484,7 +1523,13 @@ class Orden_Compra extends CI_Controller {
 			}
 			
 			$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => $id_TCSi, 'primer_digitoTi' => $primer_digito);
-			
+			/*
+			echo "<pre>";
+			print_r($info_pago);
+			echo "</pre>"; */
+			//exit;
+
+
 			/////// direccion(es) de envío///////
 			$info_direcciones = array();
 			//las direcciones de envío vienene como argumento en la llamada
@@ -1533,19 +1578,27 @@ class Orden_Compra extends CI_Controller {
 				//si no requiere se vacía
 				$info_direcciones['facturacion'] = array();
 			}
-			
-			/*echo "<pre>";
+			/*
+			echo "<pre>";
 			print_r($info_direcciones);
 			echo "</pre>";
-			exit;*/
+			exit;
+			 */ 
 			///////estatus de registro de la compra///////
 			$estatus = ($tipo_pago == self::$TIPO_PAGO['Deposito_Bancario']) ? self::$ESTATUS_COMPRA['PAGO_DEPOSITO_BANCARIO'] : self::$ESTATUS_COMPRA['SOLICITUD_CCTC'];
 			$info_estatus = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_estatusCompraSi' => $estatus);
 			
+			/*echo "<pre>";
+			print_r($info_direcciones);
+			echo "</pre>";
+			exit;*/			
+
+
+
 			///////////// registrar compra inicial en BD /////// 
 			$registro_orden = $this->orden_compra_model->registrar_compra_inicial($info_articulos, $info_pago, $info_direcciones, $info_estatus);
 			//echo "compra: " . $id_compra;
-			//exit();
+//			exit();
 			return $id_compra;
 		} else {
 			//Error en el registro de la compra
@@ -1656,7 +1709,9 @@ class Orden_Compra extends CI_Controller {
 	private function enviar_correo($asunto, $mensaje) {
 		$headers = "Content-type: text/html; charset=UTF-8\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-	    $headers .= "From: Pagos Grupo Expansión<soporte@expansion.com.mx>\r\n";
+	    $headers .= "From: Pagos Grupo Expansión<pagosmercadotecnia@expansion.com.mx>\r\n";
+		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx\r\n";
+		
 		
 		$email = $this->session->userdata('email');
 					

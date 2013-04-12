@@ -1,0 +1,207 @@
+<!--h1>Orden de Compra de <?php echo $this->session->userdata('username');?></h1-->
+<div class="contenedor-gris">
+	<div id="list_results">				
+		<?php 
+		//Si se solicitó pago con TC
+		if (isset($resultado)) {	
+						
+			echo 	"<table cellspacing='0' style=' border: solid; border-width: 1px; border-color: #C90002;'>
+					    <tr style='background-color: #C90002;'>
+					    	<td colspan='4' align='left' height='25px'>
+								<b style='color: #FFF;'>Resumen de orden:</b>
+							</td>
+						</tr>										   	   
+						<tr>
+			   	        	<td colspan='4' align='left'><b>Número de orden:</b>&nbsp;&nbsp;<span class='instrucciones'>".$id_compra."</span>
+			   	           	</td>										   	           										   	          
+			   	       	</tr>
+			   	       	<tr>
+			   	       		<td colspan='4'>
+			   	       	    	<b>Productos en la orden:</b>	   
+			   	       	   	</td>
+			   	       </tr>";
+				   	       				
+						### se usará "$detalle_promociones", para mostrar la información de los artículos de la orden
+						//IVA inicial de la compra
+						$iva_compra = 0.0;
+						$iva_message = "";
+						$subtotal = 0;
+						
+						foreach ($detalle_promociones['descripciones_promocion'] as $promociones) {
+					
+							//para los artículos de las promos que lleven IVA
+							$iva_message  = "";		//en principio no lleva para la promocion
+							
+							//revisar si se cobra IVA
+							if ($promociones['promocion']->iva_promocion > 0) { //($articulo['taxableBi']) {
+								$iva_compra += $promociones['promocion']->iva_promocion;	//ya se calcula desde el API para el la promoción
+								$iva_message  = "<b>costo m&aacute;s IVA</b>";	//en principio no lleva para la promocion
+							}
+							
+							if (strstr($promociones['promocion']->descripcionVc, '|' )) {
+								$mp = explode('|', $promociones['promocion']->descripcionVc);
+								$nmp = count($mp);
+								if ($nmp == 2) {
+									$desc_promo = $mp[0];
+								} else if ($nmp == 3) {
+									$desc_promo = $mp[1];
+								}
+							} else {
+								$desc_promo = $promociones['promocion']->descripcionVc;
+							}
+							
+							//indicador de que requiere envío
+							$promo_requiere_envio = $promociones['promocion']->requiere_envio;
+							
+							//sacar la descripción que se mostrará de la promoción
+							echo "<tr><td colspan='4' class='instrucciones'>&nbsp;<br />".$desc_promo."</td></tr>";
+							foreach ($promociones['articulos'] as $articulo) {
+								echo 
+								"<tr>
+									<td colspan='2' class='instrucciones'>";
+								if ($articulo['issue_id']) {
+									foreach ($detalle_promociones['tipo_productoVc'] as $k => $v) {
+										if ($k == $articulo['issue_id']) {
+											if (strstr($v, '|' )) {
+												$mp = explode('|',$v);
+												$nmp = count($mp);
+												if ($nmp == 2) {
+													$desc_art = $mp[0];
+												} else if ($nmp == 3) {
+													$desc_art = $mp[1];
+												}
+											} else {
+												$desc_art = $v;
+											}
+										}
+									}
+								} else {
+									$desc_art = $articulo['tipo_productoVc'];
+									foreach($detalle_promociones['articulo_oc'] as $i => $oc){
+										if($i == $articulo['oc_id'])
+											$desc_art.= $oc;
+									}
+								}
+								//medio de entrega del artículo
+								$medio_entrega = empty($articulo['medio_entregaVc']) ? "" : $articulo['medio_entregaVc']; 
+																
+								echo "<div>".$desc_art. "&nbsp;<div class='label-promo-rojo'>$iva_message</div></div><br/>";
+								
+								//direcciones de envío asociadas
+								if ($promo_requiere_envio) {
+									//id de la promoción que se quiere asociar con otra dirección
+									$id_promo = $promociones['promocion']->id_promocionIn;
+									
+									//detalles de las direcciones
+									if (!empty($detalles_direcciones) && array_key_exists($id_promo, $detalles_direcciones)) {
+									 	$d = $detalles_direcciones[$id_promo];
+									 	
+									 	echo "Calle " . $d->address1 . ", Número " .$d->address2. " " . (isset($d->address4) ? ", Interior ".$d->address4 : "") . "<br/>";
+										echo "C.P. " . $d->zip . " " . $d->city . ", ". $d->state . " ". $d->codigo_paisVc . ", Tel. " . $d->phone . "&nbsp;";
+									 }
+								}
+								//sumar al subtotal de la compra
+								$subtotal += $promociones['promocion']->subtotal_promocion;
+								//precio de la promoción
+								echo
+									"</td>
+									<td>&nbsp;</td>
+									<td class='instrucciones' align='right'>$" . number_format($articulo['tarifaDc'], 2, '.', ',') . "&nbsp;" . $moneda . "</td>" .
+								"</tr>";
+							}
+						}
+													
+	   	       			echo 
+	   	       					"<tr>
+					   	           <td colspan='2'>&nbsp;
+					   	           </td>
+					   	           <td align='right'>Sub-total:
+					   	           </td>
+					   	           <td align='right'>$".number_format($detalle_promociones['total_pagar'], 2, '.', ',')."&nbsp;".$moneda."
+					   	           </td>
+					   	       </tr>
+					   	       <tr>
+					   	           <td colspan='2'>&nbsp;
+					   	           </td>
+					   	           <td align='right'>I.V.A
+					   	           </td>
+					   	           <td align='right'>$".number_format($detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;".$moneda."
+					   	           </td>
+					   	       </tr>
+					   	       <tr>
+					   	           <td colspan='2' width='325px'>&nbsp;
+					   	           </td>
+					   	           <td align='right' width='180px'><b>Total de la orden</b>
+					   	           </td>
+					   	           <td align='right' width='95px'><b>$".number_format($detalle_promociones['total_pagar'] + $detalle_promociones['total_iva'], 2, '.', ',')."&nbsp;" . $moneda ."</b>
+					   	           </td>
+					   	       </tr>
+		   	       		<tr>
+		   	       			<td colspan='4'> 
+		   	       				<b>Método de pago:</b>
+		   	       			</td>
+		   	       		</tr>	
+		   	       		<tr>
+		   	       			<td colspan='4' class='instrucciones'>".$tc->descripcionVc." con terminación ".substr($tc->terminacion_tarjetaVc, -4)."		   	       				
+		   	       			</td>
+		   	       		</tr>
+		   	       		<tr>
+		   	       			<td colspan='4'>
+		   	       				<b>Código de Autorización:&nbsp;&nbsp;</b><span class='instrucciones'>" . $resultado->codigo_autorizacion . "</span>	
+		   	       			</td>
+		   	       		</tr>
+		   	       		<tr>
+		   	       			<td colspan='4'>
+		   	       				<b>Respuesta del Banco:&nbsp;&nbsp;</b><span class='instrucciones'>";
+		   	       				
+		   	       				if ($resultado->respuesta_banco != "approved") {
+									echo "<b style='color: #E60000'>Pago Declinado</b>";
+								} else {
+									echo "<b style='color: #E60000'>Pago Aprobado</b>";
+								}
+		   	       	echo 
+		   	       			"</span>
+		   	       			</td>	
+		   	       		</tr>
+		   	       		<tr>
+		   	       			<td colspan='4'>
+		   	       				<b>Fecha de autorización:&nbsp;&nbsp;</b>";		   	       				
+					$this->load->helper('date');
+					echo "<span class='instrucciones'>".mdate('%d-%m-%Y', time())."</span>";
+	   	       
+		   	       	echo 
+		   	       			"</td>
+		   	       		</tr>								   	       												   										   	   
+		   			</table>";
+		?>
+		
+						
+		<?php
+		} else if (isset($deposito)) {
+			//En caso contrario si se hizo el pago con depósito
+		?>
+			<div class="instrucciones">
+				Para completar tu orden, sigue los pasos que enlistamos abajo. Estas instrucciones también serán enviadas a tu correo electrónico registrado.<br /><br />
+				Realiza un depósito por el total de la orden acudiendo a cualquier sucursal BBVA Bancomer, o realizando una transferencia electrónica, por medio del convenio CIE 57351 o directamente a la cuenta que aparece abajo.  Es importante que indiques tu nombre y número telefónico como referencia. La cuenta de depósito es la siguiente:<br /><br />
+				Banco: BBVA Bancomer<br />
+				Beneficiario: Expansión S.A. de C.V.<br />
+				Cuenta CLABE:  012180004465210022<br />
+				Cuenta:  0446521002<br />
+				Sucursal: 1820<br />
+				Plaza: 001<br /><br />
+				Una vez realizado el depósito por favor confirma tu pago llamando al teléfono (55) 5061 2413 o escribiendo al correo pagosmercadotecnia@expansion.com.mx . Si confirmas por correo, no olvides indicar tu nombre y el producto que adquieres, y enviar escaneada tu ficha de depósito.<br /><br /> 
+				Recibirás un correo electrónico confirmando que tu compra ha sido completada.
+			</div>
+	<?php
+	
+		}
+
+		if ($estatus_pago==1) {
+			echo "<p><a href='https://kiosco.grupoexpansion.mx'>Continuar</a></p>";														
+		} 
+		else{
+			echo "<p>".anchor('suscripcion_express/checkout/".$sitio."', 'intentar Nuevamente')."</p>";
+		}
+	?>
+	</div>
+</div>

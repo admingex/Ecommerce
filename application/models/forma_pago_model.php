@@ -223,5 +223,26 @@ class Forma_Pago_model extends CI_Model {
         //echo '<bt/>Resultado: '.$res;
         return $res;
     }
+	function existe_tc_express($datos_tc)
+	{
+		$campos = array('id_clienteIn' 	=> 	$datos_tc['id_clienteIn'],
+						'nombre_titularVc' 	=> 	$datos_tc['nombre_titularVc'], 
+						'apellidoP_titularVc' => $datos_tc['apellidoP_titularVc'],
+						'apellidoM_titularVc' => $datos_tc['apellidoM_titularVc'],
+						'mes_expiracionVc' 	=> 	$datos_tc['mes_expiracionVc'],
+						'anio_expiracionVc' => 	$datos_tc['anio_expiracionVc'],
+						'terminacion_tarjetaVc' =>	$datos_tc['terminacion_tarjetaVc'],
+						'id_tipo_tarjetaSi'	=>	$datos_tc['id_tipo_tarjetaSi'],
+						'id_estatusSi !=' => self::$CAT_ESTATUS['DESHABILITADA']);
+						
+		$res = $this->db->get_where('CMS_IntTC', $campos);
+		
+		if($res->num_rows() > 0)
+		{
+			return $res;
+		} else {
+			return FALSE;
+		}
+	}
 	
 }
