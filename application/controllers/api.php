@@ -232,7 +232,7 @@ class Api extends CI_Controller {
 		}
 	}
 	
-	public function detalle($sitio, $canal, $promocion, $formato, $ultimosegmento){
+	public function detalle($sitio, $canal, $promocion, $formato, $ultimosegmento) {
 	  	
     	$data['detalle'] = TRUE;	  	
     	$data['listar'] = FALSE;	  	
@@ -354,16 +354,17 @@ class Api extends CI_Controller {
 			$this->session->set_userdata('promociones',$data);
 			$this->formato($formato,$data);
 		}
-		 			  	    		  		
-  }  
+  	}
+
 	/**
 	 *	Devuelve el detalle decierta promoción a partir del sitio, el canal y la promoción misma
 	 */
-	public function obtener_detalle_promo($sitio, $canal, $promocion) {
+	public function obtener_detalle_promo($sitio, $canal, $promocion)
+	{
 		$data = array();
 		if (!empty($sitio)) {
-	  		$rsitio = $this->api_model->obtener_sitio($sitio);	
-			if ($rsitio->num_rows()!=0) {
+	  		$rsitio = $this->api_model->obtener_sitio($sitio);
+			if ($rsitio->num_rows() != 0) {
 				$data['sitio'] = $rsitio->row();
 			} else {
 				$data['error']['sitio'] = "No existe informacién del sitio solicitado.";
@@ -393,6 +394,7 @@ class Api extends CI_Controller {
 				$data['error']['promocion'] = "No existe informacion de la promoción solicitada.";
 			}
     	}
+		
 		return $data;
 	}
 
@@ -681,23 +683,24 @@ class Api extends CI_Controller {
 	 * Regresa un array con la información que se tiene sobre las promociones y los artículos que se van a comprar
 	 * Para mostrar los detalles del último producto agregado y los demás no ... 
 	 */
-	public function obtiene_articulos_y_promociones($prom="") {
+	public function obtiene_articulos_y_promociones($prom = "")
+	{
 		$datos = array();
 		$total = 0;			//lo que se cobrará como total de la compra
 		$iva_total = 0;		//el iva total de la compra
-		$det_promo = 0;		//de la últoma promoción agregada
-		$lleva_ra = 0;	//para saber si alguna promoción de la compre requiere RA 
+		$det_promo = 0;		//de la última promoción agregada
+		$lleva_ra = 0;		//para saber si alguna promoción de la compra requiere RA (Renovación Automática)
 		
 		$datos['numero_promociones'] = count($this->session->userdata('promociones'));
 		$datos['tipo_productoVc'] = array();		//para la descripción de la primera promoción en el carrito
 		$datos['ids_promociones'] = array();		//contendrá sólo los id de las promociones que se van a cobrar
 		
-		$promociones=array();
-		if(!empty($prom))			
-			$promociones= $prom;		
-		else			
-			$promociones=$this->session->userdata('promociones');
-		
+		$promociones = array();
+		//toma la promoción del parámetro (que es un array con la info.), o toma las que haya en la sesión
+		if (!empty($prom))
+			$promociones = $prom;
+		else
+			$promociones = $this->session->userdata('promociones');
 		
 		/**
 		 * En la sesión se trae la información de las promociones que se cobrarán: sitio, canal, promoción y cantidad
@@ -710,11 +713,11 @@ class Api extends CI_Controller {
 			
 			//sólo se obtiene la descripción de la primer promoción
 			if ($det_promo == 0) {
-				/*
-				echo "<pre>";
-					print_r($respromo['promocion']);		
-				echo "</pre>";
-				*/
+				/*echo "<pre>";
+					print_r($respromo);
+					//print_r($_SERVER); 
+					//if (isset($_SERVER['HTTP_REFERER'])) echo "HTTP_REFERR: " . $_SERVER['HTTP_REFERER'];
+				echo "</pre>"; exit();*/
 				
 				//obtiene descripción / si es un issue (PDFs IDC), se busca la descripción del issue
 				$datos['descripcion_promocion'] = $respromo['promocion']->descripcionVc;
@@ -725,16 +728,15 @@ class Api extends CI_Controller {
 						$datos['articulo_promocion'][] = $issue->row()->descripcionVc;
 					} else {
 						$oc = $this->api_model->obtener_ocid($articulo['oc_id']);
-						if($oc){
+						if ($oc) {
 							$datos['articulo_promocion'][] = $articulo['tipo_productoVc']."&nbsp;".$oc->row()->nombreVc;
+						} else {
+							$datos['articulo_promocion'][] = $articulo['tipo_productoVc'];
 						}
-						else{
-							$datos['articulo_promocion'][] = $articulo['tipo_productoVc'];	
-						}												
 					}
 				}
-				exit;
-				$det_promo = 1;	//se desactiva la bandera pparabuscar el tipo de producto de los artículos de la promoción
+				//exit;
+				$det_promo = 1;	//se desactiva la bandera para buscar el tipo de producto de los demás artículos de la promoción
 			}
 			
 			// se agrega la promoción con todos los detalles al arreglo que las contendrá, incluída la información del sitio y canal
@@ -752,34 +754,29 @@ class Api extends CI_Controller {
 					$datos['tipo_productoVc'][($articulo['issue_id'])] = $issue->row()->descripcionVc;
 					
 					//si lo que tenemos son pdf de la tienda
-					if($promocion['id_sitio'] == 3){
+					if ($promocion['id_sitio'] == 3) {	//sitio de la promoción
 														
-						$datos_sit= $this->api_model->obtener_sitio_promo($promocion['id_promocion'])->row();
-						if($datos_sit->id_sitioSi == 1){
-							$datos['issues_idc']['sitio']=$datos_sit->id_sitioSi;						
-							$datos['issues_idc']['url_back']=$this->api_model->obtener_sitio($datos_sit->id_sitioSi)->row()->url_PostbackVc;
-							$mp = explode('|',$issue->row()->descripcionVc);
-							$datos['issues_idc']['clave'][]=end($mp);													
-								
+						$datos_sit = $this->api_model->obtener_sitio_promo($promocion['id_promocion'])->row();
+						if ($datos_sit->id_sitioSi == 1) {	//sitio es la página de IDC
+							$datos['issues_idc']['sitio'] = $datos_sit->id_sitioSi;
+							$datos['issues_idc']['url_back'] = $this->api_model->obtener_sitio($datos_sit->id_sitioSi)->row()->url_PostbackVc;
+							$mp = explode('|', $issue->row()->descripcionVc);
+							$datos['issues_idc']['clave'][] = end($mp);
 						}
-						else if($datos_sit->id_sitioSi == 2){
-							$datos['issues_cnn']['sitio']=$datos_sit->id_sitioSi;						
-							$datos['issues_cnn']['url_back']=$this->api_model->obtener_sitio($datos_sit->id_sitioSi)->row()->url_PostbackVc;
-							$mp = explode('|',$issue->row()->descripcionVc);
-							$datos['issues_cnn']['clave'][]=end($mp);													
-								
-						}						
-					}	
-					
-				}
-				else{
-						$oc = $this->api_model->obtener_ocid($articulo['oc_id']);
-						if($oc){
-							$datos['articulo_oc'][($articulo['oc_id'])] = $oc->row()->nombreVc;
+						else if($datos_sit->id_sitioSi == 2) {	//sitio es la página de Expansión
+							$datos['issues_cnn']['sitio'] = $datos_sit->id_sitioSi;
+							$datos['issues_cnn']['url_back'] = $this->api_model->obtener_sitio($datos_sit->id_sitioSi)->row()->url_PostbackVc;
+							$mp = explode('|', $issue->row()->descripcionVc);
+							$datos['issues_cnn']['clave'][] = end($mp);
 						}
-						else{
-							$datos['articulo_oc'][($articulo['oc_id'])] = $articulo['tipo_productoVc'];	
-						}	
+					}
+				} else {
+					$oc = $this->api_model->obtener_ocid($articulo['oc_id']);
+					if ($oc) {
+						$datos['articulo_oc'][($articulo['oc_id'])] = $oc->row()->nombreVc;
+					} else {
+						$datos['articulo_oc'][($articulo['oc_id'])] = $articulo['tipo_productoVc'];
+					}
 				}
 				//si requiere dirección de envío:
 				if ($articulo['requiere_envioBi']) {
@@ -800,16 +797,18 @@ class Api extends CI_Controller {
 				}
 			}
 			
-			//guardar el total por promoción y sumar al total de la compra 
+			//guardar el total por promoción y sumar al total de la compra
 			$respromo['promocion']->subtotal_promocion = $subtotal_promocion;
 			$respromo['promocion']->iva_promocion = $iva_promocion;
 			
 			$total = $total + $subtotal_promocion;
 			$iva_total += $iva_promocion;
 		}
+
 		$datos['lleva_ra'] = $lleva_ra;
 		$datos['total_pagar'] = $total;
 		$datos['total_iva'] = $iva_total;
+		/*echo "<pre>"; print_r($datos); echo "</pre>"; exit();*/
 		return $datos;
 	}	
 	

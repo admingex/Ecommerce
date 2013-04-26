@@ -681,28 +681,30 @@ class Api extends CI_Controller {
 	 * Regresa un array con la información que se tiene sobre las promociones y los artículos que se van a comprar
 	 * Para mostrar los detalles del último producto agregado y los demás no ... 
 	 */
-	public function obtiene_articulos_y_promociones($prom="") {
+	public function obtiene_articulos_y_promociones($prom = "")
+	{
 		$datos = array();
 		$total = 0;			//lo que se cobrará como total de la compra
 		$iva_total = 0;		//el iva total de la compra
-		$det_promo = 0;		//de la últoma promoción agregada
-		$lleva_ra = 0;	//para saber si alguna promoción de la compre requiere RA 
+		$det_promo = 0;		//de la última promoción agregada
+		$lleva_ra = 0;		//para saber si alguna promoción de la compra requiere RA (Renovación Automática)
 		
 		$datos['numero_promociones'] = count($this->session->userdata('promociones'));
 		$datos['tipo_productoVc'] = array();		//para la descripción de la primera promoción en el carrito
 		$datos['ids_promociones'] = array();		//contendrá sólo los id de las promociones que se van a cobrar
 		
-		$promociones=array();
-		if(!empty($prom))			
-			$promociones= $prom;		
-		else			
-			$promociones=$this->session->userdata('promociones');
-		
+		$promociones = array();
+		//toma la promoción del parámetro (que es un array con la info.), o toma las que haya en la sesión
+		if (!empty($prom))
+			$promociones = $prom;
+		else
+			$promociones = $this->session->userdata('promociones');
 		
 		/**
 		 * En la sesión se trae la información de las promociones que se cobrarán: sitio, canal, promoción y cantidad
 		 */
 		foreach ($promociones as $promocion) {
+			
 			// obtiene las promociones y los artículos que contienen
 			
 			$respromo = $this->obtener_detalle_promo($promocion['id_sitio'], $promocion['id_canal'], $promocion['id_promocion']);
@@ -710,11 +712,11 @@ class Api extends CI_Controller {
 			
 			//sólo se obtiene la descripción de la primer promoción
 			if ($det_promo == 0) {
-				/*
-				echo "<pre>";
-					print_r($respromo['promocion']);		
+				
+				/*echo "<pre>";
+					print_r($respromo['promocion']);
 				echo "</pre>";
-				*/
+				exit();*/
 				
 				//obtiene descripción / si es un issue (PDFs IDC), se busca la descripción del issue
 				$datos['descripcion_promocion'] = $respromo['promocion']->descripcionVc;
@@ -725,16 +727,15 @@ class Api extends CI_Controller {
 						$datos['articulo_promocion'][] = $issue->row()->descripcionVc;
 					} else {
 						$oc = $this->api_model->obtener_ocid($articulo['oc_id']);
-						if($oc){
+						if ($oc) {
 							$datos['articulo_promocion'][] = $articulo['tipo_productoVc']."&nbsp;".$oc->row()->nombreVc;
+						} else {
+							$datos['articulo_promocion'][] = $articulo['tipo_productoVc'];
 						}
-						else{
-							$datos['articulo_promocion'][] = $articulo['tipo_productoVc'];	
-						}												
 					}
 				}
 				
-				$det_promo = 1;	//se desactiva la bandera pparabuscar el tipo de producto de los artículos de la promoción
+				$det_promo = 1;	//se desactiva la bandera parabuscar el tipo de producto de los artículos de la promoción
 			}
 			
 			// se agrega la promoción con todos los detalles al arreglo que las contendrá, incluída la información del sitio y canal

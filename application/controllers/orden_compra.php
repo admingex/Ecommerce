@@ -19,24 +19,24 @@ class Orden_Compra extends CI_Controller {
 	const Tipo_AMEX = 1;
 	const HASH_PAGOS = "P3lux33n3l357ux3";	//hash que se utiliza vara validar la información del lado de CCTC
 	
-	public static $ESTATUS_COMPRA = array(
-		"SOLICITUD_CCTC"			=> 1, 
-		"RESPUESTA_CCTC"			=> 2, 
+	public static $ESTATUS_COMPRA = array (
+		"SOLICITUD_CCTC"			=> 1,
+		"RESPUESTA_CCTC"			=> 2,
 		"REGISTRO_PAGO_ECOMMERCE"	=> 3,
 		"PAGO_DEPOSITO_BANCARIO" 	=> 4,
 		"ENVIO_CORREO"				=> 5
 	);
 	
-	public static $TIPO_PAGO = array(
-		"Prosa"				=> 1, 
-		"American_Express"	=> 2, 
+	public static $TIPO_PAGO = array (
+		"Prosa"				=> 1,
+		"American_Express"	=> 2,
 		"Deposito_Bancario"	=> 3,
 		"Otro"				=> 4
 	);
 	
-	public static $TIPO_DIR = array(
-		"RESIDENCE"	=> 0, 
-		"BUSINESS"	=> 1, 
+	public static $TIPO_DIR = array (
+		"RESIDENCE"	=> 0,
+		"BUSINESS"	=> 1,
 		"OTHER"		=> 2
 	);
 	
@@ -77,7 +77,8 @@ class Orden_Compra extends CI_Controller {
 		
     }
 
-	public function index() {
+	public function index()
+	{
 		if ($_POST) {
 			if (array_key_exists('direccion_selecionada', $_POST)) {
 				$cte = $this->id_cliente;
@@ -88,14 +89,15 @@ class Orden_Compra extends CI_Controller {
 				
 				if ($rs != "" && $ds != "") {
 					$rbr = $this->direccion_facturacion_model->busca_relacion($cte, $rs, $ds);
+					
 					if ($rbr->num_rows() == 0) {
 						$this->load->helper('date');
 						$fecha = mdate('%Y/%m/%d',time());
-						$data_dir = array(
-                   			'id_clienteIn'  => $cte,
-                   			'id_consecutivoSi' => $ds,
-                   			'id_razonSocialIn' => $rs,
-                   			'fecha_registroDt' => $fecha
+						$data_dir = array (
+                   			'id_clienteIn'  	=> $cte,
+                   			'id_consecutivoSi' 	=> $ds,
+                   			'id_razonSocialIn' 	=> $rs,
+                   			'fecha_registroDt' 	=> $fecha
                			);
 						
 						$this->direccion_facturacion_model->insertar_rs_direccion($data_dir);
@@ -1710,7 +1712,7 @@ class Orden_Compra extends CI_Controller {
 		$headers = "Content-type: text/html; charset=UTF-8\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
 	    $headers .= "From: Pagos Grupo Expansión<pagosmercadotecnia@expansion.com.mx>\r\n";
-		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx\r\n";
+		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx, harteaga@expansion.com.mx\r\n";
 		
 		
 		$email = $this->session->userdata('email');

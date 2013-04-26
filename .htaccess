@@ -1,7 +1,7 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
-	
+	Allow from 10.177.74.76
 	#Enforce SSL https://www. 
 	#RewriteCond %{HTTPS} !=on
 	#RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

@@ -43,11 +43,9 @@
 <body>
 	<div id="header-container">
         <header>
-            <img src="<?php echo PAGOS;?>/images/logo_expansion.gif" alt="logo gex" width="52" height="52"/>            
-        </header>        
-    </div>    
-
-    
+            <img src="<?php echo PAGOS;?>/images/logo_expansion.gif" alt="logo gex" width="52" height="52"/>
+        </header>
+    </div>
     <div id="main">
     	<img src="<?php echo PAGOS;?>/images/css_sprite_logotipocompleto.jpg" class='img-logo' />
     	<div id="pleca-punteada"></div>
@@ -56,10 +54,25 @@
     	</div>    	    	
     	<div class="textos-error">
     		<div class="tipo-error">
-    			Error	<?php echo $severity; ?>
-<p>Message:  <?php echo $message; ?></p>
-<p>Filename: <?php echo $filepath; ?></p>
-<p>Line Number: <?php echo $line; ?>
+    			Error interno
+    			<p>Severity: <?php echo $severity; ?></p>
+				<p>Message:  <?php echo $message; ?></p>
+				<p>Filename: <?php echo $filepath; ?></p>
+				<p>Line Number: <?php echo $line; ?></p>
+				<p>URI Requested: <?php echo $_SERVER["REQUEST_URI"] ; ?></p>
+				<p>Remote Address: <?php echo $_SERVER["REMOTE_ADDR"] ; ?></p>
+				<p>
+					<?php 
+						
+						if (isset($_SERVER['HTTP_REFERER'])) echo "HTTP_REFERR: " . $_SERVER['HTTP_REFERER'];
+						//echo "<pre>";
+						//print_r($this->session->all_userdata());
+						//print_r($_REQUEST);
+						//print_r($_SERVER);
+						//print_r($this->detalle_promociones);
+						//echo "</pre>";
+					?>
+				</p>
     		</div>
     		<div id='pleca-2'></div>
     		<div class="detalle-error">

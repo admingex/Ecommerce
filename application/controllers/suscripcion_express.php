@@ -6,132 +6,142 @@ include('api.php');
 
 class Suscripcion_Express extends CI_Controller {
 	
-	var $title = 'Reporte de Usuarios'; 		// Capitalize the first letter
-	var $subtitle = 'Reporte de Usuarios'; 	// Capitalize the first letter
-	var $detalle_promociones=array();
+	var $title = 'Suscripción Express';
+	var $subtitle = 'Reporte de Usuarios';
+	var $detalle_promociones = array();
 	
 	const HASH_PAGOS = "P3lux33n3l357ux3";	//hash que se utiliza vara validar la información del lado de CCTC
 	const Tipo_AMEX = 1;
 	
-	public static $FORMA_PAGO = array(
+	public static $FORMA_PAGO = array (
 		1 =>	"Prosa", 
 		2 =>	"American Express", 
 		3 =>	"Deposito Bancario",
 		4 =>	"Otro"
 	);
 	
-	public static $TIPO_DIR = array(
-		"RESIDENCE"	=> 0, 
-		"BUSINESS"	=> 1, 
+	public static $TIPO_DIR = array (
+		"RESIDENCE"	=> 0,
+		"BUSINESS"	=> 1,
 		"OTHER"		=> 2
 	);
 	
-	public static $ESTATUS_COMPRA = array(
-		"SOLICITUD_CCTC"			=> 1, 
-		"RESPUESTA_CCTC"			=> 2, 
+	public static $ESTATUS_COMPRA = array (
+		"SOLICITUD_CCTC"			=> 1,
+		"RESPUESTA_CCTC"			=> 2,
 		"REGISTRO_PAGO_ECOMMERCE"	=> 3,
 		"PAGO_DEPOSITO_BANCARIO" 	=> 4,
 		"ENVIO_CORREO"				=> 5
 	);
 	
-	public static $TIPO_PAGO = array(
+	public static $TIPO_PAGO = array (
 		"Prosa"				=> 1, 
 		"American_Express"	=> 2, 
 		"Deposito_Bancario"	=> 3,
 		"Otro"				=> 4
 	);
 	
-	
-		
-	function __construct(){
-        parent::__construct();						
+	function __construct()
+	{
+        parent::__construct();
 		$this->load->model('direccion_facturacion_model', 'direccion_facturacion_model', true);
 		$this->load->model('direccion_envio_model', 'direccion_envio_model', true);
 		$this->load->model('forma_pago_model', 'forma_pago_model', true);
 		$this->load->model('suscripcion_express_model', 'suscripcion_express_model', true);
-		$this->load->model('orden_compra_model', 'orden_compra_model', true);		
+		$this->load->model('orden_compra_model', 'orden_compra_model', true);
 		
-				
 		$this->load->helper('date');
-		$this->api = New Api();										
+		$this->api = New Api();
     }
 	
-	public function index(){		
-		$this->datos();									
-	}	
+	/**
+	 * Método del controlador que atiende la petición por defaul del sitio sin parámetros
+	 */
+	public function index()
+	{
+		$this->datos();
+	}
 	
-	public function datos($sitio = "", $canal = "", $promocion = ""){			
-		$data['title']='Suscripción Express';
+	/**
+	 * Método que atenderá la compra de la suscripciónm express en base a la informción:
+	 * Sitio, Canal, Promoción
+	 * @param int $sitio el id del sitio de la promoción 
+	 * @param int $canal el id del canal de la promoción 
+	 * @param int $promocion el id de la promoción 
+	 */
+	public function datos($sitio = "", $canal = "", $promocion = "")
+	{
+		$data['title'] = 'Suscripción Express';
 		
-		
-		if(is_numeric($sitio) && is_numeric($canal) && is_numeric($promocion)){
+		// Si los parámetros para buscar la promoción son correctos...
+		if (is_numeric($sitio) && is_numeric($canal) && is_numeric($promocion)) {
 			
 			$lista_paises_think = $this->direccion_facturacion_model->listar_paises_think();
 			$data['lista_paises_think'] = $lista_paises_think;
 			
-			
+			// meter la informacón de la promoción externa a la sesión de CI
 			$this->session->set_userdata('id_sitio', $sitio);
 			$this->session->set_userdata('id_canal', $canal);
 			$this->session->set_userdata('id_promocion', $promocion);
 			$this->session->set_userdata('promociones', array(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion)));
-			$promoexp= array(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));					
-			$data['detalle_promociones']=$this->api->obtiene_articulos_y_promociones($promoexp);									
-			$oc_id =  key($data['detalle_promociones']['articulo_oc']);		
+			
+			// recuperar la información de la promoción en cuestión si es que existe
+			$promoexp = array(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));
+			#### TO DO Revisar la función del API para cachar las excepciones
+			$data['detalle_promociones'] = $this->api->obtiene_articulos_y_promociones($promoexp);
+			
+			//echo "Encontró la promoción? ". key_exists("detalle_promociones", $data);	//'datos: $_REQUEST
+			/*echo '<pre>';print_r($data['detalle_promociones']); echo "</pre>";exit;*/
+			
+			$oc_id =  key($data['detalle_promociones']['articulo_oc']);
+			echo '<pre>'; print_r($data['detalle_promociones']['articulo_oc']); echo "</pre>"; exit;
 			$data['imagen_back'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->url_imagen;
 			$this->session->set_userdata('imagen_back', $data['imagen_back']);
-				
-			$data['metatags'] = $this->img_obtiene($oc_id);			
+			
+			$data['metatags'] = $this->img_obtiene($oc_id);
 			$this->session->set_userdata('oc_id_img', $oc_id);
 			
-			
-			if($_POST){
-				
+			if ($_POST) {
 				$datos = $this->get_datos_registro();
 				
-				if(empty($this->registro_errores)){
-										
-					$this->session->set_userdata('email', $datos['email']);					
+				if (empty($this->registro_errores)) {
+					$this->session->set_userdata('email', $datos['email']);
 					$cte = $this->suscripcion_express_model->verifica_registro_email($datos['email']);
 					
-					if($cte->num_rows() > 0){							
-						$ctereg=end($cte->result_object());												
+					//si es cliente registrado
+					if ($cte->num_rows() > 0) {
+						$ctereg = end($cte->result_object());
 						$this->session->set_userdata('id_cliente', $ctereg->id_clienteIn);
 						
-						$datos['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
+						$datos['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];	//address_type
 						$datos['direccion']['id_clienteIn']= $ctereg->id_clienteIn;
 						$dirreg = $this->suscripcion_express_model->existe_direccion($datos['direccion']);
 						
-						
-						if($dirreg->num_rows() > 0){
-							$dir=end($dirreg->result_object());							
+						//si tiene alguna dirección de envío registrada pasa al pago
+						if ($dirreg->num_rows() > 0) {
+							$dir = end($dirreg->result_object());
 							$this->session->set_userdata('consecutivo', $dir->id_consecutivoSi);
 							$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
 							header("Location: $pago");
-								
-						}
-						else{
-							$consecutivo = $this->suscripcion_express_model->get_consecutivo_dir($ctereg->id_clienteIn);	
-							$datos['direccion']['id_consecutivoSi']= $consecutivo;
+						} else {	//si no tiene alguna dirección de envío registrada la registra
+							$consecutivo = $this->suscripcion_express_model->get_consecutivo_dir($ctereg->id_clienteIn);
+							$datos['direccion']['id_consecutivoSi'] = $consecutivo;
 							$datos['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
 							$datos['direccion']['id_clienteIn']= $ctereg->id_clienteIn;
-								
+							
 							$regdir = $this->suscripcion_express_model->insertar_direccion($datos['direccion']);
-							if($regdir === 1){
-								$this->session->set_userdata('consecutivo', $consecutivo);	
+							
+							if ($regdir === 1) {	//si se registró correctamente la dirección
+								$this->session->set_userdata('consecutivo', $consecutivo);
 								$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
 								header("Location: $pago");
-							}	
-							else{
-								$data['mensaje']="Ocurrio un problema al hacer el registro de dirección, intentelo nuevamente";
+							} else {
+								$data['mensaje'] = "Ocurrió un problema al hacer el registro de dirección, intentelo nuevamente.";
 								$this->load->view('templates/header', $data);
-								$this->load->view('mensaje', $data);	
-							}		
-														
-						}																		  							
-														
-					}
-					else{
-						
+								$this->load->view('mensaje', $data);
+							}
+						}
+					} else {	//si es cliente nuevo
 						$id_cliente = $this->suscripcion_express_model->next_cliente_id();	//id del cliente
 						$datos['id_clienteIn'] = $id_cliente;
 						####
@@ -143,8 +153,8 @@ class Suscripcion_Express extends CI_Controller {
 						$pass = $this->genera_pass();
 						$datos['password'] = md5($datos['email']."|".$pass);
 						
-						$regcte = $this->suscripcion_express_model->registro_cliente($datos); 
-						if($regcte === 1){
+						$regcte = $this->suscripcion_express_model->registro_cliente($datos);
+						if ($regcte === 1) {
 							
 							
 							$headers="Content-type: text/html; charset=UTF-8\r\n";
@@ -214,9 +224,8 @@ class Suscripcion_Express extends CI_Controller {
 			#promocion inexistente				
 			$data['mensaje']="Información insuficiente para completar la orden";
 			$this->load->view('templates/header', $data);
-			$this->load->view('mensaje', $data); 			
-		}						
-		
+			$this->load->view('mensaje', $data);
+		}
 	}
 	
 	public function pago($sitio='', $canal='', $promocion =''){
@@ -2141,7 +2150,7 @@ class Suscripcion_Express extends CI_Controller {
 		}
 	}
 	
-	private function actualizar_info_compra_tc($id_cliente, $id_compra, $id_tc, $primer_digito, $tipo_pago) 
+	private function actualizar_info_compra_tc($id_cliente, $id_compra, $id_tc, $primer_digito, $tipo_pago)
 	{
 		$new_data = array('id_TCSi' => $id_tc, 'primer_digitoTi' => $primer_digito, 'id_tipoPagoSi' => $tipo_pago);
 		try {
@@ -2152,14 +2161,14 @@ class Suscripcion_Express extends CI_Controller {
 		}
 	}	
 	
-		/**
+	/**
 	 * Envía un correo 
 	 */
 	private function enviar_correo($asunto, $mensaje) {
 		$headers = "Content-type: text/html; charset=UTF-8\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
 	    $headers .= "From: Pagos Grupo Expansión<pagosmercadotecnia@expansion.com.mx>\r\n";
-		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx\r\n";
+		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx, harteaga@expansion.com.mx\r\n";
 		
 		
 		$email = $this->session->userdata('email');
@@ -2170,13 +2179,13 @@ class Suscripcion_Express extends CI_Controller {
 	
 	private function img_obtiene($oc_id){
 		$datos = array();			
-			$datos['descripcion_larga'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->descripcion_larga;
-			$datos['descripcion_corta'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->descripcion_corta;
-			$datos['nombre'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->nombre;
-		return $datos;	
+		$datos['descripcion_larga'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->descripcion_larga;
+		$datos['descripcion_corta'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->descripcion_corta;
+		$datos['nombre'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->nombre;
+		return $datos;
 	}
 	
 }
 
-/* End of file reporte.php */
-/* Location: ./application/controllers/reporte.php */
+/* End of file suscripcion_express.php */
+/* Location: ./application/controllers/suscripcion_express.php */

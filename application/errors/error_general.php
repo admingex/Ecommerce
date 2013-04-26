@@ -56,13 +56,13 @@
     	</div>    	    	
     	<div class="textos-error">
     		<div class="tipo-error">
-    			Error	
+    			Error General
     		</div>
     		<div id='pleca-2'></div>
     		<div class="detalle-error">
     			<div class="instrucciones">
     				La p&aacute;gina que intentas solicitar no est&aacute; en el servidor<br />
-    				Prueba nuevamente en nuestro homepage    				
+    				Prueba nuevamente en nuestro homepage.    				
     			</div>
     			
 				<div class="titulo-proceso-img">&nbsp;		

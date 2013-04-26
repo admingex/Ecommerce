@@ -47,9 +47,9 @@
 
 $active_group = 'default';
 $active_record = TRUE;
-$db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'root';
-$db['default']['password'] = 'GGee00**';
+$db['default']['hostname'] = '10.177.73.120';//'localhost';
+$db['default']['username'] = 'ecommerce_user';	//'root';
+$db['default']['password'] = 'ecommerce';	//'GGee00**';
 $db['default']['database'] = 'cms0mxdb'; 
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
