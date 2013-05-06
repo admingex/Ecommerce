@@ -93,8 +93,9 @@ class Suscripcion_Express extends CI_Controller {
 			//echo "Encontró la promoción? ". key_exists("detalle_promociones", $data);	//'datos: $_REQUEST
 			/*echo '<pre>';print_r($data['detalle_promociones']); echo "</pre>";exit;*/
 			
+			//el oc_id para la imagen de fondo de la promoción
 			$oc_id =  key($data['detalle_promociones']['articulo_oc']);
-			echo '<pre>'; print_r($data['detalle_promociones']['articulo_oc']); echo "</pre>"; exit;
+			//se pasa en el data de la vista y se pone en la sesión
 			$data['imagen_back'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->url_imagen;
 			$this->session->set_userdata('imagen_back', $data['imagen_back']);
 			
@@ -105,6 +106,7 @@ class Suscripcion_Express extends CI_Controller {
 				$datos = $this->get_datos_registro();
 				
 				if (empty($this->registro_errores)) {
+					
 					$this->session->set_userdata('email', $datos['email']);
 					$cte = $this->suscripcion_express_model->verifica_registro_email($datos['email']);
 					
@@ -116,9 +118,10 @@ class Suscripcion_Express extends CI_Controller {
 						$datos['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];	//address_type
 						$datos['direccion']['id_clienteIn']= $ctereg->id_clienteIn;
 						$dirreg = $this->suscripcion_express_model->existe_direccion($datos['direccion']);
-						
+						echo '<pre>'; echo "existe regdir". print_r($dirreg)."<br/>"; echo "num_rows=>". $dirreg->num_rows(); print_r($datos['direccion']);echo "</pre>"; exit;
 						//si tiene alguna dirección de envío registrada pasa al pago
 						if ($dirreg->num_rows() > 0) {
+							echo '<pre>'; echo "regdir". print_r($dirreg)."<br/>"; print_r($cte->result_object()); print_r($datos['direccion']); print_r($datos); echo "</pre>"; exit;
 							$dir = end($dirreg->result_object());
 							$this->session->set_userdata('consecutivo', $dir->id_consecutivoSi);
 							$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
@@ -130,7 +133,7 @@ class Suscripcion_Express extends CI_Controller {
 							$datos['direccion']['id_clienteIn']= $ctereg->id_clienteIn;
 							
 							$regdir = $this->suscripcion_express_model->insertar_direccion($datos['direccion']);
-							
+							//echo '<pre>'; echo "regdir". $regdir; print_r($cte->result_object()); print_r($datos['direccion']); print_r($datos); echo "</pre>"; exit;
 							if ($regdir === 1) {	//si se registró correctamente la dirección
 								$this->session->set_userdata('consecutivo', $consecutivo);
 								$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
@@ -155,72 +158,63 @@ class Suscripcion_Express extends CI_Controller {
 						
 						$regcte = $this->suscripcion_express_model->registro_cliente($datos);
 						if ($regcte === 1) {
-							
-							
-							$headers="Content-type: text/html; charset=UTF-8\r\n";
-		                $headers.="MIME-Version: 1.0\r\n";
-					    $headers .= "From: Pagos Grupo Expansión<servicioaclientes@expansion.com.mx>\r\n";       
-						$mensaje="<html>
-								  <body>
-								  	   <div>Hola, ".$datos['salutation'].",<br /><br /> 
-								  	   </div>									   
-								  	   <div>
-								  	      Gracias por crear tu cuenta en pagos.grupoexpansion.mx.<br /><br /> 
-										  Con tu cuenta podrás almacenar tus datos para que tus siguientes compras sean más ágiles, pues no tendrás necesidad de registrar tus datos cada vez que compres aquí.<br /><br />
-										  Te damos la más cordial bienvenida y esperamos que disfrutes tu compra.<br /><br />
-										  Tu password de acceso a nuestra plataforma de pagos es la siguiente: ".$pass."<br /><br />
-										  Estamos disponibles para cualquier pregunta o duda sobre tu cuenta en:<br /><br/>
-										  Atención a clientes<br/><br/>
-										  Tel. (55) 9177 4342<br/><br/>
-										  servicioaclientes@expansion.com.mx<br/><br/>
-										  Cordialmente,<br/><br/>
-										  Grupo Expansión.<br/>
+						
+							$headers = "Content-type: text/html; charset=UTF-8\r\n";
+			                $headers .= "MIME-Version: 1.0\r\n";
+						    $headers .= "From: Pagos Grupo Expansión<servicioaclientes@expansion.com.mx>\r\n";
+							$mensaje = 
+								"<html>
+									<body>
+								  	   	<div>Hola, ".$datos['salutation'].",<br /><br /> 
+								   		</div>									   
+									   	<div>
+									    	Gracias por crear tu cuenta en pagos.grupoexpansion.mx.<br /><br /> 
+										  	Con tu cuenta podrás almacenar tus datos para que tus siguientes compras sean más ágiles, pues no tendrás necesidad de registrar tus datos cada vez que compres aquí.<br /><br />
+										  	Te damos la más cordial bienvenida y esperamos que disfrutes tu compra.<br /><br />
+										  	Tu password de acceso a nuestra plataforma de pagos es la siguiente: ".$pass."<br /><br />
+											Estamos disponibles para cualquier pregunta o duda sobre tu cuenta en:<br /><br/>
+										  	Atención a clientes<br/><br/>
+										  	Tel. (55) 9177 4342<br/><br/>
+											servicioaclientes@expansion.com.mx<br/><br/>
+											Cordialmente,<br/><br/>
+											Grupo Expansión.<br/>
 								  	   </div>								  	   
-								  </body>
-								  </html>"; 									
-																								     		      									
-								if(mail($datos['email'], "=?UTF-8?B?".base64_encode('¡Bienvenido a la plataforma de pagos de Grupo Expansión!')."?=", $mensaje, $headers)){
-																																					
-									$this->session->set_userdata('id_cliente', $id_cliente);
-									$consecutivo = $this->suscripcion_express_model->get_consecutivo_dir($id_cliente);	
-									$datos['direccion']['id_consecutivoSi']= $consecutivo;
-									$datos['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
-									$datos['direccion']['id_clienteIn']= $id_cliente;
-									
-									$regdir = $this->suscripcion_express_model->insertar_direccion($datos['direccion']);
-									if($regdir === 1){
-										$this->session->set_userdata('consecutivo', $consecutivo);	
-										$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
-										header("Location: $pago");
-									}	
-									else{
-										$data['mensaje']="Ocurrio un problema al hacer el registro de dirección, intentelo nuevamente";
-										$this->load->view('templates/header', $data);
-										$this->load->view('mensaje', $data);	
-									}
-								}														
-														
-						}						 
-						else{
-							$data['mensaje']="Ocurrio un problema al hacer el registro, intentelo nuevamente";
+								  	</body>
+	  							</html>";
+							//Si se envía correctamente el correo de registro
+							if (mail($datos['email'], "=?UTF-8?B?".base64_encode('¡Bienvenido a la plataforma de pagos de Grupo Expansión!')."?=", $mensaje, $headers)) {
+								
+								$this->session->set_userdata('id_cliente', $id_cliente);
+								$consecutivo = $this->suscripcion_express_model->get_consecutivo_dir($id_cliente);
+								$datos['direccion']['id_consecutivoSi']= $consecutivo;
+								$datos['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
+								$datos['direccion']['id_clienteIn']= $id_cliente;
+								
+								$regdir = $this->suscripcion_express_model->insertar_direccion($datos['direccion']);
+								if ($regdir === 1) {
+									$this->session->set_userdata('consecutivo', $consecutivo);
+									$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
+									header("Location: $pago");
+								} else {
+									$data['mensaje'] = "Ocurrio un problema al hacer el registro de dirección, intentelo nuevamente";
+									$this->load->view('templates/header', $data);
+									$this->load->view('mensaje', $data);
+								}
+							}													
+						} else {
+							$data['mensaje'] = "Ocurrió un problema al hacer el registro del cliente, inténtelo nuevamente";
 							$this->load->view('templates/header', $data);
-							$this->load->view('mensaje', $data);	
-						}						
-					}						 
-					 
+							$this->load->view('mensaje', $data);
+						}
+					}
+				} else {
+					$data['registro_errores'] = $this->registro_errores;
+					$this->cargar_vista('', 'suscripcion_express/registro_cliente' , $data);
 				}
-				else{
-					$data['registro_errores']=$this->registro_errores;
-					$this->cargar_vista('', 'suscripcion_express/registro_cliente' , $data);																
-				}
-						
+			} else {
+				$this->cargar_vista('', 'suscripcion_express/registro_cliente' , $data);
 			}
-			else{
-				$this->cargar_vista('', 'suscripcion_express/registro_cliente' , $data);								
-			}
-						
-		}	
-		else{
+		} else {
 			#promocion inexistente				
 			$data['mensaje']="Información insuficiente para completar la orden";
 			$this->load->view('templates/header', $data);
@@ -1296,83 +1290,72 @@ class Suscripcion_Express extends CI_Controller {
 	{
 		$datos = array();
 		
-		if(array_key_exists('txt_nombre', $_POST)) {
-			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_nombre'])) { 
+		if (array_key_exists('txt_nombre', $_POST)) {
+			if (preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{2,30}$/i', $_POST['txt_nombre'])) {
 				$datos['salutation'] = $_POST['txt_nombre'];
 			} else {
 				$this->registro_errores['txt_nombre'] = '<div class="error">Por favor ingresa tu nombre</div>';
 			}
 		}
-		if(array_key_exists('txt_apellidoPaterno', $_POST)) {
-			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{1,30}$/i', $_POST['txt_apellidoPaterno'])) { 
+		if (array_key_exists('txt_apellidoPaterno', $_POST)) {
+			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{1,30}$/i', $_POST['txt_apellidoPaterno'])) {
 				$datos['fname'] = $_POST['txt_apellidoPaterno'];
 			} else {
 				$this->registro_errores['txt_apellidoPaterno'] = '<div class="error">Por favor ingresa tu apellido paterno</div>';
 			}
 		}
-		if(array_key_exists('txt_apellidoMaterno', $_POST)) {
-			if(preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{1,30}$/i', $_POST['txt_apellidoMaterno'])) { 
+		if (array_key_exists('txt_apellidoMaterno', $_POST)) {
+			if (preg_match('/^[A-Z \'.-áéíóúÁÉÍÓÚÑñ]{1,30}$/i', $_POST['txt_apellidoMaterno'])) {
 				$datos['lname'] = $_POST['txt_apellidoMaterno'];
-			}
-			else{
+			} else {
 				$datos['lname'] = '';
 			}
 		}
-		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {			
+		if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 			$datos['email'] = htmlspecialchars(trim($_POST['email']));
-		} else {			
+		} else {
 			$this->registro_errores['email'] = '<div class="error2">Por favor ingresa un correo electrónico <br />válido. Ejemplo: nombre@dominio.mx</div>';
-		}	
-		if (array_key_exists('calle', $_POST)) {
-			if(preg_match('/^[A-Z0-9áéíóúÁÉÍÓÚÑñ \'.-]{1,50}$/i', $_POST['calle'])) {
+		}
+		if (array_key_exists('calle', $_POST)) {	//Calle
+			if (preg_match('/^[A-Z0-9áéíóúÁÉÍÓÚÑñ \'.-]{1,50}$/i', $_POST['calle'])) {
 				$datos['direccion']['address1'] = $_POST['calle'];
-			}
-			else {
+			} else {
 				$this->registro_errores['calle'] = '<span class="error">Por favor ingresa una calle</span>';
 			}
-		}	
-		if (array_key_exists('num_ext', $_POST)) {
-			if(preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['num_ext'])) {
+		}
+		if (array_key_exists('num_ext', $_POST)) {	//Número esterior
+			if (preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['num_ext'])) {
 				$datos['direccion']['address2'] = $_POST['num_ext'];
-			}
-			else {
+			} else {
 				$this->registro_errores['num_ext'] = '<span class="error">Por favor ingresa el número exterior</span>';
 			}
-		}	
-		
-		if (!empty($_POST['num_int'])) {
-			if(preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['num_int'])) {
+		}
+		if (!empty($_POST['num_int'])) {	//Número interior
+			if (preg_match('/^[A-Z0-9 -]{1,50}$/i', $_POST['num_int'])) {
 				$datos['direccion']['address4'] = $_POST['num_int'];
-			} 
-			else {
+			} else {
 				$this->registro_errores['num_int'] = '<span class="error">Por favor ingresa el número interior</span>';
 			}
-		} 
+		}
 		else {
 				$datos['direccion']['address4'] = NULL;
 		}
-		
 		if (!empty($_POST['pais'])) {
 			$datos['direccion']['codigo_paisVc'] = $_POST['pais'];
+		} else {
+			$this->reg_errores['sel_pais'] = '<span class="error">Por favor selecciona el pa&iacute;s</span>';
 		}
-		else {
-				$this->reg_errores['sel_pais'] = '<span class="error">Por favor selecciona el pa&iacute;s</span>';
-		}
-		
 		if (array_key_exists('cp', $_POST)) {
 			//regex usada en js
 			if (preg_match('/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/', $_POST['cp'])) {
 				$datos['direccion']['zip'] = $_POST['cp'];
-			} 
-			else {
+			} else {
 				$this->registro_errores['cp'] = '<span class="error2">Por favor ingresa un código postal de 5 dígitos</span>';
 			}
-		}	
-		
-		if (array_key_exists('colonia', $_POST) && trim($_POST['colonia']) != ""){
-			$datos['direccion']['address3'] = $_POST['colonia'];
 		}
-		else {
+		if (array_key_exists('colonia', $_POST) && trim($_POST['colonia']) != "") {		//Colonia
+			$datos['direccion']['address3'] = $_POST['colonia'];
+		} else {
 			$this->registro_errores['colonia'] = '<span class="error">Por favor ingresa la colonia</span>';
 		}
 		
@@ -1600,9 +1583,10 @@ class Suscripcion_Express extends CI_Controller {
 	private function genera_pass(){
 		$str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
         $contra = "";
-        for($i=1;$i<=8;$i++) {
+        for ($i=1; $i <= 8; $i++) {
         	$contra .= substr($str,rand(0,62),1);
         }
+		
 		return $contra;
 	}
 	
@@ -2177,8 +2161,13 @@ class Suscripcion_Express extends CI_Controller {
 		return mail($email, "=?UTF-8?B?".base64_encode($asunto)."?=", $mensaje, $headers);
 	}
 	
-	private function img_obtiene($oc_id){
-		$datos = array();			
+	/**
+	 * Obtiene la información para los 'metatags' de TND_CatOCThink en base al oc_id
+	 * @param oc_id int el oc_id de la publicación de la promoción
+	 * @return metatags array(descripcion_larga, descripcion_corta, nombre) el arreglo de meta-información de la publicación
+	 */
+	private function img_obtiene($oc_id) {
+		$datos = array();
 		$datos['descripcion_larga'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->descripcion_larga;
 		$datos['descripcion_corta'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->descripcion_corta;
 		$datos['nombre'] = $this->suscripcion_express_model->obtener_img_back($oc_id)->row()->nombre;

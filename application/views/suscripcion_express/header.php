@@ -1,23 +1,25 @@
 <?php
 	$imgback = '';
-	if(isset($imagen_back)){		
+	if (isset($imagen_back)) {
 		$imgback = $imagen_back;
-	}
-	else if(($this->session->userdata('imagen_back'))){		
+	} else if (($this->session->userdata('imagen_back'))) {
 		$imgback = $this->session->userdata('imagen_back');
-	}						
+	}
 	
 	//echo "<pre>";
-		//print_r($detalle_promociones);
-		//print_r($detalle_promociones['ids_promociones']);	
-		$images_b = array('elle1.jpg', 'elle2.jpg');
-		if (in_array('1405', $detalle_promociones['ids_promociones'])){
-			$imgback = $images_b[1];			
-		}
+	//print_r($detalle_promociones);
+	//print_r($detalle_promociones['ids_promociones']);	
+	
+	//Imágenes que se usarán para promociones de elle, la sdegunda
+	$images_b = array('elle1.jpg', 'elle2.jpg');
+	//revisa si la promoción es de ELLE
+	if (in_array('1405', $detalle_promociones['ids_promociones'])) {
+		$imgback = $images_b[1];
+	}
 	//echo "</pre>";
 	
-?>	
-<html> 
+?>
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta charset="utf-8">

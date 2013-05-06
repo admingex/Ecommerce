@@ -74,10 +74,22 @@ class Suscripcion_Express_Model extends CI_Model {
 					
 	}
 	
-	function insertar_direccion($datos_direccion){
+	function insertar_direccion($datos_direccion) {
 		
 		$qry = "INSERT INTO CMS_IntDireccion (id_consecutivoSi, address_type, id_clienteIn, address1, address2, address3, zip, state, city, id_estatusSi, codigo_paisVc, address4)
-				VALUES ('".$datos_direccion['id_consecutivoSi']."', '".$datos_direccion['address_type']."', '".$datos_direccion['id_clienteIn']."', '".$datos_direccion['address1']."', '".$datos_direccion['address2']."', '".$datos_direccion['address3']."', '".$datos_direccion['zip']."', '".$datos_direccion['state']."', '".$datos_direccion['city']."', '3', '".$datos_direccion['codigo_paisVc']."', '".$datos_direccion['address4']."')";
+				VALUES ('".
+				$datos_direccion['id_consecutivoSi']."', '".
+				$datos_direccion['address_type']."', '".
+				$datos_direccion['id_clienteIn']."', '".
+				$datos_direccion['address1']."', '".
+				$datos_direccion['address2']."', '".
+				$datos_direccion['address3']."', '".
+				$datos_direccion['zip']."', '".
+				$datos_direccion['state']."', '".
+				$datos_direccion['city']."', '3', '".
+				$datos_direccion['codigo_paisVc']."', '".
+				$datos_direccion['address4']."')";
+				//echo "qry: ".$qry;exit;
 		$res = $this->db->query($qry);
 		
 		return (int)$res;
@@ -110,7 +122,7 @@ class Suscripcion_Express_Model extends CI_Model {
 		return (int)$res;	
 	}
 	
-	function obtener_img_back($oc){
+	function obtener_img_back($oc) {
 		$qry = "SELECT nombreVc as nombre, url_imagen_vistaVc  as url_imagen, descripcion_largaVc as descripcion_larga, descripcion_cortaVc as descripcion_corta
 				FROM TND_CatOCThink WHERE oc_id='".$oc."'";
 		$res = $this->db->query($qry);
