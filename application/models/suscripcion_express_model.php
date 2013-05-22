@@ -74,8 +74,8 @@ class Suscripcion_Express_Model extends CI_Model {
 					
 	}
 	
-	function insertar_direccion($datos_direccion) {
-		
+	function insertar_direccion($datos_direccion)
+	{
 		$qry = "INSERT INTO CMS_IntDireccion (id_consecutivoSi, address_type, id_clienteIn, address1, address2, address3, zip, state, city, id_estatusSi, codigo_paisVc, address4)
 				VALUES ('".
 				$datos_direccion['id_consecutivoSi']."', '".
@@ -89,14 +89,16 @@ class Suscripcion_Express_Model extends CI_Model {
 				$datos_direccion['city']."', '3', '".
 				$datos_direccion['codigo_paisVc']."', '".
 				$datos_direccion['address4']."')";
-				//echo "qry: ".$qry;exit;
+				//echo "qry: ".$qry; exit;
 		$res = $this->db->query($qry);
 		
 		return (int)$res;
 					
 	} 
 	
-	function existe_direccion($datos_dir){
+	function existe_direccion($datos_dir)
+	{
+		//echo 'existe direccion: <pre>'; print_r($datos_dir); echo "</pre>";
 		$campos = array('id_clienteIn' 	=> 	$datos_dir['id_clienteIn'], 
 						'address_type' => $datos_dir['address_type'],
 						'address1' => $datos_dir['address1'],		//calle
@@ -110,16 +112,17 @@ class Suscripcion_Express_Model extends CI_Model {
 						'id_estatusSi !=' => self::$CAT_ESTATUS['DESHABILITADA']);
 
 		$resultado = $this->db->get_where('CMS_IntDireccion', $campos);
-		
-		return $resultado;		
+		//echo '<pre>'; print_r($resultado); echo "</pre>"; exit;
+		return $resultado;
 	}
 	
-	function insertar_rs($datos_fact){		
+	function insertar_rs($datos_fact)
+	{
 		$qry = "INSERT INTO CMS_IntRazonSocial (tax_id_number, company, email, id_estatusSi, id_clienteIn )
 				VALUES ('".$datos_fact['tax_id_number']."', '".$datos_fact['company']."', '".$datos_fact['email']."', '3', '".$datos_fact['id_clienteIn']."')";
 		$res = $this->db->query($qry);
 		
-		return (int)$res;	
+		return (int)$res;
 	}
 	
 	function obtener_img_back($oc) {

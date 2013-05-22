@@ -762,8 +762,7 @@ class Api extends CI_Controller {
 							$datos['issues_idc']['url_back'] = $this->api_model->obtener_sitio($datos_sit->id_sitioSi)->row()->url_PostbackVc;
 							$mp = explode('|', $issue->row()->descripcionVc);
 							$datos['issues_idc']['clave'][] = end($mp);
-						}
-						else if($datos_sit->id_sitioSi == 2) {	//sitio es la página de Expansión
+						} else if ($datos_sit->id_sitioSi == 2) {	//sitio es la página de Expansión
 							$datos['issues_cnn']['sitio'] = $datos_sit->id_sitioSi;
 							$datos['issues_cnn']['url_back'] = $this->api_model->obtener_sitio($datos_sit->id_sitioSi)->row()->url_PostbackVc;
 							$mp = explode('|', $issue->row()->descripcionVc);
@@ -778,6 +777,7 @@ class Api extends CI_Controller {
 						$datos['articulo_oc'][($articulo['oc_id'])] = $articulo['tipo_productoVc'];
 					}
 				}
+				
 				//si requiere dirección de envío:
 				if ($articulo['requiere_envioBi']) {
 					$respromo['promocion']->requiere_envio = TRUE;
