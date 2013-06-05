@@ -60,7 +60,6 @@
 	if (isset($articulo_oc))
 		$band = 1;
 		//echo "sesion tags_google var->".$tags_google;
-		
 	if ($band == 1) {
 ?>
 <!-- Google Tag Manager -->
