@@ -2168,7 +2168,7 @@ class Suscripcion_Express extends CI_Controller {
 		$headers = "Content-type: text/html; charset=UTF-8\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
 	    $headers .= "From: Pagos Grupo Expansión<pagosmercadotecnia@expansion.com.mx>\r\n";
-		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx, harteaga@expansion.com.mx\r\n";
+		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx, jesus.aguilar@externo.expansion.com.mx, harteaga@expansion.com.mx\r\n";
 		
 		
 		$email = $this->session->userdata('email');
