@@ -99,12 +99,15 @@ class Suscripcion_Express_Model extends CI_Model {
 	function existe_direccion($datos_dir)
 	{
 		//echo 'existe direccion: <pre>'; print_r($datos_dir); echo "</pre>";
+		if (empty($datos_dir['address4'])){
+			$numinterior = "";
+		}
 		$campos = array('id_clienteIn' 	=> 	$datos_dir['id_clienteIn'], 
 						'address_type' => $datos_dir['address_type'],
 						'address1' => $datos_dir['address1'],		//calle
 						'address2' 	=> 	$datos_dir['address2'],		//numero ext
 						'address3' => 	$datos_dir['address3'],		//colonia
-						'address4' =>	$datos_dir['address4'],		//num int
+						'address4' =>	$numinterior,		//num int
 						'zip' =>	$datos_dir['zip'],				//cp
 						'state' =>	$datos_dir['state'],
 						'city' =>	$datos_dir['city'],

@@ -74,7 +74,7 @@ class Suscripcion_Express extends CI_Controller {
 		$data['title'] = 'Suscripción Exprés';
 		
 		// Si los parámetros para buscar la promoción son correctos...
-		if (is_numeric($sitio) && is_numeric($canal) && is_numeric($promocion)) {
+		if (is_numeric($sitio) && !empty($sitio) && is_numeric($canal) && !empty($canal) && is_numeric($promocion) && !empty($promocion)) {
 			
 			$lista_paises_think = $this->direccion_facturacion_model->listar_paises_think();
 			$data['lista_paises_think'] = $lista_paises_think;
