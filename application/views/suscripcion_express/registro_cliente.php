@@ -2,7 +2,7 @@
 /*
 	echo "<pre>";
 		print_r($promo);
-	echo "</pre>";
+	echo "</pre>";---
 */
 ?>
 <div class="contenedor-gris">
@@ -82,9 +82,11 @@
 		<td class="label">
 			País
 		</td>
-		<td>			
+		<td>	
 			<select name='pais'>
-			<?php 
+			<?php
+			//Validación de moneda
+			if ($detalle_promociones['moneda'] != "MX") {
 				$id_pais = "MX";				//Mexico por default
 				if (isset($_POST['sel_pais']))	//pais seleccionado para la captura
 					$id_pais = $_POST['sel_pais'];
@@ -96,7 +98,11 @@
 					else {
 						echo "<option value='".$pais->id_pais."'>".$pais->pais."</option>";
 					}				
-				}																	
+				}
+			}
+			else{
+				echo "<option value='MX' selected='true'>MÉXICO</option>";
+			}
 			?>									
 			</select>			
 		</td>

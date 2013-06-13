@@ -69,12 +69,12 @@ class Suscripcion_Express extends CI_Controller {
 	 * @param int $canal el id del canal de la promoción 
 	 * @param int $promocion el id de la promoción 
 	 */
-	public function datos($sitio = "", $canal = "", $promocion = "")
+	public function datos($sitio="", $canal="", $promocion="")
 	{
 		$data['title'] = 'Suscripción Exprés';
 		
 		// Si los parámetros para buscar la promoción son correctos...
-		if (is_numeric($sitio) && is_numeric($canal) && is_numeric($promocion)) {
+		if (is_numeric($sitio) && !empty($sitio) && is_numeric($canal) && !empty($canal) && is_numeric($promocion) && !empty($promocion)) {
 			
 			$lista_paises_think = $this->direccion_facturacion_model->listar_paises_think();
 			$data['lista_paises_think'] = $lista_paises_think;
@@ -114,6 +114,10 @@ class Suscripcion_Express extends CI_Controller {
 			$data['metatags'] = $this->img_obtiene($oc_id);
 			$this->session->set_userdata('oc_id_img', $oc_id);
 			/*echo '<pre>';print_r($data); echo "</pre>";exit;*/
+			
+			$moneda_pais= $data['detalle_promociones']['moneda'];
+			/*echo '<pre>';print_r($moneda_pais); echo "</pre>";exit;*/
+			
 			if ($_POST) {
 				$datos = $this->get_datos_registro();
 				
@@ -124,7 +128,11 @@ class Suscripcion_Express extends CI_Controller {
 					
 					// si es cliente registrado
 					if ($cte->num_rows() > 0) {
+						/*echo "SI EXISTE USUARIO";
+							exit();*/
 						$ctereg = end($cte->result_object());
+						
+						/*echo '<pre>';print_r($ctereg); echo "</pre>";exit;*/
 						$this->session->set_userdata('id_cliente', $ctereg->id_clienteIn);
 						
 						$datos['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];	//address_type
@@ -133,12 +141,17 @@ class Suscripcion_Express extends CI_Controller {
 						//echo 'existe regdir: <pre>'; print_r($dirreg)."<br/>"; echo "num_rows > ". $dirreg->num_rows(); print_r($datos['direccion']);echo "</pre>"; exit;
 						// si tiene alguna dirección de envío registrada, pasa al pago
 						if ($dirreg->num_rows() > 0) {
-							echo '<pre>'; echo "regdir". print_r($dirreg)."<br/>"; print_r($cte->result_object()); print_r($datos['direccion']); print_r($datos); echo "</pre>"; exit;
+							//echo '<pre>'; echo "regdir". print_r($dirreg)."<br/>"; print_r($cte->result_object()); print_r($datos['direccion']); print_r($datos); echo "</pre>"; exit;
 							$dir = end($dirreg->result_object());
+							/*echo "SI EXISTE DIRECCIÓN";
+							exit();*/
+							//echo '<pre>';print_r($dir); echo "</pre>";exit;
 							$this->session->set_userdata('consecutivo', $dir->id_consecutivoSi);
 							$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
 							header("Location: $pago");
 						} else {	// si no tiene alguna dirección de envío registrada, la registra
+							/*echo "NO EXISTE DIRECCIÓN";
+							exit();*/
 							$consecutivo = $this->suscripcion_express_model->get_consecutivo_dir($ctereg->id_clienteIn);
 							$datos['direccion']['id_consecutivoSi'] = $consecutivo;
 							$datos['direccion']['address_type'] = self::$TIPO_DIR['RESIDENCE'];		//address_type
@@ -157,6 +170,8 @@ class Suscripcion_Express extends CI_Controller {
 							}
 						}
 					} else {	// si es cliente nuevo
+						/*echo "NO EXISTE USUARIO";
+							exit();*/
 						$id_cliente = $this->suscripcion_express_model->next_cliente_id();	//id del cliente
 						$datos['id_clienteIn'] = $id_cliente;
 						####
@@ -258,6 +273,8 @@ class Suscripcion_Express extends CI_Controller {
 		$data['promo'] = $this->api->obtener_detalle_promo($sitio, $canal, $promocion );
 		$data['lista_tipo_tarjeta'] = $this->forma_pago_model->listar_tipos_tarjeta();
 		$data['metatags'] = $this->img_obtiene($this->session->userdata('oc_id_img'));
+		
+
 		$this->load->view('suscripcion_express/header', $data);
 		if ($_POST) {
 			
@@ -459,8 +476,14 @@ class Suscripcion_Express extends CI_Controller {
 		$data['requiere_envio'] = $this->session->userdata('consecutivo');
 		$dir_envio = $this->session->userdata('consecutivo');
 		
+		/*echo '<pre>'; print_r($data['detalle_promociones']); echo "</pre>";
+		echo '<pre>'; print_r($dir_envio); echo "</pre>";
+		exit();*/
+		 /*$info_sesion = $this->session->all_userdata();
+		 echo '<pre>'; print_r($dir_envio); echo "</pre>";
+		exit();*/
+		 
 		$detalles_direcciones = array();		//Información de las direcciones que se mostrará
-				
 
 		if (!empty($dir_envio)) {	//si no existe, se crea "dse" y se recupera la información de la dirección general para todas las promociones
 			//recuperar las promociones para saber cuál requiere envío
@@ -468,6 +491,8 @@ class Suscripcion_Express extends CI_Controller {
 			if ($this->detalle_promociones) {
 				$detalle_promociones = $this->detalle_promociones;
 			}
+		 /*echo '<pre>'; print_r($detalle_promociones); echo "</pre>";
+		exit();*/
 
 			//si existe una dirección de envío inicial y la información detallada de las promociones...
 			if (is_integer((int)$dir_envio) && $detalle_promociones) {
@@ -480,7 +505,8 @@ class Suscripcion_Express extends CI_Controller {
 				
 				//$detalles_direcciones = array();		//información de las direcciones que se mostrará, se pasará a la vista en el data
 				$detalle_dir_gral = $this->direccion_envio_model->detalle_direccion($dir_general, $id_cliente);	//detalle de la información para todas las promociones
-				
+				/*echo '<pre>'; print_r($detalle_dir_gral); echo "</pre>";
+				exit();*/
 				//colocar en el arreglo de direcciones todas las promociones que puedan tener envío
 				foreach ($detalle_promociones['descripciones_promocion'] as $p) {
 					//si requiere dirección de envío se mete al arreglo
@@ -490,6 +516,9 @@ class Suscripcion_Express extends CI_Controller {
 						$detalles_direcciones[$id_promo] = $detalle_dir_gral;
 					}
 				}
+				/*echo '<pre>'; print_r($detalles_direcciones); echo "</pre>";
+				echo '<pre>'; print_r($promos_dirs); echo "</pre>";
+				exit();*/
 				//colocar en el arreglo de direcciones el id de la promoción que se quiere asociar con alguna dirección antes de ponerlo en sesión
 				$this->session->set_userdata('dse', $promos_dirs);
 
@@ -500,12 +529,15 @@ class Suscripcion_Express extends CI_Controller {
 		
 		$tarjeta = $this->session->userdata('tarjeta');
 		
-		//print_r($tarjeta);
+		/*print_r($tarjeta);
+		echo '<pre>'; print_r($tarjeta); echo "</pre>";
+		exit();*/
 		
 		//revisar si hay TC como forma de pago
 		if (!empty($tarjeta)) {		
 			//no se guarda la tarjeta en la BD, la información sólo está en sesión
 			if (is_array($this->session->userdata('tarjeta'))) {
+				
 				$tarjeta = (object)$tarjeta;
 				$detalle_tarjeta = (object)$tarjeta->tc;
 				
@@ -516,6 +548,8 @@ class Suscripcion_Express extends CI_Controller {
 					$data['amex'] = (object)$tarjeta->amex;
 					//en este caso se consultará la info del WS
 				}
+				/*echo '<pre> array'; print_r($data['tc']); echo "</pre>";
+				exit();*/
 
 			} else if (is_integer((int)$this->session->userdata('tarjeta'))) {				
 				//la tarjeta está guardada en la BD 
@@ -530,6 +564,8 @@ class Suscripcion_Express extends CI_Controller {
 					$data['amex'] = $this->obtener_detalle_interfase_CCTC($id_cliente, $consecutivo);	//cambio de interfase con CCTC
 					//en este caso se consultará la info del WS
 				}
+				/*echo '<pre> entero'; print_r($data['tc']); echo "</pre>";
+				exit();*/
 				
 			}
 			
@@ -542,6 +578,8 @@ class Suscripcion_Express extends CI_Controller {
 		if ($_POST) {
 			$orden_info = array();		
 			$orden_info = $this->get_datos_orden();
+			/*echo '<pre> entero'; print_r($orden_info); echo "</pre>";
+			exit();*/
 									
 			if (empty($this->registro_errores)) {
 								
@@ -561,10 +599,14 @@ class Suscripcion_Express extends CI_Controller {
 				//promociones que se van a comprar, vienen en el detalle de la promoción en un array llamado "ids_promociones"
 				$ids_promociones = $detalle_promociones['ids_promociones'];
 				//$ids_promociones = $this->session->userdata('promocion')->id_promocionIn;				
-				
+				/*echo '<pre> entero'; print_r($ids_promociones); echo "</pre>";
+				exit();*/
+			
 				//direcciones de envío que utilizaremos para la compra
 				$ids_direcciones_envio = array();
 				$ids_direcciones_envio = $this->session->userdata('dse');
+				/*echo '<pre> entero'; print_r($ids_direcciones_envio); echo "</pre>";
+				exit();*/
 				
 				//detalles para las direcciones asociadas
 				$detalles_direcciones = array();
@@ -573,6 +615,8 @@ class Suscripcion_Express extends CI_Controller {
 						$detalles_direcciones[$id_promocion] = $this->direccion_envio_model->detalle_direccion($id_direccion_env, $id_cliente);
 					}
 				}
+				
+				
 								
 				//$digito = (isset($_POST['txt_codigo'])) ? $_POST['txt_codigo'] : 0;
 				$digito = (!empty($orden_info)) ? $orden_info['cvv'] : 0;
@@ -586,6 +630,8 @@ class Suscripcion_Express extends CI_Controller {
 					redirect('mensaje/'.md5(7), 'refresh');		//error al encriptar la información
 										
 				}
+				/*echo '<pre> entero'; print_r($digito_rsa); echo "</pre>";
+				exit();*/
 				### Ajuste para saber qué tipo de tarjeta se utiliza en base al primer dígito del número de la tarjeta 
 				/**
 				 * Sólo hay que insertar el campo en la tabla "CMS_RelCompraPago" al momento de solicitar el cobro en el registro de la compra.
@@ -619,11 +665,14 @@ class Suscripcion_Express extends CI_Controller {
 				
 				$tipo_pago = self::$TIPO_PAGO['Otro'];	//ninguno válido al inicio
 				
-								
+				/*echo '<pre> entero'; print_r($informacion_orden); echo "</pre>";
+				exit();			*/	
 				#### Configuración de la forma de pago y solicitud de cobro a CCTC
 				
 				if (is_array($this->session->userdata('tarjeta'))) {
 					//////////// pago con tarjetas no guardada en BD y que está en sesión
+					echo "TARJETA NO GUARDADA";
+					exit();	
 				
 					$detalle_tarjeta = $this->session->userdata('tarjeta');					
 					$tc = $detalle_tarjeta['tc'];
@@ -967,7 +1016,8 @@ class Suscripcion_Express extends CI_Controller {
 				} else {
 					//////// la informacion de la TC está guardada en la BD
 					//recupera la información de la TC
-					
+					/*echo "TARJETA SI GUARDADA";
+					exit();	*/
 					$detalle_tarjeta = $this->forma_pago_model->detalle_tarjeta($consecutivo, $id_cliente);										
 					$tc = $detalle_tarjeta;
 					$data['tc'] = $detalle_tarjeta;
@@ -1217,6 +1267,12 @@ class Suscripcion_Express extends CI_Controller {
 						#echo $mensaje;
 						#exit;
 						$estatus_pago = 0;
+						/*$simple_result->respuesta_banco= "approved";*/
+						/*echo "simple_result<pre> gettype->";//.gettype($simple_result);
+						print_r($simple_result);
+						echo "</pre>";
+						exit();*/
+						
 						if (strtolower($simple_result->respuesta_banco) == "approved") {
 							$estatus_pago = 1;
 							$envio_correo = $this->enviar_correo("Confirmación de compra", $mensaje);
@@ -2168,7 +2224,7 @@ class Suscripcion_Express extends CI_Controller {
 		$headers = "Content-type: text/html; charset=UTF-8\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
 	    $headers .= "From: Pagos Grupo Expansión<pagosmercadotecnia@expansion.com.mx>\r\n";
-		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx, harteaga@expansion.com.mx\r\n";
+		$headers .= "Bcc: abarrales@expansion.com.mx, aespinosa@expansion.com.mx, jramirez@expansion.com.mx, jesus.aguilar@externo.expansion.com.mx, harteaga@expansion.com.mx\r\n";
 		
 		
 		$email = $this->session->userdata('email');
