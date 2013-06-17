@@ -10,27 +10,30 @@ class Api extends CI_Controller {
 	#### CONSTANTES
 	const IVA = 0.16;	//IVA
 			
-	function __construct(){
+	function __construct()
+	{
         // Call the Model constructor
-        parent::__construct();		
+        parent::__construct();
 		$this->load->model('api_model', 'api_model', true);
-		$this->key='AC35-4564-AE4D-0B881031F295';										
+		$this->key='AC35-4564-AE4D-0B881031F295';
     }
 	
-	public function index(){												
+	public function index()
+	{
+		//Con la configuración de rutas se pasa directo al método de listar												
 	}
 	
-	public function listar($sitio= "", $canal= "", $promocion= "", $formato= ""){
-		//limpiar datos en session 
-		foreach (array_keys($this->session->userdata) as $key){			
-			if(($key!='ip_address') && ($key!='session_id') && ($key!='user_agent') && ($key!='last_activity')){
-				$this->session->unset_userdata($key);	
-			}			    		
-		} 
-													
-		$data['title']='Promociones';		
+	public function listar($sitio= "", $canal= "", $promocion= "", $formato= "") {
+		//limpiar datos en session
+		foreach (array_keys($this->session->userdata) as $key) {
+			if(($key!='ip_address') && ($key!='session_id') && ($key!='user_agent') && ($key!='last_activity')) {
+				$this->session->unset_userdata($key);
+			}
+		}
+		
+		$data['title'] = 'Promociones';
 		$data['listar'] = TRUE;
-		$data['detalle'] = FALSE;						
+		$data['detalle'] = FALSE;
 		
 		//cuantos segmentos trae la url, después de: http://localhost/ecommerce/api/
 		$segm = $this->uri->total_segments();
@@ -38,8 +41,8 @@ class Api extends CI_Controller {
 		if ($segm == 2) {
 			$cad = $this->uri->segment(2);
 			if (($cad == "json") || ($cad == "xml") || ($cad == "html")) {
-				$sitio="";
-				$formato=$cad;
+				$sitio = "";
+				$formato = $cad;
 				
 			} else if (((!is_numeric($cad))|| (strlen($cad)>2)) && ($_POST) ) { //buscar los artículos con la clave enviada desde el portal de IDC
 				
@@ -54,9 +57,8 @@ class Api extends CI_Controller {
 				*/
 				
 				echo $this->obtener_url_promo($cad, $_POST);
-				exit();				
+				exit();
 			}
-			
 		}
 		//atención al carrito de compras de la tienda
 		//la información viene de "detalle carrito" en la vista
@@ -74,18 +76,17 @@ class Api extends CI_Controller {
 						print_r($datos_decrypt);
 					echo "</pre>";
 					exit;*/
-					if(preg_match('/^[A-Z0-9-}{]{1,38}$/i', $_POST['guidx']))
+					if (preg_match('/^[A-Z0-9-}{]{1,38}$/i', $_POST['guidx']))
 						$guidx = $_POST['guidx'];
 					else
 						$guidx = '';
-						
-					if(preg_match('/^[A-Z0-9-}{]{1,38}$/i', $_POST['guidz']))
+					
+					if (preg_match('/^[A-Z0-9-}{]{1,38}$/i', $_POST['guidz']))
 						$guidz = $_POST['guidz'];
 					else
 						$guidz = '';
-						
+					
 					if (!empty($guidx) && !empty($guidz)) {
-																		
 						//obtener el id del sitio por medio del guidx
 						$ressit = $this->api_model->obtener_sitio_guidx($_POST['guidx']);
 						$sitio = $ressit->row()->id_sitioSi;
@@ -181,10 +182,10 @@ class Api extends CI_Controller {
 			foreach ($sitios->result_array() as $siti) {
 				$res = $this->api_model->obtener_sitio($siti['id_sitioSi']);
 				$sit = $res->row();
-				$data['sitios'][]=array('urlVc'=>$sit->urlVc, 'id_sitioSi'=>$sit->id_sitioSi);
+				$data['sitios'][] = array('urlVc'=>$sit->urlVc, 'id_sitioSi'=>$sit->id_sitioSi);
 			}								
 			$this->formato($formato, $data);
-						
+			
 		} else if (($sitio) && (empty($canal)) && (empty($promocion))) {
 			//si trae sitio, listar los canales del sitio solicitado
 			$canales = $this->api_model->obtener_canales_sitio($sitio);
@@ -194,8 +195,8 @@ class Api extends CI_Controller {
 					$res = $this->api_model->obtener_canal($cana['id_canalSi']);
 					$can = $res->row();
 					$data['canales'][] = array('id_canalSi'=>$can->id_canalSi , 'descripcionVc'=>$can->descripcionVc, 'addKeyVc'=>$can->addKeyVc);
-				}	
-			} else{
+				}
+			} else {
 				$data['error']['sitio']="No existe información del sitio solicitado.";
 			}
 			
@@ -207,6 +208,7 @@ class Api extends CI_Controller {
 			
 			if ($promocion->num_rows() != 0) {
 				foreach ($promocion->result_array() as $promo) {
+					// se obtienen las promociones para el sitio y canal especificados
 					$res = $this->api_model->obtener_promocion($promo['id_promocionIn']);
 					$prom = $res->row();
 					$data['promocion'][] = array('id_promocionIn'=>$prom->id_promocionIn,
@@ -216,8 +218,9 @@ class Api extends CI_Controller {
 						                     'terminoVc'=>$prom->terminoVc,
 						                     'fecha_creacionDt'=>$prom->fecha_creacionDt,
 						                     'email_usuario_altaVc'=>$prom->email_usuario_altaVc,
-						                     'precioF'=>$prom->precioF
-											 );				
+						                     'precioF'=>$prom->precioF,
+						                     'edicion'=>$prom->edicion
+											 );
 				}				
 			}  else {
 				$data['error']['canal']='no existe informacion de este canal';
@@ -232,16 +235,16 @@ class Api extends CI_Controller {
 		}
 	}
 	
-	public function detalle($sitio, $canal, $promocion, $formato, $ultimosegmento) {
-	  	
-    	$data['detalle'] = TRUE;	  	
-    	$data['listar'] = FALSE;	  	
-    	$data['title']='Promociones';  
-	  	$pago=FALSE;	    
-		  
-    	if(!empty($sitio)){	  
-	  		$rsitio= $this->api_model->obtener_sitio($sitio);	
-			if($rsitio->num_rows()!=0){
+	public function detalle($sitio, $canal, $promocion, $formato, $ultimosegmento)
+	{
+    	$data['detalle'] = TRUE;
+    	$data['listar'] = FALSE;
+    	$data['title'] = 'Promociones';
+	  	$pago = FALSE;
+		
+    	if (!empty($sitio)) {
+	  		$rsitio = $this->api_model->obtener_sitio($sitio);
+			if ($rsitio->num_rows() != 0) {
 				$data['sitio']=$rsitio->row();
 			}		 
 			else{				
@@ -510,8 +513,14 @@ class Api extends CI_Controller {
 							
 								$response .="<precioF>";
 								$response .=$prom['precioF'];
-								$response .="</precioF>";	
-								$response .= "</promocion>";										
+								$response .="</precioF>";
+								
+								//El número de la edición
+								$response .="<edicion>";
+								$response .=$prom['edicion'];
+								$response .="</edicion>";
+								//El cierre del elemento promoción
+								$response .= "</promocion>";
 							}
 							$response .='</promociones>';
 							$response .="</detalle>";			
@@ -567,13 +576,20 @@ class Api extends CI_Controller {
 						$response .="</email_usuario_altaVc>";
 						$response .="<precioF>";
 						$response .=$data['promocion']->precioF;
-						$response .="</precioF>";						
+						$response .="</precioF>";
+						
+						//El número de la edición
+						$response .="<edicion>";
+						$response .=$prom['edicion'];
+						$response .="</edicion>";
+						//El cierre del elemento promoción
+								
 						$response .="</promocion>";	
 						$response .="</promociones>";
 									
 						$response .="<articulos>";
 						foreach($data['articulos'] as $articulo){
-							$response .="<articulo>";							
+							$response .="<articulo>";
 							$response .="<id_articuloIn>";
 							$response .=$articulo['id_articuloIn'];
 							$response .="</id_articuloIn>";
