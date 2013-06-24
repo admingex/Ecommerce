@@ -14,8 +14,8 @@
 | path to your installation.
 |
 */
+$config['base_url']	= 'http://dev.pagos.grupoexpansion.mx/';
 
-$config['base_url']	= 'http://ecommerce/';
 /*
 |--------------------------------------------------------------------------
 | Index File
@@ -126,7 +126,7 @@ $config['subclass_prefix'] = 'MY_';
 | DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!
 |
 */
-$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-+=';
 
 
 /*
@@ -244,7 +244,7 @@ $config['encryption_key'] = 'ecommerce_gex';
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'ci_session';	//session_gex
+$config['sess_cookie_name']		= 'ci_session';
 $config['sess_expiration']		= 6000;	//7200;
 $config['sess_expire_on_close']	= TRUE;
 $config['sess_encrypt_cookie']	= TRUE;
@@ -266,14 +266,9 @@ $config['sess_time_to_update']	= 300;
 |
 */
 $config['cookie_prefix']	= "";
-$config['cookie_domain']	= "";	//.pagos.grupoexpansion.mx
+$config['cookie_domain']	= "";
 $config['cookie_path']		= "/";
-$config['cookie_secure']	= FALSE;	//TRUE;
-//$confid['cookie_httponly'] = TRUE;	
-
-//Se modificó la libary del system/libraries/Session.php 
-//agregando la propiedad 'cookie_httponly' y asignándola en el contructor y al crear la cookie.
-//esto sólo se hizo en el servidor de producción. 
+$config['cookie_secure']	= FALSE;
 
 /*
 |--------------------------------------------------------------------------

@@ -1,0 +1,39 @@
+				
+<div class="orden-compra-izquierda">
+	<div class="bloque-orden-compra-auto">
+		<b>Forma de Pago:</b><br />
+		<?php
+			if (isset($tc) && is_object($tc)) {
+				include("detalle_tarjeta.html");
+			}
+		?>
+	</div>	
+</div>		
+
+
+<div class="orden-compra-izquierda">
+	
+
+	
+	<div class="bloque-orden-compra">
+		<?php
+			////Bloque clausurado por cambio
+			//existencia de más direcciones para la compra 
+			$mas_direcciones = $this->session->userdata('dse');
+			
+			//si requiere envío y sólo hay una dirección para la compra
+			if (isset($dir_envio)) {	//is_object($dir_envio)
+				//echo "<b>Direcci&oacute;n de env&iacute;o:</b><br/>";
+				//include("detalle_envio.html");
+				
+			} else if (!$mas_direcciones) {
+				//include("detalle_envio_temp.html");
+				//echo anchor('direccion_envio/registrar', '+ Agregar');
+			}
+		?>				
+	</div>
+	<div id="pleca-gris"></div>
+
+
+</div>
+
