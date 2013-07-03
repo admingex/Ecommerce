@@ -158,7 +158,7 @@ class Suscripcion_Express extends CI_Controller {
 							$datos['direccion']['id_clienteIn']= $ctereg->id_clienteIn;
 							
 							$regdir = $this->suscripcion_express_model->insertar_direccion($datos['direccion']);
-							echo 'after insert, regdir <pre>'; $regdir; print_r($cte->result_object()); print_r($datos['direccion']); print_r($datos); echo "</pre>"; exit;
+							/*echo 'after insert, regdir <pre>'; $regdir; print_r($cte->result_object()); print_r($datos['direccion']); print_r($datos); echo "</pre>"; exit;*/
 							if ($regdir === 1) {	//si se registró correctamente la dirección
 								$this->session->set_userdata('consecutivo', $consecutivo);
 								$pago = site_url('suscripcion_express/pago/'.$sitio.'/'.$canal.'/'.$promocion);
@@ -254,12 +254,20 @@ class Suscripcion_Express extends CI_Controller {
 	 */
 	public function pago($sitio='', $canal='', $promocion ='')
 	{
+		
 		$data['title']='Suscripción express';
 		
 		$sitio = $this->session->userdata('id_sitio');
 		$canal = $this->session->userdata('id_canal');
 		$promocion = $this->session->userdata('id_promocion');
+		$id_cliente = $this->session->userdata('id_cliente');
+		/*echo "<pre>";
+			print_r($id_cliente);
+		echo "</pre>";
+		exit();
+		 * && !empty($data['detalle_promociones']) */
 		
+		if (is_numeric($sitio) && !empty($sitio) && is_numeric($canal) && !empty($canal) && is_numeric($promocion) && !empty($promocion) && !empty($id_cliente)) {
 		$promoexp = array(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));
 		$data['detalle_promociones'] = $this->api->obtiene_articulos_y_promociones($promoexp);
 		/*
@@ -267,6 +275,7 @@ class Suscripcion_Express extends CI_Controller {
 			print_r($data['detalle_promociones']);
 		echo "</pre>";	
 		*/
+		
 		$lista_paises_amex = $this->forma_pago_model->listar_paises_amex();
 		$data['lista_paises_amex'] = $lista_paises_amex;
 		
@@ -276,6 +285,10 @@ class Suscripcion_Express extends CI_Controller {
 		
 
 		$this->load->view('suscripcion_express/header', $data);
+		/*echo "<pre>";	
+		print_r($data['detalle_promociones']['lleva_ra']);
+		echo "</pre>";*/
+		
 		if ($_POST) {
 			
 			$tarjeta = $this->get_datos_tarjeta();
@@ -327,6 +340,13 @@ class Suscripcion_Express extends CI_Controller {
 		else{			
 			$this->cargar_vista('', 'suscripcion_express/pago' , $data);						 
 		}
+		}
+	else {
+		#promocion inexistente				
+			$data['mensaje']="Información insuficiente para completar la orden";
+			$this->load->view('templates/header', $data);
+			$this->load->view('mensaje', $data);
+	}
 		
 	}
 	
@@ -470,10 +490,16 @@ class Suscripcion_Express extends CI_Controller {
 		
 		###se calculan nuevamente los datos para mostar el resumen si el codigo de verificacionno es correcto
 		$this->detalle_promociones =$this->api->obtiene_articulos_y_promociones($this->session->userdata('promociones'));
-		$data['detalle_promociones']= $this->detalle_promociones;			
+		$data['detalle_promociones']= $this->detalle_promociones;	
+		/*echo "<pre>";
+			print_r($data['detalle_promociones']);
+		echo "</pre>";
+		exit();		*/
 		$this->load->view('suscripcion_express/header', $data);	
 				
 		$data['requiere_envio'] = $this->session->userdata('consecutivo');
+		//GUARDA EN SESIÓN SI REQUIERE ENVIO TRUE O FALSE
+		$this->session->set_userdata('requiere_envio', $data['requiere_envio']);
 		$dir_envio = $this->session->userdata('consecutivo');
 		
 		/*echo '<pre>'; print_r($data['detalle_promociones']); echo "</pre>";
@@ -611,8 +637,12 @@ class Suscripcion_Express extends CI_Controller {
 				//detalles para las direcciones asociadas
 				$detalles_direcciones = array();
 				if ($ids_direcciones_envio) {
+					/*echo '<pre> ENTRO AL IF CON DIRECCIONES DE ENVIO'; print_r($ids_direcciones_envio); echo "</pre>";
+					exit();*/
 					foreach ($ids_direcciones_envio as $id_promocion => $id_direccion_env) {
 						$detalles_direcciones[$id_promocion] = $this->direccion_envio_model->detalle_direccion($id_direccion_env, $id_cliente);
+						/*echo '<pre> ENTRO AL FOR CON DIRECCIONES DE ENVIO'; print_r($detalles_direcciones[$id_promocion]); echo "</pre>";
+						exit();*/
 					}
 				}
 				
@@ -1040,9 +1070,24 @@ class Suscripcion_Express extends CI_Controller {
 						
 						//si la compra no se ha generado y guardado en sesión en algún intento previo de pago
 						if ($this->session->userdata('id_compra')) {
+							
 							$id_compra = $this->session->userdata('id_compra');
+							/*echo "IF SESSION USER DATA ID_COMPRA: ".$id_compra;
+							exit();*/
 						} else {
+							/*echo "ELSE REGISTRAR ORDEN COMPRA_COMPRA: ".$ids_promociones.$ids_direcciones_envio."ACABA DE IMPRIMIR";
+							echo "<pre>";
+							print_r($ids_promociones, $ids_direcciones_envio);
+							echo "</pre>";
+							exit();	
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($id_cliente); echo "</pre>";
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($ids_promociones); echo "</pre>";
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($ids_direcciones_envio); echo "</pre>";
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($tipo_pago); echo "</pre>";
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($primer_digito); echo "</pre>";
+							exit();*/
 							$id_compra = $this->registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago, $primer_digito);
+							
 						}
 						
 						if (!$id_compra) {	//Si falla el registro inicial de la compra en CCTC
@@ -1938,6 +1983,12 @@ class Suscripcion_Express extends CI_Controller {
 	
 	private function registrar_orden_compra($id_cliente, $ids_promociones, $ids_direcciones_envio, $tipo_pago, $primer_digito = NULL)
 	{
+		/*echo '<pre> ENTRO A LA FUNCION REGISTRAR_ORDEM_COMPRA '; print_r($id_cliente); echo "</pre>";
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($ids_promociones); echo "</pre>";
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($ids_direcciones_envio); echo "</pre>";
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($tipo_pago); echo "</pre>";
+							echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($primer_digito); echo "</pre>";
+							exit();*/
 		//Registrar eb la tabla de órdenes
 		$id_compra = 0;
 		$id_compra = $this->registrar_compra($id_cliente);
@@ -1959,11 +2010,11 @@ class Suscripcion_Express extends CI_Controller {
 					$info_articulos[] = array((int)$articulo->id_articulo, $id_compra, (int)$id_cliente, (int)$id_promo);
 				}
 			}
-			/*
-			echo "<pre>";
+			
+			/*echo "<pre>";
 			print_r($info_articulos);
-			echo "</pre>";*/
-			//exit;
+			echo "</pre>";
+			exit();*/
 			
 			/////// forma pago ///////
 			$id_TCSi = 0;
@@ -1978,18 +2029,23 @@ class Suscripcion_Express extends CI_Controller {
 			}
 			
 			$info_pago = array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_tipoPagoSi' => $tipo_pago, 'id_TCSi' => $id_TCSi, 'primer_digitoTi' => $primer_digito);
-			/*
-			echo "<pre>";
-			print_r($info_pago);
-			echo "</pre>"; */
-			//exit;
-
-
+			
+			
+			#PRUEBAS DIRECCIONES ENVIO
+			/*$REQUIERE_ENVIO_VAR = $this->session->userdata('requiere_envio');
+			echo "<pre> INFO PAGO ANTES DEL IF DE DIRECCIONES DE ENVIO";
+			print_r($REQUIERE_ENVIO_VAR);
+			echo "</pre>"; 
+			echo '<pre> ELSE REGISTRAR ORDEN COMPRA_COMPRA: '; print_r($ids_direcciones_envio); echo "</pre>";
+			exit();*/
+			#FIN PRUEBAS DIRECCIONES ENVIO
+			
 			/////// direccion(es) de envío///////
 			$info_direcciones = array();
 			//las direcciones de envío vienene como argumento en la llamada
 			if ($this->session->userdata('requiere_envio') && !empty($ids_direcciones_envio)) {
-				//echo "Sí requiere_envio: Si<br/>";
+				/*echo "Sí requiere_envio: Si<br/>";
+				exit();*/
 				### Ajustado para múltiples direcciones
 				###if ($dir_envio = $this->session->userdata('dir_envio')) {
 				foreach ($ids_direcciones_envio as $id_promo => $id_direccion) {
@@ -2000,13 +2056,20 @@ class Suscripcion_Express extends CI_Controller {
 						array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_promocionIn' => $id_promo, 'id_consecutivoSi' => (int)$id_direccion, 'address_type' => self::$TIPO_DIR['RESIDENCE']);
 						//array('id_compraIn' => $id_compra, 'id_clienteIn' => (int)$id_cliente, 'id_consecutivoSi' => (int)$dir_envio, 'address_type' => self::$TIPO_DIR['RESIDENCE']);
 				} 
+				/*echo '<pre> LLENA ARREGLO DIRECCIONES DE ENVIO: '; print_r($info_direcciones); echo "</pre>";
+				exit();*/
+				
 				
 			} else if ($this->session->userdata('requiere_envio') && empty($ids_direcciones_envio)) {
 					//No se efectúa la petición por que falta el dato de envío
+					/*echo "ERROR requiere_envio: Si<br/>";
+				exit();*/
 					echo "Error: la compra requiere dirección de envío.";
 					return FALSE;
 			} else {
 				//si no requiere se vacía el arreglo
+				/*echo "NO requiere_envio: Si<br/>";
+				exit();*/
 				$info_direcciones['envio'] = array();
 			}
 			
@@ -2031,11 +2094,25 @@ class Suscripcion_Express extends CI_Controller {
 			exit;*/			
 
 
-
+			/*ECHO "YA VA A REGISTRAR COMPRA INICIAL";
+			echo "<pre>";
+			print_r($info_articulos);
+			echo "</pre>";
+			echo "<pre>";
+			print_r($info_pago);
+			echo "</pre>";
+			echo "<pre>";
+			print_r($info_direcciones);
+			echo "</pre>";
+			echo "<pre>";
+			print_r($info_estatus);
+			echo "</pre>";
+			exit();*/
+			
 			///////////// registrar compra inicial en BD /////// 
 			$registro_orden = $this->orden_compra_model->registrar_compra_inicial($info_articulos, $info_pago, $info_direcciones, $info_estatus);
-			//echo "compra: " . $id_compra;
-//			exit();
+			/*echo "compra: " . $id_compra;
+			exit();*/
 			return $id_compra;
 		} else {
 			//Error en el registro de la compra
