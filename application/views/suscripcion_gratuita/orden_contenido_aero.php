@@ -37,6 +37,9 @@
 			height: 30px;
 			cursor: pointer;
 		}		
+		.grisb{
+			color: #9b9b9b;
+		}
 	</style>
 		
 </head>
@@ -49,7 +52,6 @@
 
 
 
-<section class="contenedor">
 	
   <form id="form_orden_compra" action="https://kiosco.grupoexpansion.mx/" method="POST" >
 	<div class="contenedor-blanco">				
@@ -69,9 +71,9 @@
 				<div>
 									    	<b>
 										  	Ahora puedes acceder y disfrutar del contenido: <br /><br />
-											- <a href='http://dev.pagos.grupoexpansion.mx/aeromexico/download/<?php echo $archivo_pdf1; ?>'>Gran Plan Aeromexico</a><br /><br/>
-											- <a href='http://dev.pagos.grupoexpansion.mx/aeromexico/download/<?php echo $archivo_pdf2; ?>'>Aire Aeromexico</a><br /><br/>
-                                            - <a href='http://dev.pagos.grupoexpansion.mx/aeromexico/download/<?php echo $archivo_pdf3; ?>'>Accent Aeromexico</a><br /><br/><br />
+											- <a href='http://dev.pagos.grupoexpansion.mx/aeromexico/download/<?php echo $archivo_pdf1; ?>'>Gran Plan Aeromexico</a><span class="grisb"> (12MB)</span><br /><br/>
+											- <a href='http://dev.pagos.grupoexpansion.mx/aeromexico/download/<?php echo $archivo_pdf2; ?>'>Aire Aeromexico</a><span class="grisb"> (50MB)</span><br /><br/>
+                                            - <a href='http://dev.pagos.grupoexpansion.mx/aeromexico/download/<?php echo $archivo_pdf3; ?>'>Accent Aeromexico</a><span class="grisb"> (30MB)</span><br /><br/><br />
                                             
 											Cordialmente,<br/><br/>
 											Grupo Expansión.<br/></b>
@@ -86,5 +88,3 @@
 		<input type="submit" id="enviar" value="Aceptar" class="btn_finalizar_compra"/>
 	</div>
 	</form>
-
-</section>

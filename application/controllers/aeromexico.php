@@ -10,7 +10,7 @@ class Aeromexico extends CI_Controller {
 	var $subtitle = 'Revista Aeroméxico';
 	var $detalle_promociones = array();
 	var $key = 'suscripcionaeromexico';
-	var $urlpdf_base = 'http://dev.kiosco.grupoexpansion.mx/aeromexico/';
+	var $urlpdf_base = 'https://kiosco.grupoexpansion.mx/aeromexico/';
 	
 	/*const HASH_PAGOS = "P3lux33n3l357ux3";	//hash que se utiliza vara validar la información del lado de CCTC
 	const Tipo_AMEX = 1;*/
@@ -38,7 +38,7 @@ class Aeromexico extends CI_Controller {
 	 */
 	public function index()
 	{
-		$registro = site_url('aeromexico/registro/3/27/1517');
+		$registro = site_url('aeromexico/registro/3/25/1517');
 		header("Location: $registro");
 	}
 	
@@ -84,15 +84,11 @@ class Aeromexico extends CI_Controller {
 			$this->session->set_userdata('oc_id_img', $oc_id);
 			/*echo '<pre>';print_r($data); echo "</pre>";exit;*/
 			
-			
-			/*$moneda_pais= $data['detalle_promociones']['moneda'];
-			echo '<pre>';print_r($moneda_pais); echo "</pre>";exit;*/
-			
 			$tarifa_dc = $data['detalle_promociones']['tarifa'];
 			//echo '<pre>';print_r($tarifa_dc); echo "</pre>";exit;
 			
 			if (!empty($tarifa_dc) && $tarifa_dc== "0.0000"){
-
+			
 				if ($_POST) {
 					$datos = $this->get_datos_registro();
 					
@@ -103,10 +99,18 @@ class Aeromexico extends CI_Controller {
 						
 						// si es cliente registrado
 						if ($cte->num_rows() > 0) {
-							$this->registro_errores['email'] = '<br><span class="validation_message"><strong>Solicitaste un registro como cliente nuevo, pero ya existe una cuenta con el correo: '.$datos['email'].'</strong></span>';
+							$this->session->set_userdata('reenvio', 1);
+							$urlpdf_base = "reenvio";
+							$urlpdf_encriptada = $this->encrypt($urlpdf_base);
+							$this->session->set_userdata('urlpdf_encriptada', $urlpdf_encriptada);
+							//$this->session->set_userdata('email_cliente', $datos['email']);
+							$this->session->set_userdata('nombre_cliente', $datos['salutation']);
+							
+							$this->registro_errores['email'] = '<br><span class="validation_message"><strong>Solicitaste un registro como cliente nuevo, pero ya existe una cuenta con el correo: '.$datos['email'].'. <a href="http://dev.pagos.grupoexpansion.mx/aeromexico/contenido/'.$urlpdf_encriptada.'">Da clic aquí</a> y reenviaremos a esta cuenta de correo la información necesaria para acceder al contenido.</strong></span>';
 							$data['registro_errores'] = $this->registro_errores;
 							$this->cargar_vista('', 'suscripcion_gratuita/registro_cliente' , $data);
 						} else {	// si es cliente nuevo
+							$this->session->set_userdata('reenvio', 0);
 							$id_cliente = $this->suscripcion_gratuita_model->next_cliente_id();	//id del cliente
 							$datos['id_clienteIn'] = $id_cliente;
 							
@@ -204,7 +208,6 @@ class Aeromexico extends CI_Controller {
 				} else {
 					$this->cargar_vista('', 'suscripcion_gratuita/registro_cliente' , $data);
 				}
-				
 			}//TARIFA != 0
 			else {
 				#promocion inexistente				
@@ -213,6 +216,7 @@ class Aeromexico extends CI_Controller {
 				$this->load->view('mensaje', $data);	
 			}
 
+			
 		} else {
 			#promocion inexistente				
 			$data['mensaje']="Información insuficiente para completar la orden";
@@ -225,15 +229,15 @@ class Aeromexico extends CI_Controller {
 
 	public function resumen($sitio='', $canal = '', $promocion = '')
 	{
-
 		$data['title'] = "Instrucciones para visualizar la información";
 		$data['subtitle'] = "Resultado de la petición";	
 		$data['metatags'] = $this->img_obtiene($this->session->userdata('oc_id_img'));	
 		$id_cliente=$this->session->userdata('id_cliente');
 		$urlpdf_encriptada = $this->session->userdata('urlpdf_encriptada');
 		
-		###se calculan nuevamente los datos para mostar el resumen si el codigo de verificacionno es correcto
-		$this->detalle_promociones =$this->api->obtiene_articulos_y_promociones($this->session->userdata('promociones'));
+		// Se calculan nuevamente los datos para mostar el resumen 
+		$promoexp = array(array('id_sitio'=>$sitio, 'id_canal'=>$canal, 'id_promocion'=>$promocion));
+		$this->detalle_promociones =$this->api->obtiene_articulos_y_promociones($promoexp);
 		$data['detalle_promociones']= $this->detalle_promociones;			
 		$this->load->view('suscripcion_gratuita/header', $data);	
 				
@@ -272,7 +276,13 @@ class Aeromexico extends CI_Controller {
 				//$data['id_compra']=$id_compra;		
 				/*echo '<pre> entero'; print_r($urlpdf_encriptada); echo "</pre>";
 				exit();*/
-				$this->cargar_vista('', 'suscripcion_gratuita/orden_compra', $data);
+				$varreenvio = $this->session->userdata('reenvio');
+				if ($varreenvio == 1) {
+					$this->cargar_vista('', 'suscripcion_gratuita/reenvio', $data);
+				}
+				else{
+					$this->cargar_vista('', 'suscripcion_gratuita/orden_compra', $data);
+				}
 				//$this->session->sess_destroy();	
 
 						
@@ -293,54 +303,99 @@ class Aeromexico extends CI_Controller {
 				$this->cargar_vista('', 'suscripcion_gratuita/orden_compra' , $data);
 				
 			}
-		/*} 
-		else { //si llega sin una petición
-			
-			$data['mensaje']="Información insuficiente para completar la orden";
-			$this->load->view('templates/header', $data);
-			$this->load->view('mensaje', $data);
-			 
-			$this->cargar_vista('', 'suscripcion_gratuita/orden_compra' , $data);  
-		}*/
 	}
 
 	// Método para validar y descargar el contenido PDF
-	public function contenido($cadena_a_desencriptar)
+	public function contenido($cadena_a_desencriptar="")
 	{
-
-		//$cadena_desencriptada = $this->decrypt($email_a_desencriptar,"dev.pagos.grupoexpansion.mx.aeromexico");
-		//Desencriptamos el texto
+		//SI ES IGUAL A CÓDIGO DE REENVIO PARA USUARIOS YA REGISTRADOS SE MANDA UN CORREO Y SE IMPRIME ENVIO EXITOSO
 		$cadena_desencriptada = $this->decrypt($cadena_a_desencriptar);
-		//$url_a_desencriptar = ;
-		//echo '<pre>'; print_r($cadena_desencriptada); echo "</pre>"; exit();
-		$verifica_cliente = $this->suscripcion_gratuita_model->verifica_registro_email($cadena_desencriptada);
-		
-		
-		if ($verifica_cliente->num_rows() > 0){
-			$archivo1 = 'cACC.pdf';
-			$archivo2 = 'cAIR.pdf';
-			$archivo3 = 'cGRP.pdf';
-			
-			$this->session->set_userdata('archivo1', $archivo1);
-			$this->session->set_userdata('archivo2', $archivo2);
-			$this->session->set_userdata('archivo3', $archivo3);
+		if ($cadena_desencriptada == "reenvio"){
+								//Se recupera info suficiente para hacer el reenvio del emial y redireccionar
+								$nombre_cliente = $this->session->userdata('nombre_cliente');
+								$email_cliente = $this->session->userdata('email');
+								$sitio = $this->session->userdata('id_sitio');
+								$canal = $this->session->userdata('id_canal');
+								$promocion = $this->session->userdata('id_promocion');
+								$urlpdf_base = $email_cliente;
+								$urlpdf_encriptada = $this->encrypt($urlpdf_base);
+								$this->session->set_userdata('urlpdf_encriptada', $urlpdf_encriptada);
+								
+								$urlpdf_encriptada = $this->session->userdata('urlpdf_encriptada');
+								
+								$headers = "Content-type: text/html; charset=UTF-8\r\n";
+				                $headers .= "MIME-Version: 1.0\r\n";
+							    $headers .= "From: Suscripción Aeromexico Grupo Expansión<servicioaclientes@expansion.com.mx>\r\n";
+								$mensaje = 
+									"<html>
+										<body>
+									  	   	<div>Hola, ".$nombre_cliente.",<br /><br /> 
+									   		</div>									   
+										   	<div>
+											  	Recibimos una solicitud para recuperar tu acceso al contenido de Aeromexico asociada a este correo. Si tú hiciste esta solicitud, por favor sigue las
+instrucciones que aparecen abajo. Si no solicitaste el acceso, puedes ignorar este correo con tranquilidad, pues tu cuenta de cliente está segura. <br /><br />
+											  	Puedes acceder al contenido de la siguiente manera: <br />
+												- Sigue el siguiente link para acceder al contenido: <a href='http://dev.pagos.grupoexpansion.mx/aeromexico/contenido/".$urlpdf_encriptada."'>http://dev.pagos.grupoexpansion.mx/aeromexico/contenido/".$urlpdf_encriptada."</a><br /><br/>
+												- Si seguir el link no funciona, puedes copiar y pegar el link en la barra de dirección de tu navegador, o reescribirla ahí.<br /><br/>
+												<br />
+												Estamos disponibles para cualquier pregunta relacionada con este correo.<br /><br/>
+											  	Atención a clientes<br/><br/>
+											  	Tel. (55) 9177 4342<br/><br/>
+												servicioaclientes@expansion.com.mx<br/><br/>
+												Cordialmente,<br/><br/>
+												Grupo Expansión.<br/>
+									  	   </div>								  	   
+									  	</body>
+		  							</html>";
+								//Si se envía correctamente el correo de registro
+								if (mail($email_cliente, "=?UTF-8?B?".base64_encode('¡Bienvenido al contenido Aeromexico de Grupo Expansión!')."?=", $mensaje, $headers)) {
+									/*$this->session->set_userdata('id_cliente', $id_cliente);
+									this->session->set_userdata('consecutivo', $consecutivo);*/
+									$resumen = site_url('aeromexico/resumen/'.$sitio.'/'.$canal.'/'.$promocion);
+									header("Location: $resumen");
+								}//END IF ENVIA CORREO
+								else {
+									$data['mensaje'] = "Ocurrió un problema al hacer el reenvío, inténtelo nuevamente.";
+									$this->load->view('templates/header', $data);
+									$this->load->view('mensaje', $data);
+								}
 
-			$this->mostrar_contenido('', 'suscripcion_gratuita/orden_contenido_aero', '$data');
-		}
+		}//END IF CODIGO DE REENVIO
+		
+		//Si no entra a verificar cliente según la cadena a desencriptar 
 		else {
-			#no muestra contenido	
-			$data['title'] = 'Suscripción Aeromexico';			
-			$data['mensaje']="Información insuficiente para mostrar el contenido";
-			$this->load->view('templates/header', $data);
-			$this->load->view('mensaje', $data);
-		}
+			//Desencriptamos el texto
+			$cadena_desencriptada = $this->decrypt($cadena_a_desencriptar);
+
+			$verifica_cliente = $this->suscripcion_gratuita_model->verifica_registro_email($cadena_desencriptada);
 			
-		/*$cadena_desencriptada = $this->decrypt($url_a_desencriptar,"1517");
-		echo '<pre>'; print_r($cadena_desencriptada); echo "</pre>";
-				exit();*/
+			
+			if ($verifica_cliente->num_rows() > 0){
+				$archivo1 = 'cACC.pdf';
+				$archivo2 = 'cAIR.pdf';
+				$archivo3 = 'cGRP.pdf';
+				
+				$this->session->set_userdata('archivo1', $archivo1);
+				$this->session->set_userdata('archivo2', $archivo2);
+				$this->session->set_userdata('archivo3', $archivo3);
+	
+				$this->mostrar_contenido('', 'suscripcion_gratuita/orden_contenido_aero', '$data');
+			}
+			else {
+				#no muestra contenido	
+				$data['title'] = 'Suscripción Aeromexico';			
+				$data['mensaje']="Información insuficiente para mostrar el contenido";
+				$this->load->view('templates/header', $data);
+				$this->load->view('mensaje', $data);
+			}
+				
+			/*$cadena_desencriptada = $this->decrypt($url_a_desencriptar,"1517");
+			echo '<pre>'; print_r($cadena_desencriptada); echo "</pre>";
+					exit();*/
+		}
+
 	}
-	
-	
+
 	// Método para descargar archivos
 	public function download($archivo_a_descargar){
 		$_GET['file'] = $archivo_a_descargar;
