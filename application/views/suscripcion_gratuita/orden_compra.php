@@ -8,7 +8,7 @@ $urlpdf_encriptada = $this->session->userdata('urlpdf_encriptada');
 	<div class="instrucciones">Por favor verifica la informaci&oacute;n que aparece abajo.</div>
 
 </div>
-<section class="contenedor">
+
 
 	<form id="form_orden_compra" action="https://kiosco.grupoexpansion.mx/" method="POST" >
 	<div class="contenedor-blanco">				
@@ -49,25 +49,30 @@ $urlpdf_encriptada = $this->session->userdata('urlpdf_encriptada');
 		<input type="submit" id="enviar" value="Finalizar" class="btn_finalizar_compra"/>
 	</div>
 	</form>
+	<!-- Google Code for Suscripci&oacute;n Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 988262015;
+var google_conversion_language = "en";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "WAc_CPHhtgUQ_9ye1wM";
+var google_conversion_value = 599;
+/* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/988262015/?value=599&amp;label=WAc_CPHhtgUQ_9ye1wM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+<!-- Google Code for Suscripci&oacute;n Conversion Page -->
 
-	<div id="scripts">
-		<script type="text/javascript">
-			/*mensaje y redirección*/
-			$(function() {
-				$( "#dialog:ui-dialog" ).dialog( "destroy" );
-				
-				$( "#dialog" ).dialog({
-					resizable: false,
-					//height:140,
-					modal: true,
-					buttons: {
-						"Ok": function() {
-							$( this ).dialog( "close" );
-							//$url_redirect = site_url('direccion_envio');
-						}
-					}
-				});
-			});
-		</script>
-	</div>
-</section>
+<!--Advertiser ‘Flock MX — USD *s’,  Conversion tracking ‘Headway Digital — Flock MX — Unsecure Conversion Pixel’ — DO NOT MODIFY THIS PIXEL IN ANY WAY -->
+<img src="http://ad.resultsaccelerator.net/pixel?id=2395060&t=2" width="1" height="1" />
+<!--End of conversion tag -->
+
+<!-- Conversion Pixel - Headway Digital - Flock MX - Quien.com - Unsecure Conversion Pixel - DO NOT MODIFY -->
+<img src="http://ads.resultsaccelerator.net/px?id=89562&t=2" width="1" height="1" />
+<!-- End of Conversion Pixel -->
